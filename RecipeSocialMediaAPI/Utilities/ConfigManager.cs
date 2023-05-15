@@ -19,7 +19,7 @@
                 .GetSection("MongoDB")
                 .GetValue<string>(keyName);
 
-            return val == null ? "" : val.ToString();
+            return val?.ToString() ?? string.Empty;
         }
     }
 }

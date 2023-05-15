@@ -20,12 +20,9 @@ namespace RecipeSocialMediaAPI.DAL
 
         public List<T> QueryCollection(Expression<Func<T, bool>> expr)
         {
-            if (_collection != null) 
-            {
-                return _collection.Find(expr).ToList();
-            }
-
-            return new List<T>();
+            return _collection?.Find(expr).ToList() ?? new List<T>();
         }
+
+
     }
 }
