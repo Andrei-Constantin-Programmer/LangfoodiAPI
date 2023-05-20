@@ -8,10 +8,10 @@ namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
 {
     public class AddRecipeHandler : IRequestHandler<AddRecipeCommand>
     {
-        private readonly IFakeRecipeRepository _fakeRecipeRepository;
+        private readonly IRecipeRepository _fakeRecipeRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         
-        public AddRecipeHandler(IFakeRecipeRepository fakeRecipeRepository, IDateTimeProvider dateTimeProvider)
+        public AddRecipeHandler(IRecipeRepository fakeRecipeRepository, IDateTimeProvider dateTimeProvider)
         {
             _fakeRecipeRepository = fakeRecipeRepository;
             _dateTimeProvider = dateTimeProvider;

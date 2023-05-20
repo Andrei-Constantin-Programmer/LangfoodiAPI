@@ -3,12 +3,13 @@ using RecipeSocialMediaAPI.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.DAL.Repositories
 {
-    public class FakeRecipeRepository : IFakeRecipeRepository
+    public class RecipeRepository : IRecipeRepository
     {
         private readonly List<Recipe> _recipes;
-        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public FakeRecipeRepository(IDateTimeProvider dateTimeProvider)
+        private readonly IDateTimeProvider _dateTimeProvider;
+        
+        public RecipeRepository(IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
 

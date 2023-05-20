@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-builder.Services.AddSingleton<IFakeRecipeRepository, FakeRecipeRepository>();
+builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
 
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
@@ -37,3 +37,5 @@ app.MapPost("/logtest", (ILogger<Program> logger) =>
 
 
 app.Run();
+
+public partial class Program { }

@@ -8,6 +8,6 @@
 
         public required string Chef { get; set; }
 
-        public required DateTimeOffset? CreationDate { get; set; }
+        public DateTimeOffset? CreationDate { get; set; }
     }
 }

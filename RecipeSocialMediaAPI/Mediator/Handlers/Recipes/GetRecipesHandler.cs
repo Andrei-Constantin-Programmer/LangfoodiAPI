@@ -7,9 +7,9 @@ namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
 {
     public class GetRecipesHandler : IRequestHandler<GetRecipesQuery, IEnumerable<RecipeDTO>>
     {
-        private readonly IFakeRecipeRepository _fakeRepository;
+        private readonly IRecipeRepository _fakeRepository;
 
-        public GetRecipesHandler(IFakeRecipeRepository fakeRepository)
+        public GetRecipesHandler(IRecipeRepository fakeRepository)
         {
             _fakeRepository = fakeRepository;
         }
