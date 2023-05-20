@@ -1,17 +1,19 @@
-using RecipeSocialMediaAPI.DAL;
-using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Endpoints;
-using RecipeSocialMediaAPI.Utilities;
 using RecipeSocialMediaAPI.Configuration;
 using Serilog;
+using RecipeSocialMediaAPI.Services.Interfaces;
+using RecipeSocialMediaAPI.DAL.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
+
+builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+builder.Services.AddSingleton<IFakeRecipeRepository, FakeRecipeRepository>();
+
+builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 var app = builder.Build();
 
@@ -26,6 +28,7 @@ app.UseHttpsRedirection();
 
 // Setup Endpoints
 app.MapUserEndpoints();
+app.MapRecipeEndpoints();
 
 app.MapPost("/logtest", (ILogger<Program> logger) =>
 {
