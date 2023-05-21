@@ -19,11 +19,13 @@ namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
 
         public async Task Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
         {
+            var recipeDTO = request.Recipe;
             await _fakeRecipeRepository.CreateRecipe(new Recipe(
-                request.Recipe.Title,
-                request.Recipe.Description,
-                request.Recipe.Chef,
-                request.Recipe.CreationDate ?? _dateTimeProvider.Now
+                recipeDTO.Id,
+                recipeDTO.Title,
+                recipeDTO.Description,
+                recipeDTO.Chef,
+                recipeDTO.CreationDate ?? _dateTimeProvider.Now
             ));
         }
     }

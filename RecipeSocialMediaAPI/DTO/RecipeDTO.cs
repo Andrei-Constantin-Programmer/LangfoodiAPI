@@ -1,7 +1,9 @@
 ﻿namespace RecipeSocialMediaAPI.DTO
 {
-    public class RecipeDTO
+    public record RecipeDTO
     {
+        public required int Id { get; set; }
+
         public required string Title { get; set; }
 
         public required string Description { get; set; }

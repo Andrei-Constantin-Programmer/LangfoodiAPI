@@ -6,5 +6,6 @@ namespace RecipeSocialMediaAPI.DAL.Repositories
     {
         Task CreateRecipe(Recipe recipe);
         Task<IEnumerable<Recipe>> GetAllRecipes();
+        Task<Recipe?> GetRecipeById(int id);
     }
 }

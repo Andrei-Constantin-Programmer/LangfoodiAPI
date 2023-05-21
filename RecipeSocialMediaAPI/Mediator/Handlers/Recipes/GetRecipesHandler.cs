@@ -20,6 +20,7 @@ namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
                 .GetAllRecipes())
                 .Select(recipe => new RecipeDTO()
                 {
+                    Id = recipe.Id,
                     Title = recipe.Title,
                     Description = recipe.Description,
                     Chef = recipe.Chef,

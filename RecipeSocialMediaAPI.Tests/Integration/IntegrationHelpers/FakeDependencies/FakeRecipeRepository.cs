@@ -23,5 +23,10 @@ namespace RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers.FakeDependen
         {
             return await Task.FromResult(_recipes);
         }
+
+        public async Task<Recipe?> GetRecipeById(int id)
+        {
+            return await Task.FromResult(_recipes.SingleOrDefault(r => r.Id == id));
+        }
     }
 }
