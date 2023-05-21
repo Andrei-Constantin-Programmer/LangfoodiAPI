@@ -16,7 +16,7 @@ namespace RecipeSocialMediaAPI.Endpoints
 
             app.MapPost("/recipes/create", async (RecipeDTO recipe, ISender sender) =>
             {
-                await sender.Send(new AddRecipeCommand(recipe));
+                await sender.Send(new CreateRecipeCommand(recipe));
 
                 return Results.Ok();
             });

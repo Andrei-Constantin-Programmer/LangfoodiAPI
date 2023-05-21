@@ -6,20 +6,20 @@ using RecipeSocialMediaAPI.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
 {
-    public class AddRecipeHandler : IRequestHandler<AddRecipeCommand>
+    public class CreateRecipeHandler : IRequestHandler<CreateRecipeCommand>
     {
         private readonly IRecipeRepository _fakeRecipeRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         
-        public AddRecipeHandler(IRecipeRepository fakeRecipeRepository, IDateTimeProvider dateTimeProvider)
+        public CreateRecipeHandler(IRecipeRepository fakeRecipeRepository, IDateTimeProvider dateTimeProvider)
         {
             _fakeRecipeRepository = fakeRecipeRepository;
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task Handle(AddRecipeCommand request, CancellationToken cancellationToken)
+        public async Task Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
         {
-            await _fakeRecipeRepository.AddRecipe(new Recipe(
+            await _fakeRecipeRepository.CreateRecipe(new Recipe(
                 request.Recipe.Title,
                 request.Recipe.Description,
                 request.Recipe.Chef,

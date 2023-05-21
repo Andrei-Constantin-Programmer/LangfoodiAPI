@@ -23,7 +23,7 @@ namespace RecipeSocialMediaAPI.DAL.Repositories
 
         public async Task<IEnumerable<Recipe>> GetAllRecipes() => await Task.FromResult(_recipes);
 
-        public async Task AddRecipe(Recipe recipe)
+        public async Task CreateRecipe(Recipe recipe)
         {
             _recipes.Add(recipe);
 

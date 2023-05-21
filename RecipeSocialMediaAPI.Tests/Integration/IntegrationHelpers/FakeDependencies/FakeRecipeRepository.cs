@@ -12,7 +12,7 @@ namespace RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers.FakeDependen
             _recipes = new List<Recipe>();
         }
 
-        public Task AddRecipe(Recipe recipe)
+        public Task CreateRecipe(Recipe recipe)
         {
             _recipes.Add(recipe);
 
