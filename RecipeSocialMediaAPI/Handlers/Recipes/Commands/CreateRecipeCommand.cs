@@ -11,9 +11,9 @@ namespace RecipeSocialMediaAPI.Handlers.Recipes.Commands
     internal class CreateRecipeHandler : IRequestHandler<CreateRecipeCommand>
     {
         private readonly IRecipeRepository _fakeRecipeRepository;
-        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IClock _dateTimeProvider;
 
-        public CreateRecipeHandler(IRecipeRepository fakeRecipeRepository, IDateTimeProvider dateTimeProvider)
+        public CreateRecipeHandler(IRecipeRepository fakeRecipeRepository, IClock dateTimeProvider)
         {
             _fakeRecipeRepository = fakeRecipeRepository;
             _dateTimeProvider = dateTimeProvider;

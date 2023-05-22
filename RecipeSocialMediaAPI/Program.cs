@@ -43,6 +43,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
+
 builder.Services.AddSingleton<IMongoFactory, MongoFactory>();
 builder.Services.AddSingleton<IConfigManager, ConfigManager>();
 builder.Services.AddSingleton<IClock, SystemClock>();
@@ -60,7 +61,6 @@ builder.Services.AddSingleton<IValidationService, ValidationService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserTokenService, UserTokenService>();
 
-builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
 
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));

@@ -7,9 +7,9 @@ namespace RecipeSocialMediaAPI.DAL.Repositories
     {
         private readonly List<Recipe> _recipes;
 
-        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IClock _dateTimeProvider;
         
-        public RecipeRepository(IDateTimeProvider dateTimeProvider)
+        public RecipeRepository(IClock dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
 

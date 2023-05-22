@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Services.Interfaces
 {
-    public interface IDateTimeProvider
+    public interface IClock
     {
         DateTimeOffset Now { get; }
     }

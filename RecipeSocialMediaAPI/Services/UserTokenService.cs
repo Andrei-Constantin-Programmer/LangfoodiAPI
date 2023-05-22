@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.Utilities;
 using MongoDB.Bson;
 using RecipeSocialMediaAPI.DTO;
 using AutoMapper;
+using RecipeSocialMediaAPI.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Services
 {
@@ -36,7 +37,7 @@ namespace RecipeSocialMediaAPI.Services
         public bool RemoveToken(string token)
         {
             ObjectId tokenObj = ObjectId.Parse(token);
-            return _userTokenCollection.Delete(x => x._id == tokenObj);
+            return _userTokenCollection.Delete(x => x.TokenId == tokenObj);
         }
 
         public UserTokenDto GenerateToken(UserDto user)
@@ -65,7 +66,7 @@ namespace RecipeSocialMediaAPI.Services
         public UserDocument GetUserFromTokenWithPassword(string token)
         {
             ObjectId tokenObj = ObjectId.Parse(token);
-            UserTokenDocument userToken = _userTokenCollection.Find(x => x._id == tokenObj)!;
+            UserTokenDocument userToken = _userTokenCollection.Find(x => x.TokenId == tokenObj)!;
 
             return _userCollection.Find(x => x._id == userToken.UserId)!;
         }
@@ -115,14 +116,14 @@ namespace RecipeSocialMediaAPI.Services
         public bool CheckTokenExpired(string token)
         {
             ObjectId tokenObj = ObjectId.Parse(token);
-            UserTokenDocument tokenDoc = _userTokenCollection.Find(x => x._id! == tokenObj)!;
+            UserTokenDocument tokenDoc = _userTokenCollection.Find(x => x.TokenId! == tokenObj)!;
             return _clock.Now >= tokenDoc.ExpiryDate;
         }
 
         public bool CheckTokenExists(string token)
         {
             ObjectId tokenObj = ObjectId.Parse(token);
-            return _userTokenCollection.Contains(x => x._id! == tokenObj);
+            return _userTokenCollection.Contains(x => x.TokenId! == tokenObj);
         }
         #endregion
     }
