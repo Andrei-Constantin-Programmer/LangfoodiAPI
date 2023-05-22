@@ -17,14 +17,6 @@ namespace RecipeSocialMediaAPI.Services
             _mapper = mapper;
         }
 
-        public UserTokenDto AddUser(UserDto user, IUserTokenService userTokenService, IUserValidationService validationService)
-        {
-            user.Password = validationService.HashPassword(user.Password);
-            UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(user));
-
-            return userTokenService.GenerateToken(insertedUser);
-        }
-
         public bool RemoveUser(string token, IUserTokenService userTokenService)
         {
             UserDocument userDoc = userTokenService.GetUserFromToken(token);

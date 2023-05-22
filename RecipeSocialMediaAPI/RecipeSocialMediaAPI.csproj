@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Handlers\Users\Commands\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
 
