@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 
-namespace RecipeSocialMediaAPI.DTO.Mongo
+namespace RecipeSocialMediaAPI.DAL.Documents
 {
     public record UserTokenDocument
     {

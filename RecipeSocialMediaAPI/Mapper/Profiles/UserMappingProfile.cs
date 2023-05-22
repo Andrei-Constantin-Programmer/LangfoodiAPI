@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using RecipeSocialMediaAPI.DTO.Mongo;
+using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.Data.DTO;
 
-namespace RecipeSocialMediaAPI.DTO.Profiles
+namespace RecipeSocialMediaAPI.Mapper.Profiles
 {
     public class UserMappingProfile : Profile
     {
-        public UserMappingProfile() 
+        public UserMappingProfile()
         {
             CreateMap<UserDto, UserDocument>();
             CreateMap<UserDocument, UserDto>()

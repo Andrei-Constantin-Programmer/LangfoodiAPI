@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.DTO;
+using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints

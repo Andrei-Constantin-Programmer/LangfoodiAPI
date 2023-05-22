@@ -1,11 +1,11 @@
 ﻿using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.DAL;
-using RecipeSocialMediaAPI.DTO.Mongo;
 using RecipeSocialMediaAPI.Utilities;
 using MongoDB.Bson;
-using RecipeSocialMediaAPI.DTO;
 using AutoMapper;
 using RecipeSocialMediaAPI.Services.Interfaces;
+using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.DAL.Documents;
 
 namespace RecipeSocialMediaAPI.Services
 {

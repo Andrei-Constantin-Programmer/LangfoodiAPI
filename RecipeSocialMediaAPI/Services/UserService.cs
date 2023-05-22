@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using MongoDB.Bson;
 using RecipeSocialMediaAPI.DAL;
+using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.DTO.Mongo;
+using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Services

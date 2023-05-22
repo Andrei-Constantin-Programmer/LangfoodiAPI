@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
-using RecipeSocialMediaAPI.DTO;
+using RecipeSocialMediaAPI.Data.DTO;
 
 namespace RecipeSocialMediaAPI.Services
 {
@@ -27,7 +27,7 @@ namespace RecipeSocialMediaAPI.Services
                 && !userService.CheckUserNameExists(user);
         }
 
-        private bool RegexPatternMatch(string pattern, string value)
+        private static bool RegexPatternMatch(string pattern, string value)
         {
             Regex rgx = new Regex(pattern, RegexOptions.Compiled);
             return rgx.IsMatch(value);

@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.DTO
+﻿namespace RecipeSocialMediaAPI.Data.DTO
 {
     public record RecipeDTO
     {

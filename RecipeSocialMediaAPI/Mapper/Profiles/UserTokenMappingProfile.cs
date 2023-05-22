@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using RecipeSocialMediaAPI.DTO.Mongo;
+using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.Data.DTO;
 
-namespace RecipeSocialMediaAPI.DTO.Profiles
+namespace RecipeSocialMediaAPI.Mapper.Profiles
 {
     public class UserTokenMappingProfile : Profile
     {
-        public UserTokenMappingProfile() 
+        public UserTokenMappingProfile()
         {
             CreateMap<UserTokenDocument, UserTokenDto>()
                 .ForMember(d => d.Token, o => o.MapFrom(s => s.TokenId!.ToString()))

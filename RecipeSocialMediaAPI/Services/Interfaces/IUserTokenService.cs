@@ -1,5 +1,5 @@
-﻿using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.DTO.Mongo;
+﻿using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.Data.DTO;
 
 namespace RecipeSocialMediaAPI.Services
 {

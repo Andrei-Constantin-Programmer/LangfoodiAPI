@@ -1,4 +1,4 @@
-﻿using RecipeSocialMediaAPI.DTO;
+﻿using RecipeSocialMediaAPI.Data.DTO;
 
 namespace RecipeSocialMediaAPI.Services
 {

@@ -1,6 +1,5 @@
 using Microsoft.OpenApi.Models;
 using RecipeSocialMediaAPI.DAL;
-using RecipeSocialMediaAPI.DTO.Profiles;
 using RecipeSocialMediaAPI.Endpoints;
 using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Utilities;
@@ -8,6 +7,7 @@ using Serilog;
 using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using AutoMapper;
+using RecipeSocialMediaAPI.Mapper.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
@@ -48,13 +48,7 @@ builder.Services.AddSingleton<IMongoFactory, MongoFactory>();
 builder.Services.AddSingleton<IConfigManager, ConfigManager>();
 builder.Services.AddSingleton<IClock, SystemClock>();
 
-// Setup mapping profiles
-var mappings = new MapperConfiguration(config =>
-{
-    config.AddProfile(new UserMappingProfile());
-    config.AddProfile(new UserTokenMappingProfile());
-});
-builder.Services.AddSingleton(mappings.CreateMapper());
+builder.Services.AddAutoMapper(typeof(UserMappingProfile), typeof(UserTokenMappingProfile));
 
 // Setup business logic services
 builder.Services.AddSingleton<IValidationService, ValidationService>();
