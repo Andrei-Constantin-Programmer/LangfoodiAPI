@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.DAL.Documents
 {
-    public record UserDocument
+    public record UserDocument : MongoDocument
     {
 #pragma warning disable IDE1006 // Naming Styles
         public required BsonObjectId _id { get; set; }

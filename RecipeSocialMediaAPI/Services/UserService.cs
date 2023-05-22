@@ -17,16 +17,6 @@ namespace RecipeSocialMediaAPI.Services
             _mapper = mapper;
         }
 
-        public bool CheckEmailExists(UserDto user)
-        {
-            return _userCollection.Contains(x => x.Email.ToLower() == user.Email.ToLower());
-        }
-
-        public bool CheckUserNameExists(UserDto user)
-        {
-            return _userCollection.Contains(x => x.UserName == user.UserName);
-        }
-
         public UserTokenDto AddUser(UserDto user, IUserTokenService userTokenService, IUserValidationService validationService)
         {
             user.Password = validationService.HashPassword(user.Password);

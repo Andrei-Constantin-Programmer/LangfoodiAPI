@@ -1,12 +1,19 @@
 ﻿using System.Text.RegularExpressions;
+using MediatR;
 using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Handlers.Users.Querries;
 using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Services
 {
     public class UserValidationService : IUserValidationService
     {
-        public UserValidationService() {}
+        private readonly ISender _sender;
+
+        public UserValidationService(ISender sender) 
+        {
+            _sender = sender;
+        }
 
         public string HashPassword(string password)
         {
@@ -18,13 +25,13 @@ namespace RecipeSocialMediaAPI.Services
             return BCrypter.Verify(password, hash);
         }
 
-        public bool ValidUser(UserDto user, IUserService userService)
+        public async Task<bool> ValidUserAsync(UserDto user, IUserService userService)
         {
             return ValidUserName(user.UserName)
                 && ValidEmail(user.Email)
                 && ValidPassword(user.Password)
-                && !userService.CheckEmailExists(user)
-                && !userService.CheckUserNameExists(user);
+                && !await _sender.Send(new CheckEmailExistsQuery(user))
+                && !await _sender.Send(new CheckUsernameExistsQuery(user));
         }
 
         public bool ValidPassword(string password)

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Handlers.Users.Querries;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints
@@ -8,9 +10,9 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserEndpoints(this WebApplication app)
         {
-            app.MapPost("/users/createuser", (IUserTokenService userTokenService, IUserValidationService validationService, IUserService userService, UserDto newUser) =>
+            app.MapPost("/users/createuser", async (IUserTokenService userTokenService, IUserValidationService validationService, IUserService userService, UserDto newUser) =>
             {
-                if (!validationService.ValidUser(newUser, userService))
+                if (!await validationService.ValidUserAsync(newUser, userService))
                 {
                     return Results.BadRequest("Invalid credentials format");
                 }
@@ -46,24 +48,24 @@ namespace RecipeSocialMediaAPI.Endpoints
                 return Results.Ok(true);
             });
 
-            app.MapPost("/users/username/exists", (IUserValidationService validationService, IUserService userService, UserDto user) =>
+            app.MapPost("/users/username/exists", async (ISender sender, IUserValidationService validationService, IUserService userService, UserDto user) =>
             {
                 if (!validationService.ValidUserName(user.UserName))
                 {
                     return Results.BadRequest("Invalid username format");
                 }
 
-                return Results.Ok(userService.CheckUserNameExists(user));
+                return Results.Ok(await sender.Send(new CheckUsernameExistsQuery(user)));
             });
 
-            app.MapPost("/users/email/exists", (IUserValidationService validationService, IUserService userService, UserDto user) =>
+            app.MapPost("/users/email/exists", async (ISender sender, IUserValidationService validationService, IUserService userService, UserDto user) =>
             {
                 if (!validationService.ValidEmail(user.Email))
                 {
                     return Results.BadRequest("Invalid email format");
                 }
 
-                return Results.Ok(userService.CheckEmailExists(user));
+                return Results.Ok(await sender.Send(new CheckEmailExistsQuery(user)));
             });
         }
     }

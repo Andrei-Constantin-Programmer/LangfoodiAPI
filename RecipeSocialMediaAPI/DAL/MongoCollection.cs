@@ -1,11 +1,12 @@
 ﻿using System.Linq.Expressions;
 using MongoDB.Driver;
+using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.DAL
 {
-    public class MongoCollection<T> : IMongoCollection<T> where T : class
+    public class MongoCollection<T> : IMongoCollection<T> where T : MongoDocument
     {
         private readonly IMongoClient _mongoClient;
         private readonly IMongoDatabase _database;
