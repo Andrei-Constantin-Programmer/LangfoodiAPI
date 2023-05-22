@@ -11,15 +11,15 @@ namespace RecipeSocialMediaAPI.Services
 {
     public class UserTokenService : IUserTokenService
     {
-        private readonly IMongoCollectionManager<UserTokenDocument> _userTokenCollection;
-        private readonly IMongoCollectionManager<UserDocument> _userCollection;
+        private readonly IMongoCollection<UserTokenDocument> _userTokenCollection;
+        private readonly IMongoCollection<UserDocument> _userCollection;
         private readonly IClock _clock;
         private readonly IMapper _mapper;
 
         public UserTokenService(IMapper mapper, IMongoFactory factory, IConfigManager config, IClock clock)
         {
-            _userTokenCollection = factory.GetCollectionManager<UserTokenDocument>(new UserTokenRepository(), config);
-            _userCollection = factory.GetCollectionManager<UserDocument>(new UserRepository(), config);
+            _userTokenCollection = factory.GetCollection<UserTokenDocument>(new UserTokenRepository(), config);
+            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
             _clock = clock;
             _mapper = mapper;
         }
@@ -44,7 +44,7 @@ namespace RecipeSocialMediaAPI.Services
         {
             ObjectId tokenObj = ObjectId.Parse(token);
 
-            return _userTokenCollection.Delete(x => x.TokenId == tokenObj);
+            return _userTokenCollection.Delete(x => x._id == tokenObj);
         }
 
         public UserTokenDto GenerateToken(UserDto user)
@@ -79,7 +79,7 @@ namespace RecipeSocialMediaAPI.Services
         public UserDocument GetUserFromTokenWithPassword(string token)
         {
             ObjectId tokenObj = ObjectId.Parse(token);
-            UserTokenDocument userToken = _userTokenCollection.Find(x => x.TokenId == tokenObj)!;
+            UserTokenDocument userToken = _userTokenCollection.Find(x => x._id == tokenObj)!;
 
             return _userCollection.Find(x => x._id == userToken.UserId)!;
         }
@@ -149,7 +149,7 @@ namespace RecipeSocialMediaAPI.Services
         public bool CheckTokenExpired(string token)
         {
             ObjectId tokenObj = ObjectId.Parse(token);
-            UserTokenDocument tokenDoc = _userTokenCollection.Find(x => x.TokenId! == tokenObj)!;
+            UserTokenDocument tokenDoc = _userTokenCollection.Find(x => x._id! == tokenObj)!;
 
             return _clock.Now >= tokenDoc.ExpiryDate;
         }
@@ -158,7 +158,7 @@ namespace RecipeSocialMediaAPI.Services
         {
             ObjectId tokenObj = ObjectId.Parse(token);
 
-            return _userTokenCollection.Contains(x => x.TokenId! == tokenObj);
+            return _userTokenCollection.Contains(x => x._id! == tokenObj);
         }
         #endregion
     }

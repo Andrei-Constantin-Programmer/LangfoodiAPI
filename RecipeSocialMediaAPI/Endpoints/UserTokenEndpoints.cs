@@ -1,6 +1,7 @@
-﻿using System.Xml.Linq;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Handlers.Users.Querries;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints
@@ -9,9 +10,9 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserTokenEndpoints(this WebApplication app)
         {
-            app.MapPost("/tokens/login", (IUserValidationService validationService, IUserService userService, IUserTokenService userTokenService, UserDto user) =>
+            app.MapPost("/tokens/login", async (ISender sender, IUserValidationService validationService, IUserService userService, IUserTokenService userTokenService, UserDto user) =>
             {
-                if (!userService.ValidUserLogin(validationService, user))
+                if (!await sender.Send(new ValidUserLoginQuery(user)))
                 {
                     return Results.BadRequest("Invalid credentials");
                 }

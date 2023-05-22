@@ -6,7 +6,6 @@ using RecipeSocialMediaAPI.Utilities;
 using Serilog;
 using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.DAL.Repositories;
-using AutoMapper;
 using RecipeSocialMediaAPI.Mapper.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,7 +40,6 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(requirement);
 
 });
-
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
 
 builder.Services.AddSingleton<IMongoFactory, MongoFactory>();

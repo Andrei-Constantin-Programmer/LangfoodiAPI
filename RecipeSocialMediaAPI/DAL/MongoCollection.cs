@@ -5,13 +5,13 @@ using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.DAL
 {
-    public class MongoCollectionManager<T> : IMongoCollectionManager<T> where T : class
+    public class MongoCollection<T> : IMongoCollection<T> where T : class
     {
         private readonly IMongoClient _mongoClient;
         private readonly IMongoDatabase _database;
-        private readonly IMongoCollection<T> _collection;
+        private readonly MongoDB.Driver.IMongoCollection<T> _collection;
 
-        public MongoCollectionManager(IRepository repo, IConfigManager configManager) 
+        public MongoCollection(IRepository repo, IConfigManager configManager) 
         {
             _mongoClient = new MongoClient(configManager.GetMongoSetting("Connection"));
             _database = _mongoClient.GetDatabase(configManager.GetMongoSetting("ClusterName"));

@@ -5,9 +5,9 @@ namespace RecipeSocialMediaAPI.DAL
 {
     public class MongoFactory : IMongoFactory
     {
-        public IMongoCollectionManager<T> GetCollectionManager<T>(IRepository repo, IConfigManager config) where T : class
+        public IMongoCollection<T> GetCollection<T>(IRepository repo, IConfigManager config) where T : class
         {
-            return new MongoCollectionManager<T>(repo, config);
+            return new MongoCollection<T>(repo, config);
         }
     }
 }
