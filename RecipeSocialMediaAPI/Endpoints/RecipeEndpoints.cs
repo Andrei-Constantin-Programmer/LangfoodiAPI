@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Exceptions;
-using RecipeSocialMediaAPI.Mediator.Commands.Recipes;
-using RecipeSocialMediaAPI.Mediator.Queries.Recipes;
+using RecipeSocialMediaAPI.Handlers.Recipes.Commands;
+using RecipeSocialMediaAPI.Handlers.Recipes.Querries;
 
 namespace RecipeSocialMediaAPI.Endpoints
 {

@@ -1,16 +1,18 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data;
-using RecipeSocialMediaAPI.Mediator.Commands.Recipes;
+using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Services.Interfaces;
 
-namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
+namespace RecipeSocialMediaAPI.Handlers.Recipes.Commands
 {
-    public class CreateRecipeHandler : IRequestHandler<CreateRecipeCommand>
+    internal record CreateRecipeCommand(RecipeDTO Recipe) : IRequest;
+
+    internal class CreateRecipeHandler : IRequestHandler<CreateRecipeCommand>
     {
         private readonly IRecipeRepository _fakeRecipeRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
-        
+
         public CreateRecipeHandler(IRecipeRepository fakeRecipeRepository, IDateTimeProvider dateTimeProvider)
         {
             _fakeRecipeRepository = fakeRecipeRepository;

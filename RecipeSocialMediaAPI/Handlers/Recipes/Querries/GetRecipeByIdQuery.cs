@@ -2,10 +2,11 @@
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Exceptions;
-using RecipeSocialMediaAPI.Mediator.Queries.Recipes;
 
-namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
+namespace RecipeSocialMediaAPI.Handlers.Recipes.Querries
 {
+    public record GetRecipeByIdQuery(int Id) : IRequest<RecipeDTO>;
+
     public class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDTO>
     {
         private readonly IRecipeRepository _repository;
@@ -19,7 +20,7 @@ namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
         {
             var recipe = await _repository.GetRecipeById(request.Id) ?? throw new RecipeNotFoundException(request.Id);
 
-            return new RecipeDTO() 
+            return new RecipeDTO()
             {
                 Id = recipe.Id,
                 Title = recipe.Title,

@@ -1,10 +1,11 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Mediator.Queries.Recipes;
 
-namespace RecipeSocialMediaAPI.Mediator.Handlers.Recipes
+namespace RecipeSocialMediaAPI.Handlers.Recipes.Querries
 {
+    public record GetRecipesQuery() : IRequest<IEnumerable<RecipeDTO>>;
+
     public class GetRecipesHandler : IRequestHandler<GetRecipesQuery, IEnumerable<RecipeDTO>>
     {
         private readonly IRecipeRepository _fakeRepository;
