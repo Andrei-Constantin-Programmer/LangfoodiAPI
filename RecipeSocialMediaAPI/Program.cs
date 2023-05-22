@@ -46,10 +46,12 @@ builder.Services.AddSingleton<IMongoFactory, MongoFactory>();
 builder.Services.AddSingleton<IConfigManager, ConfigManager>();
 builder.Services.AddSingleton<IClock, SystemClock>();
 
+
 builder.Services.AddAutoMapper(typeof(UserMappingProfile), typeof(UserTokenMappingProfile));
 
 // Setup business logic services
 builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
+builder.Services.AddTransient<ITokenGeneratorService, TokenGeneratorService>();
 builder.Services.AddTransient<IUserTokenService, UserTokenService>();
 
 builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();

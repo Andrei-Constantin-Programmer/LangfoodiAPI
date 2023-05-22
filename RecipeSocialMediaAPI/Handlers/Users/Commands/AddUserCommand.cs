@@ -13,14 +13,16 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
 
     public class AddUserHandler : IRequestHandler<AddUserCommand, UserTokenDto>
     {
+        private readonly ITokenGeneratorService _tokenGeneratorService;
         private readonly IUserValidationService _userValidationService;
         private readonly IUserTokenService _userTokenService;
         private readonly IMapper _mapper;
 
         private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
 
-        public AddUserHandler(IUserValidationService userValidationService, IMapper mapper, IUserTokenService userTokenService, IMongoFactory factory, IConfigManager config)
+        public AddUserHandler(ITokenGeneratorService tokenGeneratorService, IUserValidationService userValidationService, IMapper mapper, IUserTokenService userTokenService, IMongoFactory factory, IConfigManager config)
         {
+            _tokenGeneratorService = tokenGeneratorService;
             _userTokenService = userTokenService;
             _userValidationService = userValidationService;
             _mapper = mapper;
@@ -33,7 +35,7 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
             user.Password = _userValidationService.HashPassword(user.Password);
             UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(user));
 
-            return Task.FromResult(_userTokenService.GenerateToken(insertedUser));
+            return Task.FromResult(_tokenGeneratorService.GenerateToken(insertedUser));
         }
     }
 }

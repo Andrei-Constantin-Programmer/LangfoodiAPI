@@ -24,42 +24,6 @@ namespace RecipeSocialMediaAPI.Services
             _mapper = mapper;
         }
 
-        #region Write Methods
-        public bool RemoveToken(string token)
-        {
-            ObjectId tokenObj = ObjectId.Parse(token);
-
-            return _userTokenCollection.Delete(x => x._id == tokenObj);
-        }
-
-        public UserTokenDto GenerateToken(UserDto user)
-        {
-            UserDocument? userDoc = null;
-            if (user.Email != string.Empty)
-            {
-                userDoc = _userCollection.Find(x => x.Email.ToLower() == user.Email.ToLower());
-            }
-            else if (user.UserName != string.Empty)
-            {
-                userDoc = _userCollection.Find(x => x.UserName == user.UserName);
-            }
-
-            return GenerateToken(userDoc!);
-        }
-
-        public UserTokenDto GenerateToken(UserDocument user)
-        {
-            UserTokenDocument tokenToInsert = new()
-            {
-                UserId = user._id,
-                ExpiryDate = _clock.Now.AddMonths(3),
-            };
-            _userTokenCollection.Insert(tokenToInsert);
-
-            return _mapper.Map<UserTokenDto>(tokenToInsert);
-        }
-        #endregion
-
         #region Read Methods
         public UserDocument GetUserFromTokenWithPassword(string token)
         {
