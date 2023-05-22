@@ -11,7 +11,7 @@ namespace RecipeSocialMediaAPI.DAL
         private readonly IMongoDatabase _database;
         private readonly IMongoCollection<T> _collection;
 
-        public MongoCollectionManager(IRepository repo, IConfigManager configManager)
+        public MongoCollectionManager(IRepository repo, IConfigManager configManager) 
         {
             _mongoClient = new MongoClient(configManager.GetMongoSetting("Connection"));
             _database = _mongoClient.GetDatabase(configManager.GetMongoSetting("ClusterName"));
@@ -23,6 +23,30 @@ namespace RecipeSocialMediaAPI.DAL
             return _collection?.Find(expr).ToList() ?? new List<T>();
         }
 
+        public T Insert(T doc)
+        {
+            _collection?.InsertOne(doc);
+            return doc;
+        }
 
+        public bool Delete(Expression<Func<T, bool>> expr)
+        {
+            return _collection?.DeleteOne(expr).DeletedCount > 0;
+        }
+
+        public bool Contains(Expression<Func<T, bool>> expr)
+        {
+            return _collection?.Find(expr).Limit(1).Any() ?? false;
+        }
+
+        public T? Find(Expression<Func<T, bool>> expr)
+        {
+            return _collection?.Find(expr).FirstOrDefault();
+        }
+
+        public bool UpdateRecord(T record, Expression<Func<T, bool>> expr)
+        {
+            return _collection?.ReplaceOne(expr, record).ModifiedCount > 0;
+        }
     }
 }

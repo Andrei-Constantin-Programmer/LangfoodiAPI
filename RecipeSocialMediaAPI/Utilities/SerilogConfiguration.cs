@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Serilog.Events;
 
-namespace RecipeSocialMediaAPI.Configuration
+namespace RecipeSocialMediaAPI.Utilities
 {
     public static class SerilogConfiguration
     {
