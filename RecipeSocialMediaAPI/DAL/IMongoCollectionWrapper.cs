@@ -1,8 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using RecipeSocialMediaAPI.DAL.Documents;
+using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.DAL
 {
-    public interface IMongoCollection<T> where T : class
+    public interface IMongoCollectionWrapper<T> where T : MongoDocument
     {
         List<T> QueryCollection(Expression<Func<T, bool>> expr);
         T Insert(T doc);

@@ -21,7 +21,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                 return Results.Ok(sender.Send(new AddUserCommand(newUser)));
             });
 
-            app.MapPost("/users/updateuser", ([FromHeader(Name = "authorization")] string token, IUserValidationService validationService, IUserTokenService userTokenService, IUserService userService, UserDto user) =>
+            app.MapPost("/users/updateuser", ([FromHeader(Name = "authorizationToken")] string token, IUserValidationService validationService, IUserTokenService userTokenService, IUserService userService, UserDto user) =>
             {
                 if (!userTokenService.CheckValidToken(token))
                 {
@@ -34,14 +34,14 @@ namespace RecipeSocialMediaAPI.Endpoints
                 
                 return Results.Ok(true);
             });
-
-            app.MapDelete("/users/removeuser/", ([FromHeader(Name = "authorization")] string token, IUserTokenService userTokenService, IUserService userService) =>
+            
+            app.MapDelete("/users/removeuser/", async ([FromHeader(Name = "authorizationToken")] string token, ISender sender, IUserTokenService userTokenService, IUserService userService) =>
             {
                 if (!userTokenService.CheckValidToken(token)) 
                 { 
                     return Results.Unauthorized(); 
                 }
-                if (!userService.RemoveUser(token, userTokenService))
+                if (!await sender.Send(new RemoveUserCommand(token)))
                 {
                     return Results.BadRequest("Issue removing user");
                 }

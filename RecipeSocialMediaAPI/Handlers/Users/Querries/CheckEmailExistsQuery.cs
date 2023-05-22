@@ -11,7 +11,7 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Querries
 
     public class CheckEmailExistsHandler : IRequestHandler<CheckEmailExistsQuery, bool>
     {
-        private readonly IMongoCollection<UserDocument> _userCollection;
+        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
 
         public CheckEmailExistsHandler(IMongoFactory factory, IConfigManager config)
         {

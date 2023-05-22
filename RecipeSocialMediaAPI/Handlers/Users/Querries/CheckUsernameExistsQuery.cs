@@ -11,7 +11,7 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Querries
 
     public class CheckUsernameExistsHandler : IRequestHandler<CheckUsernameExistsQuery, bool>
     {
-        private readonly IMongoCollection<UserDocument> _userCollection;
+        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
 
         public CheckUsernameExistsHandler(IMongoFactory factory, IConfigManager config)
         {

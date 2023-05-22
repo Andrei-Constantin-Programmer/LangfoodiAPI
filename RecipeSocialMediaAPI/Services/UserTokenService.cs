@@ -11,8 +11,8 @@ namespace RecipeSocialMediaAPI.Services
 {
     public class UserTokenService : IUserTokenService
     {
-        private readonly IMongoCollection<UserTokenDocument> _userTokenCollection;
-        private readonly IMongoCollection<UserDocument> _userCollection;
+        private readonly IMongoCollectionWrapper<UserTokenDocument> _userTokenCollection;
+        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
         private readonly IClock _clock;
         private readonly IMapper _mapper;
 

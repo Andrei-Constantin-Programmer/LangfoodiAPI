@@ -12,7 +12,7 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Querries
 
     public class ValidUserLoginHandler : IRequestHandler<ValidUserLoginQuery, bool>
     {
-        private readonly IMongoCollection<UserDocument> _userCollection;
+        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
 
         public ValidUserLoginHandler(IMongoFactory factory, IConfigManager config)
         {
