@@ -11,7 +11,7 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserEndpoints(this WebApplication app)
         {
-            app.MapPost("/users/createuser", async (ISender sender, IUserTokenService userTokenService, IUserValidationService validationService, UserDto newUser) =>
+            app.MapPost("/users/createuser", async (UserDto newUser, ISender sender, IUserTokenService userTokenService, IUserValidationService validationService) =>
             {
                 if (!await validationService.ValidUserAsync(newUser))
                 {
@@ -49,7 +49,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                 return Results.Ok(true);
             });
 
-            app.MapPost("/users/username/exists", async (ISender sender, IUserValidationService validationService, UserDto user) =>
+            app.MapPost("/users/username/exists", async (UserDto user, ISender sender, IUserValidationService validationService) =>
             {
                 if (!validationService.ValidUserName(user.UserName))
                 {
@@ -59,7 +59,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                 return Results.Ok(await sender.Send(new CheckUsernameExistsQuery(user)));
             });
 
-            app.MapPost("/users/email/exists", async (ISender sender, IUserValidationService validationService, UserDto user) =>
+            app.MapPost("/users/email/exists", async (UserDto user, ISender sender, IUserValidationService validationService) =>
             {
                 if (!validationService.ValidEmail(user.Email))
                 {

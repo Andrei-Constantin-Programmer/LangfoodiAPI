@@ -10,7 +10,7 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserTokenEndpoints(this WebApplication app)
         {
-            app.MapPost("/tokens/login", async (ISender sender, IUserValidationService validationService, IUserTokenService userTokenService, UserDto user) =>
+            app.MapPost("/tokens/login", async (UserDto user, ISender sender, IUserValidationService validationService, IUserTokenService userTokenService) =>
             {
                 if (!await sender.Send(new ValidUserLoginQuery(user)))
                 {
