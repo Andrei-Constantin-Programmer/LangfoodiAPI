@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Utilities;
+using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Services
 {
@@ -30,7 +31,7 @@ namespace RecipeSocialMediaAPI.Services
             }
 
             return userDoc != null 
-                && BCrypt.Net.BCrypt.Verify(user.Password, userDoc.Password);
+                && BCrypter.Verify(user.Password, userDoc.Password);
         }
 
         public bool CheckEmailExists(UserDto user)

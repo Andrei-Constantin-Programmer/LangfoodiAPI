@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using RecipeSocialMediaAPI.Data.DTO;
+using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Services
 {
@@ -9,12 +10,12 @@ namespace RecipeSocialMediaAPI.Services
 
         public string HashPassword(string password)
         {
-            return BCrypt.Net.BCrypt.HashPassword(password);
+            return BCrypter.HashPassword(password);
         }
 
         public bool VerifyPassword(string password, string hash)
         {
-            return BCrypt.Net.BCrypt.Verify(password, hash);
+            return BCrypter.Verify(password, hash);
         }
 
         public bool ValidUser(UserDto user, IUserService userService)
