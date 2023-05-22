@@ -37,7 +37,7 @@ namespace RecipeSocialMediaAPI.DAL
 
         public bool Contains(Expression<Func<T, bool>> expr)
         {
-            return _collection?.Find(expr).Limit(1).Any() ?? false;
+            return _collection?.Find(expr).Any() ?? false;
         }
 
         public T? Find(Expression<Func<T, bool>> expr)

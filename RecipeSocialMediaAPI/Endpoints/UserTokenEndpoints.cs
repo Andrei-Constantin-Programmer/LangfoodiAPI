@@ -10,7 +10,7 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserTokenEndpoints(this WebApplication app)
         {
-            app.MapPost("/tokens/login", async (ISender sender, IUserValidationService validationService, IUserService userService, IUserTokenService userTokenService, UserDto user) =>
+            app.MapPost("/tokens/login", async (ISender sender, IUserValidationService validationService, IUserTokenService userTokenService, UserDto user) =>
             {
                 if (!await sender.Send(new ValidUserLoginQuery(user)))
                 {
@@ -32,7 +32,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                 return Results.Ok(userTokenService.GetTokenFromUser(user));
             });
 
-            app.MapPost("/tokens/exists", ([FromHeader(Name = "authorization")] string token, IUserValidationService validationService, IUserTokenService userTokenService) =>
+            app.MapPost("/tokens/valid", ([FromHeader(Name = "authorization")] string token, IUserValidationService validationService, IUserTokenService userTokenService) =>
             {
                 if (!userTokenService.CheckValidToken(token))
                 {

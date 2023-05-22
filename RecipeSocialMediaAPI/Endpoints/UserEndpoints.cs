@@ -11,9 +11,9 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserEndpoints(this WebApplication app)
         {
-            app.MapPost("/users/createuser", async (ISender sender, IUserTokenService userTokenService, IUserValidationService validationService, IUserService userService, UserDto newUser) =>
+            app.MapPost("/users/createuser", async (ISender sender, IUserTokenService userTokenService, IUserValidationService validationService, UserDto newUser) =>
             {
-                if (!await validationService.ValidUserAsync(newUser, userService))
+                if (!await validationService.ValidUserAsync(newUser))
                 {
                     return Results.BadRequest("Invalid credentials format");
                 }
@@ -21,21 +21,21 @@ namespace RecipeSocialMediaAPI.Endpoints
                 return Results.Ok(sender.Send(new AddUserCommand(newUser)));
             });
 
-            app.MapPost("/users/updateuser", ([FromHeader(Name = "authorizationToken")] string token, IUserValidationService validationService, IUserTokenService userTokenService, IUserService userService, UserDto user) =>
+            app.MapPost("/users/updateuser", async ([FromHeader(Name = "authorizationToken")] string token, ISender sender, IUserValidationService validationService, IUserTokenService userTokenService, UserDto user) =>
             {
                 if (!userTokenService.CheckValidToken(token))
                 {
                     return Results.Unauthorized();
                 }
-                if (!userService.UpdateUser(validationService, userTokenService, token, user))
+                if (!await sender.Send(new UpdateUserCommand(user, token)))
                 {
                     return Results.BadRequest("Issue updating user");
                 }
                 
-                return Results.Ok(true);
+                return Results.Ok();
             });
             
-            app.MapDelete("/users/removeuser/", async ([FromHeader(Name = "authorizationToken")] string token, ISender sender, IUserTokenService userTokenService, IUserService userService) =>
+            app.MapDelete("/users/removeuser", async ([FromHeader(Name = "authorizationToken")] string token, ISender sender, IUserTokenService userTokenService) =>
             {
                 if (!userTokenService.CheckValidToken(token)) 
                 { 
@@ -49,7 +49,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                 return Results.Ok(true);
             });
 
-            app.MapPost("/users/username/exists", async (ISender sender, IUserValidationService validationService, IUserService userService, UserDto user) =>
+            app.MapPost("/users/username/exists", async (ISender sender, IUserValidationService validationService, UserDto user) =>
             {
                 if (!validationService.ValidUserName(user.UserName))
                 {
@@ -59,7 +59,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                 return Results.Ok(await sender.Send(new CheckUsernameExistsQuery(user)));
             });
 
-            app.MapPost("/users/email/exists", async (ISender sender, IUserValidationService validationService, IUserService userService, UserDto user) =>
+            app.MapPost("/users/email/exists", async (ISender sender, IUserValidationService validationService, UserDto user) =>
             {
                 if (!validationService.ValidEmail(user.Email))
                 {

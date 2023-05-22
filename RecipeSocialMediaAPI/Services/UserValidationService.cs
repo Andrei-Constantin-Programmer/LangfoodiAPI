@@ -25,7 +25,7 @@ namespace RecipeSocialMediaAPI.Services
             return BCrypter.Verify(password, hash);
         }
 
-        public async Task<bool> ValidUserAsync(UserDto user, IUserService userService)
+        public async Task<bool> ValidUserAsync(UserDto user)
         {
             return ValidUserName(user.UserName)
                 && ValidEmail(user.Email)
