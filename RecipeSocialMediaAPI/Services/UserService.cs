@@ -17,12 +17,20 @@ namespace RecipeSocialMediaAPI.Services
             _mapper = mapper;
         }
 
-        public bool ValidUserLogin(IValidationService validationService, UserDto user)
+        public bool ValidUserLogin(IUserValidationService validationService, UserDto user)
         {
             UserDocument? userDoc = null;
-            if (user.Email != string.Empty) userDoc = _userCollection.Find(x => x.Email.ToLower() == user.Email.ToLower());
-            else if (user.UserName != string.Empty) userDoc = _userCollection.Find(x => x.UserName == user.UserName);
-            return userDoc != null && BCrypt.Net.BCrypt.Verify(user.Password, userDoc.Password);
+            if (user.Email != string.Empty)
+            {
+                userDoc = _userCollection.Find(x => x.Email.ToLower() == user.Email.ToLower());
+            }
+            else if (user.UserName != string.Empty)
+            {
+                userDoc = _userCollection.Find(x => x.UserName == user.UserName);
+            }
+
+            return userDoc != null 
+                && BCrypt.Net.BCrypt.Verify(user.Password, userDoc.Password);
         }
 
         public bool CheckEmailExists(UserDto user)
@@ -35,10 +43,11 @@ namespace RecipeSocialMediaAPI.Services
             return _userCollection.Contains(x => x.UserName == user.UserName);
         }
 
-        public UserTokenDto AddUser(UserDto user, IUserTokenService userTokenService, IValidationService validationService)
+        public UserTokenDto AddUser(UserDto user, IUserTokenService userTokenService, IUserValidationService validationService)
         {
             user.Password = validationService.HashPassword(user.Password);
             UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(user));
+
             return userTokenService.GenerateToken(insertedUser);
         }
 
@@ -46,10 +55,11 @@ namespace RecipeSocialMediaAPI.Services
         {
             UserDocument userDoc = userTokenService.GetUserFromToken(token);
             userTokenService.RemoveToken(token);
+
             return _userCollection.Delete(x => x._id == userDoc._id);
         }
 
-        public bool UpdateUser(IValidationService validationService, IUserTokenService userTokenService, string token, UserDto user)
+        public bool UpdateUser(IUserValidationService validationService, IUserTokenService userTokenService, string token, UserDto user)
         {
             user.Password = validationService.HashPassword(user.Password);
             UserDocument newUserDoc = _mapper.Map<UserDocument>(user);

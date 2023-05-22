@@ -27,6 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Handlers\Users\Commands\" />
+    <Folder Include="Handlers\Users\Querries\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
 

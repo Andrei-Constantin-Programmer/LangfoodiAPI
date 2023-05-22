@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Services
 {
-    public interface IValidationService
+    public interface IUserValidationService
     {
         bool ValidPassword(string password);
         bool ValidEmail(string email);

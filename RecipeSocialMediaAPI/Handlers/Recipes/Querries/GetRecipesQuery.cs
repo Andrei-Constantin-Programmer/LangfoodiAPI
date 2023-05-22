@@ -8,16 +8,16 @@ namespace RecipeSocialMediaAPI.Handlers.Recipes.Querries
 
     public class GetRecipesHandler : IRequestHandler<GetRecipesQuery, IEnumerable<RecipeDTO>>
     {
-        private readonly IRecipeRepository _fakeRepository;
+        private readonly IRecipeRepository _recipeRepository;
 
-        public GetRecipesHandler(IRecipeRepository fakeRepository)
+        public GetRecipesHandler(IRecipeRepository recipeRepository)
         {
-            _fakeRepository = fakeRepository;
+            _recipeRepository = recipeRepository;
         }
 
         public async Task<IEnumerable<RecipeDTO>> Handle(GetRecipesQuery request, CancellationToken cancellationToken)
         {
-            return (await _fakeRepository
+            return (await _recipeRepository
                 .GetAllRecipes())
                 .Select(recipe => new RecipeDTO()
                 {

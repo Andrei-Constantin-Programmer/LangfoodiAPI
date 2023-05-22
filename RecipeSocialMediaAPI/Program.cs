@@ -51,7 +51,7 @@ builder.Services.AddSingleton<IClock, SystemClock>();
 builder.Services.AddAutoMapper(typeof(UserMappingProfile), typeof(UserTokenMappingProfile));
 
 // Setup business logic services
-builder.Services.AddSingleton<IValidationService, ValidationService>();
+builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserTokenService, UserTokenService>();
 

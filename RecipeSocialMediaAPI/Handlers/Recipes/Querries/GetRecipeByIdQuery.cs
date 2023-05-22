@@ -9,16 +9,16 @@ namespace RecipeSocialMediaAPI.Handlers.Recipes.Querries
 
     public class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDTO>
     {
-        private readonly IRecipeRepository _repository;
+        private readonly IRecipeRepository _recipeRepository;
 
-        public GetRecipeByIdHandler(IRecipeRepository repository)
+        public GetRecipeByIdHandler(IRecipeRepository recipeRepository)
         {
-            _repository = repository;
+            _recipeRepository = recipeRepository;
         }
 
         public async Task<RecipeDTO> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)
         {
-            var recipe = await _repository.GetRecipeById(request.Id) ?? throw new RecipeNotFoundException(request.Id);
+            var recipe = await _recipeRepository.GetRecipeById(request.Id) ?? throw new RecipeNotFoundException(request.Id);
 
             return new RecipeDTO()
             {
