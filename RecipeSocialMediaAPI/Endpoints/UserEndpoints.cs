@@ -46,7 +46,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                     return Results.BadRequest("Issue removing user");
                 }
 
-                return Results.Ok(true);
+                return Results.Ok();
             });
 
             app.MapPost("/users/username/exists", async (UserDto user, ISender sender, IUserValidationService validationService) =>

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Handlers.Users.Querries;
+using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints
@@ -10,7 +11,7 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserTokenEndpoints(this WebApplication app)
         {
-            app.MapPost("/tokens/login", async (UserDto user, ISender sender, IUserValidationService validationService, IUserTokenService userTokenService) =>
+            app.MapPost("/tokens/login", async (UserDto user, ISender sender, IPublisher publisher, IUserValidationService validationService, IUserTokenService userTokenService) =>
             {
                 if (!await sender.Send(new ValidUserLoginQuery(user)))
                 {
@@ -24,7 +25,7 @@ namespace RecipeSocialMediaAPI.Endpoints
 
                 if (userTokenService.CheckTokenExpired(user))
                 {
-                    userTokenService.RemoveToken(user);
+                    await publisher.Publish(new RemoveTokenForUserNotification(user));
 
                     return Results.Ok(userTokenService.GenerateToken(user));
                 }
@@ -39,21 +40,19 @@ namespace RecipeSocialMediaAPI.Endpoints
                     return Results.BadRequest("Invalid/Expired token");
                 }
 
-                return Results.Ok(true);
+                return Results.Ok();
             });
 
-            app.MapGet("/tokens/logout", ([FromHeader(Name = "authorization")] string token, IUserTokenService userTokenService) =>
+            app.MapGet("/tokens/logout", async ([FromHeader(Name = "authorization")] string token, IPublisher publisher, IUserTokenService userTokenService) =>
             {
                 if (!userTokenService.CheckValidToken(token))
                 {
                     return Results.Unauthorized();
                 }
-                if (!userTokenService.RemoveToken(token))
-                {
-                    return Results.BadRequest("Issue removing token");
-                }
+
+                await publisher.Publish(new RemoveTokenNotification(token));
                 
-                return Results.Ok(true);
+                return Results.Ok();
             });
         }
     }

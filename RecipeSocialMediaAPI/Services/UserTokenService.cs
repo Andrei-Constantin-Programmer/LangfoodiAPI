@@ -25,21 +25,6 @@ namespace RecipeSocialMediaAPI.Services
         }
 
         #region Write Methods
-        public bool RemoveToken(UserDto user)
-        {
-            UserDocument? userDoc = null;
-            if (user.Email != string.Empty)
-            {
-                userDoc = _userCollection.Find(x => x.Email.ToLower() == user.Email.ToLower());
-            }
-            else if (user.UserName != string.Empty)
-            {
-                userDoc = _userCollection.Find(x => x.UserName == user.UserName);
-            }
-
-            return _userTokenCollection.Delete(x => x.UserId == userDoc!._id);
-        }
-        
         public bool RemoveToken(string token)
         {
             ObjectId tokenObj = ObjectId.Parse(token);
