@@ -2,7 +2,6 @@
 using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.Endpoints;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
 using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Utilities;
@@ -26,13 +25,9 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
 
         public async Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
         {
-            if (!_userTokenService.CheckValidToken(request.Token))
-            {
-                throw new InvalidTokenException();
-            }
+            await _publisher.Publish(new RemoveTokenNotification(request.Token), cancellationToken);
 
             UserDocument userDoc = _userTokenService.GetUserFromToken(request.Token);
-            await _publisher.Publish(new RemoveTokenNotification(request.Token), cancellationToken);
 
             var successful = await Task.FromResult(_userCollection.Delete(x => x._id == userDoc._id));
 

@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Commands;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
+using RecipeSocialMediaAPI.Handlers.UserTokens.Querries;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints
@@ -29,21 +30,35 @@ namespace RecipeSocialMediaAPI.Endpoints
                 }
             });
 
-            app.MapPost("/tokens/valid", ([FromHeader(Name = "authorizationToken")] string token, IUserValidationService validationService, IUserTokenService userTokenService) =>
+            app.MapPost("/tokens/valid", async ([FromHeader(Name = "authorizationToken")] string token, ISender sender) =>
             {
-                return Results.Ok(userTokenService.CheckValidToken(token));
+                try
+                {
+                    var existsAndIsNotExpired = await sender.Send(new GetIsValidUserTokenQuery(token));
+                    return Results.Ok();
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
 
-            app.MapGet("/tokens/logout", async ([FromHeader(Name = "authorizationToken")] string token, IPublisher publisher, IUserTokenService userTokenService) =>
+            app.MapGet("/tokens/logout", async ([FromHeader(Name = "authorizationToken")] string token, IPublisher publisher) =>
             {
-                if (!userTokenService.CheckValidToken(token))
+                try
+                {
+                    await publisher.Publish(new RemoveTokenNotification(token));
+                
+                    return Results.Ok();
+                }
+                catch (TokenNotFoundOrExpiredException)
                 {
                     return Results.Unauthorized();
                 }
-
-                await publisher.Publish(new RemoveTokenNotification(token));
-                
-                return Results.Ok();
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
         }
     }

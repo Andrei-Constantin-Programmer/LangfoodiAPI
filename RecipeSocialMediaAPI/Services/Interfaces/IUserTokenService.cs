@@ -11,6 +11,6 @@ namespace RecipeSocialMediaAPI.Services
         bool CheckTokenExists(UserDto user);
         bool CheckTokenExpired(string token);
         bool CheckTokenExpired(UserDto user);
-        bool CheckValidToken(string token);
+        bool CheckTokenExistsAndNotExpired(string token);
     }
 }

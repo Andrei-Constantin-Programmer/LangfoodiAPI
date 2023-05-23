@@ -34,7 +34,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                     await sender.Send(new UpdateUserCommand(user, token));
                     return Results.Ok();
                 }
-                catch (InvalidTokenException)
+                catch (TokenNotFoundOrExpiredException)
                 {
                     return Results.Unauthorized();
                 }
@@ -52,7 +52,7 @@ namespace RecipeSocialMediaAPI.Endpoints
 
                     return Results.Ok();
                 }
-                catch (InvalidTokenException)
+                catch (TokenNotFoundOrExpiredException)
                 {
                     return Results.Unauthorized();
                 }

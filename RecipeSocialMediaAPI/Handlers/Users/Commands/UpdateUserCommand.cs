@@ -31,9 +31,9 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
 
         public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            if (!_userTokenService.CheckValidToken(request.Token))
+            if (!_userTokenService.CheckTokenExistsAndNotExpired(request.Token))
             {
-                throw new InvalidTokenException();
+                throw new TokenNotFoundOrExpiredException();
             }
 
             request.User.Password = _userValidationService.HashPassword(request.User.Password);

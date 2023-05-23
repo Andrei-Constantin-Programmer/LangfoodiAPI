@@ -37,8 +37,7 @@ namespace RecipeSocialMediaAPI.Services
             return user;
         }
 
-        #region Validation Methods
-        public bool CheckValidToken(string token)
+        public bool CheckTokenExistsAndNotExpired(string token)
         {
             return CheckTokenExists(token) 
                 && !CheckTokenExpired(token);
@@ -89,6 +88,5 @@ namespace RecipeSocialMediaAPI.Services
 
             return _userTokenCollection.Contains(x => x._id! == tokenObj);
         }
-        #endregion
     }
 }
