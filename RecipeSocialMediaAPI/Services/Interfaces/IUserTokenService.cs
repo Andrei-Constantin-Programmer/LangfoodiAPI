@@ -5,7 +5,6 @@ namespace RecipeSocialMediaAPI.Services
 {
     public interface IUserTokenService
     {
-        UserTokenDto GetTokenFromUser(UserDto user);
         UserDocument GetUserFromTokenWithPassword(string token);
         UserDocument GetUserFromToken(string token);
         bool CheckTokenExists(string token);

@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Handlers.Users.Querries;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Commands;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
+using RecipeSocialMediaAPI.Handlers.UserTokens.Querries;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints
@@ -30,7 +31,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                     return Results.Ok(await sender.Send(new GenerateTokenCommand(user)));
                 }
 
-                return Results.Ok(userTokenService.GetTokenFromUser(user));
+                return Results.Ok(await sender.Send(new GetUserTokenQuery(user)));
             });
 
             app.MapPost("/tokens/valid", ([FromHeader(Name = "authorizationToken")] string token, IUserValidationService validationService, IUserTokenService userTokenService) =>

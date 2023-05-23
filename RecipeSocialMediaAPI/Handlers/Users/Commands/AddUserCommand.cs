@@ -15,7 +15,6 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
     {
         private readonly ITokenGeneratorService _tokenGeneratorService;
         private readonly IUserValidationService _userValidationService;
-        private readonly IUserTokenService _userTokenService;
         private readonly IMapper _mapper;
 
         private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
@@ -23,7 +22,6 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
         public AddUserHandler(ITokenGeneratorService tokenGeneratorService, IUserValidationService userValidationService, IMapper mapper, IUserTokenService userTokenService, IMongoFactory factory, IConfigManager config)
         {
             _tokenGeneratorService = tokenGeneratorService;
-            _userTokenService = userTokenService;
             _userValidationService = userValidationService;
             _mapper = mapper;
             _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);

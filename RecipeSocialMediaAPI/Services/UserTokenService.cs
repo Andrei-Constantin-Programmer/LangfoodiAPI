@@ -2,7 +2,6 @@
 using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.Utilities;
 using MongoDB.Bson;
-using AutoMapper;
 using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.DAL.Documents;
@@ -14,17 +13,14 @@ namespace RecipeSocialMediaAPI.Services
         private readonly IMongoCollectionWrapper<UserTokenDocument> _userTokenCollection;
         private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
         private readonly IClock _clock;
-        private readonly IMapper _mapper;
 
-        public UserTokenService(IMapper mapper, IMongoFactory factory, IConfigManager config, IClock clock)
+        public UserTokenService(IMongoFactory factory, IConfigManager config, IClock clock)
         {
             _userTokenCollection = factory.GetCollection<UserTokenDocument>(new UserTokenRepository(), config);
             _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
             _clock = clock;
-            _mapper = mapper;
         }
 
-        #region Read Methods
         public UserDocument GetUserFromTokenWithPassword(string token)
         {
             ObjectId tokenObj = ObjectId.Parse(token);
@@ -40,22 +36,6 @@ namespace RecipeSocialMediaAPI.Services
 
             return user;
         }
-
-        public UserTokenDto GetTokenFromUser(UserDto user)
-        {
-            UserDocument? userDoc = null;
-            if (user.Email != string.Empty)
-            {
-                userDoc = _userCollection.Find(x => x.Email.ToLower() == user.Email.ToLower());
-            }
-            else if (user.UserName != string.Empty)
-            {
-                userDoc = _userCollection.Find(x => x.UserName == user.UserName);
-            }
-
-            return _mapper.Map<UserTokenDto>(_userTokenCollection.Find(x => x.UserId == userDoc!._id));
-        }
-        #endregion
 
         #region Validation Methods
         public bool CheckValidToken(string token)
