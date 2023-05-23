@@ -6,5 +6,6 @@ namespace RecipeSocialMediaAPI.Services
     public interface ITokenGeneratorService
     {
         UserTokenDto GenerateToken(UserDocument user);
+        UserTokenDto GenerateToken(UserDto user);
     }
 }

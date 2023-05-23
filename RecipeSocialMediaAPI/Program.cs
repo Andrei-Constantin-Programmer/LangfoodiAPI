@@ -52,6 +52,7 @@ builder.Services.AddAutoMapper(typeof(UserMappingProfile), typeof(UserTokenMappi
 // Setup business logic services
 builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
 builder.Services.AddTransient<ITokenGeneratorService, TokenGeneratorService>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserTokenService, UserTokenService>();
 
 builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Handlers.Users.Querries;
-using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints
 {
@@ -70,10 +69,6 @@ namespace RecipeSocialMediaAPI.Endpoints
                     var usernameExists = await sender.Send(new CheckUsernameExistsQuery(user));
                     return Results.Ok(usernameExists);
                 }
-                catch (InvalidCredentialsException)
-                {
-                    return Results.BadRequest("Invalid username format.");
-                }
                 catch (Exception)
                 {
                     return Results.StatusCode(500);
@@ -86,10 +81,6 @@ namespace RecipeSocialMediaAPI.Endpoints
                 {
                     var emailExists = await sender.Send(new CheckEmailExistsQuery(user));
                     return Results.Ok(emailExists);
-                }
-                catch (InvalidCredentialsException)
-                {
-                    return Results.BadRequest("Invalid email format.");
                 }
                 catch (Exception)
                 {

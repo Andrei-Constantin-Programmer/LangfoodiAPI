@@ -34,9 +34,8 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
                 throw new InvalidCredentialsException();
             }
 
-            var user = request.User;
-            user.Password = _userValidationService.HashPassword(user.Password);
-            UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(user));
+            request.User.Password = _userValidationService.HashPassword(request.User.Password);
+            UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(request.User));
 
             return _tokenGeneratorService.GenerateToken(insertedUser);
         }

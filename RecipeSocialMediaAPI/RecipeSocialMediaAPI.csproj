@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Handlers\UserTokens\Querries\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
 
