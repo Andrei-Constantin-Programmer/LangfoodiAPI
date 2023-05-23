@@ -10,7 +10,7 @@ namespace RecipeSocialMediaAPI.DAL
     {
         private readonly IMongoClient _mongoClient;
         private readonly IMongoDatabase _database;
-        private readonly MongoDB.Driver.IMongoCollection<T> _collection;
+        private readonly IMongoCollection<T> _collection;
 
         public MongoCollectionWrapper(IRepository repo, IConfigManager configManager) 
         {

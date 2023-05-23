@@ -73,11 +73,7 @@ app.UseHttpsRedirection();
 app.MapUserEndpoints();
 app.MapUserTokenEndpoints();
 app.MapRecipeEndpoints();
-
-app.MapPost("/logtest", (ILogger<Program> logger) =>
-{
-    logger.LogInformation("Hello World");
-});
+app.MapTestEndpoints();
 
 app.Run();
 
