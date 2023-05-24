@@ -1,19 +1,17 @@
-﻿using RecipeSocialMediaAPI.DAL;
-using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.Repositories;
+﻿using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.Data.DTO;
-using RecipeSocialMediaAPI.Utilities;
 using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Services
 {
     public class UserService : IUserService
     {
-        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
+        private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public UserService(IMongoFactory factory, IConfigManager config)
+        public UserService(IMongoCollectionFactory factory)
         {
-            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
+            _userCollection = factory.GetCollection<UserDocument>();
         }
 
         public bool DoesUserExist(UserDto user)

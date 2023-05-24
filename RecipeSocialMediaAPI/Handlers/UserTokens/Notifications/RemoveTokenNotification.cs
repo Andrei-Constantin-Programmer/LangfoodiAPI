@@ -1,11 +1,9 @@
 ﻿using MediatR;
 using MongoDB.Bson;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.Endpoints;
 using RecipeSocialMediaAPI.Services;
-using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Handlers.UserTokens.Notifications
 {
@@ -14,12 +12,12 @@ namespace RecipeSocialMediaAPI.Handlers.UserTokens.Notifications
     public class RemoveTokenHandler : INotificationHandler<RemoveTokenNotification>
     {
         private readonly IUserTokenService _userTokenService;
-        private readonly IMongoCollectionWrapper<UserTokenDocument> _userTokenCollection;
+        private readonly IMongoRepository<UserTokenDocument> _userTokenCollection;
 
-        public RemoveTokenHandler(IUserTokenService userTokenService, IMongoFactory factory, IConfigManager config)
+        public RemoveTokenHandler(IUserTokenService userTokenService, IMongoCollectionFactory factory)
         {
             _userTokenService = userTokenService;
-            _userTokenCollection = factory.GetCollection<UserTokenDocument>(new UserTokenRepository(), config);
+            _userTokenCollection = factory.GetCollection<UserTokenDocument>();
         }
 
         public Task Handle(RemoveTokenNotification notification, CancellationToken cancellationToken)

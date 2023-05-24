@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
 using RecipeSocialMediaAPI.Services;
-using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Handlers.UserTokens.Commands
 {
@@ -22,10 +20,10 @@ namespace RecipeSocialMediaAPI.Handlers.UserTokens.Commands
         private readonly IUserService _userService;
         private readonly IUserTokenService _userTokenService;
 
-        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
-        private readonly IMongoCollectionWrapper<UserTokenDocument> _userTokenCollection;
+        private readonly IMongoRepository<UserDocument> _userCollection;
+        private readonly IMongoRepository<UserTokenDocument> _userTokenCollection;
 
-        public GetOrCreateUserTokenHandler(IPublisher publisher, ITokenGeneratorService tokenGeneratorService, IMapper mapper, IUserService userService, IUserTokenService userTokenService, IMongoFactory factory, IConfigManager config)
+        public GetOrCreateUserTokenHandler(IPublisher publisher, ITokenGeneratorService tokenGeneratorService, IMapper mapper, IUserService userService, IUserTokenService userTokenService, IMongoCollectionFactory factory)
         {
             _publisher = publisher;
             _tokenGeneratorService = tokenGeneratorService;
@@ -33,8 +31,8 @@ namespace RecipeSocialMediaAPI.Handlers.UserTokens.Commands
             _userService = userService;
             _userTokenService = userTokenService;
 
-            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
-            _userTokenCollection = factory.GetCollection<UserTokenDocument>(new UserTokenRepository(), config);
+            _userCollection = factory.GetCollection<UserDocument>();
+            _userTokenCollection = factory.GetCollection<UserTokenDocument>();
         }
 
         public async Task<UserTokenDto> Handle(GetOrCreateUserTokenCommand request, CancellationToken cancellationToken)

@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Utilities;
@@ -12,11 +12,11 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Querries
 
     public class ValidUserLoginHandler : IRequestHandler<ValidUserLoginQuery, bool>
     {
-        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
+        private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public ValidUserLoginHandler(IMongoFactory factory, IConfigManager config)
+        public ValidUserLoginHandler(IMongoCollectionFactory factory)
         {
-            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
+            _userCollection = factory.GetCollection<UserDocument>();
         }
 
         public Task<bool> Handle(ValidUserLoginQuery request, CancellationToken cancellationToken)

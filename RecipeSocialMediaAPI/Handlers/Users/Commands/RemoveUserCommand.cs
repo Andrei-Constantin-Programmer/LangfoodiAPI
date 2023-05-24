@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
 using RecipeSocialMediaAPI.Services;
@@ -14,13 +14,13 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
     {
         private readonly IPublisher _publisher;
         private readonly IUserTokenService _userTokenService;
-        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
+        private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public RemoveUserHandler(IPublisher publisher, IUserTokenService userTokenService, IMongoFactory factory, IConfigManager config)
+        public RemoveUserHandler(IPublisher publisher, IUserTokenService userTokenService, IMongoCollectionFactory factory)
         {
             _publisher = publisher;
             _userTokenService = userTokenService;
-            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
+            _userCollection = factory.GetCollection<UserDocument>();
         }
 
         public async Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)

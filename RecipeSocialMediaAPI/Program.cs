@@ -1,5 +1,4 @@
 using Microsoft.OpenApi.Models;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.Endpoints;
 using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Utilities;
@@ -7,6 +6,7 @@ using Serilog;
 using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Mapper.Profiles;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
@@ -42,7 +42,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
 
-builder.Services.AddSingleton<IMongoFactory, MongoFactory>();
+builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
 builder.Services.AddSingleton<IConfigManager, ConfigManager>();
 builder.Services.AddSingleton<IClock, SystemClock>();
 

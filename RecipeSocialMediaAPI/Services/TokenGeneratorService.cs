@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Services.Interfaces;
-using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Services
 {
@@ -13,15 +11,15 @@ namespace RecipeSocialMediaAPI.Services
     {
         private readonly IClock _clock;
         private readonly IMapper _mapper;
-        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
-        private readonly IMongoCollectionWrapper<UserTokenDocument> _userTokenCollection;
+        private readonly IMongoRepository<UserDocument> _userCollection;
+        private readonly IMongoRepository<UserTokenDocument> _userTokenCollection;
 
-        public TokenGeneratorService(IClock clock, IMapper mapper, IMongoFactory factory, IConfigManager config)
+        public TokenGeneratorService(IClock clock, IMapper mapper, IMongoCollectionFactory factory)
         {
             _clock = clock;
             _mapper = mapper;
-            _userTokenCollection = factory.GetCollection<UserTokenDocument>(new UserTokenRepository(), config);
-            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
+            _userTokenCollection = factory.GetCollection<UserTokenDocument>();
+            _userCollection = factory.GetCollection<UserDocument>();
         }
 
         public UserTokenDto GenerateToken(UserDto user)

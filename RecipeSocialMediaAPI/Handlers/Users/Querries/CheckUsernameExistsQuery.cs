@@ -1,9 +1,7 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.Data.DTO;
-using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Querries
 {
@@ -11,11 +9,11 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Querries
 
     public class CheckUsernameExistsHandler : IRequestHandler<CheckUsernameExistsQuery, bool>
     {
-        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
+        private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public CheckUsernameExistsHandler(IMongoFactory factory, IConfigManager config)
+        public CheckUsernameExistsHandler(IMongoCollectionFactory factory)
         {
-            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
+            _userCollection = factory.GetCollection<UserDocument>();
         }
 
         public Task<bool> Handle(CheckUsernameExistsQuery request, CancellationToken cancellationToken)

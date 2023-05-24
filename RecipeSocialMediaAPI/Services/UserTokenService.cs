@@ -1,23 +1,23 @@
 ﻿using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.Utilities;
 using MongoDB.Bson;
 using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 
 namespace RecipeSocialMediaAPI.Services
 {
     public class UserTokenService : IUserTokenService
     {
-        private readonly IMongoCollectionWrapper<UserTokenDocument> _userTokenCollection;
-        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
+        private readonly IMongoRepository<UserTokenDocument> _userTokenCollection;
+        private readonly IMongoRepository<UserDocument> _userCollection;
         private readonly IClock _clock;
 
-        public UserTokenService(IMongoFactory factory, IConfigManager config, IClock clock)
+        public UserTokenService(IMongoCollectionFactory factory, IClock clock)
         {
-            _userTokenCollection = factory.GetCollection<UserTokenDocument>(new UserTokenRepository(), config);
-            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
+            _userTokenCollection = factory.GetCollection<UserTokenDocument>();
+            _userCollection = factory.GetCollection<UserDocument>();
             _clock = clock;
         }
 

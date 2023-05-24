@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using RecipeSocialMediaAPI.DAL;
 using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Endpoints;
@@ -18,15 +18,15 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
         private readonly IMapper _mapper;
         private readonly IUserTokenService _userTokenService;
 
-        private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
+        private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public UpdateUserHandler(IUserValidationService userValidationService, IMapper mapper, IUserTokenService userTokenService, IMongoFactory factory, IConfigManager config)
+        public UpdateUserHandler(IUserValidationService userValidationService, IMapper mapper, IUserTokenService userTokenService, IMongoCollectionFactory factory)
         {
             _userValidationService = userValidationService;
             _mapper = mapper;
             _userTokenService = userTokenService;
 
-            _userCollection = factory.GetCollection<UserDocument>(new UserRepository(), config);
+            _userCollection = factory.GetCollection<UserDocument>();
         }
 
         public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)

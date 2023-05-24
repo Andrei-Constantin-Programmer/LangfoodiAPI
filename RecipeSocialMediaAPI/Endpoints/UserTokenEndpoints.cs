@@ -35,7 +35,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                 try
                 {
                     var existsAndIsNotExpired = await sender.Send(new GetIsValidUserTokenQuery(token));
-                    return Results.Ok();
+                    return Results.Ok(existsAndIsNotExpired);
                 }
                 catch (Exception)
                 {
