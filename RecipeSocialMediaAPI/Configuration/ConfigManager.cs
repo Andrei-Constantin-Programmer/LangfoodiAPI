@@ -15,11 +15,9 @@
 
         public string GetMongoSetting(string keyName)
         {
-            string? val = _configuration
+            return _configuration
                 .GetSection("MongoDB")
-                .GetValue<string>(keyName);
-
-            return val?.ToString() ?? string.Empty;
+                .GetValue<string>(keyName) ?? string.Empty;
         }
     }
 }
