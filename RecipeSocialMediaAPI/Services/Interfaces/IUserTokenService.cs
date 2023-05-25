@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Data.DTO;
 
 namespace RecipeSocialMediaAPI.Services
 {
-    public interface IUserTokenService
+    internal interface IUserTokenService
     {
         UserDocument GetUserFromTokenWithPassword(string token);
         UserDocument GetUserFromToken(string token);

@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.DAL.Repositories
 {
-    public interface IRecipeRepository
+    internal interface IRecipeRepository
     {
         Task CreateRecipe(Recipe recipe);
         Task<IEnumerable<Recipe>> GetAllRecipes();

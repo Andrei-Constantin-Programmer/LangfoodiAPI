@@ -3,7 +3,7 @@ using Serilog.Events;
 
 namespace RecipeSocialMediaAPI.Utilities
 {
-    public static class SerilogConfiguration
+    internal static class SerilogConfiguration
     {
         public static void ConfigureSerilog(HostBuilderContext _, IServiceProvider __, LoggerConfiguration configuration)
         {

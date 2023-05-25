@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Data.DTO;
 
 namespace RecipeSocialMediaAPI.Services
 {
-    public interface ITokenGeneratorService
+    internal interface ITokenGeneratorService
     {
         UserTokenDto GenerateToken(UserDocument user);
         UserTokenDto GenerateToken(UserDto user);

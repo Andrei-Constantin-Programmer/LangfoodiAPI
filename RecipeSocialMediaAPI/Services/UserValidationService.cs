@@ -6,7 +6,7 @@ using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Services
 {
-    public class UserValidationService : IUserValidationService
+    internal class UserValidationService : IUserValidationService
     {
         private readonly ISender _sender;
 

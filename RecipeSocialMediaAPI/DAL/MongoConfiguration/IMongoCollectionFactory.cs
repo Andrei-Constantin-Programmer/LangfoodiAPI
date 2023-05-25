@@ -1,8 +1,9 @@
 ﻿using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.DAL.Repositories;
 
 namespace RecipeSocialMediaAPI.DAL.MongoConfiguration
 {
-    public interface IMongoCollectionFactory
+    internal interface IMongoCollectionFactory
     {
         IMongoRepository<TDocument> GetCollection<TDocument>() where TDocument : MongoDocument;
     }

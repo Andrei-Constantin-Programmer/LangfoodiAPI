@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Utilities
 {
-    public interface IConfigManager
+    internal interface IConfigManager
     {
         string GetMongoSetting(string keyName);
     }

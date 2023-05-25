@@ -1,20 +1,20 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
-
+using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Querries
 {
-    public record CheckEmailExistsQuery(UserDto User) : IRequest<bool>;
+    internal record CheckEmailExistsQuery(UserDto User) : IRequest<bool>;
 
-    public class CheckEmailExistsHandler : IRequestHandler<CheckEmailExistsQuery, bool>
+    internal class CheckEmailExistsHandler : IRequestHandler<CheckEmailExistsQuery, bool>
     {
         private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public CheckEmailExistsHandler(IMongoCollectionFactory factory)
+        public CheckEmailExistsHandler(IMongoCollectionFactory collectionFactory)
         {
-            _userCollection = factory.GetCollection<UserDocument>();
+            _userCollection = collectionFactory.GetCollection<UserDocument>();
         }
 
         public Task<bool> Handle(CheckEmailExistsQuery request, CancellationToken cancellationToken)

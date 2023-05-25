@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Services.Interfaces;
 namespace RecipeSocialMediaAPI.DAL.Repositories
 {
     // TODO This class is a stub. To be replaced with a real repository once the Recipe model has been set.
-    public class RecipeRepository : IRecipeRepository
+    internal class RecipeRepository : IRecipeRepository
     {
         private readonly List<Recipe> _recipes;
 

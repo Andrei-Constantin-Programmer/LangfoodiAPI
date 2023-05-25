@@ -7,6 +7,9 @@ using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Mapper.Profiles;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);

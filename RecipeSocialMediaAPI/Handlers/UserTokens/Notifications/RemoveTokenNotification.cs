@@ -2,22 +2,23 @@
 using MongoDB.Bson;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
+using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Endpoints;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Handlers.UserTokens.Notifications
 {
-    public record RemoveTokenNotification(string Token) : INotification;
+    internal record RemoveTokenNotification(string Token) : INotification;
 
-    public class RemoveTokenHandler : INotificationHandler<RemoveTokenNotification>
+    internal class RemoveTokenHandler : INotificationHandler<RemoveTokenNotification>
     {
         private readonly IUserTokenService _userTokenService;
         private readonly IMongoRepository<UserTokenDocument> _userTokenCollection;
 
-        public RemoveTokenHandler(IUserTokenService userTokenService, IMongoCollectionFactory factory)
+        public RemoveTokenHandler(IUserTokenService userTokenService, IMongoCollectionFactory collectionFactory)
         {
             _userTokenService = userTokenService;
-            _userTokenCollection = factory.GetCollection<UserTokenDocument>();
+            _userTokenCollection = collectionFactory.GetCollection<UserTokenDocument>();
         }
 
         public Task Handle(RemoveTokenNotification notification, CancellationToken cancellationToken)

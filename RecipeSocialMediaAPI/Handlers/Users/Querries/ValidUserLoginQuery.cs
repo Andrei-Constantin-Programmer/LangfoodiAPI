@@ -3,20 +3,19 @@ using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
-using RecipeSocialMediaAPI.Utilities;
 using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Querries
 {
-    public record ValidUserLoginQuery(UserDto User) : IRequest<bool>;
+    internal record ValidUserLoginQuery(UserDto User) : IRequest<bool>;
 
-    public class ValidUserLoginHandler : IRequestHandler<ValidUserLoginQuery, bool>
+    internal class ValidUserLoginHandler : IRequestHandler<ValidUserLoginQuery, bool>
     {
         private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public ValidUserLoginHandler(IMongoCollectionFactory factory)
+        public ValidUserLoginHandler(IMongoCollectionFactory collectionFactory)
         {
-            _userCollection = factory.GetCollection<UserDocument>();
+            _userCollection = collectionFactory.GetCollection<UserDocument>();
         }
 
         public Task<bool> Handle(ValidUserLoginQuery request, CancellationToken cancellationToken)

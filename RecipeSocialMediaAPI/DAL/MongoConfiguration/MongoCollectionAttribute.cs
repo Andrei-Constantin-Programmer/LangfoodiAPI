@@ -1,7 +1,7 @@
 ﻿namespace RecipeSocialMediaAPI.DAL.MongoConfiguration
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class MongoCollectionAttribute : Attribute
+    internal class MongoCollectionAttribute : Attribute
     {
         public string CollectionName { get; }
 

@@ -5,9 +5,9 @@ using RecipeSocialMediaAPI.Exceptions;
 
 namespace RecipeSocialMediaAPI.Handlers.Recipes.Querries
 {
-    public record GetRecipeByIdQuery(int Id) : IRequest<RecipeDTO>;
+    internal record GetRecipeByIdQuery(int Id) : IRequest<RecipeDTO>;
 
-    public class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDTO>
+    internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDTO>
     {
         private readonly IRecipeRepository _recipeRepository;
 

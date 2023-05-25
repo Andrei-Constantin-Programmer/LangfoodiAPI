@@ -4,9 +4,9 @@ using RecipeSocialMediaAPI.Data.DTO;
 
 namespace RecipeSocialMediaAPI.Handlers.Recipes.Querries
 {
-    public record GetRecipesQuery() : IRequest<IEnumerable<RecipeDTO>>;
+    internal record GetRecipesQuery() : IRequest<IEnumerable<RecipeDTO>>;
 
-    public class GetRecipesHandler : IRequestHandler<GetRecipesQuery, IEnumerable<RecipeDTO>>
+    internal class GetRecipesHandler : IRequestHandler<GetRecipesQuery, IEnumerable<RecipeDTO>>
     {
         private readonly IRecipeRepository _recipeRepository;
 

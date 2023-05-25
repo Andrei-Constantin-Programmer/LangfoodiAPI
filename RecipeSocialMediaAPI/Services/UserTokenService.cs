@@ -1,5 +1,4 @@
 ﻿using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.Utilities;
 using MongoDB.Bson;
 using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.Data.DTO;
@@ -8,16 +7,16 @@ using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 
 namespace RecipeSocialMediaAPI.Services
 {
-    public class UserTokenService : IUserTokenService
+    internal class UserTokenService : IUserTokenService
     {
         private readonly IMongoRepository<UserTokenDocument> _userTokenCollection;
         private readonly IMongoRepository<UserDocument> _userCollection;
         private readonly IClock _clock;
 
-        public UserTokenService(IMongoCollectionFactory factory, IClock clock)
+        public UserTokenService(IMongoCollectionFactory collectionFactory, IClock clock)
         {
-            _userTokenCollection = factory.GetCollection<UserTokenDocument>();
-            _userCollection = factory.GetCollection<UserDocument>();
+            _userTokenCollection = collectionFactory.GetCollection<UserTokenDocument>();
+            _userCollection = collectionFactory.GetCollection<UserDocument>();
             _clock = clock;
         }
 

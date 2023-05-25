@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Services
 {
-    public interface IUserService
+    internal interface IUserService
     {
         bool DoesUserExist(UserDto user);
     }

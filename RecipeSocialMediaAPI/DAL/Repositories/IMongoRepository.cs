@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.DAL.Repositories
 {
-    public interface IMongoRepository<TDocument> where TDocument : MongoDocument
+    internal interface IMongoRepository<TDocument> where TDocument : MongoDocument
     {
         List<TDocument> GetAll(Expression<Func<TDocument, bool>> expr);
         TDocument Insert(TDocument doc);

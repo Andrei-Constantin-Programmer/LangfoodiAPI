@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Utilities
 {
-    public class ConfigManager : IConfigManager
+    internal class ConfigManager : IConfigManager
     {
         private readonly IConfiguration _configuration;
 

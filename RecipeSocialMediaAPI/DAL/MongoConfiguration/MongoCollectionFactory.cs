@@ -1,9 +1,10 @@
 ﻿using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.DAL.MongoConfiguration
 {
-    public class MongoCollectionFactory : IMongoCollectionFactory
+    internal class MongoCollectionFactory : IMongoCollectionFactory
     {
         private readonly IConfigManager _configManager;
 

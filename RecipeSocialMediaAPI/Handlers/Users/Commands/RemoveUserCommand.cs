@@ -8,19 +8,19 @@ using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands
 {
-    public record RemoveUserCommand(string Token) : IRequest;
+    internal record RemoveUserCommand(string Token) : IRequest;
 
-    public class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
+    internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
     {
         private readonly IPublisher _publisher;
         private readonly IUserTokenService _userTokenService;
         private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public RemoveUserHandler(IPublisher publisher, IUserTokenService userTokenService, IMongoCollectionFactory factory)
+        public RemoveUserHandler(IPublisher publisher, IUserTokenService userTokenService, IMongoCollectionFactory collectionFactory)
         {
             _publisher = publisher;
             _userTokenService = userTokenService;
-            _userCollection = factory.GetCollection<UserDocument>();
+            _userCollection = collectionFactory.GetCollection<UserDocument>();
         }
 
         public async Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)

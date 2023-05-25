@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Utilities
 {
-    public class SystemClock : IClock
+    internal class SystemClock : IClock
     {
         public DateTimeOffset Now => DateTimeOffset.UtcNow;
     }

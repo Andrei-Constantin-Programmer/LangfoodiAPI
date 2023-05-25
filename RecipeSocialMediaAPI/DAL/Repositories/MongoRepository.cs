@@ -6,7 +6,7 @@ using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.DAL.Repositories
 {
-    public class MongoRepository<TDocument> : IMongoRepository<TDocument> where TDocument : MongoDocument
+    internal class MongoRepository<TDocument> : IMongoRepository<TDocument> where TDocument : MongoDocument
     {
         private readonly IMongoClient _mongoClient;
         private readonly IMongoDatabase _database;

@@ -3,9 +3,9 @@ using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Handlers.UserTokens.Querries
 {
-    public record GetIsValidUserTokenQuery(string Token) : IRequest<bool>;
+    internal record GetIsValidUserTokenQuery(string Token) : IRequest<bool>;
 
-    public class GetIsValidUserTokenHandler : IRequestHandler<GetIsValidUserTokenQuery, bool>
+    internal class GetIsValidUserTokenHandler : IRequestHandler<GetIsValidUserTokenQuery, bool>
     {
         private readonly IUserTokenService _userTokenService;
 

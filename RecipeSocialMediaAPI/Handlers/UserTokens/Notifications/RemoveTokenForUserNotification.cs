@@ -1,25 +1,22 @@
-﻿using Amazon.Runtime.Internal;
-using MediatR;
-using MongoDB.Bson;
+﻿using MediatR;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
-using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Handlers.UserTokens.Notifications
 {
-    public record RemoveTokenForUserNotification(UserDto User) : INotification;
+    internal record RemoveTokenForUserNotification(UserDto User) : INotification;
 
-    public class RemoveTokenForUserHandler : INotificationHandler<RemoveTokenForUserNotification>
+    internal class RemoveTokenForUserHandler : INotificationHandler<RemoveTokenForUserNotification>
     {
         private readonly IMongoRepository<UserTokenDocument> _userTokenCollection;
         private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public RemoveTokenForUserHandler(IMongoCollectionFactory factory)
+        public RemoveTokenForUserHandler(IMongoCollectionFactory collectionFactory)
         {
-            _userTokenCollection = factory.GetCollection<UserTokenDocument>();
-            _userCollection = factory.GetCollection<UserDocument>();
+            _userTokenCollection = collectionFactory.GetCollection<UserTokenDocument>();
+            _userCollection = collectionFactory.GetCollection<UserDocument>();
         }
 
         public Task Handle(RemoveTokenForUserNotification notification, CancellationToken cancellationToken)

@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Data.DTO;
 
 namespace RecipeSocialMediaAPI.Mapper.Profiles
 {
-    public class UserMappingProfile : Profile
+    internal class UserMappingProfile : Profile
     {
         public UserMappingProfile()
         {

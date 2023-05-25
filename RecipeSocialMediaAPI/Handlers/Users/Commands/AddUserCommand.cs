@@ -9,9 +9,9 @@ using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands
 {
-    public record AddUserCommand(UserDto User) : IRequest<UserTokenDto>;
+    internal record AddUserCommand(UserDto User) : IRequest<UserTokenDto>;
 
-    public class AddUserHandler : IRequestHandler<AddUserCommand, UserTokenDto>
+    internal class AddUserHandler : IRequestHandler<AddUserCommand, UserTokenDto>
     {
         private readonly ITokenGeneratorService _tokenGeneratorService;
         private readonly IUserValidationService _userValidationService;
@@ -19,12 +19,12 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
 
         private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public AddUserHandler(ITokenGeneratorService tokenGeneratorService, IUserValidationService userValidationService, IMapper mapper, IMongoCollectionFactory factory, IConfigManager config)
+        public AddUserHandler(ITokenGeneratorService tokenGeneratorService, IUserValidationService userValidationService, IMapper mapper, IMongoCollectionFactory collectionFactory)
         {
             _tokenGeneratorService = tokenGeneratorService;
             _userValidationService = userValidationService;
             _mapper = mapper;
-            _userCollection = factory.GetCollection<UserDocument>();
+            _userCollection = collectionFactory.GetCollection<UserDocument>();
         }
 
         public async Task<UserTokenDto> Handle(AddUserCommand request, CancellationToken cancellationToken)
