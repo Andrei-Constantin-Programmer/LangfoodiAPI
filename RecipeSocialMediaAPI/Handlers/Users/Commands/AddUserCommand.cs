@@ -5,7 +5,6 @@ using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Services;
-using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands
 {
@@ -15,21 +14,25 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
     {
         private readonly ITokenGeneratorService _tokenGeneratorService;
         private readonly IUserValidationService _userValidationService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
         private readonly IMongoRepository<UserDocument> _userCollection;
 
-        public AddUserHandler(ITokenGeneratorService tokenGeneratorService, IUserValidationService userValidationService, IMapper mapper, IMongoCollectionFactory collectionFactory)
+        public AddUserHandler(ITokenGeneratorService tokenGeneratorService, IUserValidationService userValidationService, IUserService userService, IMapper mapper, IMongoCollectionFactory collectionFactory)
         {
             _tokenGeneratorService = tokenGeneratorService;
             _userValidationService = userValidationService;
+            _userService = userService;
             _mapper = mapper;
             _userCollection = collectionFactory.GetCollection<UserDocument>();
         }
 
-        public async Task<UserTokenDto> Handle(AddUserCommand request, CancellationToken cancellationToken)
+        public Task<UserTokenDto> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
-            if (!await _userValidationService.ValidUserAsync(request.User))
+            if (!_userValidationService.ValidUser(request.User)
+                || (!_userService.DoesUsernameExist(request.User.UserName)
+                && !_userService.DoesEmailExist(request.User.Email)))
             {
                 throw new InvalidCredentialsException();
             }
@@ -37,7 +40,7 @@ namespace RecipeSocialMediaAPI.Handlers.Users.Commands
             request.User.Password = _userValidationService.HashPassword(request.User.Password);
             UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(request.User));
 
-            return _tokenGeneratorService.GenerateToken(insertedUser);
+            return Task.FromResult(_tokenGeneratorService.GenerateToken(insertedUser));
         }
     }
 }
