@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Services;
 
-namespace RecipeSocialMediaAPI.Handlers.UserTokens.Querries
+namespace RecipeSocialMediaAPI.Handlers.UserTokens.Queries
 {
     internal record GetIsValidUserTokenQuery(string Token) : IRequest<bool>;
 

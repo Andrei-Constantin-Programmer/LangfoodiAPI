@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 
-namespace RecipeSocialMediaAPI.Handlers.Recipes.Querries
+namespace RecipeSocialMediaAPI.Handlers.Recipes.Queries
 {
     internal record GetRecipesQuery() : IRequest<IEnumerable<RecipeDTO>>;
 

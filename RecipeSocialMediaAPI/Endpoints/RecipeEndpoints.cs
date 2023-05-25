@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Handlers.Recipes.Querries;
+using RecipeSocialMediaAPI.Handlers.Recipes.Queries;
 
 namespace RecipeSocialMediaAPI.Endpoints
 {

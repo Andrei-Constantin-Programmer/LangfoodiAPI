@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using BCrypter = BCrypt.Net.BCrypt;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Querries
+namespace RecipeSocialMediaAPI.Handlers.Users.Queries
 {
     internal record ValidUserLoginQuery(UserDto User) : IRequest<bool>;
 

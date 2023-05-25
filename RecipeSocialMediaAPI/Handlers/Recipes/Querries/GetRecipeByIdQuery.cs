@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 
-namespace RecipeSocialMediaAPI.Handlers.Recipes.Querries
+namespace RecipeSocialMediaAPI.Handlers.Recipes.Queries
 {
     internal record GetRecipeByIdQuery(int Id) : IRequest<RecipeDTO>;
 

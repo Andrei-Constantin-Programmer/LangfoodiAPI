@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Commands;
 using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
-using RecipeSocialMediaAPI.Handlers.UserTokens.Querries;
+using RecipeSocialMediaAPI.Handlers.UserTokens.Queries;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints

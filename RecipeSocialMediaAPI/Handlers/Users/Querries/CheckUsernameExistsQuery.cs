@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Querries
+namespace RecipeSocialMediaAPI.Handlers.Users.Queries
 {
     internal record CheckUsernameExistsQuery(UserDto User) : IRequest<bool>;
 

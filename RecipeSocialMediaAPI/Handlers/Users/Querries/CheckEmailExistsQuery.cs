@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Services;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Querries
+namespace RecipeSocialMediaAPI.Handlers.Users.Queries
 {
     internal record CheckEmailExistsQuery(UserDto User) : IRequest<bool>;
 
