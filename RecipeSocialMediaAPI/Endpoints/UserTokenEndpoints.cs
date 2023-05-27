@@ -1,6 +1,10 @@
-﻿using System.Xml.Linq;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.DTO;
+using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Exceptions;
+using RecipeSocialMediaAPI.Handlers.UserTokens.Commands;
+using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
+using RecipeSocialMediaAPI.Handlers.UserTokens.Queries;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Endpoints
@@ -9,31 +13,52 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserTokenEndpoints(this WebApplication app)
         {
-            app.MapPost("/tokens/login", (IValidationService validationService, IUserService userService, IUserTokenService userTokenService, UserDto user) =>
+            app.MapPost("/tokens/login", async (UserDto user, ISender sender) =>
             {
-                if (!userService.ValidUserLogin(validationService, user)) return Results.BadRequest("Invalid credentials");
-                if (!userTokenService.CheckTokenExists(user)) return Results.Ok(userTokenService.GenerateToken(user));
-                if (userTokenService.CheckTokenExpired(user))
+                try
                 {
-                    userTokenService.RemoveToken(user);
-                    return Results.Ok(userTokenService.GenerateToken(user));
+                    var token = await sender.Send(new GetOrCreateUserTokenCommand(user));
+                    return Results.Ok(token);
                 }
-
-                return Results.Ok(userTokenService.GetTokenFromUser(user));
+                catch (UserNotFoundException)
+                {
+                    return Results.NotFound();
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
 
-            app.MapPost("/tokens/exists", ([FromHeader(Name = "authorization")] string token, IValidationService validationService, IUserTokenService userTokenService) =>
+            app.MapPost("/tokens/valid", async ([FromHeader(Name = "authorizationToken")] string token, ISender sender) =>
             {
-                if (!userTokenService.CheckValidToken(token)) return Results.BadRequest("Invalid/Expired token");
-                return Results.Ok(true);
+                try
+                {
+                    var existsAndIsNotExpired = await sender.Send(new GetIsValidUserTokenQuery(token));
+                    return Results.Ok(existsAndIsNotExpired);
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
 
-            app.MapGet("/tokens/logout", ([FromHeader(Name = "authorization")] string token, IUserTokenService userTokenService) =>
+            app.MapGet("/tokens/logout", async ([FromHeader(Name = "authorizationToken")] string token, IPublisher publisher) =>
             {
-                if (!userTokenService.CheckValidToken(token)) return Results.Unauthorized();
-                if (!userTokenService.RemoveToken(token)) return Results.BadRequest("Issue removing token");
+                try
+                {
+                    await publisher.Publish(new RemoveTokenNotification(token));
                 
-                return Results.Ok(true);
+                    return Results.Ok();
+                }
+                catch (TokenNotFoundOrExpiredException)
+                {
+                    return Results.Unauthorized();
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
         }
     }

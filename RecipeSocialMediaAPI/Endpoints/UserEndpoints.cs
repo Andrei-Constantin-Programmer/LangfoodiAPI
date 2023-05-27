@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Services;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Handlers.Users.Queries;
 
 namespace RecipeSocialMediaAPI.Endpoints
 {
@@ -8,38 +10,82 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapUserEndpoints(this WebApplication app)
         {
-            app.MapPost("/users/createuser", (IUserTokenService userTokenService, IValidationService validationService, IUserService userService, UserDto newUser) =>
+            app.MapPost("/users/createuser", async (UserDto newUser, ISender sender) =>
             {
-                if (!validationService.ValidUser(newUser, userService)) return Results.BadRequest("Invalid credentials format");
-                return Results.Ok(userService.AddUser(newUser, userTokenService, validationService));
+                try
+                {
+                    var token = await sender.Send(new AddUserCommand(newUser));
+                    return Results.Ok(token);
+                }
+                catch (InvalidCredentialsException)
+                {
+                    return Results.BadRequest("Invalid credentials format.");
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
 
-            app.MapPost("/users/updateuser", ([FromHeader(Name = "authorization")] string token, IValidationService validationService, IUserTokenService userTokenService, IUserService userService, UserDto user) =>
+            app.MapPost("/users/updateuser", async ([FromHeader(Name = "authorizationToken")] string token, UserDto user, ISender sender) =>
             {
-                if (!userTokenService.CheckValidToken(token)) return Results.Unauthorized();
-                if (!userService.UpdateUser(validationService, userTokenService, token, user)) return Results.BadRequest("Issue updating user");
-                
-                return Results.Ok(true);
+                try
+                {
+                    await sender.Send(new UpdateUserCommand(user, token));
+                    return Results.Ok();
+                }
+                catch (TokenNotFoundOrExpiredException)
+                {
+                    return Results.Unauthorized();
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
+            });
+            
+            app.MapDelete("/users/removeuser", async ([FromHeader(Name = "authorizationToken")] string token, ISender sender) =>
+            {
+                try
+                {
+                    await sender.Send(new RemoveUserCommand(token));
+
+                    return Results.Ok();
+                }
+                catch (TokenNotFoundOrExpiredException)
+                {
+                    return Results.Unauthorized();
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
 
-            app.MapDelete("/users/removeuser/", ([FromHeader(Name = "authorization")] string token, IUserTokenService userTokenService, IUserService userService) =>
+            app.MapPost("/users/username/exists", async (UserDto user, ISender sender) =>
             {
-                if (!userTokenService.CheckValidToken(token)) return Results.Unauthorized();
-                if (!userService.RemoveUser(token, userTokenService)) return Results.BadRequest("Issue removing user");
-
-                return Results.Ok(true);
+                try
+                {
+                    var usernameExists = await sender.Send(new CheckUsernameExistsQuery(user));
+                    return Results.Ok(usernameExists);
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
 
-            app.MapPost("/users/username/exists", (IValidationService validationService, IUserService userService, UserDto user) =>
+            app.MapPost("/users/email/exists", async (UserDto user, ISender sender) =>
             {
-                if (!validationService.ValidUserName(user.UserName)) return Results.BadRequest("Invalid username format");
-                return Results.Ok(userService.CheckUserNameExists(user));
-            });
-
-            app.MapPost("/users/email/exists", (IValidationService validationService, IUserService userService, UserDto user) =>
-            {
-                if (!validationService.ValidEmail(user.Email)) return Results.BadRequest("Invalid email format");
-                return Results.Ok(userService.CheckEmailExists(user));
+                try
+                {
+                    var emailExists = await sender.Send(new CheckEmailExistsQuery(user));
+                    return Results.Ok(emailExists);
+                }
+                catch (Exception)
+                {
+                    return Results.StatusCode(500);
+                }
             });
         }
     }
