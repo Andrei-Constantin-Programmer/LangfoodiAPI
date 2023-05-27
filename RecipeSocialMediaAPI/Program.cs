@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests")]
 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
 
