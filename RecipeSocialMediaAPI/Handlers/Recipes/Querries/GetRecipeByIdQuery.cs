@@ -26,7 +26,7 @@ namespace RecipeSocialMediaAPI.Handlers.Recipes.Queries
                 Title = recipe.Title,
                 Description = recipe.Description,
                 Chef = recipe.Chef,
-                CreationDate = recipe.CreationDate
+                CreationDate = recipe.CreationDate,
             };
         }
     }

@@ -1,17 +1,15 @@
+using System.Runtime.CompilerServices;
 using Microsoft.OpenApi.Models;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
+using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Endpoints;
+using RecipeSocialMediaAPI.Mapper.Profiles;
 using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.Utilities;
 using Serilog;
-using RecipeSocialMediaAPI.Services.Interfaces;
-using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.Mapper.Profiles;
-using RecipeSocialMediaAPI.DAL.MongoConfiguration;
-using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests")]
-
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureSerilog);
 

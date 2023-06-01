@@ -2,13 +2,13 @@
 {
     public record RecipeDTO
     {
-        public required int Id { get; set; }
+        required public int Id { get; set; }
 
-        public required string Title { get; set; }
+        required public string Title { get; set; }
 
-        public required string Description { get; set; }
+        required public string Description { get; set; }
 
-        public required string Chef { get; set; }
+        required public string Chef { get; set; }
 
         public DateTimeOffset? CreationDate { get; set; }
     }
