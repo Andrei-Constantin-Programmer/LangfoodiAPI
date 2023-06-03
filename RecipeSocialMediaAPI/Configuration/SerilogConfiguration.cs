@@ -1,19 +1,18 @@
 ﻿using Serilog;
 using Serilog.Events;
 
-namespace RecipeSocialMediaAPI.Utilities
+namespace RecipeSocialMediaAPI.Utilities;
+
+internal static class SerilogConfiguration
 {
-    internal static class SerilogConfiguration
+    public static void ConfigureLogging(this WebApplicationBuilder builder)
     {
-        public static void ConfigureSerilog(HostBuilderContext _, IServiceProvider __, LoggerConfiguration configuration)
-        {
-            configuration
-                .WriteTo.Console()
-                .WriteTo.File("C:\\Logs\\RecipeSocialMedia\\RecipeSocialMediaLog.txt", rollingInterval: RollingInterval.Day)
-                .Enrich.FromLogContext()
-                .Enrich.WithMachineName()
-                .Enrich.WithThreadId()
-                .MinimumLevel.Is(LogEventLevel.Debug);
-        }
+        builder.Host.UseSerilog((_, _, configuration) => configuration
+            .WriteTo.Console()
+            .WriteTo.File("C:\\Logs\\RecipeSocialMedia\\RecipeSocialMediaLog.txt", rollingInterval: RollingInterval.Day)
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithThreadId()
+            .MinimumLevel.Is(LogEventLevel.Debug));
     }
 }
