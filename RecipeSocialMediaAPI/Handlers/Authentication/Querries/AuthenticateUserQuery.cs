@@ -1,22 +1,35 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.Data.DTO;
-using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.DAL.Documents;
+using RecipeSocialMediaAPI.DAL.MongoConfiguration;
+using RecipeSocialMediaAPI.DAL.Repositories;
+
+using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Handlers.Authentication.Querries;
 
-internal record AuthenticateUserQuery(UserDto User) : IRequest<bool>;
+internal record AuthenticateUserQuery(string UsernameOrEmail, string Password) : IRequest<bool>;
 
 internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, bool>
 {
-    private readonly IUserService _userService;
+    private readonly IMongoRepository<UserDocument> _userRepository;
 
-    public AuthenticateUserHandler(IUserService userService)
+    public AuthenticateUserHandler(IMongoCollectionFactory _collectionFactory)
     {
-        _userService = userService;
+        _userRepository = _collectionFactory.GetCollection<UserDocument>();
     }
 
     public Task<bool> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(_userService.DoesUserExist(request.User));
+        UserDocument? user = _userRepository.Find(user => user.UserName == request.UsernameOrEmail)
+                         ?? _userRepository.Find(user => user.Email == request.UsernameOrEmail);
+
+        if (user is null)
+        {
+            return Task.FromResult(false);
+        }
+
+        bool successfulLogin = BCrypter.Verify(request.Password, user.Password);
+
+        return Task.FromResult(successfulLogin);
     }
 }

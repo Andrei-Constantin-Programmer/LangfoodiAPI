@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Handlers.Users.Queries;
 
@@ -18,7 +19,9 @@ public static class UserEndpoints
             {
                 return Results.Ok(await sender.Send(new AddUserCommand(newUser)));
             }
-            catch (InvalidCredentialsException)
+            catch (Exception ex) when (ex 
+                is ArgumentException 
+                or InvalidCredentialsException)
             {
                 return Results.BadRequest("Invalid credentials format.");
             }
@@ -48,14 +51,18 @@ public static class UserEndpoints
         });
         
         app.MapDelete("/users/removeuser", async (
-            [FromBody] UserDto user, 
+            [FromQuery] string emailOrId, 
             [FromServices] ISender sender) =>
         {
             try
             {
-                await sender.Send(new RemoveUserCommand(user));
+                await sender.Send(new RemoveUserCommand(emailOrId));
 
                 return Results.Ok();
+            }
+            catch (UserNotFoundException)
+            {
+                return Results.BadRequest("User not found.");
             }
             catch (Exception)
             {
@@ -64,13 +71,12 @@ public static class UserEndpoints
         });
 
         app.MapPost("/users/username/exists", async (
-            [FromBody] UserDto user, 
+            [FromQuery] string username, 
             [FromServices] ISender sender) =>
         {
             try
             {
-                var usernameExists = await sender.Send(new CheckUsernameExistsQuery(user));
-                return Results.Ok(usernameExists);
+                return Results.Ok(await sender.Send(new CheckUsernameExistsQuery(username)));
             }
             catch (Exception)
             {
@@ -79,13 +85,12 @@ public static class UserEndpoints
         });
 
         app.MapPost("/users/email/exists", async (
-            [FromBody] UserDto user, 
+            [FromQuery] string email, 
             [FromServices] ISender sender) =>
         {
             try
             {
-                var emailExists = await sender.Send(new CheckEmailExistsQuery(user));
-                return Results.Ok(emailExists);
+                return Results.Ok(await sender.Send(new CheckEmailExistsQuery(email)));
             }
             catch (Exception)
             {

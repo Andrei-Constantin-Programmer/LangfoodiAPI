@@ -9,8 +9,8 @@ internal class UserMappingProfile : Profile
     public UserMappingProfile()
     {
         CreateMap<UserDto, UserDocument>()
-            .ForMember(dest => dest._id, config => config.MapFrom(src => src.Id));
+            .ForMember(dest => dest.Id, config => config.MapFrom(src => src.Id));
         CreateMap<UserDocument, UserDto>()
-            .ForMember(dest => dest.Id, config => config.MapFrom(src => src._id));
+            .ForMember(dest => dest.Id, config => config.MapFrom(src => src.Id));
     }
 }

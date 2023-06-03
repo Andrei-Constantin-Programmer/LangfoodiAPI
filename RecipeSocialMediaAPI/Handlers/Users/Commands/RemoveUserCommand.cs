@@ -1,36 +1,32 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Exceptions;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
-internal record RemoveUserCommand(UserDto User) : IRequest;
+internal record RemoveUserCommand(string EmailOrId) : IRequest;
 
 internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
 {
-    private readonly IMapper _mapper;
     private readonly IMongoRepository<UserDocument> _userCollection;
 
-    public RemoveUserHandler(IMapper mapper, IMongoCollectionFactory collectionFactory)
+    public RemoveUserHandler(IMongoCollectionFactory collectionFactory)
     {
-        _mapper = mapper;
         _userCollection = collectionFactory.GetCollection<UserDocument>();
     }
 
     public Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
     {
-        UserDocument userDoc = _mapper.Map<UserDocument>(request.User);
+        UserDocument userDoc = _userCollection.Find(user => user.Email == request.EmailOrId)
+                            ?? _userCollection.Find(user => user.Id == request.EmailOrId)
+                            ?? throw new UserNotFoundException();
 
-        var successful = _userCollection.Delete(x => x._id == userDoc._id);
+        var successful = _userCollection.Delete(x => x.Id == userDoc.Id);
 
-        if (!successful)
-        {
-            throw new Exception($"Could not remove user with id {userDoc._id}.");
-        }
-
-        return Task.CompletedTask;
+        return successful 
+            ? Task.CompletedTask 
+            : throw new Exception($"Could not remove user with id {userDoc.Id}.");
     }
 }

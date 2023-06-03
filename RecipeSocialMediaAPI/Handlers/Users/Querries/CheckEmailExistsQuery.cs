@@ -1,23 +1,21 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Services;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Queries
+namespace RecipeSocialMediaAPI.Handlers.Users.Queries;
+
+internal record CheckEmailExistsQuery(string Email) : IRequest<bool>;
+
+internal class CheckEmailExistsHandler : IRequestHandler<CheckEmailExistsQuery, bool>
 {
-    internal record CheckEmailExistsQuery(UserDto User) : IRequest<bool>;
+    private readonly IUserService _userService;
 
-    internal class CheckEmailExistsHandler : IRequestHandler<CheckEmailExistsQuery, bool>
+    public CheckEmailExistsHandler(IUserService userService)
     {
-        private readonly IUserService _userService;
+        _userService = userService;
+    }
 
-        public CheckEmailExistsHandler(IUserService userService)
-        {
-            _userService = userService;
-        }
-
-        public Task<bool> Handle(CheckEmailExistsQuery request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(_userService.DoesEmailExist(request.User.Email));
-        }
+    public Task<bool> Handle(CheckEmailExistsQuery request, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(_userService.DoesEmailExist(request.Email));
     }
 }

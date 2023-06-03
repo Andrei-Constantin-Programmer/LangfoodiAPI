@@ -11,12 +11,13 @@ public static class AuthenticationEndpoints
     public static void MapAuthenticationEndpoints(this WebApplication app)
     {
         app.MapPost("/auth/authenticate", async (
-            [FromBody] UserDto user,
+            [FromHeader] string usernameOrEmail,
+            [FromHeader] string password,
             [FromServices] ISender sender) =>
         {
             try
             {
-                var successfulLogin = await sender.Send(new AuthenticateUserQuery(user));
+                var successfulLogin = await sender.Send(new AuthenticateUserQuery(usernameOrEmail, password));
                 return Results.Ok(successfulLogin);
             }
             catch (InvalidCredentialsException)

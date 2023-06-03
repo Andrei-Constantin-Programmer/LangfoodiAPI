@@ -33,6 +33,11 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDto>
             throw new InvalidCredentialsException();
         }
 
+        if (request.User.Id is not null)
+        {
+            throw new ArgumentException("You cannot insert a user with a predefined Id.");
+        }
+
         if(_userService.DoesUsernameExist(request.User.UserName)
             || _userService.DoesEmailExist(request.User.Email))
         {

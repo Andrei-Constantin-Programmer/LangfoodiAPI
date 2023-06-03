@@ -30,10 +30,10 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
         request.User.Password = _userValidationService.HashPassword(request.User.Password);
         UserDocument newUserDoc = _mapper.Map<UserDocument>(request.User);
 
-        var result = _userCollection.UpdateRecord(newUserDoc, x => x._id == newUserDoc._id);
+        var result = _userCollection.UpdateRecord(newUserDoc, x => x.Id == newUserDoc.Id);
 
         return result 
             ? Task.CompletedTask 
-            : throw new Exception($"Could not update user with id {newUserDoc._id}.");
+            : throw new Exception($"Could not update user with id {newUserDoc.Id}.");
     }
 }
