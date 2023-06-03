@@ -4,50 +4,36 @@ using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
-using RecipeSocialMediaAPI.Endpoints;
 using RecipeSocialMediaAPI.Services;
-using RecipeSocialMediaAPI.Utilities;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Commands
+namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
+
+internal record UpdateUserCommand(UserDto User) : IRequest;
+
+internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
-    internal record UpdateUserCommand(UserDto User, string Token) : IRequest;
+    private readonly IUserValidationService _userValidationService;
+    private readonly IMapper _mapper;
 
-    internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
+    private readonly IMongoRepository<UserDocument> _userCollection;
+
+    public UpdateUserHandler(IUserValidationService userValidationService, IMapper mapper, IMongoCollectionFactory collectionFactory)
     {
-        private readonly IUserValidationService _userValidationService;
-        private readonly IMapper _mapper;
-        private readonly IUserTokenService _userTokenService;
+        _userValidationService = userValidationService;
+        _mapper = mapper;
 
-        private readonly IMongoRepository<UserDocument> _userCollection;
+        _userCollection = collectionFactory.GetCollection<UserDocument>();
+    }
 
-        public UpdateUserHandler(IUserValidationService userValidationService, IMapper mapper, IUserTokenService userTokenService, IMongoCollectionFactory collectionFactory)
-        {
-            _userValidationService = userValidationService;
-            _mapper = mapper;
-            _userTokenService = userTokenService;
+    public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    {
+        request.User.Password = _userValidationService.HashPassword(request.User.Password);
+        UserDocument newUserDoc = _mapper.Map<UserDocument>(request.User);
 
-            _userCollection = collectionFactory.GetCollection<UserDocument>();
-        }
+        var result = _userCollection.UpdateRecord(newUserDoc, x => x._id == newUserDoc._id);
 
-        public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
-        {
-            if (!_userTokenService.CheckTokenExistsAndNotExpired(request.Token))
-            {
-                throw new TokenNotFoundOrExpiredException();
-            }
-
-            request.User.Password = _userValidationService.HashPassword(request.User.Password);
-            UserDocument newUserDoc = _mapper.Map<UserDocument>(request.User);
-            newUserDoc._id = _userTokenService.GetUserFromToken(request.Token)._id;
-
-            var result = _userCollection.UpdateRecord(newUserDoc, x => x._id == newUserDoc._id);
-
-            if (!result)
-            {
-                throw new Exception($"Could not update user with id {newUserDoc._id}.");
-            }
-
-            return Task.CompletedTask;
-        }
+        return result 
+            ? Task.CompletedTask 
+            : throw new Exception($"Could not update user with id {newUserDoc._id}.");
     }
 }

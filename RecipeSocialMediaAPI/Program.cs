@@ -51,13 +51,11 @@ builder.Services.AddSingleton<IConfigManager, ConfigManager>();
 builder.Services.AddSingleton<IClock, SystemClock>();
 
 
-builder.Services.AddAutoMapper(typeof(UserMappingProfile), typeof(UserTokenMappingProfile));
+builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 
 // Setup business logic services
 builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
-builder.Services.AddTransient<ITokenGeneratorService, TokenGeneratorService>();
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IUserTokenService, UserTokenService>();
 
 builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
 
@@ -76,9 +74,9 @@ app.UseHttpsRedirection();
 
 // Setup endpoints
 app.MapUserEndpoints();
-app.MapUserTokenEndpoints();
 app.MapRecipeEndpoints();
 app.MapTestEndpoints();
+app.MapAuthenticationEndpoints();
 
 app.Run();
 

@@ -2,16 +2,15 @@
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.Data.DTO;
 
-namespace RecipeSocialMediaAPI.Mapper.Profiles
+namespace RecipeSocialMediaAPI.Mapper.Profiles;
+
+internal class UserMappingProfile : Profile
 {
-    internal class UserMappingProfile : Profile
+    public UserMappingProfile()
     {
-        public UserMappingProfile()
-        {
-            CreateMap<UserDto, UserDocument>();
-            CreateMap<UserDocument, UserDto>()
-                .ForSourceMember(s => s._id, o => o.DoNotValidate())
-                .ForSourceMember(s => s.Password, o => o.DoNotValidate());
-        }
+        CreateMap<UserDto, UserDocument>()
+            .ForMember(dest => dest._id, config => config.MapFrom(src => src.Id));
+        CreateMap<UserDocument, UserDto>()
+            .ForMember(dest => dest.Id, config => config.MapFrom(src => src._id));
     }
 }
