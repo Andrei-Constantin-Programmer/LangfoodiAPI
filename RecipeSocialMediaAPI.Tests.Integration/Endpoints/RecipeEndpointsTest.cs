@@ -16,12 +16,12 @@ public class RecipeEndpointsTest : EndpointTestBase
     [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesGet_NoRecipesCreated_ReturnsEmptyList()
     {
-        // Arrange
+        // Given
         
-        // Act
+        // When
         var result = await _client.GetAsync("/recipes/get");
 
-        // Assert
+        // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
@@ -33,7 +33,7 @@ public class RecipeEndpointsTest : EndpointTestBase
     [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesCreate_ValidRecipe_ReturnsOk()
     {
-        // Arrange
+        // Given
         var testRecipe = new RecipeDTO()
         {
             Id = 0,
@@ -42,10 +42,10 @@ public class RecipeEndpointsTest : EndpointTestBase
             Chef = "TestChef"
         };
 
-        // Act
+        // When
         var result = await _client.PostAsJsonAsync("/recipes/create", testRecipe);
 
-        // Assert
+        // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
@@ -53,7 +53,7 @@ public class RecipeEndpointsTest : EndpointTestBase
     [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesCreateAndGet_AfterValidRecipeCreated_GetReturnsTheNewRecipe()
     {
-        // Arrange
+        // Given
         RecipeDTO testRecipe = new()
         {
             Id = 0,
@@ -62,12 +62,12 @@ public class RecipeEndpointsTest : EndpointTestBase
             Chef = "TestChef"
         };
 
-        // Act
+        // When
         await _client.PostAsJsonAsync("/recipes/create", testRecipe);
 
         var result = await _client.GetAsync("/recipes/get");
 
-        // Assert
+        // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         
         var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
@@ -84,13 +84,13 @@ public class RecipeEndpointsTest : EndpointTestBase
     [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesGetById_RecipeDoesNotExist_ReturnsNotFound()
     {
-        // Arrange
+        // Given
         int testId = 1;
 
-        // Act
+        // When
         var result = await _client.PostAsync($"/recipes/getById/{testId}", null);
 
-        // Assert
+        // Then
         //result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         result.Content.Headers.Should().BeEmpty();
     }
@@ -99,7 +99,7 @@ public class RecipeEndpointsTest : EndpointTestBase
     [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesGetById_RecipeDoesExist_ReturnsRecipe()
     {
-        // Arrange
+        // Given
         RecipeDTO testRecipe = new()
         {
             Id = 1,
@@ -110,10 +110,10 @@ public class RecipeEndpointsTest : EndpointTestBase
 
         await _client.PostAsJsonAsync("/recipes/create", testRecipe);
 
-        // Act
+        // When
         var result = await _client.PostAsync($"/recipes/getById/{testRecipe.Id}", null);
 
-        // Assert
+        // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         var data = result.Content.ReadFromJsonAsync<RecipeDTO>().Result;
 
