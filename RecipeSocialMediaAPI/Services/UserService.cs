@@ -20,11 +20,11 @@ namespace RecipeSocialMediaAPI.Services
             UserDocument? userDoc = null;
             if (user.Email != string.Empty)
             {
-                userDoc = _userCollection.Find(user => user.Email.ToLower() == user.Email.ToLower());
+                userDoc = _userCollection.Find(u => user.Email.ToLower() == u.Email.ToLower());
             }
             else if (user.UserName != string.Empty)
             {
-                userDoc = _userCollection.Find(user => user.UserName == user.UserName);
+                userDoc = _userCollection.Find(u => user.UserName == u.UserName);
             }
 
             return userDoc != null && BCrypter.Verify(user.Password, userDoc.Password);
@@ -37,6 +37,5 @@ namespace RecipeSocialMediaAPI.Services
         public bool DoesUsernameExist(string username) =>
             _userCollection
                 .Contains(user => user.UserName == username);
-
     }
 }

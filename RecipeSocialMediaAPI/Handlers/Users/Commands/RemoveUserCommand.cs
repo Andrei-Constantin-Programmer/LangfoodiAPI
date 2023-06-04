@@ -2,41 +2,31 @@
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.Handlers.UserTokens.Notifications;
-using RecipeSocialMediaAPI.Services;
-using RecipeSocialMediaAPI.Utilities;
+using RecipeSocialMediaAPI.Exceptions;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Commands
+namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
+
+internal record RemoveUserCommand(string EmailOrId) : IRequest;
+
+internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
 {
-    internal record RemoveUserCommand(string Token) : IRequest;
+    private readonly IMongoRepository<UserDocument> _userCollection;
 
-    internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
+    public RemoveUserHandler(IMongoCollectionFactory collectionFactory)
     {
-        private readonly IPublisher _publisher;
-        private readonly IUserTokenService _userTokenService;
-        private readonly IMongoRepository<UserDocument> _userCollection;
+        _userCollection = collectionFactory.GetCollection<UserDocument>();
+    }
 
-        public RemoveUserHandler(IPublisher publisher, IUserTokenService userTokenService, IMongoCollectionFactory collectionFactory)
-        {
-            _publisher = publisher;
-            _userTokenService = userTokenService;
-            _userCollection = collectionFactory.GetCollection<UserDocument>();
-        }
+    public Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
+    {
+        UserDocument userDoc = _userCollection.Find(user => user.Email == request.EmailOrId)
+                            ?? _userCollection.Find(user => user.Id == request.EmailOrId)
+                            ?? throw new UserNotFoundException();
 
-        public async Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
-        {
-            await _publisher.Publish(new RemoveTokenNotification(request.Token), cancellationToken);
+        var successful = _userCollection.Delete(x => x.Id == userDoc.Id);
 
-            UserDocument userDoc = _userTokenService.GetUserFromToken(request.Token);
-
-            var successful = await Task.FromResult(_userCollection.Delete(x => x._id == userDoc._id));
-
-            if (!successful)
-            {
-                throw new Exception($"Could not remove user with id {userDoc._id}.");
-            }
-
-            await Task.CompletedTask;
-        }
+        return successful 
+            ? Task.CompletedTask 
+            : throw new Exception($"Could not remove user with id {userDoc.Id}.");
     }
 }
