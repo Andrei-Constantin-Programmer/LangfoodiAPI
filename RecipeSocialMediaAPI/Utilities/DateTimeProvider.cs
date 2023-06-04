@@ -1,8 +1,8 @@
-﻿using RecipeSocialMediaAPI.Services.Interfaces;
+﻿using Microsoft.Extensions.Internal;
 
 namespace RecipeSocialMediaAPI.Utilities
 {
-    internal class SystemClock : IClock
+    internal class DateTimeProvider : IDateTimeProvider
     {
         public DateTimeOffset Now => DateTimeOffset.UtcNow;
     }

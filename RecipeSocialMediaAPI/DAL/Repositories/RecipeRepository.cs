@@ -1,5 +1,5 @@
 ﻿using RecipeSocialMediaAPI.Data;
-using RecipeSocialMediaAPI.Services.Interfaces;
+using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.DAL.Repositories
 {
@@ -8,9 +8,9 @@ namespace RecipeSocialMediaAPI.DAL.Repositories
     {
         private readonly List<Recipe> _recipes;
 
-        private readonly IClock _dateTimeProvider;
+        private readonly IDateTimeProvider _dateTimeProvider;
         
-        public RecipeRepository(IClock dateTimeProvider)
+        public RecipeRepository(IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
 

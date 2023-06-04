@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data;
 using RecipeSocialMediaAPI.Data.DTO;
-using RecipeSocialMediaAPI.Services.Interfaces;
+using RecipeSocialMediaAPI.Utilities;
 
 namespace RecipeSocialMediaAPI.Handlers.Recipes.Commands
 {
@@ -11,9 +11,9 @@ namespace RecipeSocialMediaAPI.Handlers.Recipes.Commands
     internal class CreateRecipeHandler : IRequestHandler<CreateRecipeCommand>
     {
         private readonly IRecipeRepository _recipeRepository;
-        private readonly IClock _dateTimeProvider;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public CreateRecipeHandler(IRecipeRepository recipeRepository, IClock dateTimeProvider)
+        public CreateRecipeHandler(IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
         {
             _recipeRepository = recipeRepository;
             _dateTimeProvider = dateTimeProvider;
