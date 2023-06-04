@@ -30,8 +30,4 @@
     <ProjectReference Include="..\RecipeSocialMediaAPI\RecipeSocialMediaAPI.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestHelpers\Traits\" />
-  </ItemGroup>
-
 </Project>
