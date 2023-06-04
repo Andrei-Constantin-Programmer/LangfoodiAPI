@@ -6,7 +6,7 @@ using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Services;
 using System.Linq.Expressions;
 using Neleus.LambdaCompare;
-using RecipeSocialMediaAPI.Tests.TestHelpers;
+using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
 
 namespace RecipeSocialMediaAPI.Tests.Unit;
 
