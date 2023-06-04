@@ -63,6 +63,100 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    public async void UserUsernameExists_WhenUsernameExists_ReturnTrue()
+    {
+        // Given
+        UserDto testUser = new()
+        {
+            Id = null,
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        await (await _client
+            .PostAsJsonAsync("user/create", testUser))
+            .Content.ReadFromJsonAsync<UserDto>();
+
+        // When
+        var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+        
+        // Then
+        var resultContent = bool.Parse(await
+            result.Content.ReadAsStringAsync());
+
+        resultContent.Should().BeTrue();
+    }
+
+    [Fact]
+    public async void UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
+    {
+        // Given
+        UserDto testUser = new()
+        {
+            Id = null,
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        
+        // When
+        var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+
+        // Then
+        var resultContent = bool.Parse(await
+            result.Content.ReadAsStringAsync());
+
+        resultContent.Should().BeFalse();
+    }
+
+    [Fact]
+    public async void UserEmailExists_WhenEmailExists_ReturnTrue()
+    {
+        // Given
+        UserDto testUser = new()
+        {
+            Id = null,
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        await (await _client
+            .PostAsJsonAsync("user/create", testUser))
+            .Content.ReadFromJsonAsync<UserDto>();
+
+        // When
+        var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(testUser.Email)}", null);
+
+        // Then
+        var resultContent = bool.Parse(await
+            result.Content.ReadAsStringAsync());
+
+        resultContent.Should().BeTrue();
+    }
+
+    [Fact]
+    public async void UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
+    {
+        // Given
+        UserDto testUser = new()
+        {
+            Id = null,
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+
+        // When
+        var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(testUser.Email)}", null);
+
+        // Then
+        var resultContent = bool.Parse(await
+            result.Content.ReadAsStringAsync());
+
+        resultContent.Should().BeFalse();
+    }
+
+    [Fact]
     public async void UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
