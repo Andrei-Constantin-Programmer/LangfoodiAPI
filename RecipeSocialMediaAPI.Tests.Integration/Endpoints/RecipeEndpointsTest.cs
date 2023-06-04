@@ -13,7 +13,7 @@ public class RecipeEndpointsTest : EndpointTestBase
     public RecipeEndpointsTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
     [Fact]
-    [Trait(TraitKeys.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesGet_NoRecipesCreated_ReturnsEmptyList()
     {
         // Arrange
@@ -30,7 +30,7 @@ public class RecipeEndpointsTest : EndpointTestBase
     }
     
     [Fact]
-    [Trait(TraitKeys.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesCreate_ValidRecipe_ReturnsOk()
     {
         // Arrange
@@ -50,7 +50,7 @@ public class RecipeEndpointsTest : EndpointTestBase
     }
 
     [Fact]
-    [Trait(TraitKeys.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesCreateAndGet_AfterValidRecipeCreated_GetReturnsTheNewRecipe()
     {
         // Arrange
@@ -81,7 +81,7 @@ public class RecipeEndpointsTest : EndpointTestBase
     }
 
     [Fact]
-    [Trait(TraitKeys.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesGetById_RecipeDoesNotExist_ReturnsNotFound()
     {
         // Arrange
@@ -96,7 +96,7 @@ public class RecipeEndpointsTest : EndpointTestBase
     }
 
     [Fact]
-    [Trait(TraitKeys.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, "Recipe")]
     public async void RecipesGetById_RecipeDoesExist_ReturnsRecipe()
     {
         // Arrange

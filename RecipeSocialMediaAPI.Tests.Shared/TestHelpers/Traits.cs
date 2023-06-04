@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
 
-public static class TraitKeys
+public static class Traits
 {
     public const string DOMAIN = "Domain";
 }

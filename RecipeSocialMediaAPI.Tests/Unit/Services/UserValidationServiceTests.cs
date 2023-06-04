@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
 using BCrypter = BCrypt.Net.BCrypt;
 
-namespace RecipeSocialMediaAPI.Tests.Unit;
+namespace RecipeSocialMediaAPI.Tests.Unit.Unit.Services;
 public class UserValidationServiceTests
 {
     private readonly UserValidationService _userValidationServiceSUT;
@@ -14,6 +15,7 @@ public class UserValidationServiceTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, "User")]
     public void VerifyPassword_ValidPasswordAndHash_ReturnsTrue()
     {
         // Given
@@ -28,6 +30,7 @@ public class UserValidationServiceTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, "User")]
     public void VerifyPassword_InvalidPasswordAndHash_ReturnsFalse()
     {
         // Given
@@ -42,6 +45,7 @@ public class UserValidationServiceTests
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, "User")]
     [InlineData("username")]
     [InlineData("username123")]
     public void ValidUserName_ValidUserName_ReturnsTrue(string userName)
@@ -56,6 +60,7 @@ public class UserValidationServiceTests
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, "User")]
     [InlineData("invalid_username")]
     [InlineData("12")]
     public void ValidUserName_InvalidUserName_ReturnsFalse(string userName)
@@ -70,6 +75,7 @@ public class UserValidationServiceTests
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, "User")]
     [InlineData("test@example.com")]
     [InlineData("john.doe@example.com")]
     public void ValidEmail_ValidEmail_ReturnsTrue(string email)
@@ -84,6 +90,7 @@ public class UserValidationServiceTests
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, "User")]
     [InlineData("invalid_email")]
     [InlineData("example.com")]
     public void ValidEmail_InvalidEmail_ReturnsFalse(string email)
@@ -98,6 +105,7 @@ public class UserValidationServiceTests
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, "User")]
     [InlineData("P@ssw0rd")]
     [InlineData("Password123!")]
     public void ValidPassword_ValidPassword_ReturnsTrue(string password)
@@ -112,6 +120,7 @@ public class UserValidationServiceTests
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, "User")]
     [InlineData("invalid_password")]
     [InlineData("12345678")]
     public void ValidPassword_InvalidPassword_ReturnsFalse(string password)
@@ -126,6 +135,7 @@ public class UserValidationServiceTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, "User")]
     public void ValidUser_ValidUserDto_ReturnsTrue()
     {
         // Given
@@ -145,6 +155,7 @@ public class UserValidationServiceTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, "User")]
     public void ValidUser_InvalidUserDto_ReturnsFalse()
     {
         // Given

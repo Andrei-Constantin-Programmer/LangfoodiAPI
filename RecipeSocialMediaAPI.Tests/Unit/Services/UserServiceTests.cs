@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
 
-namespace RecipeSocialMediaAPI.Tests.Unit;
+namespace RecipeSocialMediaAPI.Tests.Unit.Unit.Services;
 
 public class UserServiceTests
 {
@@ -29,13 +29,13 @@ public class UserServiceTests
     }
 
     [Theory]
-    [Trait(TraitKeys.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, "User")]
     [InlineData("testemail")]
     [InlineData("TESTEMAIL")]
     public void DoesEmailExist_WhenRepositoryContainsEmail_CheckEmailEqualityCaseInsensitiveAndReturnTrue(string emailToCheck)
     {
         // Given
-        Expression<Func<UserDocument, bool>> testExpression = 
+        Expression<Func<UserDocument, bool>> testExpression =
             user => user.Email.ToLower() == emailToCheck.ToLower();
 
         _userRepositoryMock
@@ -53,7 +53,7 @@ public class UserServiceTests
     }
 
     [Theory]
-    [Trait(TraitKeys.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, "User")]
     [InlineData("testemail")]
     [InlineData("TESTEMAIL")]
     public void DoesEmailExist_WhenRepositoryDoesNotContainsEmail_CheckEmailEqualityCaseInsensitiveAndReturnFalse(string emailToCheck)
@@ -74,7 +74,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    [Trait(TraitKeys.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, "User")]
     public void DoesUsernameExist_WhenRepositoryContainsUsername_CheckUsernameAndReturnTrue()
     {
         // Given
@@ -97,7 +97,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    [Trait(TraitKeys.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, "User")]
     public void DoesUsernameExist_WhenRepositoryDoesNotContainsUsername_CheckUsernameAndReturnFalse()
     {
         // Given
