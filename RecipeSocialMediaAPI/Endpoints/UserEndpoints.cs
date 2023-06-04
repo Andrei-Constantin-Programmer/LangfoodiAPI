@@ -44,6 +44,10 @@ public static class UserEndpoints
                 await sender.Send(new UpdateUserCommand(user));
                 return Results.Ok();
             }
+            catch (UserNotFoundException)
+            {
+                return Results.BadRequest("User not found.");
+            }
             catch (Exception)
             {
                 return Results.StatusCode(500);

@@ -108,4 +108,28 @@ public class UserEndpointsTests : EndpointTestBase
         oldUserExists.Should().BeFalse();
         newUserExists.Should().BeTrue();
     }
+
+    [Fact]
+    public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnBadRequest()
+    {
+        // Given
+        UserDto testUser = new()
+        {
+            Id = null,
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+
+        // When
+        var result = await _client.PostAsJsonAsync("user/update", testUser);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+        var userExists = bool.Parse(await
+            userExistsResult.Content.ReadAsStringAsync());
+        userExists.Should().BeFalse();
+    }
 }
