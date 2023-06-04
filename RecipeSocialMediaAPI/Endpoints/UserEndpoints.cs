@@ -29,7 +29,7 @@ public static class UserEndpoints
             {
                 return Results.BadRequest("User already exists.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Results.StatusCode(500);
             }

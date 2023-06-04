@@ -7,8 +7,20 @@ namespace RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers.FakeDependen
 
 internal class FakeMongoCollectionFactory : IMongoCollectionFactory
 {
+    private readonly IMongoRepository<UserDocument> _userRepository;
+
+    public FakeMongoCollectionFactory()
+    {
+        _userRepository = new FakeRepository<UserDocument>();
+    }
+
     public IMongoRepository<TDocument> GetCollection<TDocument>() where TDocument : MongoDocument
-    => new FakeRepository<TDocument>();
+    => typeof(TDocument) switch
+    {
+        Type type when type == typeof(UserDocument) => (IMongoRepository<TDocument>)_userRepository,
+
+        _ => throw new NotImplementedException(),
+    };
 }
 
 internal class FakeRepository<TDocument> : IMongoRepository<TDocument> where TDocument : MongoDocument
@@ -40,8 +52,8 @@ internal class FakeRepository<TDocument> : IMongoRepository<TDocument> where TDo
     {
         try
         {
-            var userToChange = _collection.Single(user => expr.Compile()(user));
-            userToChange = record;
+            var index = _collection.FindIndex(user => expr.Compile()(user));
+            _collection[index] = record;
 
             return true;
         } catch (Exception)
