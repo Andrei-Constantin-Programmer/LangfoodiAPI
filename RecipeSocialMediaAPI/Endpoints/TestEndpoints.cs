@@ -4,7 +4,7 @@
     {
         public static void MapTestEndpoints(this WebApplication app)
         {
-            app.MapPost("/logtest", (ILogger<Program> logger) =>
+            app.MapPost("/test/log", (ILogger<Program> logger) =>
             {
                 logger.LogInformation("Hello World");
             });

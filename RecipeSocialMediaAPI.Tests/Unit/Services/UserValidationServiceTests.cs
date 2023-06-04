@@ -16,7 +16,7 @@ public class UserValidationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, "User")]
-    public void VerifyPassword_ValidPasswordAndHash_ReturnsTrue()
+    public void VerifyPassword_WhenValidPasswordAndHash_ReturnsTrue()
     {
         // Given
         string password = "P@ssw0rd";
@@ -31,7 +31,7 @@ public class UserValidationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, "User")]
-    public void VerifyPassword_InvalidPasswordAndHash_ReturnsFalse()
+    public void VerifyPassword_WhenInvalidPasswordAndHash_ReturnsFalse()
     {
         // Given
         string password = "P@ssw0rd";
@@ -48,7 +48,7 @@ public class UserValidationServiceTests
     [Trait(Traits.DOMAIN, "User")]
     [InlineData("username")]
     [InlineData("username123")]
-    public void ValidUserName_ValidUserName_ReturnsTrue(string userName)
+    public void ValidUserName_WhenValidUserName_ReturnsTrue(string userName)
     {
         // Given
 
@@ -63,7 +63,7 @@ public class UserValidationServiceTests
     [Trait(Traits.DOMAIN, "User")]
     [InlineData("invalid_username")]
     [InlineData("12")]
-    public void ValidUserName_InvalidUserName_ReturnsFalse(string userName)
+    public void ValidUserName_WhenInvalidUserName_ReturnsFalse(string userName)
     {
         // Given
 
@@ -78,7 +78,7 @@ public class UserValidationServiceTests
     [Trait(Traits.DOMAIN, "User")]
     [InlineData("test@example.com")]
     [InlineData("john.doe@example.com")]
-    public void ValidEmail_ValidEmail_ReturnsTrue(string email)
+    public void ValidEmail_WhenValidEmail_ReturnsTrue(string email)
     {
         // Given
 
@@ -93,7 +93,7 @@ public class UserValidationServiceTests
     [Trait(Traits.DOMAIN, "User")]
     [InlineData("invalid_email")]
     [InlineData("example.com")]
-    public void ValidEmail_InvalidEmail_ReturnsFalse(string email)
+    public void ValidEmail_WhenInvalidEmail_ReturnsFalse(string email)
     {
         // Given
 
@@ -108,7 +108,7 @@ public class UserValidationServiceTests
     [Trait(Traits.DOMAIN, "User")]
     [InlineData("P@ssw0rd")]
     [InlineData("Password123!")]
-    public void ValidPassword_ValidPassword_ReturnsTrue(string password)
+    public void ValidPassword_WhenValidPassword_ReturnsTrue(string password)
     {
         // Given
 
@@ -123,7 +123,7 @@ public class UserValidationServiceTests
     [Trait(Traits.DOMAIN, "User")]
     [InlineData("invalid_password")]
     [InlineData("12345678")]
-    public void ValidPassword_InvalidPassword_ReturnsFalse(string password)
+    public void ValidPassword_WhenInvalidPassword_ReturnsFalse(string password)
     {
         // Given
 
@@ -136,7 +136,7 @@ public class UserValidationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, "User")]
-    public void ValidUser_ValidUserDto_ReturnsTrue()
+    public void ValidUser_WhenValidUserDto_ReturnsTrue()
     {
         // Given
         var userDto = new UserDto
@@ -156,7 +156,7 @@ public class UserValidationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, "User")]
-    public void ValidUser_InvalidUserDto_ReturnsFalse()
+    public void ValidUser_WhenInvalidUserDto_ReturnsFalse()
     {
         // Given
         var userDto = new UserDto
