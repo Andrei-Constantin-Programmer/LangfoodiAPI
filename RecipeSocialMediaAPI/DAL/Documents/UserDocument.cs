@@ -5,8 +5,8 @@ namespace RecipeSocialMediaAPI.DAL.Documents
     [MongoCollection("User")]
     public record UserDocument : MongoDocument
     {
-        public required string UserName { get; set; }
-        public required string Email { get; set; }
-        public required string Password { get; set; }
+        required public string UserName { get; set; }
+        required public string Email { get; set; }
+        required public string Password { get; set; }
     }
 }

@@ -1,9 +1,9 @@
-﻿using RecipeSocialMediaAPI.DAL.Repositories;
-using MongoDB.Bson;
-using RecipeSocialMediaAPI.Services.Interfaces;
-using RecipeSocialMediaAPI.Data.DTO;
+﻿using MongoDB.Bson;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
+using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Services
 {

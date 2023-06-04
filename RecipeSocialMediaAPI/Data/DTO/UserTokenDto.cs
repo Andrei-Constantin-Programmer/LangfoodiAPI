@@ -2,6 +2,6 @@
 {
     public record UserTokenDto
     {
-        public required string Token { get; set; }
+        required public string Token { get; set; }
     }
 }
