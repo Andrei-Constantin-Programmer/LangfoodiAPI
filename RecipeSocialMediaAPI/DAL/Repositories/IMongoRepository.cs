@@ -1,5 +1,5 @@
-﻿using RecipeSocialMediaAPI.DAL.Documents;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using RecipeSocialMediaAPI.DAL.Documents;
 
 namespace RecipeSocialMediaAPI.DAL.Repositories
 {

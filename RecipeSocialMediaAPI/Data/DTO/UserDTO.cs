@@ -2,8 +2,8 @@
 
 public record UserDto
 {
-    public required string? Id { get; set; }
-    public required string UserName { get; set; }
-    public required string Email { get; set; }
-    public required string Password { get; set; }
+    required public string? Id { get; set; }
+    required public string UserName { get; set; }
+    required public string Email { get; set; }
+    required public string Password { get; set; }
 }
