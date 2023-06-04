@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Moq;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
@@ -131,5 +130,83 @@ public class UserEndpointsTests : EndpointTestBase
         var userExists = bool.Parse(await
             userExistsResult.Content.ReadAsStringAsync());
         userExists.Should().BeFalse();
+    }
+
+    [Fact]
+    public async void UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
+    {
+        // Given
+        UserDto testUser = new()
+        {
+            Id = null,
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        await(await _client
+            .PostAsJsonAsync("user/create", testUser))
+            .Content.ReadFromJsonAsync<UserDto>();
+
+        // When
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(testUser.Email)}");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+        var userExists = bool.Parse(await
+            userExistsResult.Content.ReadAsStringAsync());
+        userExists.Should().BeFalse();
+    }
+
+    [Fact]
+    public async void UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
+    {
+        // Given
+        UserDto testUser = new()
+        {
+            Id = null,
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        var user = await (await _client
+            .PostAsJsonAsync("user/create", testUser))
+            .Content.ReadFromJsonAsync<UserDto>();
+
+        // When
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user!.Id!)}");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+        var userExists = bool.Parse(await
+            userExistsResult.Content.ReadAsStringAsync());
+        userExists.Should().BeFalse();
+    }
+
+    [Fact]
+    public async void UserRemove_WhenUserEmailDoesNotExist_ReturnBadRequest()
+    {
+        // Given
+        var email = "test@mail.com";
+
+        // When
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(email)}");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async void UserRemove_WhenUserIdDoesNotExist_ReturnBadRequest()
+    {
+        // Given
+        var id = "1";
+
+        // When
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(id)}");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }
