@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
@@ -34,6 +35,6 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 
         return result 
             ? Task.CompletedTask 
-            : throw new Exception($"Could not update user with id {newUserDoc.Id}.");
+            : throw new UserNotFoundException();
     }
 }

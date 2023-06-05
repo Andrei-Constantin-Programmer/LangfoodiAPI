@@ -2,7 +2,9 @@ using RecipeSocialMediaAPI.Utilities;
 using System.Runtime.CompilerServices;
 using RecipeSocialMediaAPI.Configuration;
 
-[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests")]
+[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests.Unit")]
+[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests.Integration")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 var builder = WebApplication.CreateBuilder(args);
 builder.ConfigureLogging();

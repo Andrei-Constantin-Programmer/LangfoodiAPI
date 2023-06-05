@@ -11,13 +11,13 @@ namespace RecipeSocialMediaAPI.Endpoints
     {
         public static void MapRecipeEndpoints(this WebApplication app)
         {
-            app.MapGet("/recipes/get", async (
+            app.MapGet("/recipe/get", async (
                 [FromServices] ISender sender) =>
             {
                 return Results.Ok(await sender.Send(new GetRecipesQuery()));
             });
 
-            app.MapPost("/recipes/getById/{id}", async (
+            app.MapPost("/recipe/getById/{id}", async (
                 [FromRoute] int id, 
                 [FromServices] ISender sender) =>
             {
@@ -31,7 +31,7 @@ namespace RecipeSocialMediaAPI.Endpoints
                 }
             });
 
-            app.MapPost("/recipes/create", async (
+            app.MapPost("/recipe/create", async (
                 [FromBody] RecipeDTO recipe,
                 [FromServices] ISender sender) =>
             {

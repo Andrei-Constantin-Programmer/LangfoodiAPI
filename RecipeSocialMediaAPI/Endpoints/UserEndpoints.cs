@@ -11,7 +11,7 @@ public static class UserEndpoints
 {
     public static void MapUserEndpoints(this WebApplication app)
     {
-        app.MapPost("/users/createuser", async (
+        app.MapPost("/user/create", async (
             [FromBody] UserDto newUser, 
             [FromServices] ISender sender) =>
         {
@@ -35,7 +35,7 @@ public static class UserEndpoints
             }
         });
 
-        app.MapPost("/users/updateuser", async (
+        app.MapPost("/user/update", async (
             [FromBody] UserDto user, 
             [FromServices] ISender sender) =>
         {
@@ -44,13 +44,17 @@ public static class UserEndpoints
                 await sender.Send(new UpdateUserCommand(user));
                 return Results.Ok();
             }
+            catch (UserNotFoundException)
+            {
+                return Results.BadRequest("User not found.");
+            }
             catch (Exception)
             {
                 return Results.StatusCode(500);
             }
         });
         
-        app.MapDelete("/users/removeuser", async (
+        app.MapDelete("/user/remove", async (
             [FromQuery] string emailOrId, 
             [FromServices] ISender sender) =>
         {
@@ -70,7 +74,7 @@ public static class UserEndpoints
             }
         });
 
-        app.MapPost("/users/username/exists", async (
+        app.MapPost("/user/username/exists", async (
             [FromQuery] string username, 
             [FromServices] ISender sender) =>
         {
@@ -84,7 +88,7 @@ public static class UserEndpoints
             }
         });
 
-        app.MapPost("/users/email/exists", async (
+        app.MapPost("/user/email/exists", async (
             [FromQuery] string email, 
             [FromServices] ISender sender) =>
         {

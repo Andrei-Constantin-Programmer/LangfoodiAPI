@@ -1,7 +1,6 @@
 ﻿using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Mapper.Profiles;
-using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Utilities;
 
@@ -17,7 +16,7 @@ internal static class ServicesConfiguration
         // Singletons
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IConfigManager, ConfigManager>();
-        builder.Services.AddSingleton<IClock, SystemClock>();
+        builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
 
