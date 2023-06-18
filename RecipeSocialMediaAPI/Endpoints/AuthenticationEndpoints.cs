@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 
@@ -10,13 +11,12 @@ public static class AuthenticationEndpoints
     public static void MapAuthenticationEndpoints(this WebApplication app)
     {
         app.MapPost("/auth/authenticate", async (
-            [FromHeader] string usernameOrEmail,
-            [FromHeader] string password,
+            [FromBody] AuthenticationAttemptDTO authenticationAttempt,
             [FromServices] ISender sender) =>
         {
             try
             {
-                var successfulLogin = await sender.Send(new AuthenticateUserQuery(usernameOrEmail, password));
+                var successfulLogin = await sender.Send(new AuthenticateUserQuery(authenticationAttempt.UsernameOrEmail, authenticationAttempt.Password));
                 return Results.Ok(successfulLogin);
             }
             catch (InvalidCredentialsException)
