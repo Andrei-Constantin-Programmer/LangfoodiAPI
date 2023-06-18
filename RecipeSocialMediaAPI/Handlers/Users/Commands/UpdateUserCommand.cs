@@ -9,7 +9,7 @@ using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
-internal record UpdateUserCommand(UserDto User) : IRequest;
+internal record UpdateUserCommand(UserDTO User) : IRequest;
 
 internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {

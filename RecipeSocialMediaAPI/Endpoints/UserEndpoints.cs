@@ -12,7 +12,7 @@ public static class UserEndpoints
     public static void MapUserEndpoints(this WebApplication app)
     {
         app.MapPost("/user/create", async (
-            [FromBody] UserDto newUser, 
+            [FromBody] NewUserDTO newUser,
             [FromServices] ISender sender) =>
         {
             try
@@ -36,7 +36,7 @@ public static class UserEndpoints
         });
 
         app.MapPost("/user/update", async (
-            [FromBody] UserDto user, 
+            [FromBody] UserDTO user, 
             [FromServices] ISender sender) =>
         {
             try
@@ -102,4 +102,6 @@ public static class UserEndpoints
             }
         });
     }
+
+    
 }

@@ -139,16 +139,15 @@ public class UserValidationServiceTests
     public void ValidUser_WhenValidUserDto_ReturnsTrue()
     {
         // Given
-        var userDto = new UserDto
+        var newUserDto = new NewUserDTO
         {
-            Id = null,
             UserName = "username",
             Email = "test@example.com",
             Password = "P@ssw0rd"
         };
 
         // When
-        bool result = _userValidationServiceSUT.ValidUser(userDto);
+        bool result = _userValidationServiceSUT.ValidUser(newUserDto);
 
         // Then
         result.Should().BeTrue();
@@ -159,16 +158,15 @@ public class UserValidationServiceTests
     public void ValidUser_WhenInvalidUserDto_ReturnsFalse()
     {
         // Given
-        var userDto = new UserDto
+        var newUserDTO = new NewUserDTO
         {
-            Id = null,
             UserName = "invalid_username",
             Email = "invalid_email",
             Password = "invalid_password"
         };
 
         // When
-        bool result = _userValidationServiceSUT.ValidUser(userDto);
+        bool result = _userValidationServiceSUT.ValidUser(newUserDTO);
 
         // Then
         result.Should().BeFalse();
