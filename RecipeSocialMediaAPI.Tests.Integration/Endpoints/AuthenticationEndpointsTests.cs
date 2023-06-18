@@ -82,5 +82,61 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         authenticatedUser.Password.Should().Be(userInDb.Password);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, "Authentication")]
+    public async void Authenticate_WhenUserDoesNotExist_ReturnBadRequest()
+    {
+        // Given
+        UserDto userToCreate = new()
+        {
+            Id = null,
+            UserName = "testUser",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        await
+            (await _client
+                .PostAsJsonAsync("user/create", userToCreate))
+            .Content
+            .ReadFromJsonAsync<UserDto>();
 
+        // When
+        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptDTO()
+        {
+            UsernameOrEmail = "Inexistant user",
+            Password = userToCreate.Password
+        });
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, "Authentication")]
+    public async void Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
+    {
+        // Given
+        UserDto userToCreate = new()
+        {
+            Id = null,
+            UserName = "testUser",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        await
+            (await _client
+                .PostAsJsonAsync("user/create", userToCreate))
+            .Content
+            .ReadFromJsonAsync<UserDto>();
+
+        // When
+        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptDTO()
+        {
+            UsernameOrEmail = userToCreate.UserName,
+            Password = ""
+        });
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }

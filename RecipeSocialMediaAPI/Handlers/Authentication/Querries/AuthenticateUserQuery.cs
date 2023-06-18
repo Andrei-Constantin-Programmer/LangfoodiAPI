@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using BCrypter = BCrypt.Net.BCrypt;
 
@@ -27,10 +28,13 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
         UserDocument? user = _userRepository.Find(user => user.UserName == request.UsernameOrEmail)
                          ?? _userRepository.Find(user => user.Email == request.UsernameOrEmail);
 
-        var successfulLogin = BCrypter.Verify(request.Password, user?.Password);
+        if (user is null)
+        {
+            throw new UserNotFoundException();
+        }
 
-        if (user is null
-            || !successfulLogin)
+        var successfulLogin = BCrypter.Verify(request.Password, user?.Password);
+        if (!successfulLogin)
         {
             throw new InvalidCredentialsException();
         }

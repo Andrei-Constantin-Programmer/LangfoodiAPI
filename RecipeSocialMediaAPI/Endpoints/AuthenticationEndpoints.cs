@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 
@@ -18,6 +19,10 @@ public static class AuthenticationEndpoints
             {
                 var successfulLogin = await sender.Send(new AuthenticateUserQuery(authenticationAttempt.UsernameOrEmail, authenticationAttempt.Password));
                 return Results.Ok(successfulLogin);
+            }
+            catch (UserNotFoundException)
+            {
+                return Results.BadRequest("User not found.");
             }
             catch (InvalidCredentialsException)
             {
