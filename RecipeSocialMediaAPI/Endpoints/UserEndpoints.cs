@@ -23,7 +23,7 @@ public static class UserEndpoints
                 is ArgumentException 
                 or InvalidCredentialsException)
             {
-                return Results.BadRequest("Invalid credentials format.");
+                return Results.BadRequest("Invalid credentials.");
             }
             catch (UserAlreadyExistsException)
             {

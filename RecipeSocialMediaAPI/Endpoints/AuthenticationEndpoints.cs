@@ -21,7 +21,7 @@ public static class AuthenticationEndpoints
             }
             catch (InvalidCredentialsException)
             {
-                return Results.BadRequest("Invalid format.");
+                return Results.BadRequest("Invalid credentials.");
             }
             catch (Exception)
             {
