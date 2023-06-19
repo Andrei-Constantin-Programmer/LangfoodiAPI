@@ -8,9 +8,9 @@ using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
-internal record AddUserCommand(UserDto User) : IRequest<UserDto>;
+internal record AddUserCommand(NewUserDTO User) : IRequest<UserDTO>;
 
-internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDto>
+internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 {
     private readonly IUserValidationService _userValidationService;
     private readonly IUserService _userService;
@@ -26,16 +26,11 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDto>
         _userCollection = collectionFactory.GetCollection<UserDocument>();
     }
 
-    public Task<UserDto> Handle(AddUserCommand request, CancellationToken cancellationToken)
+    public Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         if (!_userValidationService.ValidUser(request.User))
         {
             throw new InvalidCredentialsException();
-        }
-
-        if (request.User.Id is not null)
-        {
-            throw new ArgumentException("You cannot insert a user with a predefined Id.");
         }
 
         if(_userService.DoesUsernameExist(request.User.UserName)
@@ -47,6 +42,6 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDto>
         request.User.Password = _userValidationService.HashPassword(request.User.Password);
         UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(request.User));
 
-        return Task.FromResult(_mapper.Map<UserDto>(insertedUser));
+        return Task.FromResult(_mapper.Map<UserDTO>(insertedUser));
     }
 }

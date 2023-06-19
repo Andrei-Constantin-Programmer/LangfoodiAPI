@@ -21,7 +21,7 @@ internal class UserValidationService : IUserValidationService
         }
     }
 
-    public bool ValidUser(UserDto user) =>
+    public bool ValidUser(NewUserDTO user) =>
         ValidUserName(user.UserName)
         && ValidEmail(user.Email)
         && ValidPassword(user.Password);

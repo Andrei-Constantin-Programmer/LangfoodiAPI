@@ -7,7 +7,7 @@ using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Queries
 {
-    internal record ValidUserLoginQuery(UserDto User) : IRequest<bool>;
+    internal record ValidUserLoginQuery(UserDTO User) : IRequest<bool>;
 
     internal class ValidUserLoginHandler : IRequestHandler<ValidUserLoginQuery, bool>
     {
