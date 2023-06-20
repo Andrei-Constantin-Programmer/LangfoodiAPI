@@ -11,7 +11,7 @@ pipelines:
               - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
               - dotnet restore
               - dotnet build --no-restore --configuration Release
-              - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"xunit;LogFilePath=$REPORTS_PATH/xunit.xml"
+              - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"xunit;LogFilePath=$REPORTS_PATH/test_results.xml"
         - step:
             name: Lint the code
             caches:
