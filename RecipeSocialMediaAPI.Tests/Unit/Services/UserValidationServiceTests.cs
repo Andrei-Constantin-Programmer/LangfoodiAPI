@@ -136,10 +136,10 @@ public class UserValidationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, "User")]
-    public void ValidUser_WhenValidUserDto_ReturnsTrue()
+    public void ValidUser_WhenValidUserDTO_ReturnsTrue()
     {
         // Given
-        var newUserDto = new NewUserDTO
+        var newUserDTO = new NewUserDTO
         {
             UserName = "username",
             Email = "test@example.com",
@@ -147,7 +147,7 @@ public class UserValidationServiceTests
         };
 
         // When
-        bool result = _userValidationServiceSUT.ValidUser(newUserDto);
+        bool result = _userValidationServiceSUT.ValidUser(newUserDTO);
 
         // Then
         result.Should().BeTrue();
@@ -155,7 +155,7 @@ public class UserValidationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, "User")]
-    public void ValidUser_WhenInvalidUserDto_ReturnsFalse()
+    public void ValidUser_WhenInvalidUserDTO_ReturnsFalse()
     {
         // Given
         var newUserDTO = new NewUserDTO

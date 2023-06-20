@@ -10,9 +10,9 @@ using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Handlers.Authentication.Querries;
 
-internal record AuthenticateUserQuery(string UsernameOrEmail, string Password) : IRequest<UserDto>;
+internal record AuthenticateUserQuery(string UsernameOrEmail, string Password) : IRequest<UserDTO>;
 
-internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, UserDto>
+internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, UserDTO>
 {
     private readonly IMongoRepository<UserDocument> _userRepository;
     private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
         _mapper = mapper;
     }
 
-    public Task<UserDto> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
+    public Task<UserDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
         UserDocument? user = _userRepository.Find(user => user.UserName == request.UsernameOrEmail)
                          ?? _userRepository.Find(user => user.Email == request.UsernameOrEmail);
@@ -39,6 +39,6 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
             throw new InvalidCredentialsException();
         }
 
-        return Task.FromResult(_mapper.Map<UserDto>(user));
+        return Task.FromResult(_mapper.Map<UserDTO>(user));
     }
 }

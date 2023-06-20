@@ -17,9 +17,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     public async void Authenticate_WhenValidUserWithUsername_ReturnUserFromDB()
     {
         // Given
-        UserDto userToCreate = new()
+        NewUserDTO userToCreate = new()
         {
-            Id = null,
             UserName = "testUser",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -28,7 +27,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             (await _client
                 .PostAsJsonAsync("user/create", userToCreate))
             .Content
-            .ReadFromJsonAsync<UserDto>())!;
+            .ReadFromJsonAsync<UserDTO>())!;
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptDTO() 
@@ -39,7 +38,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        UserDto authenticatedUser = (await result.Content.ReadFromJsonAsync<UserDto>())!;
+        UserDTO authenticatedUser = (await result.Content.ReadFromJsonAsync<UserDTO>())!;
 
         authenticatedUser.Id.Should().Be(userInDb.Id);
         authenticatedUser.UserName.Should().Be(userInDb.UserName);
@@ -52,9 +51,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     public async void Authenticate_WhenValidUserWithEmail_ReturnUserFromDB()
     {
         // Given
-        UserDto userToCreate = new()
+        NewUserDTO userToCreate = new()
         {
-            Id = null,
             UserName = "testUser",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -63,7 +61,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             (await _client
                 .PostAsJsonAsync("user/create", userToCreate))
             .Content
-            .ReadFromJsonAsync<UserDto>())!;
+            .ReadFromJsonAsync<UserDTO>())!;
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptDTO()
@@ -74,7 +72,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        UserDto authenticatedUser = (await result.Content.ReadFromJsonAsync<UserDto>())!;
+        UserDTO authenticatedUser = (await result.Content.ReadFromJsonAsync<UserDTO>())!;
 
         authenticatedUser.Id.Should().Be(userInDb.Id);
         authenticatedUser.UserName.Should().Be(userInDb.UserName);
@@ -87,9 +85,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     public async void Authenticate_WhenUserDoesNotExist_ReturnBadRequest()
     {
         // Given
-        UserDto userToCreate = new()
+        NewUserDTO userToCreate = new()
         {
-            Id = null,
             UserName = "testUser",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -98,7 +95,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             (await _client
                 .PostAsJsonAsync("user/create", userToCreate))
             .Content
-            .ReadFromJsonAsync<UserDto>();
+            .ReadFromJsonAsync<UserDTO>();
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptDTO()
@@ -116,9 +113,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     public async void Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
     {
         // Given
-        UserDto userToCreate = new()
+        NewUserDTO userToCreate = new()
         {
-            Id = null,
             UserName = "testUser",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -127,7 +123,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             (await _client
                 .PostAsJsonAsync("user/create", userToCreate))
             .Content
-            .ReadFromJsonAsync<UserDto>();
+            .ReadFromJsonAsync<UserDTO>();
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptDTO()
