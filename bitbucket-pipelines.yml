@@ -1,0 +1,27 @@
+image: mcr.microsoft.com/dotnet/sdk:7.0
+
+pipelines:
+  default:
+    - parallel:
+        - step:
+            name: Build and Test
+            caches:
+              - dotnetcore
+            script:
+              - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
+              - dotnet restore
+              - dotnet build --no-restore --configuration Release
+              - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"xunit;LogFilePath=$REPORTS_PATH/xunit.xml"
+        - step:
+            name: Lint the code
+            caches:
+              - dotnetcore
+            script:
+              - export SOLUTION_NAME=$SLN_NAME
+              - export REPORTS_PATH=linter-reports
+              - dotnet new tool-manifest
+              - dotnet tool install JetBrains.ReSharper.GlobalTools
+              - dotnet tool restore
+              - dotnet jb inspectcode ${SOLUTION_NAME}.sln --output="${REPORTS_PATH}/jb-${BITBUCKET_BUILD_NUMBER}.xml"
+            artifacts:
+              - linter-reports/**
