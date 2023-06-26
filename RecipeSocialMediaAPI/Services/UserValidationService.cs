@@ -4,7 +4,7 @@ using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Services;
 
-internal class UserValidationService : IUserValidationService
+public class UserValidationService : IUserValidationService
 {
     public string HashPassword(string password) =>
         BCrypter.HashPassword(password);

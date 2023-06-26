@@ -1,16 +1,19 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
+using OneOf;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.Validation;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
-internal record AddUserCommand(NewUserDTO User) : IRequest<UserDTO>;
+public record AddUserCommand(NewUserDTO User) : IRequest<OneOf<UserDTO, ValidationFailed>>;
 
-internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
+internal class AddUserHandler : IRequestHandler<AddUserCommand, OneOf<UserDTO, ValidationFailed>>
 {
     private readonly IUserValidationService _userValidationService;
     private readonly IUserService _userService;
@@ -26,13 +29,8 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
         _userCollection = collectionFactory.GetCollection<UserDocument>();
     }
 
-    public Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<UserDTO, ValidationFailed>> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if (!_userValidationService.ValidUser(request.User))
-        {
-            throw new InvalidCredentialsException();
-        }
-
         if(_userService.DoesUsernameExist(request.User.UserName)
             || _userService.DoesEmailExist(request.User.Email))
         {
@@ -42,6 +40,20 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
         request.User.Password = _userValidationService.HashPassword(request.User.Password);
         UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(request.User));
 
-        return Task.FromResult(_mapper.Map<UserDTO>(insertedUser));
+        return await Task.FromResult(_mapper.Map<UserDTO>(insertedUser));
+    }
+}
+
+public class AddUserValidator : AbstractValidator<AddUserCommand>
+{
+    private readonly IUserValidationService _userValidationService;
+
+    public AddUserValidator(IUserValidationService userValidationService)
+    {
+        _userValidationService = userValidationService;
+
+        RuleFor(x => x.User)
+            .NotEmpty()
+            .Must(_userValidationService.ValidUser);
     }
 }

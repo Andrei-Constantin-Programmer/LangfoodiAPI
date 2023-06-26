@@ -1,9 +1,11 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Handlers.Users.Queries;
+using RecipeSocialMediaAPI.Validation;
 
 namespace RecipeSocialMediaAPI.Endpoints;
 
@@ -17,11 +19,21 @@ public static class UserEndpoints
         {
             try
             {
-                return Results.Ok(await sender.Send(new AddUserCommand(newUser)));
+                var oneOfUser = await sender.Send(new AddUserCommand(newUser));
+                oneOfUser.TryPickT0(out UserDTO user, out ValidationFailed failure);
+
+                if (failure?.Errors?.Any() ?? false)
+                {
+                    throw new ValidationException(failure.Errors);
+                }
+
+                return Results.Ok(user);
             }
-            catch (Exception ex) when (ex 
-                is ArgumentException 
-                or InvalidCredentialsException)
+            catch (ValidationException)
+            {
+                return Results.BadRequest("Wrong input format.");
+            }
+            catch (InvalidCredentialsException)
             {
                 return Results.BadRequest("Invalid credentials.");
             }
