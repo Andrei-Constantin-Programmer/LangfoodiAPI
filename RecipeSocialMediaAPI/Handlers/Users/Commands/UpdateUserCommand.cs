@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
@@ -6,10 +7,11 @@ using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.Validation;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
-internal record UpdateUserCommand(UserDTO User) : IRequest;
+public record UpdateUserCommand(UserDTO User) : IValidatableRequestVoid;
 
 internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
@@ -36,5 +38,27 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
         return result 
             ? Task.CompletedTask 
             : throw new UserNotFoundException();
+    }
+}
+
+public class UpdateUserValidator : AbstractValidator<UpdateUserCommand>
+{
+    private readonly IUserValidationService _userValidationService;
+
+    public UpdateUserValidator(IUserValidationService userValidationService)
+    {
+        _userValidationService = userValidationService;
+
+        RuleFor(x => x.User.UserName)
+            .NotEmpty()
+            .Must(_userValidationService.ValidUserName);
+
+        RuleFor(x => x.User.Email)
+            .NotEmpty()
+            .Must(_userValidationService.ValidEmail);
+
+        RuleFor(x => x.User.Password)
+            .NotEmpty()
+            .Must(_userValidationService.ValidPassword);
     }
 }

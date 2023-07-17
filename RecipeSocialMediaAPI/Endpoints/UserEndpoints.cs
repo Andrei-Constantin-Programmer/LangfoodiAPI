@@ -19,7 +19,6 @@ public static class UserEndpoints
             try
             {
                 UserDTO user = await sender.Send(new AddUserCommand(newUser));
-
                 return Results.Ok(user);
             }
             catch (ValidationException)
@@ -44,6 +43,10 @@ public static class UserEndpoints
             {
                 await sender.Send(new UpdateUserCommand(user));
                 return Results.Ok();
+            }
+            catch (ValidationException)
+            {
+                return Results.BadRequest("Invalid input.");
             }
             catch (UserNotFoundException)
             {

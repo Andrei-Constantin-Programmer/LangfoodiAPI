@@ -165,7 +165,7 @@ public class UserEndpointsTests : EndpointTestBase
             .Content
             .ReadFromJsonAsync<UserDTO>())!;
 
-        UserDTO newUser = new()
+        UserDTO updatedUser = new()
         {
             Id = user.Id,
             UserName = "NewUsername",
@@ -174,13 +174,13 @@ public class UserEndpointsTests : EndpointTestBase
         };
 
         // When
-        var result = await _client.PostAsJsonAsync("user/update", newUser);
+        var result = await _client.PostAsJsonAsync("user/update", updatedUser);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var oldUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(user.UserName)}", null);
-        var newUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(newUser.UserName)}", null);
+        var newUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(updatedUser.UserName)}", null);
 
         var oldUserExists = bool.Parse(await 
             oldUserExistsResult.Content.ReadAsStringAsync());
@@ -198,8 +198,9 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnBadRequest()
     {
         // Given
-        NewUserDTO testUser = new()
+        UserDTO testUser = new()
         {
+            Id = "TestId",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -219,6 +220,42 @@ public class UserEndpointsTests : EndpointTestBase
             .ReadAsStringAsync());
 
         userExists.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData("", "test@mail.com", "Test@123")]
+    [InlineData("TestUsername", "test.com", "Test@123")]
+    [InlineData("TestUsername", "test@mail.com", "test")]
+    [Trait(Traits.DOMAIN, "User")]
+    public async void UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
+    {
+        // Given
+        NewUserDTO testUser = new()
+        {
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        var user = (await
+            (await _client
+                .PostAsJsonAsync("user/create", testUser))
+            .Content
+            .ReadFromJsonAsync<UserDTO>())!;
+
+        UserDTO updatedUser = new()
+        {
+            Id = user.Id,
+            UserName = username,
+            Password = email,
+            Email = password,
+        };
+
+        // When
+        var result = await _client.PostAsJsonAsync("user/update", updatedUser);
+
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]
