@@ -5,7 +5,6 @@ using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Handlers.Users.Queries;
-using RecipeSocialMediaAPI.Validation;
 
 namespace RecipeSocialMediaAPI.Endpoints;
 
@@ -19,23 +18,13 @@ public static class UserEndpoints
         {
             try
             {
-                var oneOfUser = await sender.Send(new AddUserCommand(newUser));
-                oneOfUser.TryPickT0(out UserDTO user, out ValidationFailed failure);
-
-                if (failure?.Errors?.Any() ?? false)
-                {
-                    throw new ValidationException(failure.Errors);
-                }
+                UserDTO user = await sender.Send(new AddUserCommand(newUser));
 
                 return Results.Ok(user);
             }
             catch (ValidationException)
             {
-                return Results.BadRequest("Wrong input format.");
-            }
-            catch (InvalidCredentialsException)
-            {
-                return Results.BadRequest("Invalid credentials.");
+                return Results.BadRequest("Invalid input.");
             }
             catch (UserAlreadyExistsException)
             {

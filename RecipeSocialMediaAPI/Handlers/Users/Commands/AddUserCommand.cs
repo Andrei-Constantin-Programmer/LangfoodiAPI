@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
-using OneOf;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
@@ -11,9 +10,9 @@ using RecipeSocialMediaAPI.Validation;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
-public record AddUserCommand(NewUserDTO User) : IRequest<OneOf<UserDTO, ValidationFailed>>;
+public record AddUserCommand(NewUserDTO User) : IValidatableRequest<UserDTO>;
 
-internal class AddUserHandler : IRequestHandler<AddUserCommand, OneOf<UserDTO, ValidationFailed>>
+internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 {
     private readonly IUserValidationService _userValidationService;
     private readonly IUserService _userService;
@@ -29,7 +28,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, OneOf<UserDTO, V
         _userCollection = collectionFactory.GetCollection<UserDocument>();
     }
 
-    public async Task<OneOf<UserDTO, ValidationFailed>> Handle(AddUserCommand request, CancellationToken cancellationToken)
+    public async Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         if(_userService.DoesUsernameExist(request.User.UserName)
             || _userService.DoesEmailExist(request.User.Email))

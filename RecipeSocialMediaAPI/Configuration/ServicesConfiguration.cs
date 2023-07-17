@@ -33,7 +33,6 @@ internal static class ServicesConfiguration
         // MediatR
         builder.Services.AddMediatR(config =>
             config.RegisterServicesFromAssemblyContaining<Program>()
-                .AddValidation<AddUserCommand, UserDTO>()
         );
     }
 }
