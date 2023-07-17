@@ -8,14 +8,14 @@ namespace RecipeSocialMediaAPI.Tests.Unit.Validators;
 
 public class AddUserValidatorTests
 {
-    private readonly AddUserValidator _addUserValidatorSUT;
+    private readonly AddUserCommandValidator _addUserValidatorSUT;
     private readonly Mock<IUserValidationService> _userValidationServiceMock;
 
     public AddUserValidatorTests() 
     {
         _userValidationServiceMock = new Mock<IUserValidationService>();
 
-        _addUserValidatorSUT = new AddUserValidator(_userValidationServiceMock.Object);
+        _addUserValidatorSUT = new AddUserCommandValidator(_userValidationServiceMock.Object);
     }
 
     [Fact]
@@ -83,8 +83,8 @@ public class AddUserValidatorTests
         var validationResult = _addUserValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.User.UserName);
-        validationResult.ShouldHaveValidationErrorFor(command => command.User.Email);
-        validationResult.ShouldHaveValidationErrorFor(command => command.User.Password);
+        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserCommand.UserName);
+        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserCommand.Email);
+        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserCommand.Password);
     }
 }

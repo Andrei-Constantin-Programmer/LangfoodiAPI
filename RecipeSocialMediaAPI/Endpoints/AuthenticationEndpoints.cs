@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Contracts;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
@@ -12,7 +12,7 @@ public static class AuthenticationEndpoints
     public static void MapAuthenticationEndpoints(this WebApplication app)
     {
         app.MapPost("/auth/authenticate", async (
-            [FromBody] AuthenticationAttemptDTO authenticationAttempt,
+            [FromBody] AuthenticationAttemptContract authenticationAttempt,
             [FromServices] ISender sender) =>
         {
             try

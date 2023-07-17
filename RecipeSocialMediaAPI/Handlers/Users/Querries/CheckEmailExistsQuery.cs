@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Services;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Queries;
 
-internal record CheckEmailExistsQuery(string Email) : IRequest<bool>;
+public record CheckEmailExistsQuery(string Email) : IRequest<bool>;
 
 internal class CheckEmailExistsHandler : IRequestHandler<CheckEmailExistsQuery, bool>
 {

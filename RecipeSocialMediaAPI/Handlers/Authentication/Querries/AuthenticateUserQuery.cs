@@ -3,7 +3,7 @@ using MediatR;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using BCrypter = BCrypt.Net.BCrypt;

@@ -1,6 +1,4 @@
-﻿using RecipeSocialMediaAPI.Data.DTO;
-
-namespace RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
+﻿namespace RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 public interface IUserValidationService
 {
