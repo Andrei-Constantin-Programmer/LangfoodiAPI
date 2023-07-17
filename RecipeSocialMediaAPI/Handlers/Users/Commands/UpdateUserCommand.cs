@@ -6,8 +6,8 @@ using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Exceptions;
-using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Validation;
+using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 

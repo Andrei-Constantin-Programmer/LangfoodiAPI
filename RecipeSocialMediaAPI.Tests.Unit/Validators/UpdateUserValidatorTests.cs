@@ -1,11 +1,8 @@
-﻿using FluentAssertions;
-using FluentValidation;
-using FluentValidation.TestHelper;
+﻿using FluentValidation.TestHelper;
 using Moq;
-using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
+using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 namespace RecipeSocialMediaAPI.Tests.Unit.Validators;
 

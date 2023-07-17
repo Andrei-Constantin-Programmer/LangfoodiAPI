@@ -1,11 +1,8 @@
-﻿using FluentAssertions;
-using FluentValidation;
-using FluentValidation.TestHelper;
+﻿using FluentValidation.TestHelper;
 using Moq;
-using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
+using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 namespace RecipeSocialMediaAPI.Tests.Unit.Validators;
 
@@ -36,14 +33,23 @@ public class AddUserValidatorTests
         );
 
         _userValidationServiceMock
-            .Setup(service => service.ValidUser(It.IsAny<NewUserDTO>()))
+            .Setup(service => service.ValidUserName(It.IsAny<string>()))
+            .Returns(true)
+            .Verifiable();
+        _userValidationServiceMock
+            .Setup(service => service.ValidEmail(It.IsAny<string>()))
+            .Returns(true)
+            .Verifiable();
+        _userValidationServiceMock
+            .Setup(service => service.ValidPassword(It.IsAny<string>()))
+            .Returns(true)
             .Verifiable();
 
         // When
-        var action = () => _addUserValidatorSUT.TestValidate(testCommand);
+        var validationResult = _addUserValidatorSUT.TestValidate(testCommand);
 
         // Then
-        action.Should().NotThrow();
+        validationResult.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
@@ -61,13 +67,24 @@ public class AddUserValidatorTests
         );
 
         _userValidationServiceMock
-            .Setup(service => service.ValidUser(It.IsAny<NewUserDTO>()))
-            .Callback(() => throw new ValidationException("Test exception"));
+            .Setup(service => service.ValidUserName(It.IsAny<string>()))
+            .Returns(false)
+            .Verifiable();
+        _userValidationServiceMock
+            .Setup(service => service.ValidEmail(It.IsAny<string>()))
+            .Returns(false)
+            .Verifiable();
+        _userValidationServiceMock
+            .Setup(service => service.ValidPassword(It.IsAny<string>()))
+            .Returns(false)
+            .Verifiable();
 
         // When
-        var action = () => _addUserValidatorSUT.TestValidate(testCommand);
+        var validationResult = _addUserValidatorSUT.TestValidate(testCommand);
 
         // Then
-        action.Should().Throw<ValidationException>();
+        validationResult.ShouldHaveValidationErrorFor(command => command.User.UserName);
+        validationResult.ShouldHaveValidationErrorFor(command => command.User.Email);
+        validationResult.ShouldHaveValidationErrorFor(command => command.User.Password);
     }
 }

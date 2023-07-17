@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.Data.DTO;
 using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Validation;
+using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
@@ -51,8 +52,16 @@ public class AddUserValidator : AbstractValidator<AddUserCommand>
     {
         _userValidationService = userValidationService;
 
-        RuleFor(x => x.User)
+        RuleFor(x => x.User.UserName)
             .NotEmpty()
-            .Must(_userValidationService.ValidUser);
+            .Must(_userValidationService.ValidUserName);
+
+        RuleFor(x => x.User.Email)
+            .NotEmpty()
+            .Must(_userValidationService.ValidEmail);
+
+        RuleFor(x => x.User.Password)
+            .NotEmpty()
+            .Must(_userValidationService.ValidPassword);
     }
 }
