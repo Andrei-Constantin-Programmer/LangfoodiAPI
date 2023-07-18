@@ -1,14 +1,18 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
+using RecipeSocialMediaAPI.Contracts;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.Validation;
+using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
-internal record AddUserCommand(NewUserDTO User) : IRequest<UserDTO>;
+public record AddUserCommand(NewUserContract NewUserCommand) : IValidatableRequest<UserDTO>;
 
 internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 {
@@ -26,22 +30,39 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
         _userCollection = collectionFactory.GetCollection<UserDocument>();
     }
 
-    public Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
+    public async Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if (!_userValidationService.ValidUser(request.User))
-        {
-            throw new InvalidCredentialsException();
-        }
-
-        if(_userService.DoesUsernameExist(request.User.UserName)
-            || _userService.DoesEmailExist(request.User.Email))
+        if(_userService.DoesUsernameExist(request.NewUserCommand.UserName)
+            || _userService.DoesEmailExist(request.NewUserCommand.Email))
         {
             throw new UserAlreadyExistsException();
         }
 
-        request.User.Password = _userValidationService.HashPassword(request.User.Password);
-        UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(request.User));
+        request.NewUserCommand.Password = _userValidationService.HashPassword(request.NewUserCommand.Password);
+        UserDocument insertedUser = _userCollection.Insert(_mapper.Map<UserDocument>(request.NewUserCommand));
 
-        return Task.FromResult(_mapper.Map<UserDTO>(insertedUser));
+        return await Task.FromResult(_mapper.Map<UserDTO>(insertedUser));
+    }
+}
+
+public class AddUserCommandValidator : AbstractValidator<AddUserCommand>
+{
+    private readonly IUserValidationService _userValidationService;
+
+    public AddUserCommandValidator(IUserValidationService userValidationService)
+    {
+        _userValidationService = userValidationService;
+
+        RuleFor(x => x.NewUserCommand.UserName)
+            .NotEmpty()
+            .Must(_userValidationService.ValidUserName);
+
+        RuleFor(x => x.NewUserCommand.Email)
+            .NotEmpty()
+            .Must(_userValidationService.ValidEmail);
+
+        RuleFor(x => x.NewUserCommand.Password)
+            .NotEmpty()
+            .Must(_userValidationService.ValidPassword);
     }
 }

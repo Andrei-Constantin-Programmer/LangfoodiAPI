@@ -1,10 +1,10 @@
 ﻿using System.Text.RegularExpressions;
-using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 using BCrypter = BCrypt.Net.BCrypt;
 
-namespace RecipeSocialMediaAPI.Services;
+namespace RecipeSocialMediaAPI.Validation.GenericValidators;
 
-internal class UserValidationService : IUserValidationService
+public class UserValidator : IUserValidationService
 {
     public string HashPassword(string password) =>
         BCrypter.HashPassword(password);
@@ -20,11 +20,6 @@ internal class UserValidationService : IUserValidationService
             return false;
         }
     }
-
-    public bool ValidUser(NewUserDTO user) =>
-        ValidUserName(user.UserName)
-        && ValidEmail(user.Email)
-        && ValidPassword(user.Password);
 
     public bool ValidPassword(string password) => 
         RegexPatternMatch(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$", password);

@@ -1,17 +1,17 @@
 ﻿using FluentAssertions;
-using RecipeSocialMediaAPI.Data.DTO;
-using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
+using RecipeSocialMediaAPI.Validation.GenericValidators;
 using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Tests.Unit.Services;
-public class UserValidationServiceTests
-{
-    private readonly UserValidationService _userValidationServiceSUT;
 
-    public UserValidationServiceTests()
+public class UserValidationTests
+{
+    private readonly UserValidator _userValidationServiceSUT;
+
+    public UserValidationTests()
     {
-        _userValidationServiceSUT = new UserValidationService();
+        _userValidationServiceSUT = new UserValidator();
     }
 
     [Fact]
@@ -129,44 +129,6 @@ public class UserValidationServiceTests
 
         // When
         bool result = _userValidationServiceSUT.ValidPassword(password);
-
-        // Then
-        result.Should().BeFalse();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, "User")]
-    public void ValidUser_WhenValidUserDTO_ReturnsTrue()
-    {
-        // Given
-        var newUserDTO = new NewUserDTO
-        {
-            UserName = "username",
-            Email = "test@example.com",
-            Password = "P@ssw0rd"
-        };
-
-        // When
-        bool result = _userValidationServiceSUT.ValidUser(newUserDTO);
-
-        // Then
-        result.Should().BeTrue();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, "User")]
-    public void ValidUser_WhenInvalidUserDTO_ReturnsFalse()
-    {
-        // Given
-        var newUserDTO = new NewUserDTO
-        {
-            UserName = "invalid_username",
-            Email = "invalid_email",
-            Password = "invalid_password"
-        };
-
-        // When
-        bool result = _userValidationServiceSUT.ValidUser(newUserDTO);
 
         // Then
         result.Should().BeFalse();

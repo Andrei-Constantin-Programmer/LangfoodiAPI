@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Contracts;
+using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Handlers.Users.Queries;
@@ -12,18 +14,17 @@ public static class UserEndpoints
     public static void MapUserEndpoints(this WebApplication app)
     {
         app.MapPost("/user/create", async (
-            [FromBody] NewUserDTO newUser,
+            [FromBody] NewUserContract newUserContract,
             [FromServices] ISender sender) =>
         {
             try
             {
-                return Results.Ok(await sender.Send(new AddUserCommand(newUser)));
+                UserDTO user = await sender.Send(new AddUserCommand(newUserContract));
+                return Results.Ok(user);
             }
-            catch (Exception ex) when (ex 
-                is ArgumentException 
-                or InvalidCredentialsException)
+            catch (ValidationException)
             {
-                return Results.BadRequest("Invalid credentials.");
+                return Results.BadRequest("Invalid input.");
             }
             catch (UserAlreadyExistsException)
             {
@@ -36,13 +37,17 @@ public static class UserEndpoints
         });
 
         app.MapPost("/user/update", async (
-            [FromBody] UserDTO user, 
+            [FromBody] UpdateUserContract updateUserContract, 
             [FromServices] ISender sender) =>
         {
             try
             {
-                await sender.Send(new UpdateUserCommand(user));
+                await sender.Send(new UpdateUserCommand(updateUserContract));
                 return Results.Ok();
+            }
+            catch (ValidationException)
+            {
+                return Results.BadRequest("Invalid input.");
             }
             catch (UserNotFoundException)
             {

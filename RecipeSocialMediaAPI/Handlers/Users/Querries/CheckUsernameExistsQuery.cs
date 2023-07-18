@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.DAL.Repositories;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Queries;
 
-internal record CheckUsernameExistsQuery(string Username) : IRequest<bool>;
+public record CheckUsernameExistsQuery(string Username) : IRequest<bool>;
 
 internal class CheckUsernameExistsHandler : IRequestHandler<CheckUsernameExistsQuery, bool>
 {

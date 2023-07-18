@@ -1,10 +1,9 @@
-﻿using RecipeSocialMediaAPI.Data.DTO;
+﻿using RecipeSocialMediaAPI.DTO;
 
-namespace RecipeSocialMediaAPI.Services
+namespace RecipeSocialMediaAPI.Services;
+
+internal interface IUserService
 {
-    internal interface IUserService
-    {
-        bool DoesEmailExist (string email);
-        bool DoesUsernameExist (string username);
-    }
+    bool DoesEmailExist (string email);
+    bool DoesUsernameExist (string username);
 }

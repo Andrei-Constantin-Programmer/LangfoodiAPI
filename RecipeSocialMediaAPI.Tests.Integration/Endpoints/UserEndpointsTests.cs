@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.Data.DTO;
+using RecipeSocialMediaAPI.Contracts;
+using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
 using System.Net;
@@ -18,7 +19,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserCreate_WhenValidUser_ReturnUserWithId()
     {
         // Given
-        var testUser = new NewUserDTO
+        NewUserContract contract = new()
         {
             UserName = "TestUsername",
             Email = "test@mail.com",
@@ -26,15 +27,15 @@ public class UserEndpointsTests : EndpointTestBase
         };
 
         // When
-        var result = await _client.PostAsJsonAsync("user/create", testUser);
+        var result = await _client.PostAsJsonAsync("user/create", contract);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         var data = (await result.Content.ReadFromJsonAsync<UserDTO>())!;
 
         data.Id.Should().NotBeNull();
-        data.UserName.Should().Be(testUser.UserName);
-        data.Email.Should().Be(testUser.Email);
+        data.UserName.Should().Be(contract.UserName);
+        data.Email.Should().Be(contract.Email);
     }
 
     [Theory]
@@ -45,7 +46,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserCreate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
-        NewUserDTO testUser = new()
+        NewUserContract contract = new()
         {
             UserName = username,
             Email = email,
@@ -53,7 +54,7 @@ public class UserEndpointsTests : EndpointTestBase
         };
 
         // When
-        var result = await _client.PostAsJsonAsync("user/create", testUser);
+        var result = await _client.PostAsJsonAsync("user/create", contract);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -63,18 +64,18 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUsernameExists_WhenUsernameExists_ReturnTrue()
     {
         // Given
-        NewUserDTO testUser = new()
+        NewUserContract contract = new()
         {
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
         };
         await (await _client
-            .PostAsJsonAsync("user/create", testUser))
+            .PostAsJsonAsync("user/create", contract))
             .Content.ReadFromJsonAsync<UserDTO>();
 
         // When
-        var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+        var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(contract.UserName)}", null);
         
         // Then
         var resultContent = bool.Parse(await
@@ -87,7 +88,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
     {
         // Given
-        NewUserDTO testUser = new()
+        NewUserContract contract = new()
         {
             UserName = "TestUsername",
             Email = "test@mail.com",
@@ -95,7 +96,7 @@ public class UserEndpointsTests : EndpointTestBase
         };
         
         // When
-        var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+        var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(contract.UserName)}", null);
 
         // Then
         var resultContent = bool.Parse(await
@@ -108,18 +109,18 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserEmailExists_WhenEmailExists_ReturnTrue()
     {
         // Given
-        NewUserDTO testUser = new()
+        NewUserContract contract = new()
         {
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
         };
         await (await _client
-            .PostAsJsonAsync("user/create", testUser))
+            .PostAsJsonAsync("user/create", contract))
             .Content.ReadFromJsonAsync<UserDTO>();
 
         // When
-        var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(testUser.Email)}", null);
+        var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(contract.Email)}", null);
 
         // Then
         var resultContent = bool.Parse(await
@@ -132,7 +133,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
     {
         // Given
-        NewUserDTO testUser = new()
+        NewUserContract contract = new()
         {
             UserName = "TestUsername",
             Email = "test@mail.com",
@@ -140,7 +141,7 @@ public class UserEndpointsTests : EndpointTestBase
         };
 
         // When
-        var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(testUser.Email)}", null);
+        var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(contract.Email)}", null);
 
         // Then
         var resultContent = bool.Parse(await
@@ -153,7 +154,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
-        NewUserDTO testUser = new()
+        NewUserContract createContract = new()
         {
             UserName = "TestUsername",
             Email = "test@mail.com",
@@ -161,11 +162,11 @@ public class UserEndpointsTests : EndpointTestBase
         };
         var user = (await 
             (await _client
-                .PostAsJsonAsync("user/create", testUser))
+                .PostAsJsonAsync("user/create", createContract))
             .Content
             .ReadFromJsonAsync<UserDTO>())!;
 
-        UserDTO newUser = new()
+        UpdateUserContract updateContract = new()
         {
             Id = user.Id,
             UserName = "NewUsername",
@@ -174,13 +175,13 @@ public class UserEndpointsTests : EndpointTestBase
         };
 
         // When
-        var result = await _client.PostAsJsonAsync("user/update", newUser);
+        var result = await _client.PostAsJsonAsync("user/update", updateContract);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var oldUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(user.UserName)}", null);
-        var newUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(newUser.UserName)}", null);
+        var newUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(updateContract.UserName)}", null);
 
         var oldUserExists = bool.Parse(await 
             oldUserExistsResult.Content.ReadAsStringAsync());
@@ -198,21 +199,22 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnBadRequest()
     {
         // Given
-        NewUserDTO testUser = new()
+        UpdateUserContract updateContract = new()
         {
+            Id = "TestId",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
         };
 
         // When
-        var result = await _client.PostAsJsonAsync("user/update", testUser);
+        var result = await _client.PostAsJsonAsync("user/update", updateContract);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
         var userExistsResult = await _client
-            .PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+            .PostAsync($"user/username/exists?username={Uri.EscapeDataString(updateContract.UserName)}", null);
 
         var userExists = bool.Parse(await
             userExistsResult.Content
@@ -221,26 +223,61 @@ public class UserEndpointsTests : EndpointTestBase
         userExists.Should().BeFalse();
     }
 
+    [Theory]
+    [InlineData("", "test@mail.com", "Test@123")]
+    [InlineData("TestUsername", "test.com", "Test@123")]
+    [InlineData("TestUsername", "test@mail.com", "test")]
+    [Trait(Traits.DOMAIN, "User")]
+    public async void UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
+    {
+        // Given
+        NewUserContract createContract = new()
+        {
+            UserName = "TestUsername",
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+        var user = (await
+            (await _client
+                .PostAsJsonAsync("user/create", createContract))
+            .Content
+            .ReadFromJsonAsync<UserDTO>())!;
+
+        UpdateUserContract updateContract = new()
+        {
+            Id = user.Id,
+            UserName = username,
+            Password = email,
+            Email = password,
+        };
+
+        // When
+        var result = await _client.PostAsJsonAsync("user/update", updateContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
     [Fact]
     public async void UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        NewUserDTO testUser = new()
+        NewUserContract createContract = new()
         {
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
         };
         await(await _client
-            .PostAsJsonAsync("user/create", testUser))
+            .PostAsJsonAsync("user/create", createContract))
             .Content.ReadFromJsonAsync<UserDTO>();
 
         // When
-        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(testUser.Email)}");
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(createContract.Email)}");
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(createContract.UserName)}", null);
         var userExists = bool.Parse(await
             userExistsResult.Content.ReadAsStringAsync());
         userExists.Should().BeFalse();
@@ -250,14 +287,14 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        NewUserDTO testUser = new()
+        NewUserContract createContract = new()
         {
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
         };
         var user = await (await _client
-            .PostAsJsonAsync("user/create", testUser))
+            .PostAsJsonAsync("user/create", createContract))
             .Content.ReadFromJsonAsync<UserDTO>();
 
         // When
@@ -265,7 +302,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(testUser.UserName)}", null);
+        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(createContract.UserName)}", null);
         var userExists = bool.Parse(await
             userExistsResult.Content.ReadAsStringAsync());
         userExists.Should().BeFalse();

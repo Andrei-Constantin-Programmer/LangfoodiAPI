@@ -6,7 +6,7 @@ using RecipeSocialMediaAPI.Exceptions;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
-internal record RemoveUserCommand(string EmailOrId) : IRequest;
+public record RemoveUserCommand(string EmailOrId) : IRequest;
 
 internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
 {
