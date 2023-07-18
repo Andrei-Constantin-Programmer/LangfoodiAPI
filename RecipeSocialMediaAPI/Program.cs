@@ -1,7 +1,7 @@
 using RecipeSocialMediaAPI.Utilities;
 using System.Runtime.CompilerServices;
 using RecipeSocialMediaAPI.Configuration;
-using RecipeSocialMediaAPI;
+using RecipeSocialMediaAPI.Middleware;
 
 [assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests.Unit")]
 [assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests.Integration")]

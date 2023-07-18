@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using System.Text.Json;
 
-namespace RecipeSocialMediaAPI;
+namespace RecipeSocialMediaAPI.Middleware;
 
 public class ExceptionMappingMiddleware
 {
@@ -72,17 +72,17 @@ public class ExceptionMappingMiddleware
         context.Response.StatusCode = statusCode;
 
         await context.Response
-            .WriteAsJsonAsync(jsonResponse, options: new JsonSerializerOptions() { WriteIndented = true} );
+            .WriteAsJsonAsync(jsonResponse, options: new JsonSerializerOptions() { WriteIndented = true });
     }
 }
 
-public record ValidationErrorResponse 
+public record ValidationErrorResponse
 {
     public string Message { get; } = "Validation failed";
     public IEnumerable<string> Errors { get; set; }
 
-    public ValidationErrorResponse(ValidationException validationException) 
-        : this (validationException.Errors
+    public ValidationErrorResponse(ValidationException validationException)
+        : this(validationException.Errors
               .Select(error => $"Invalid {GetFormattedPropertyName(error.PropertyName)} with value '{error.AttemptedValue}'.").Distinct())
     { }
 
@@ -96,9 +96,9 @@ public record ValidationErrorResponse
         const int containsPeriod = -1;
         int lastPeriodIndex = propertyName.LastIndexOf('.');
 
-        return 
+        return
             lastPeriodIndex == containsPeriod
-            ? propertyName 
+            ? propertyName
             : propertyName[(lastPeriodIndex + 1)..];
     }
 }
