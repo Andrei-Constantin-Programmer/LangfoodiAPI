@@ -83,7 +83,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, "Authentication")]
-    public async void Authenticate_WhenUserDoesNotExist_ReturnBadRequest()
+    public async void Authenticate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         NewUserContract userToCreate = new()
@@ -106,7 +106,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         });
 
         // Then
-        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

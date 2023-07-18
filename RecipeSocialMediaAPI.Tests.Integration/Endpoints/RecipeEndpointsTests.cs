@@ -91,8 +91,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         var result = await _client.PostAsync($"/recipe/getById/{testId}", null);
 
         // Then
-        //result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.Content.Headers.Should().BeEmpty();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

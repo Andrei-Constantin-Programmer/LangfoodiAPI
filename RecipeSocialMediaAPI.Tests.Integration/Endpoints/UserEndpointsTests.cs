@@ -196,7 +196,7 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
-    public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnBadRequest()
+    public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
     {
         // Given
         UpdateUserContract updateContract = new()
@@ -211,7 +211,7 @@ public class UserEndpointsTests : EndpointTestBase
         var result = await _client.PostAsJsonAsync("user/update", updateContract);
 
         // Then
-        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         var userExistsResult = await _client
             .PostAsync($"user/username/exists?username={Uri.EscapeDataString(updateContract.UserName)}", null);
@@ -309,7 +309,7 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
-    public async void UserRemove_WhenUserEmailDoesNotExist_ReturnBadRequest()
+    public async void UserRemove_WhenUserEmailDoesNotExist_ReturnNotFound()
     {
         // Given
         var email = "test@mail.com";
@@ -318,11 +318,11 @@ public class UserEndpointsTests : EndpointTestBase
         var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(email)}");
 
         // Then
-        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
-    public async void UserRemove_WhenUserIdDoesNotExist_ReturnBadRequest()
+    public async void UserRemove_WhenUserIdDoesNotExist_ReturnNotFound()
     {
         // Given
         var id = "1";
@@ -331,6 +331,6 @@ public class UserEndpointsTests : EndpointTestBase
         var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(id)}");
 
         // Then
-        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
