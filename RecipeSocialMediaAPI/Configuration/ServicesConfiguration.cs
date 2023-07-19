@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.Mapper.Profiles;
+using RecipeSocialMediaAPI.Mappers.Profiles;
 using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Utilities;
 using RecipeSocialMediaAPI.Validation.GenericValidators;

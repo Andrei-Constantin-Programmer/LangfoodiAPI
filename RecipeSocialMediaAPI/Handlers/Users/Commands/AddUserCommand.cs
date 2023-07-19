@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DAL.MongoConfiguration;
 using RecipeSocialMediaAPI.DAL.Repositories;
 using RecipeSocialMediaAPI.DTO;
+using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Validation;
 using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
@@ -32,10 +33,14 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 
     public async Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if(_userService.DoesUsernameExist(request.NewUserCommand.UserName)
-            || _userService.DoesEmailExist(request.NewUserCommand.Email))
+        if(_userService.DoesUsernameExist(request.NewUserCommand.UserName))
         {
-            throw new UserAlreadyExistsException();
+            throw new UsernameAlreadyInUseException(request.NewUserCommand.UserName);
+        }
+
+        if (_userService.DoesEmailExist(request.NewUserCommand.Email))
+        {
+            throw new EmailAlreadyInUseException(request.NewUserCommand.Email);
         }
 
         request.NewUserCommand.Password = _userValidationService.HashPassword(request.NewUserCommand.Password);

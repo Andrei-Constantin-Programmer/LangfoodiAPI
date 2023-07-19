@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Contracts;
 using RecipeSocialMediaAPI.DAL.Documents;
 using RecipeSocialMediaAPI.DTO;
 
-namespace RecipeSocialMediaAPI.Mapper.Profiles;
+namespace RecipeSocialMediaAPI.Mappers.Profiles;
 
 internal class UserMappingProfile : Profile
 {
