@@ -2,10 +2,9 @@
 using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Contracts;
-using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.MongoConfiguration;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Exceptions;
+using RecipeSocialMediaAPI.Model;
 using RecipeSocialMediaAPI.Validation;
 using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
@@ -18,28 +17,27 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
     private readonly IUserValidationService _userValidationService;
     private readonly IMapper _mapper;
 
-    private readonly IMongoRepository<UserDocument> _userCollection;
+    private readonly IUserRepository _userRepository;
 
-    public UpdateUserHandler(IUserValidationService userValidationService, IMapper mapper, IMongoCollectionFactory collectionFactory)
+    public UpdateUserHandler(IUserValidationService userValidationService, IMapper mapper, IUserRepository userRepository)
     {
         _userValidationService = userValidationService;
         _mapper = mapper;
 
-        _userCollection = collectionFactory.GetCollection<UserDocument>();
+        _userRepository = userRepository;
     }
 
     public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         request.UpdateUserContract.Password = _userValidationService.HashPassword(request.UpdateUserContract.Password);
-        UserDocument updatedUserDocument = new()
-        {
-            Id = request.UpdateUserContract.Id,
-            UserName = request.UpdateUserContract.UserName,
-            Email = request.UpdateUserContract.Email,
-            Password = request.UpdateUserContract.Password,
-        };
+        User updatedUser = new(
+            request.UpdateUserContract.Id,
+            request.UpdateUserContract.UserName,
+            request.UpdateUserContract.Email,
+            request.UpdateUserContract.Password
+        );
 
-        var result = _userCollection.UpdateRecord(updatedUserDocument, x => x.Id == updatedUserDocument.Id);
+        var result = _userRepository.UpdateUser(updatedUser);
 
         return result 
             ? Task.CompletedTask 

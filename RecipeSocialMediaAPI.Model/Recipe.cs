@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.DataModels;
+﻿namespace RecipeSocialMediaAPI.Model;
 
 public class Recipe
 {

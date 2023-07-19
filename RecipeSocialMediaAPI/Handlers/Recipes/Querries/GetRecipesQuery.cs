@@ -1,32 +1,31 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.DTO;
 
-namespace RecipeSocialMediaAPI.Handlers.Recipes.Queries
+namespace RecipeSocialMediaAPI.Handlers.Recipes.Queries;
+
+internal record GetRecipesQuery() : IRequest<IEnumerable<RecipeDTO>>;
+
+internal class GetRecipesHandler : IRequestHandler<GetRecipesQuery, IEnumerable<RecipeDTO>>
 {
-    internal record GetRecipesQuery() : IRequest<IEnumerable<RecipeDTO>>;
+    private readonly IRecipeRepository _recipeRepository;
 
-    internal class GetRecipesHandler : IRequestHandler<GetRecipesQuery, IEnumerable<RecipeDTO>>
+    public GetRecipesHandler(IRecipeRepository recipeRepository)
     {
-        private readonly IRecipeRepository _recipeRepository;
+        _recipeRepository = recipeRepository;
+    }
 
-        public GetRecipesHandler(IRecipeRepository recipeRepository)
-        {
-            _recipeRepository = recipeRepository;
-        }
-
-        public async Task<IEnumerable<RecipeDTO>> Handle(GetRecipesQuery request, CancellationToken cancellationToken)
-        {
-            return (await _recipeRepository
-                .GetAllRecipes())
-                .Select(recipe => new RecipeDTO()
-                {
-                    Id = recipe.Id,
-                    Title = recipe.Title,
-                    Description = recipe.Description,
-                    Chef = recipe.Chef,
-                    CreationDate = recipe.CreationDate,
-                });
-        }
+    public async Task<IEnumerable<RecipeDTO>> Handle(GetRecipesQuery request, CancellationToken cancellationToken)
+    {
+        return (await _recipeRepository
+            .GetAllRecipes())
+            .Select(recipe => new RecipeDTO()
+            {
+                Id = recipe.Id,
+                Title = recipe.Title,
+                Description = recipe.Description,
+                Chef = recipe.Chef,
+                CreationDate = recipe.CreationDate,
+            });
     }
 }

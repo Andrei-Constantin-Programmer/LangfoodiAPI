@@ -1,22 +1,22 @@
 ﻿using System.Linq.Expressions;
 using MongoDB.Driver;
-using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.MongoConfiguration;
-using RecipeSocialMediaAPI.Utilities;
+using RecipeSocialMediaAPI.DataAccess.Helpers;
+using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
+using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 
-namespace RecipeSocialMediaAPI.DAL.Repositories;
+namespace RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 
-internal class MongoRepository<TDocument> : IMongoRepository<TDocument> where TDocument : MongoDocument
+internal class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocument> where TDocument : MongoDocument
 {
     private readonly IMongoClient _mongoClient;
     private readonly IMongoDatabase _database;
     private readonly IMongoCollection<TDocument> _collection;
 
-    public MongoRepository(IConfigManager configManager)
+    public MongoCollectionWrapper(DatabaseConfiguration databaseConfiguration)
     {
-        _mongoClient = new MongoClient(configManager.GetMongoSetting("Connection"));
-        _database = _mongoClient.GetDatabase(configManager.GetMongoSetting("ClusterName"));
-        _collection = _database.GetCollection<TDocument>(MongoRepository<TDocument>.GetCollectionName(typeof(TDocument)));
+        _mongoClient = new MongoClient(databaseConfiguration.MongoConnectionString);
+        _database = _mongoClient.GetDatabase(databaseConfiguration.MongoClusterName);
+        _collection = _database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
     }
 
     public List<TDocument> GetAll(Expression<Func<TDocument, bool>> expr)

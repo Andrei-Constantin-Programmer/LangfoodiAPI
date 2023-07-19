@@ -18,7 +18,6 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 	<PackageReference Include="MediatR" Version="12.0.1"></PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
-    <PackageReference Include="MongoDB.Driver" Version="2.19.2" />
     <PackageReference Include="Serilog" Version="2.12.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
@@ -26,6 +25,11 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RecipeSocialMediaAPI.DataAccess\RecipeSocialMediaAPI.DataAccess.csproj" />
+    <ProjectReference Include="..\RecipeSocialMediaAPI.Model\RecipeSocialMediaAPI.Model.csproj" />
   </ItemGroup>
 
 </Project>
