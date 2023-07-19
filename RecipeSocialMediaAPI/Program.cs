@@ -1,6 +1,7 @@
 using RecipeSocialMediaAPI.Utilities;
 using System.Runtime.CompilerServices;
 using RecipeSocialMediaAPI.Configuration;
+using RecipeSocialMediaAPI.Middleware;
 
 [assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests.Unit")]
 [assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests.Integration")]
@@ -25,6 +26,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<ExceptionMappingMiddleware>();
 
 app.MapEndpoints();
 app.Run();

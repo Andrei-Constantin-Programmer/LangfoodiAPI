@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers;
-using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
+using RecipeSocialMediaAPI.Tests.Shared.Traits;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -91,8 +91,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         var result = await _client.PostAsync($"/recipe/getById/{testId}", null);
 
         // Then
-        //result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.Content.Headers.Should().BeEmpty();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

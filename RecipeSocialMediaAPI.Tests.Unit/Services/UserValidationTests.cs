@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
+using RecipeSocialMediaAPI.Tests.Shared.Traits;
 using RecipeSocialMediaAPI.Validation.GenericValidators;
 using BCrypter = BCrypt.Net.BCrypt;
 
