@@ -361,6 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-
-# Pipeline (so we don't have pipelines on feature branches)
-*.yml
