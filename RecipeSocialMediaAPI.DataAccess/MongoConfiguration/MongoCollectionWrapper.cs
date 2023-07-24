@@ -15,7 +15,7 @@ internal class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocu
     public MongoCollectionWrapper(DatabaseConfiguration databaseConfiguration)
     {
         _mongoClient = new MongoClient(databaseConfiguration.MongoConnectionString);
-        _database = _mongoClient.GetDatabase(databaseConfiguration.MongoClusterName);
+        _database = _mongoClient.GetDatabase(databaseConfiguration.MongoDatabaseName);
         _collection = _database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
     }
 

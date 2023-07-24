@@ -3,5 +3,5 @@
 public record DatabaseConfiguration
 (
     string MongoConnectionString,
-    string MongoClusterName
+    string MongoDatabaseName
 );

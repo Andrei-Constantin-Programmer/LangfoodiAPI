@@ -1,6 +1,9 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
+using System.Runtime.CompilerServices;
+
+[assembly:InternalsVisibleTo("RecipeSocialMediaAPI.DataAccess.Tests.Integration")]
 
 namespace RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 
