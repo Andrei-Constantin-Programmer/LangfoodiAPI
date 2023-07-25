@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using MediatR;
+using MediatR.Pipeline;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
@@ -9,6 +11,7 @@ using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Mappers.Profiles;
 using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Utilities;
+using RecipeSocialMediaAPI.Validation;
 using RecipeSocialMediaAPI.Validation.GenericValidators;
 using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
@@ -26,8 +29,8 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
         builder.Services.AddSingleton<IUserValidationService, UserValidator>();
-        builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
+        builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 
         // Transients
         builder.Services.AddTransient<IUserService, UserService>();
@@ -37,8 +40,10 @@ internal static class ServicesConfiguration
 
         // MediatR
         builder.Services.AddMediatR(config =>
-            config.RegisterServicesFromAssemblyContaining<Program>()
-        );
+        {
+            config.RegisterServicesFromAssemblyContaining<Program>();
+            config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>));
+        });
     }
 
     private static DatabaseConfiguration GenerateDatabaseConfiguration(ConfigurationManager configurationManager) => new(
