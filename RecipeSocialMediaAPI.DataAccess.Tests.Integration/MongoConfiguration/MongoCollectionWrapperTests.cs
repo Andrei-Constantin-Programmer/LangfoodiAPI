@@ -21,10 +21,61 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    public void GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
+    {
+        // Given
+        List<TestDocument> existingDocuments = new();
+        for(int i = 0; i <= 10; i++)
+        {
+            existingDocuments.Add(new() { TestProperty = i.ToString() });
+        }
+
+        _dbFixture.TestCollection.InsertMany(existingDocuments);
+
+        // When
+        var result = _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('1'));
+
+        // Then
+        result.Should().OnlyContain(doc => doc.TestProperty == "1" || doc.TestProperty == "10");
+        result.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void GetAll_WhenNoDocumentsMatch_ReturnEmptyList()
+    {
+        // Given
+        List<TestDocument> existingDocuments = new();
+        for (int i = 0; i <= 10; i++)
+        {
+            existingDocuments.Add(new() { TestProperty = i.ToString() });
+        }
+
+        _dbFixture.TestCollection.InsertMany(existingDocuments);
+
+        // When
+        var result = _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('a'));
+
+        // Then
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetAll_WhenThereAreNoDocuments_ReturnEmptyList()
+    {
+        // Given
+
+        // When
+        var result = _mongoCollectionWrapperSUT.GetAll(_ => true);
+
+        // Then
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
     public void Insert_AddsDocumentToTheDatabaseAndReturnsDocument()
     {
         // Given
-        TestDocument testDocument = new() { Id = null, TestProperty = "Test 1" };
+        TestDocument testDocument = new() { TestProperty = "Test 1" };
 
         // When
         var document = _mongoCollectionWrapperSUT.Insert(testDocument);
@@ -39,7 +90,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrue()
     {
         // Given
-        TestDocument testDocument = new() { Id = null, TestProperty = "Test 1" };
+        TestDocument testDocument = new() { TestProperty = "Test 1" };
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
@@ -56,10 +107,10 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         // Given
         List<TestDocument> testDocuments = new()
         {
-            new() { Id = null, TestProperty = "To Delete 1" },
-            new() { Id = null, TestProperty = "To Delete 2" },
-            new() { Id = null, TestProperty = "To Keep 1" },
-            new() { Id = null, TestProperty = "To Keep 2" },
+            new() { TestProperty = "To Delete 1" },
+            new() { TestProperty = "To Delete 2" },
+            new() { TestProperty = "To Keep 1" },
+            new() { TestProperty = "To Keep 2" },
         };
         _dbFixture.TestCollection.InsertMany(testDocuments);
 
@@ -77,7 +128,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void Delete_WhenNoDocumentWithConditionExists_ReturnFalse()
     {
         // Given
-        TestDocument testDocument = new() { Id = null, TestProperty = "Test 1" };
+        TestDocument testDocument = new() { TestProperty = "Test 1" };
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
@@ -88,5 +139,125 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.Find(doc => true).ToList().Should().Contain(doc => doc == testDocument);
     }
 
+    [Fact]
+    public void Delete_WhenNoDocumentExists_ReturnFalse()
+    {
+        // Given
+        
+        // When
+        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
 
+        // Then
+        wasDeleted.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Find_WhenNoDocumentWithConditionExists_ReturnNull()
+    {
+        // Given
+        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        _dbFixture.TestCollection.InsertOne(testDocument);
+
+        // When
+        var documentFromDb = _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == "Nonexistent");
+
+        // Then
+        documentFromDb.Should().BeNull();
+    }
+
+    [Fact]
+    public void Find_WhenNoDocumentExists_ReturnNull()
+    {
+        // Given
+        
+        // When
+        var documentFromDb = _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == "Nonexistent");
+
+        // Then
+        documentFromDb.Should().BeNull();
+    }
+
+    [Fact]
+    public void Find_WhenDocumentWithConditionExists_ReturnDocument()
+    {
+        // Given
+        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        _dbFixture.TestCollection.InsertOne(testDocument);
+
+        // When
+        var documentFromDb = _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == testDocument.TestProperty);
+
+        // Then
+        documentFromDb.Should().Be(testDocument);
+    }
+
+    [Fact]
+    public void Find_WhenMultipleDocumentsWithConditionExist_ReturnTheFirstOne()
+    {
+        // Given
+        List<TestDocument> testDocuments = new()
+        {
+            new() { TestProperty = "Example 1" },
+            new() { TestProperty = "Example 2" },
+            new() { TestProperty = "Test 1" },
+            new() { TestProperty = "Test 2" },
+        };
+        _dbFixture.TestCollection.InsertMany(testDocuments);
+
+        // When
+        var documentFromDb = _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty!.Contains("Test"));
+
+        // Then
+        documentFromDb.Should().Be(testDocuments.Skip(2).First());
+    }
+
+    [Fact]
+    public void UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdate()
+    {
+        // Given
+        TestDocument testDocument = new() { TestProperty = "Test" };
+        _dbFixture.TestCollection.InsertOne(testDocument);
+
+        TestDocument updatedDocument = new() { TestProperty = "Updated" };
+
+        // When
+        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.TestProperty == "Nonexistent");
+
+        // Then
+        wasUpdatedSuccessfully.Should().BeFalse();
+        _dbFixture.TestCollection.Find(doc => true).ToList().Should().OnlyContain(doc => doc == testDocument);
+        _dbFixture.TestCollection.Find(doc => true).ToList().Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdate()
+    {
+        // Given
+        TestDocument updatedDocument = new() { TestProperty = "Updated" };
+
+        // When
+        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => true);
+
+        // Then
+        wasUpdatedSuccessfully.Should().BeFalse();
+        _dbFixture.TestCollection.Find(doc => true).ToList().Should().BeEmpty();
+    }
+
+    [Fact]
+    public void UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdate()
+    {
+        // Given
+        TestDocument testDocument = new() { TestProperty = "Test" };
+        _dbFixture.TestCollection.InsertOne(testDocument);
+
+        TestDocument updatedDocument = new() { Id = testDocument.Id, TestProperty = "Updated" };
+
+        // When
+        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.Id == testDocument.Id);
+
+        // Then
+        wasUpdatedSuccessfully.Should().BeTrue();
+        _dbFixture.TestCollection.Find(doc => true).ToList().Should().OnlyContain(doc => doc.Id == testDocument.Id && doc.TestProperty == updatedDocument.TestProperty);
+        _dbFixture.TestCollection.Find(doc => true).ToList().Should().HaveCount(1);
+    }
 }

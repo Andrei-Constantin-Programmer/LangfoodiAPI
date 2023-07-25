@@ -58,7 +58,6 @@ public class UserRepository : IUserRepository
     {
         UserDocument newUserDocument = new()
         {
-            Id = null,
             UserName = username,
             Email = email,
             Password = password
