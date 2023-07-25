@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 
 namespace RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 
-internal interface IMongoCollectionWrapper<TDocument> where TDocument : MongoDocument
+public interface IMongoCollectionWrapper<TDocument> where TDocument : MongoDocument
 {
     List<TDocument> GetAll(Expression<Func<TDocument, bool>> expr);
     TDocument Insert(TDocument doc);

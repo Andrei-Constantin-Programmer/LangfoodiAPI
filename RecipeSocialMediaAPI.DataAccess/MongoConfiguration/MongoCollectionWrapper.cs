@@ -1,12 +1,13 @@
 ﻿using System.Linq.Expressions;
 using MongoDB.Driver;
+using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 
 namespace RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 
-internal class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocument> where TDocument : MongoDocument
+public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocument> where TDocument : MongoDocument
 {
     private readonly IMongoClient _mongoClient;
     private readonly IMongoDatabase _database;
@@ -26,8 +27,15 @@ internal class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocu
 
     public TDocument Insert(TDocument doc)
     {
-        _collection?.InsertOne(doc);
-        return doc;
+        try
+        {
+            _collection?.InsertOne(doc);
+            return doc;
+        }
+        catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+        {
+            throw new DocumentAlreadyExistsException<TDocument>(doc);
+        }
     }
 
     public bool Delete(Expression<Func<TDocument, bool>> expr)

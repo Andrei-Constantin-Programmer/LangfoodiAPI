@@ -1,8 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Services;
-using System.Linq.Expressions;
-using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.Tests.Shared.Traits;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Model;

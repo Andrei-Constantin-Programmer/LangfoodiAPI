@@ -15,8 +15,4 @@
     <ProjectReference Include="..\RecipeSocialMediaAPI.Model\RecipeSocialMediaAPI.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mappers\Interfaces\" />
-  </ItemGroup>
-
 </Project>

@@ -1,6 +1,4 @@
-﻿using RecipeSocialMediaAPI.DataAccess.Helpers;
-using RecipeSocialMediaAPI.DataAccess.Mappers;
-using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
+﻿using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
@@ -10,19 +8,19 @@ namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly DatabaseConfiguration _databaseConfiguration;
     private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
+    private readonly IUserDocumentToModelMapper _mapper;
 
-    public UserRepository(DatabaseConfiguration databaseConfiguration)
+    public UserRepository(IUserDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory)
     {
-        _databaseConfiguration = databaseConfiguration;
-        _userCollection = new MongoCollectionWrapper<UserDocument>(_databaseConfiguration);
+        _mapper = mapper;
+        _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
     public IEnumerable<User> GetAllUsers() =>
         _userCollection
             .GetAll((_) => true)
-            .Select(UserDocumentToModelMapper.MapUserDocumentToUser);
+            .Select(_mapper.MapUserDocumentToUser);
 
     public User? GetUserById(string id)
     {
@@ -31,7 +29,7 @@ public class UserRepository : IUserRepository
 
         return userDocument is null 
             ? null
-            : UserDocumentToModelMapper.MapUserDocumentToUser(userDocument);
+            : _mapper.MapUserDocumentToUser(userDocument);
     }
 
     public User? GetUserByEmail(string email)
@@ -41,7 +39,7 @@ public class UserRepository : IUserRepository
 
         return userDocument is null
             ? null
-            : UserDocumentToModelMapper.MapUserDocumentToUser(userDocument);
+            : _mapper.MapUserDocumentToUser(userDocument);
     }
 
     public User? GetUserByUsername(string username)
@@ -51,7 +49,7 @@ public class UserRepository : IUserRepository
 
         return userDocument is null
             ? null
-            : UserDocumentToModelMapper.MapUserDocumentToUser(userDocument);
+            : _mapper.MapUserDocumentToUser(userDocument);
     }
 
     public User CreateUser(string username, string email, string password)
@@ -65,7 +63,7 @@ public class UserRepository : IUserRepository
 
         newUserDocument = _userCollection.Insert(newUserDocument);
 
-        return UserDocumentToModelMapper.MapUserDocumentToUser(newUserDocument);
+        return _mapper.MapUserDocumentToUser(newUserDocument);
     }
 
     public bool DeleteUser(User user) => DeleteUser(user.Id);
@@ -74,7 +72,12 @@ public class UserRepository : IUserRepository
 
     public bool UpdateUser(User user)
     {
-        var userDocument = _userCollection.Find(userDoc => userDoc.Id == user.Id)!;
+        var userDocument = _userCollection.Find(userDoc => userDoc.Id == user.Id);
+
+        if (userDocument is null)
+        {
+            return false;
+        }
 
         userDocument.UserName = user.UserName;
         userDocument.Email = user.Email;

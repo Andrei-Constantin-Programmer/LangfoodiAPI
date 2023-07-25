@@ -1,5 +1,9 @@
 ﻿using FluentValidation;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
+using RecipeSocialMediaAPI.DataAccess.Mappers;
+using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
+using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
+using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Mappers.Profiles;
@@ -23,9 +27,11 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
         builder.Services.AddSingleton<IUserValidationService, UserValidator>();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
+        builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
 
         // Transients
         builder.Services.AddTransient<IUserService, UserService>();
+        builder.Services.AddTransient<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
 
         // Scoped
 

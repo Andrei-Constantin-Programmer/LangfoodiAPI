@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using MongoDB.Driver;
+using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 using RecipeSocialMediaAPI.DataAccess.Tests.Integration.IntegrationHelpers;
+using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Integration.MongoConfiguration;
 
@@ -84,6 +86,20 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         document.Should().Be(testDocument);
         var documentFromDb = _dbFixture.TestCollection.Find(doc => doc.Id == testDocument.Id).First();
         documentFromDb.Should().Be(testDocument);
+    }
+
+    [Fact]
+    public void Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsException()
+    {
+        // Given
+        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        _dbFixture.TestCollection.InsertOne(testDocument);
+
+        // When
+        var action = () => _mongoCollectionWrapperSUT.Insert(testDocument);
+
+        // Then
+        action.Should().Throw<DocumentAlreadyExistsException<TestDocument>>();
     }
 
     [Fact]

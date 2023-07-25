@@ -1,11 +1,12 @@
-﻿using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
+﻿using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
+using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Model;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers;
 
-internal static class UserDocumentToModelMapper
+public class UserDocumentToModelMapper : IUserDocumentToModelMapper
 {
-    public static User MapUserDocumentToUser(UserDocument userDocument)
+    public User MapUserDocumentToUser(UserDocument userDocument)
     {
         if (userDocument.Id is null)
         {

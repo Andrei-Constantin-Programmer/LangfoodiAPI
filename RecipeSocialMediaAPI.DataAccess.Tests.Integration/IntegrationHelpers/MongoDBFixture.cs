@@ -1,6 +1,7 @@
 ﻿using Mongo2Go;
 using MongoDB.Driver;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
+using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Integration.IntegrationHelpers;
 
