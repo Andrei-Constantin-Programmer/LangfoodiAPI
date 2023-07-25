@@ -323,7 +323,7 @@ public class UserRepositoryTests
             .Returns(true);
 
         // When
-        var result = _userRepositorySUT.DeleteUser(testDocument.Id);
+        var result = _userRepositorySUT.DeleteUser(testDocument.Id!);
 
         // Then
         result.Should().BeTrue();
@@ -342,7 +342,7 @@ public class UserRepositoryTests
             .Returns(true);
 
         // When
-        var result = _userRepositorySUT.DeleteUser(new User(testDocument.Id, testDocument.UserName, testDocument.Email, testDocument.Password));
+        var result = _userRepositorySUT.DeleteUser(new User(testDocument.Id!, testDocument.UserName, testDocument.Email, testDocument.Password));
 
         // Then
         result.Should().BeTrue();
