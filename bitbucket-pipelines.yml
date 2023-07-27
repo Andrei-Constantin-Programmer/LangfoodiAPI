@@ -1,8 +1,8 @@
 image: mcr.microsoft.com/dotnet/sdk:7.0
 
 pipelines:
-  branches:
-    '{master,develop}':
+  pull-requests:
+    '**':
     - parallel:
         - step:
             name: Build and Test
