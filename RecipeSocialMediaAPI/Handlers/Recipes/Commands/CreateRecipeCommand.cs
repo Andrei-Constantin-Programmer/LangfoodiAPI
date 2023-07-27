@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.DataModels;
+using RecipeSocialMediaAPI.Model;
 using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Utilities;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
 namespace RecipeSocialMediaAPI.Handlers.Recipes.Commands;
 

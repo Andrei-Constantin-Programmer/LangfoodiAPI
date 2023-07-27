@@ -1,7 +1,5 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.MongoConfiguration;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Queries;
 
@@ -9,15 +7,15 @@ public record CheckUsernameExistsQuery(string Username) : IRequest<bool>;
 
 internal class CheckUsernameExistsHandler : IRequestHandler<CheckUsernameExistsQuery, bool>
 {
-    private readonly IMongoRepository<UserDocument> _userCollection;
+    private readonly IUserRepository _userRepository;
 
-    public CheckUsernameExistsHandler(IMongoCollectionFactory collectionFactory)
+    public CheckUsernameExistsHandler(IUserRepository userRepository)
     {
-        _userCollection = collectionFactory.GetCollection<UserDocument>();
+        _userRepository = userRepository;
     }
 
     public Task<bool> Handle(CheckUsernameExistsQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(_userCollection.Contains(x => x.UserName == request.Username));
+        return Task.FromResult(_userRepository.GetUserByUsername(request.Username) is not null);
     }
 }

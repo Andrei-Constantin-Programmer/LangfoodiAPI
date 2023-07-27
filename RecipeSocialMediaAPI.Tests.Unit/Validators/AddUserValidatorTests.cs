@@ -83,8 +83,8 @@ public class AddUserValidatorTests
         var validationResult = _addUserValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserCommand.UserName);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserCommand.Email);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserCommand.Password);
+        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserContract.UserName);
+        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserContract.Email);
+        validationResult.ShouldHaveValidationErrorFor(command => command.NewUserContract.Password);
     }
 }

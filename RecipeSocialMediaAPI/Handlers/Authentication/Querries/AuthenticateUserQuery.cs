@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
-using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.MongoConfiguration;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Model;
 using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Handlers.Authentication.Querries;
@@ -14,19 +13,19 @@ internal record AuthenticateUserQuery(string UsernameOrEmail, string Password) :
 
 internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, UserDTO>
 {
-    private readonly IMongoRepository<UserDocument> _userRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
-    public AuthenticateUserHandler(IMongoCollectionFactory _collectionFactory, IMapper mapper)
+    public AuthenticateUserHandler(IUserRepository userRepository, IMapper mapper)
     {
-        _userRepository = _collectionFactory.GetCollection<UserDocument>();
+        _userRepository = userRepository;
         _mapper = mapper;
     }
 
     public Task<UserDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
-        UserDocument? user = _userRepository.Find(user => user.UserName == request.UsernameOrEmail)
-                         ?? _userRepository.Find(user => user.Email == request.UsernameOrEmail);
+        User? user = _userRepository.GetUserByUsername(request.UsernameOrEmail)
+                    ?? _userRepository.GetUserByEmail(request.UsernameOrEmail);
 
         if (user is null)
         {

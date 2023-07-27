@@ -1,23 +1,19 @@
-﻿using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.MongoConfiguration;
-using RecipeSocialMediaAPI.DAL.Repositories;
+﻿using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
 namespace RecipeSocialMediaAPI.Services;
 
 internal class UserService : IUserService
 {
-    private readonly IMongoRepository<UserDocument> _userCollection;
+    private readonly IUserRepository _userRepository;
 
-    public UserService(IMongoCollectionFactory collectionFactory)
+    public UserService(IUserRepository userRepository)
     {
-        _userCollection = collectionFactory.GetCollection<UserDocument>();
+        _userRepository = userRepository;
     }
 
     public bool DoesEmailExist(string email) =>
-        _userCollection
-            .Contains(user => user.Email.ToLower() == email.ToLower());
+        _userRepository.GetUserByEmail(email.ToLower()) is not null;
 
     public bool DoesUsernameExist(string username) =>
-        _userCollection
-            .Contains(user => user.UserName == username);
+        _userRepository.GetUserByUsername(username) is not null;
 }

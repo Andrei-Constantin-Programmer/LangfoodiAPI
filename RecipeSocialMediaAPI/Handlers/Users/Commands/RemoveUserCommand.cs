@@ -1,8 +1,7 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.DAL.Documents;
-using RecipeSocialMediaAPI.DAL.MongoConfiguration;
-using RecipeSocialMediaAPI.DAL.Repositories;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Exceptions;
+using RecipeSocialMediaAPI.Model;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
@@ -10,23 +9,23 @@ public record RemoveUserCommand(string EmailOrId) : IRequest;
 
 internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
 {
-    private readonly IMongoRepository<UserDocument> _userCollection;
+    private readonly IUserRepository _userRepository;
 
-    public RemoveUserHandler(IMongoCollectionFactory collectionFactory)
+    public RemoveUserHandler(IUserRepository userRepository)
     {
-        _userCollection = collectionFactory.GetCollection<UserDocument>();
+        _userRepository = userRepository;
     }
 
     public Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
     {
-        UserDocument userDoc = _userCollection.Find(user => user.Email == request.EmailOrId)
-                            ?? _userCollection.Find(user => user.Id == request.EmailOrId)
-                            ?? throw new UserNotFoundException();
+        User user = _userRepository.GetUserById(request.EmailOrId)
+                    ?? _userRepository.GetUserByEmail(request.EmailOrId)
+            ?? throw new UserNotFoundException();
 
-        var successful = _userCollection.Delete(x => x.Id == userDoc.Id);
+        var successful = _userRepository.DeleteUser(user.Id);
 
         return successful 
             ? Task.CompletedTask 
-            : throw new Exception($"Could not remove user with id {userDoc.Id}.");
+            : throw new Exception($"Could not remove user with id {user.Id}.");
     }
 }

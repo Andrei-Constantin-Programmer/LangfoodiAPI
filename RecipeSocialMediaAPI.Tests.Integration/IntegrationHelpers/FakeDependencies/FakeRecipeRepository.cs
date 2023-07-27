@@ -1,5 +1,5 @@
-﻿using RecipeSocialMediaAPI.DAL.Repositories;
-using RecipeSocialMediaAPI.DataModels;
+﻿using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+using RecipeSocialMediaAPI.Model;
 
 namespace RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
