@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
 using FluentAssertions;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
 using Moq;
 using RecipeSocialMediaAPI.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Authentication.Querries;
+using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.Tests.Shared.Traits;
 using RecipeSocialMediaAPI.Tests.Unit.TestHelpers;
 
 namespace RecipeSocialMediaAPI.Tests.Unit.Handlers.Authentication.Queries;
@@ -13,7 +17,7 @@ namespace RecipeSocialMediaAPI.Tests.Unit.Handlers.Authentication.Queries;
 public class AuthenticateUserHandlerTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
-    private readonly Mock<IMapper> _mapper;
+    private readonly Mock<IMapper> _mapperMock;
     private readonly ICryptoService _cryptoServiceFake;
 
     private readonly AuthenticateUserHandler _authenticateUserHandlerSUT;
@@ -21,13 +25,14 @@ public class AuthenticateUserHandlerTests
     public AuthenticateUserHandlerTests()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _mapper = new Mock<IMapper>();
+        _mapperMock = new Mock<IMapper>();
         _cryptoServiceFake = new CryptoServiceFake();
 
-        _authenticateUserHandlerSUT = new AuthenticateUserHandler(_userRepositoryMock.Object, _mapper.Object, _cryptoServiceFake);
+        _authenticateUserHandlerSUT = new AuthenticateUserHandler(_userRepositoryMock.Object, _mapperMock.Object, _cryptoServiceFake);
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     public async Task Handle_WhenUserIsNotFound_ThrowUserNotFoundException()
     {
         // Given
@@ -48,5 +53,97 @@ public class AuthenticateUserHandlerTests
         await action.Should().ThrowAsync<UserNotFoundException>();
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    public async Task Handle_WhenUsernameIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
+    {
+        // Given
+        var encryptedPassword = _cryptoServiceFake.Encrypt("TestPass");
+        User testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
+        _userRepositoryMock
+            .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.UserName)))
+            .Returns(testUser);
 
+        AuthenticateUserQuery query = new(testUser.UserName, "WrongPass");
+
+        // When
+        var action = async () => await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        await action.Should().ThrowAsync<InvalidCredentialsException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    public async Task Handle_WhenEmailIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
+    {
+        // Given
+        var encryptedPassword = _cryptoServiceFake.Encrypt("TestPass");
+        User testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
+        _userRepositoryMock
+            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
+            .Returns(testUser);
+
+        AuthenticateUserQuery query = new(testUser.Email, "WrongPass");
+
+        // When
+        var action = async () => await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        await action.Should().ThrowAsync<InvalidCredentialsException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    public async Task Handle_WhenUsernameIsFoundAndCredentialsPass_ReturnMappedDTO()
+    {
+        // Given
+        var decryptedPassword = "TestPass";
+        var encryptedPassword = _cryptoServiceFake.Encrypt(decryptedPassword);
+        User testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
+
+        UserDTO expectedUserDto = new() 
+        { Id = testUser.Id, UserName = testUser.UserName, Email = testUser.Email, Password = testUser.Password };
+        _userRepositoryMock
+            .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.UserName)))
+            .Returns(testUser);
+        _mapperMock
+            .Setup(mapper => mapper.Map<UserDTO>(It.IsAny<User>()))
+            .Returns(expectedUserDto);
+
+        AuthenticateUserQuery query = new(testUser.UserName, decryptedPassword);
+
+        // When
+        var result = await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        result.Should().Be(expectedUserDto);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    public async Task Handle_WhenEmailIsFoundAndCredentialsPass_ReturnMappedDTO()
+    {
+        // Given
+        var decryptedPassword = "TestPass";
+        var encryptedPassword = _cryptoServiceFake.Encrypt(decryptedPassword);
+        User testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
+
+        UserDTO expectedUserDto = new()
+        { Id = testUser.Id, UserName = testUser.UserName, Email = testUser.Email, Password = testUser.Password };
+        _userRepositoryMock
+            .Setup(repo => repo.GetUserByUsername(It.Is<string>(email => email == testUser.Email)))
+            .Returns(testUser);
+        _mapperMock
+            .Setup(mapper => mapper.Map<UserDTO>(It.IsAny<User>()))
+            .Returns(expectedUserDto);
+
+        AuthenticateUserQuery query = new(testUser.Email, decryptedPassword);
+
+        // When
+        var result = await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        result.Should().Be(expectedUserDto);
+    }
 }

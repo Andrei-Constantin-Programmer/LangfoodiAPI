@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="xunit" Version="2.5.0" />
     <PackageReference Include="XunitXml.TestLogger" Version="3.1.11" />
 	<FrameworkReference Include="Microsoft.AspNetCore.App"></FrameworkReference>
   </ItemGroup>
