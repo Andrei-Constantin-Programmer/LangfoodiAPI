@@ -14,7 +14,8 @@ public class UserValidationTests
     }
 
     [Theory]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("username")]
     [InlineData("username123")]
     public void ValidUserName_WhenValidUserName_ReturnsTrue(string userName)
@@ -29,7 +30,8 @@ public class UserValidationTests
     }
 
     [Theory]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("invalid_username")]
     [InlineData("12")]
     public void ValidUserName_WhenInvalidUserName_ReturnsFalse(string userName)
@@ -44,7 +46,8 @@ public class UserValidationTests
     }
 
     [Theory]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("test@example.com")]
     [InlineData("john.doe@example.com")]
     public void ValidEmail_WhenValidEmail_ReturnsTrue(string email)
@@ -59,7 +62,8 @@ public class UserValidationTests
     }
 
     [Theory]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("invalid_email")]
     [InlineData("example.com")]
     public void ValidEmail_WhenInvalidEmail_ReturnsFalse(string email)
@@ -74,7 +78,8 @@ public class UserValidationTests
     }
 
     [Theory]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("P@ssw0rd")]
     [InlineData("Password123!")]
     public void ValidPassword_WhenValidPassword_ReturnsTrue(string password)
@@ -89,7 +94,8 @@ public class UserValidationTests
     }
 
     [Theory]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("invalid_password")]
     [InlineData("12345678")]
     public void ValidPassword_WhenInvalidPassword_ReturnsFalse(string password)

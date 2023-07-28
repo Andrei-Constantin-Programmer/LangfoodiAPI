@@ -15,7 +15,8 @@ public class CryptoServiceTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Cryptography")]
+    [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void ArePasswordsTheSame_WhenValidPasswordAndHash_ReturnsTrue()
     {
         // Given
@@ -30,7 +31,8 @@ public class CryptoServiceTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Cryptography")]
+    [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void ArePasswordsTheSame_WhenInvalidPasswordAndHash_ReturnsFalse()
     {
         // Given
@@ -45,7 +47,8 @@ public class CryptoServiceTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Cryptography")]
+    [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void Encrypt_ReturnsEncryptedPassword()
     {
         // Given

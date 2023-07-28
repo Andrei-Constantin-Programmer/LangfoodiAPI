@@ -15,7 +15,8 @@ public class UserEndpointsTests : EndpointTestBase
     public UserEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) {}
 
     [Fact]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserCreate_WhenValidUser_ReturnUserWithId()
     {
         // Given
@@ -39,10 +40,11 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("", "test@mail.com", "Test@123")]
     [InlineData("TestUsername", "test.com", "Test@123")]
     [InlineData("TestUsername", "test@mail.com", "test")]
-    [Trait(Traits.DOMAIN, "User")]
     public async void UserCreate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
@@ -61,6 +63,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserUsernameExists_WhenUsernameExists_ReturnTrue()
     {
         // Given
@@ -85,6 +89,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
     {
         // Given
@@ -106,6 +112,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserEmailExists_WhenEmailExists_ReturnTrue()
     {
         // Given
@@ -130,6 +138,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
     {
         // Given
@@ -151,6 +161,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
@@ -196,6 +208,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
     {
         // Given
@@ -224,10 +238,11 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("", "test@mail.com", "Test@123")]
     [InlineData("TestUsername", "test.com", "Test@123")]
     [InlineData("TestUsername", "test@mail.com", "test")]
-    [Trait(Traits.DOMAIN, "User")]
     public async void UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
@@ -259,6 +274,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
     {
         // Given
@@ -284,6 +301,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
     {
         // Given
@@ -309,6 +328,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserRemove_WhenUserEmailDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -322,6 +343,8 @@ public class UserEndpointsTests : EndpointTestBase
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserRemove_WhenUserIdDoesNotExist_ReturnNotFound()
     {
         // Given

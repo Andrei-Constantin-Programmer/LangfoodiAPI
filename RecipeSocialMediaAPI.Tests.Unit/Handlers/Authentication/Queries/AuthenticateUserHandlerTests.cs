@@ -33,6 +33,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenUserIsNotFound_ThrowUserNotFoundException()
     {
         // Given
@@ -55,6 +56,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenUsernameIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
     {
         // Given
@@ -75,6 +77,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenEmailIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
     {
         // Given
@@ -95,6 +98,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenUsernameIsFoundAndCredentialsPass_ReturnMappedDTO()
     {
         // Given
@@ -122,6 +126,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenEmailIsFoundAndCredentialsPass_ReturnMappedDTO()
     {
         // Given

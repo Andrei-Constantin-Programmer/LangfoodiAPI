@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Tests.Integration", "RecipeSocialMediaAPI.Tests.Integration\RecipeSocialMediaAPI.Tests.Integration.csproj", "{7E20C54C-6F14-4463-963C-F7F1BEBF0259}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Tests.Shared", "RecipeSocialMediaAPI.Tests.Shared\RecipeSocialMediaAPI.Tests.Shared.csproj", "{78745CF1-501F-4632-90AB-B4080B74F015}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.TestInfrastructure.Shared", "RecipeSocialMediaAPI.Tests.Shared\RecipeSocialMediaAPI.TestInfrastructure.Shared.csproj", "{78745CF1-501F-4632-90AB-B4080B74F015}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Tests.Unit", "RecipeSocialMediaAPI.Tests.Unit\RecipeSocialMediaAPI.Tests.Unit.csproj", "{848B8822-0EE9-4CD4-A547-5164F50E6D1C}"
 EndProject

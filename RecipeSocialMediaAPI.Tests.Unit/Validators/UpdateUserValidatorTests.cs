@@ -19,7 +19,8 @@ public class UpdateUserValidatorTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void UpdateUserValidation_WhenValidUser_DontThrow()
     {
         // Given
@@ -54,7 +55,8 @@ public class UpdateUserValidatorTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void UpdateUserValidation_WhenInvalidUser_ThrowsValidationException()
     {
         // Given

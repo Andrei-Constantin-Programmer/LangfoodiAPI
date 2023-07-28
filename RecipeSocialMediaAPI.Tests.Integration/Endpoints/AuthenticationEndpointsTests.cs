@@ -14,7 +14,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     public AuthenticationEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Authentication")]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void Authenticate_WhenValidUserWithUsername_ReturnUserFromDB()
     {
         // Given
@@ -48,7 +49,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Authentication")]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void Authenticate_WhenValidUserWithEmail_ReturnUserFromDB()
     {
         // Given
@@ -82,7 +84,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Authentication")]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void Authenticate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -110,7 +113,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Authentication")]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
     {
         // Given

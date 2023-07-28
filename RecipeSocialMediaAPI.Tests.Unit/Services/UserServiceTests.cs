@@ -19,7 +19,8 @@ public class UserServiceTests
     }
 
     [Theory]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("testemail")]
     [InlineData("TESTEMAIL")]
     public void DoesEmailExist_WhenRepositoryContainsEmail_CheckEmailEqualityCaseInsensitiveAndReturnTrue(string emailToCheck)
@@ -37,7 +38,8 @@ public class UserServiceTests
     }
 
     [Theory]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData("testemail")]
     [InlineData("TESTEMAIL")]
     public void DoesEmailExist_WhenRepositoryDoesNotContainsEmail_CheckEmailEqualityCaseInsensitiveAndReturnFalse(string emailToCheck)
@@ -57,7 +59,8 @@ public class UserServiceTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void DoesUsernameExist_WhenRepositoryContainsUsername_CheckUsernameAndReturnTrue()
     {
         // Given
@@ -75,7 +78,8 @@ public class UserServiceTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "User")]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void DoesUsernameExist_WhenRepositoryDoesNotContainsUsername_CheckUsernameAndReturnFalse()
     {
         // Given

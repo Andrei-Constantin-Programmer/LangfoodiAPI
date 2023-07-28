@@ -13,7 +13,8 @@ public class RecipeEndpointsTests : EndpointTestBase
     public RecipeEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeGet_WhenNoRecipesCreated_ReturnsEmptyList()
     {
         // Given
@@ -30,7 +31,8 @@ public class RecipeEndpointsTests : EndpointTestBase
     }
     
     [Fact]
-    [Trait(Traits.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeCreate_WhenValidRecipe_ReturnsOk()
     {
         // Given
@@ -50,7 +52,8 @@ public class RecipeEndpointsTests : EndpointTestBase
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeCreateAndGet_AfterValidRecipeCreated_GetReturnsTheNewRecipe()
     {
         // Given
@@ -81,7 +84,8 @@ public class RecipeEndpointsTests : EndpointTestBase
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeGetById_WhenRecipeDoesNotExist_ReturnsNotFound()
     {
         // Given
@@ -95,7 +99,8 @@ public class RecipeEndpointsTests : EndpointTestBase
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, "Recipe")]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeGetById_WhenRecipeDoesExist_ReturnsRecipe()
     {
         // Given
