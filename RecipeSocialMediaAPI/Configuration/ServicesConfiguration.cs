@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using MediatR;
 using MediatR.Pipeline;
+using RecipeSocialMediaAPI.Cryptography;
+using RecipeSocialMediaAPI.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
@@ -10,10 +12,9 @@ using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Mappers.Profiles;
 using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.Utilities;
 using RecipeSocialMediaAPI.Validation;
-using RecipeSocialMediaAPI.Validation.GenericValidators;
-using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 namespace RecipeSocialMediaAPI.Configuration;
 
@@ -28,7 +29,7 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton(GenerateDatabaseConfiguration(builder.Configuration));
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
-        builder.Services.AddSingleton<IUserValidationService, UserValidator>();
+        builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 
@@ -37,6 +38,7 @@ internal static class ServicesConfiguration
         builder.Services.AddTransient<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
 
         // Scoped
+        builder.Services.AddScoped<ICryptoService, CryptoService>();
 
         // MediatR
         builder.Services.AddMediatR(config =>

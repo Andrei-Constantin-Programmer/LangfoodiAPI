@@ -1,47 +1,16 @@
 ﻿using FluentAssertions;
+using RecipeSocialMediaAPI.Services;
 using RecipeSocialMediaAPI.Tests.Shared.Traits;
-using RecipeSocialMediaAPI.Validation.GenericValidators;
-using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Tests.Unit.Services;
 
 public class UserValidationTests
 {
-    private readonly UserValidator _userValidationServiceSUT;
+    private readonly UserValidationService _userValidationServiceSUT;
 
     public UserValidationTests()
     {
-        _userValidationServiceSUT = new UserValidator();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, "User")]
-    public void VerifyPassword_WhenValidPasswordAndHash_ReturnsTrue()
-    {
-        // Given
-        string password = "P@ssw0rd";
-        string hash = BCrypter.HashPassword(password);
-
-        // When
-        bool result = _userValidationServiceSUT.VerifyPassword(password, hash);
-
-        // Then
-        result.Should().BeTrue();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, "User")]
-    public void VerifyPassword_WhenInvalidPasswordAndHash_ReturnsFalse()
-    {
-        // Given
-        string password = "P@ssw0rd";
-        string hash = "wrongly_hashed_password";
-
-        // When
-        bool result = _userValidationServiceSUT.VerifyPassword(password, hash);
-
-        // Then
-        result.Should().BeFalse();
+        _userValidationServiceSUT = new UserValidationService();
     }
 
     [Theory]

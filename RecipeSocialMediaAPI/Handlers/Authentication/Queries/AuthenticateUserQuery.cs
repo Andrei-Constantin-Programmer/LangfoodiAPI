@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using RecipeSocialMediaAPI.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Model;
-using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Handlers.Authentication.Querries;
 
@@ -15,11 +15,13 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly ICryptoService _cryptoService;
 
-    public AuthenticateUserHandler(IUserRepository userRepository, IMapper mapper)
+    public AuthenticateUserHandler(IUserRepository userRepository, IMapper mapper, ICryptoService cryptoService)
     {
         _userRepository = userRepository;
         _mapper = mapper;
+        _cryptoService = cryptoService;
     }
 
     public Task<UserDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
@@ -32,7 +34,7 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
             throw new UserNotFoundException();
         }
 
-        var successfulLogin = BCrypter.Verify(request.Password, user?.Password);
+        var successfulLogin = _cryptoService.ArePasswordsTheSame(request.Password, user?.Password ?? string.Empty);
         if (!successfulLogin)
         {
             throw new InvalidCredentialsException();

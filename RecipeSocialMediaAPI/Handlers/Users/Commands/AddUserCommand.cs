@@ -2,13 +2,14 @@
 using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Contracts;
+using RecipeSocialMediaAPI.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.DTO;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Model;
 using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.Validation;
-using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
@@ -19,14 +20,16 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
     private readonly IUserValidationService _userValidationService;
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
+    private readonly ICryptoService _cryptoService;
 
     private readonly IUserRepository _userRepository;
 
-    public AddUserHandler(IUserValidationService userValidationService, IUserService userService, IMapper mapper, IUserRepository userRepository)
+    public AddUserHandler(IUserValidationService userValidationService, IUserService userService, IMapper mapper, ICryptoService cryptoService, IUserRepository userRepository)
     {
         _userValidationService = userValidationService;
         _userService = userService;
         _mapper = mapper;
+        _cryptoService = cryptoService;
         _userRepository = userRepository;
     }
 
@@ -41,7 +44,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
             throw new EmailAlreadyInUseException(request.NewUserContract.Email);
         }
 
-        request.NewUserContract.Password = _userValidationService.HashPassword(request.NewUserContract.Password);
+        request.NewUserContract.Password = _cryptoService.Encrypt(request.NewUserContract.Password);
         User insertedUser = _userRepository.CreateUser(request.NewUserContract.UserName,
                                                        request.NewUserContract.Email,
                                                        request.NewUserContract.Password);

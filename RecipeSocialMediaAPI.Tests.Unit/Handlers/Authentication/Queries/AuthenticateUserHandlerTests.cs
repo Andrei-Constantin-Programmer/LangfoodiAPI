@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using FluentAssertions;
 using Moq;
+using RecipeSocialMediaAPI.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.Tests.Unit.TestHelpers;
 
 namespace RecipeSocialMediaAPI.Tests.Unit.Handlers.Authentication.Queries;
 
@@ -12,6 +14,7 @@ public class AuthenticateUserHandlerTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IMapper> _mapper;
+    private readonly ICryptoService _cryptoServiceFake;
 
     private readonly AuthenticateUserHandler _authenticateUserHandlerSUT;
 
@@ -19,8 +22,9 @@ public class AuthenticateUserHandlerTests
     {
         _userRepositoryMock = new Mock<IUserRepository>();
         _mapper = new Mock<IMapper>();
+        _cryptoServiceFake = new CryptoServiceFake();
 
-        _authenticateUserHandlerSUT = new AuthenticateUserHandler(_userRepositoryMock.Object, _mapper.Object);
+        _authenticateUserHandlerSUT = new AuthenticateUserHandler(_userRepositoryMock.Object, _mapper.Object, _cryptoServiceFake);
     }
 
     [Fact]

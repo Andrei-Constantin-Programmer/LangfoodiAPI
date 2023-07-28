@@ -1,12 +1,12 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Contracts;
+using RecipeSocialMediaAPI.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Exceptions;
 using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.Services.Interfaces;
 using RecipeSocialMediaAPI.Validation;
-using RecipeSocialMediaAPI.Validation.GenericValidators.Interfaces;
 
 namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
 
@@ -14,22 +14,19 @@ public record UpdateUserCommand(UpdateUserContract UpdateUserContract) : IValida
 
 internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
-    private readonly IUserValidationService _userValidationService;
-    private readonly IMapper _mapper;
+    private readonly ICryptoService _cryptoService;
 
     private readonly IUserRepository _userRepository;
 
-    public UpdateUserHandler(IUserValidationService userValidationService, IMapper mapper, IUserRepository userRepository)
+    public UpdateUserHandler(ICryptoService cryptoService, IUserRepository userRepository)
     {
-        _userValidationService = userValidationService;
-        _mapper = mapper;
-
+        _cryptoService = cryptoService;
         _userRepository = userRepository;
     }
 
     public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        request.UpdateUserContract.Password = _userValidationService.HashPassword(request.UpdateUserContract.Password);
+        request.UpdateUserContract.Password = _cryptoService.Encrypt(request.UpdateUserContract.Password);
         User updatedUser = new(
             request.UpdateUserContract.Id,
             request.UpdateUserContract.UserName,
