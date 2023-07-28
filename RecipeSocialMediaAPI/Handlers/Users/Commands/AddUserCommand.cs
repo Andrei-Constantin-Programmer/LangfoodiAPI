@@ -7,7 +7,6 @@ using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Core.DTO;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Model;
-using RecipeSocialMediaAPI.Core.Services;
 using RecipeSocialMediaAPI.Core.Services.Interfaces;
 using RecipeSocialMediaAPI.Core.Validation;
 
@@ -17,15 +16,12 @@ public record AddUserCommand(NewUserContract NewUserContract) : IValidatableRequ
 
 internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 {
-    private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly ICryptoService _cryptoService;
-
     private readonly IUserRepository _userRepository;
 
-    public AddUserHandler(IUserService userService, IMapper mapper, ICryptoService cryptoService, IUserRepository userRepository)
+    public AddUserHandler(IMapper mapper, ICryptoService cryptoService, IUserRepository userRepository)
     {
-        _userService = userService;
         _mapper = mapper;
         _cryptoService = cryptoService;
         _userRepository = userRepository;
@@ -33,19 +29,19 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 
     public async Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if(_userService.DoesUsernameExist(request.NewUserContract.UserName))
+        if (_userRepository.GetUserByUsername(request.NewUserContract.UserName) is not null)
         {
             throw new UsernameAlreadyInUseException(request.NewUserContract.UserName);
         }
-        if (_userService.DoesEmailExist(request.NewUserContract.Email))
+        if (_userRepository.GetUserByEmail(request.NewUserContract.Email) is not null)
         {
             throw new EmailAlreadyInUseException(request.NewUserContract.Email);
         }
 
-        request.NewUserContract.Password = _cryptoService.Encrypt(request.NewUserContract.Password);
+        var encryptedPassword = _cryptoService.Encrypt(request.NewUserContract.Password);
         User insertedUser = _userRepository.CreateUser(request.NewUserContract.UserName,
                                                        request.NewUserContract.Email,
-                                                       request.NewUserContract.Password);
+                                                       encryptedPassword);
 
         return await Task.FromResult(_mapper.Map<UserDTO>(insertedUser));
     }

@@ -32,7 +32,6 @@ internal static class ServicesConfiguration
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 
         // Transients
-        builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
 
         // Scoped
