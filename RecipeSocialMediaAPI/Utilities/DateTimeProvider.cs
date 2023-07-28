@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Internal;
-
-namespace RecipeSocialMediaAPI.Utilities
+﻿namespace RecipeSocialMediaAPI.Core.Utilities
 {
     internal class DateTimeProvider : IDateTimeProvider
     {

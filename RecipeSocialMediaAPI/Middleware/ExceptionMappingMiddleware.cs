@@ -1,9 +1,8 @@
 ﻿using FluentValidation;
-using RecipeSocialMediaAPI.Exceptions;
-using RecipeSocialMediaAPI.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Core.Exceptions;
 using System.Text.Json;
 
-namespace RecipeSocialMediaAPI.Middleware;
+namespace RecipeSocialMediaAPI.Core.Middleware;
 
 public class ExceptionMappingMiddleware
 {

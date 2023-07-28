@@ -1,10 +1,10 @@
 ﻿using FluentValidation.TestHelper;
 using Moq;
-using RecipeSocialMediaAPI.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Services.Interfaces;
-using RecipeSocialMediaAPI.Tests.Shared.Traits;
+using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Core.Services.Interfaces;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
 
-namespace RecipeSocialMediaAPI.Tests.Unit.Validators;
+namespace RecipeSocialMediaAPI.Core.Tests.Unit.Validators;
 
 public class AddUserValidatorTests
 {

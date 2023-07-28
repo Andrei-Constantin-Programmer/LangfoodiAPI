@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.DTO;
+using RecipeSocialMediaAPI.Core.DTO;
 
-namespace RecipeSocialMediaAPI.Handlers.Recipes.Queries;
+namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 
 internal record GetRecipesQuery() : IRequest<IEnumerable<RecipeDTO>>;
 

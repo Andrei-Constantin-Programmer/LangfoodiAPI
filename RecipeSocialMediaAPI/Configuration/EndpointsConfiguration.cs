@@ -1,6 +1,6 @@
-﻿using RecipeSocialMediaAPI.Endpoints;
+﻿using RecipeSocialMediaAPI.Core.Endpoints;
 
-namespace RecipeSocialMediaAPI.Configuration;
+namespace RecipeSocialMediaAPI.Core.Configuration;
 
 internal static class EndpointsConfiguration
 {

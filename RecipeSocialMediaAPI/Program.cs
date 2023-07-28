@@ -1,10 +1,10 @@
-using RecipeSocialMediaAPI.Utilities;
 using System.Runtime.CompilerServices;
-using RecipeSocialMediaAPI.Configuration;
-using RecipeSocialMediaAPI.Middleware;
+using RecipeSocialMediaAPI.Core.Utilities;
+using RecipeSocialMediaAPI.Core.Configuration;
+using RecipeSocialMediaAPI.Core.Middleware;
 
-[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests.Unit")]
-[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Tests.Integration")]
+[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Core.Tests.Unit")]
+[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Core.Tests.Integration")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 var builder = WebApplication.CreateBuilder(args);

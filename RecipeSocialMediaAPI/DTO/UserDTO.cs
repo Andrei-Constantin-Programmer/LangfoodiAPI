@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.DTO;
+﻿namespace RecipeSocialMediaAPI.Core.DTO;
 
 public record UserDTO
 {

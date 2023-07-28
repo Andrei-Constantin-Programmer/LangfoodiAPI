@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using RecipeSocialMediaAPI.Services;
-using RecipeSocialMediaAPI.Tests.Shared.Traits;
+using RecipeSocialMediaAPI.Core.Services;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
 
-namespace RecipeSocialMediaAPI.Tests.Unit.Services;
+namespace RecipeSocialMediaAPI.Core.Tests.Unit.Services;
 
 public class UserValidationTests
 {

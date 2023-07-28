@@ -1,10 +1,9 @@
-﻿namespace RecipeSocialMediaAPI.Exceptions
+﻿namespace RecipeSocialMediaAPI.Core.Exceptions;
+
+[Serializable]
+public class UserNotFoundException : Exception
 {
-    [Serializable]
-    public class UserNotFoundException : Exception
+    public UserNotFoundException() : base()
     {
-        public UserNotFoundException() : base()
-        {
-        }
     }
 }

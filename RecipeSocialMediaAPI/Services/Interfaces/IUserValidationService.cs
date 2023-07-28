@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Services.Interfaces;
+﻿namespace RecipeSocialMediaAPI.Core.Services.Interfaces;
 
 public interface IUserValidationService
 {

@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Handlers.Recipes.Queries;
+using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
+using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 
-namespace RecipeSocialMediaAPI.Endpoints;
+namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class RecipeEndpoints
 {

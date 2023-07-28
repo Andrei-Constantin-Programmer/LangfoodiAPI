@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Cryptography.Interfaces;
+﻿namespace RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 
 public interface ICryptoService
 {

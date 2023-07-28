@@ -1,6 +1,6 @@
 ﻿using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
-namespace RecipeSocialMediaAPI.Services;
+namespace RecipeSocialMediaAPI.Core.Services;
 
 internal class UserService : IUserService
 {

@@ -1,7 +1,6 @@
-﻿namespace RecipeSocialMediaAPI.Exceptions
+﻿namespace RecipeSocialMediaAPI.Core.Exceptions;
+
+public class RecipeNotFoundException : Exception
 {
-    public class RecipeNotFoundException : Exception
-    {
-        public RecipeNotFoundException(int id) : base($"The recipe with the id {id} was not found.") { }
-    }
+    public RecipeNotFoundException(int id) : base($"The recipe with the id {id} was not found.") { }
 }

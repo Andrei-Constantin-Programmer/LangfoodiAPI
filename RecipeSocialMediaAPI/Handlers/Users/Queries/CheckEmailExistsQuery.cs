@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.Services;
+using RecipeSocialMediaAPI.Core.Services;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Queries;
+namespace RecipeSocialMediaAPI.Core.Handlers.Users.Queries;
 
 public record CheckEmailExistsQuery(string Email) : IRequest<bool>;
 

@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers;
-using RecipeSocialMediaAPI.Tests.Shared.Traits;
+using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace RecipeSocialMediaAPI.Tests.Integration.Endpoints;
+namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
 public class RecipeEndpointsTests : EndpointTestBase
 {

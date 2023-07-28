@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Services;
-using RecipeSocialMediaAPI.Tests.Shared.Traits;
+using RecipeSocialMediaAPI.Core.Services;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Model;
 
-namespace RecipeSocialMediaAPI.Tests.Unit.Services;
+namespace RecipeSocialMediaAPI.Core.Tests.Unit.Services;
 
 public class UserServiceTests
 {

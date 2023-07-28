@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using RecipeSocialMediaAPI.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Exceptions;
-using RecipeSocialMediaAPI.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Model;
 
-namespace RecipeSocialMediaAPI.Handlers.Authentication.Querries;
+namespace RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;
 
 internal record AuthenticateUserQuery(string UsernameOrEmail, string Password) : IRequest<UserDTO>;
 

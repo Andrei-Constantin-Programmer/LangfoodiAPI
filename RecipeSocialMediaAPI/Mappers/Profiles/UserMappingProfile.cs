@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using RecipeSocialMediaAPI.DTO;
+using RecipeSocialMediaAPI.Core.DTO;
 using RecipeSocialMediaAPI.Model;
 
-namespace RecipeSocialMediaAPI.Mappers.Profiles;
+namespace RecipeSocialMediaAPI.Core.Mappers.Profiles;
 
 internal class UserMappingProfile : Profile
 {

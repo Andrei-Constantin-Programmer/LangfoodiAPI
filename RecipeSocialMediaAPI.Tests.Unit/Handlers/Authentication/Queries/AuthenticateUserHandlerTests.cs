@@ -1,18 +1,16 @@
 ﻿using AutoMapper;
 using FluentAssertions;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
 using Moq;
-using RecipeSocialMediaAPI.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Exceptions;
-using RecipeSocialMediaAPI.Handlers.Authentication.Querries;
-using RecipeSocialMediaAPI.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Model;
-using RecipeSocialMediaAPI.Tests.Shared.Traits;
-using RecipeSocialMediaAPI.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
+using RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;
 
-namespace RecipeSocialMediaAPI.Tests.Unit.Handlers.Authentication.Queries;
+namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Authentication.Queries;
 
 public class AuthenticateUserHandlerTests
 {

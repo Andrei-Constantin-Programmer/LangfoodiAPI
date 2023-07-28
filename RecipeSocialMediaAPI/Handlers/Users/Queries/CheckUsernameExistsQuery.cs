@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Queries;
+namespace RecipeSocialMediaAPI.Core.Handlers.Users.Queries;
 
 public record CheckUsernameExistsQuery(string Username) : IRequest<bool>;
 

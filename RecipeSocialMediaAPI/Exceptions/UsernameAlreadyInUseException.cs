@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
+﻿namespace RecipeSocialMediaAPI.Core.Exceptions;
 
 [Serializable]
 public class UsernameAlreadyInUseException : Exception

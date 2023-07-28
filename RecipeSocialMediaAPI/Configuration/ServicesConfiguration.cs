@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
-using MediatR;
-using MediatR.Pipeline;
-using RecipeSocialMediaAPI.Cryptography;
-using RecipeSocialMediaAPI.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Core.Cryptography;
+using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
@@ -10,13 +8,13 @@ using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Mappers.Profiles;
-using RecipeSocialMediaAPI.Services;
-using RecipeSocialMediaAPI.Services.Interfaces;
-using RecipeSocialMediaAPI.Utilities;
-using RecipeSocialMediaAPI.Validation;
+using RecipeSocialMediaAPI.Core.Mappers.Profiles;
+using RecipeSocialMediaAPI.Core.Services;
+using RecipeSocialMediaAPI.Core.Services.Interfaces;
+using RecipeSocialMediaAPI.Core.Utilities;
+using RecipeSocialMediaAPI.Core.Validation;
 
-namespace RecipeSocialMediaAPI.Configuration;
+namespace RecipeSocialMediaAPI.Core.Configuration;
 
 internal static class ServicesConfiguration
 {

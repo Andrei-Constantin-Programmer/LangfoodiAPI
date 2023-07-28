@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace RecipeSocialMediaAPI.Configuration;
+namespace RecipeSocialMediaAPI.Core.Configuration;
 
 internal static class SwaggerConfiguration
 {

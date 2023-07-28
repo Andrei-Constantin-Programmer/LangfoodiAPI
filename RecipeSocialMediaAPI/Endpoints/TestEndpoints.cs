@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Endpoints
+﻿namespace RecipeSocialMediaAPI.Core.Endpoints
 {
     public static class TestEndpoints
     {

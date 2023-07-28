@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Exceptions;
+﻿namespace RecipeSocialMediaAPI.Core.Exceptions;
 
 [Serializable]
 public class EmailAlreadyInUseException : Exception

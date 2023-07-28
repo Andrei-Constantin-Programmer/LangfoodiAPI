@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 using MediatR;
-using RecipeSocialMediaAPI.Contracts;
-using RecipeSocialMediaAPI.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Core.Contracts;
+using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Exceptions;
+using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Model;
-using RecipeSocialMediaAPI.Services.Interfaces;
-using RecipeSocialMediaAPI.Validation;
+using RecipeSocialMediaAPI.Core.Services.Interfaces;
+using RecipeSocialMediaAPI.Core.Validation;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
+namespace RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 
 public record UpdateUserCommand(UpdateUserContract UpdateUserContract) : IValidatableRequestVoid;
 

@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Exceptions;
+using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Model;
 
-namespace RecipeSocialMediaAPI.Handlers.Users.Commands;
+namespace RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 
 public record RemoveUserCommand(string EmailOrId) : IRequest;
 

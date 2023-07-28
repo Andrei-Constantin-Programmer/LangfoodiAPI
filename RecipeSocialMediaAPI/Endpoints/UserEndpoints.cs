@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.Contracts;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Handlers.Users.Queries;
+using RecipeSocialMediaAPI.Core.Contracts;
+using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Core.Handlers.Users.Queries;
 
-namespace RecipeSocialMediaAPI.Endpoints;
+namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class UserEndpoints
 {

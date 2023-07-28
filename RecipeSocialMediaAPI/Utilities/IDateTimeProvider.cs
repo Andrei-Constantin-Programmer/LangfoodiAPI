@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Utilities
+﻿namespace RecipeSocialMediaAPI.Core.Utilities
 {
     internal interface IDateTimeProvider
     {

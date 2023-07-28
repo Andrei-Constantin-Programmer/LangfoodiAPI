@@ -7,7 +7,7 @@ using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.Model;
-using RecipeSocialMediaAPI.Tests.Shared.Traits;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
 using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories;

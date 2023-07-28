@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
-namespace RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers;
+namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 
 public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Program>>
 {

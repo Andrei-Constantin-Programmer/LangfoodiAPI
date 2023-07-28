@@ -1,8 +1,7 @@
 ﻿using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Model;
-using System.Linq.Expressions;
 
-namespace RecipeSocialMediaAPI.Tests.Integration.IntegrationHelpers.FakeDependencies;
+namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
 internal class FakeUserRepository : IUserRepository
 {

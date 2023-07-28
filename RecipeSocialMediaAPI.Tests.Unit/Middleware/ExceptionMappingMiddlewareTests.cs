@@ -4,13 +4,12 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
-using RecipeSocialMediaAPI.Exceptions;
-using RecipeSocialMediaAPI.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Middleware;
-using RecipeSocialMediaAPI.Tests.Shared.TestHelpers;
-using RecipeSocialMediaAPI.Tests.Shared.Traits;
+using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Core.Middleware;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.TestHelpers;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
 
-namespace RecipeSocialMediaAPI.Tests.Unit.Middleware;
+namespace RecipeSocialMediaAPI.Core.Tests.Unit.Middleware;
 
 public class ExceptionMappingMiddlewareTests
 {

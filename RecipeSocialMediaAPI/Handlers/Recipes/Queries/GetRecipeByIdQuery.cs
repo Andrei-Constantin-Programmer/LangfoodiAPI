@@ -1,33 +1,32 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Exceptions;
+using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.Exceptions;
 
-namespace RecipeSocialMediaAPI.Handlers.Recipes.Queries
+namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
+
+internal record GetRecipeByIdQuery(int Id) : IRequest<RecipeDTO>;
+
+internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDTO>
 {
-    internal record GetRecipeByIdQuery(int Id) : IRequest<RecipeDTO>;
+    private readonly IRecipeRepository _recipeRepository;
 
-    internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDTO>
+    public GetRecipeByIdHandler(IRecipeRepository recipeRepository)
     {
-        private readonly IRecipeRepository _recipeRepository;
+        _recipeRepository = recipeRepository;
+    }
 
-        public GetRecipeByIdHandler(IRecipeRepository recipeRepository)
+    public async Task<RecipeDTO> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)
+    {
+        var recipe = await _recipeRepository.GetRecipeById(request.Id) ?? throw new RecipeNotFoundException(request.Id);
+
+        return new RecipeDTO()
         {
-            _recipeRepository = recipeRepository;
-        }
-
-        public async Task<RecipeDTO> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)
-        {
-            var recipe = await _recipeRepository.GetRecipeById(request.Id) ?? throw new RecipeNotFoundException(request.Id);
-
-            return new RecipeDTO()
-            {
-                Id = recipe.Id,
-                Title = recipe.Title,
-                Description = recipe.Description,
-                Chef = recipe.Chef,
-                CreationDate = recipe.CreationDate,
-            };
-        }
+            Id = recipe.Id,
+            Title = recipe.Title,
+            Description = recipe.Description,
+            Chef = recipe.Chef,
+            CreationDate = recipe.CreationDate,
+        };
     }
 }

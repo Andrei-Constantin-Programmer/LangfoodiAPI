@@ -1,10 +1,9 @@
-﻿namespace RecipeSocialMediaAPI.Handlers.Users.Commands
+﻿namespace RecipeSocialMediaAPI.Core.Exceptions;
+
+[Serializable]
+public class InvalidCredentialsException : Exception
 {
-    [Serializable]
-    public class InvalidCredentialsException : Exception
+    public InvalidCredentialsException() : base()
     {
-        public InvalidCredentialsException() : base()
-        {
-        }
     }
 }

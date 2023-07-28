@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace RecipeSocialMediaAPI.Validation;
+namespace RecipeSocialMediaAPI.Core.Validation;
 
 public interface IValidatableRequest<out TResponse> : IRequest<TResponse>, IValidatableRequest { }
 

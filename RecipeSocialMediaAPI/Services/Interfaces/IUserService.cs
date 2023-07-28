@@ -1,6 +1,4 @@
-﻿using RecipeSocialMediaAPI.DTO;
-
-namespace RecipeSocialMediaAPI.Services;
+﻿namespace RecipeSocialMediaAPI.Core.Services;
 
 internal interface IUserService
 {

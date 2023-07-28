@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Model;
-using RecipeSocialMediaAPI.DTO;
-using RecipeSocialMediaAPI.Utilities;
+using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
-namespace RecipeSocialMediaAPI.Handlers.Recipes.Commands;
+namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 
 internal record CreateRecipeCommand(RecipeDTO Recipe) : IRequest;
 
