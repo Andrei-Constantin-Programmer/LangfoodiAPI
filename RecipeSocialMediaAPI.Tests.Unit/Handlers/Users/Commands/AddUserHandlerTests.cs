@@ -35,7 +35,7 @@ public class AddUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async Task Handle_WhenUsernameIsAlreadyInUse_ThrowUsernameAlreadyInUseException()
+    public async Task Handle_WhenUsernameIsAlreadyInUse_DoNotCreateAndThrowUsernameAlreadyInUseException()
     {
         // Given
         User existingUser = new("TestId", "TestUser", "TestEmail", "TestPass");
@@ -50,12 +50,14 @@ public class AddUserHandlerTests
 
         // Then
         await action.Should().ThrowAsync<UsernameAlreadyInUseException>();
+        _userRepositoryMock
+            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async Task Handle_WhenEmailIsAlreadyInUse_ThrowEmailAlreadyInUseException()
+    public async Task Handle_WhenEmailIsAlreadyInUse_DoNotCreateAndThrowEmailAlreadyInUseException()
     {
         // Given
         User existingUser = new("TestId", "TestUser", "TestEmail", "TestPass");
@@ -69,6 +71,8 @@ public class AddUserHandlerTests
 
         // Then
         await action.Should().ThrowAsync<EmailAlreadyInUseException>();
+        _userRepositoryMock
+            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]

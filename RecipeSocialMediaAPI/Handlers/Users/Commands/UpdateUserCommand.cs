@@ -26,19 +26,25 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 
     public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        request.UpdateUserContract.Password = _cryptoService.Encrypt(request.UpdateUserContract.Password);
+        var doesUserExist = _userRepository.GetUserById(request.UpdateUserContract.Id) is not null;
+        if (!doesUserExist)
+        {
+            throw new UserNotFoundException();
+        }
+
+        var encryptedPassword = _cryptoService.Encrypt(request.UpdateUserContract.Password);
         User updatedUser = new(
             request.UpdateUserContract.Id,
             request.UpdateUserContract.UserName,
             request.UpdateUserContract.Email,
-            request.UpdateUserContract.Password
+            encryptedPassword
         );
 
         var result = _userRepository.UpdateUser(updatedUser);
 
         return result 
             ? Task.CompletedTask 
-            : throw new UserNotFoundException();
+            : throw new Exception($"Could not update user with id {updatedUser.Id}.");
     }
 }
 

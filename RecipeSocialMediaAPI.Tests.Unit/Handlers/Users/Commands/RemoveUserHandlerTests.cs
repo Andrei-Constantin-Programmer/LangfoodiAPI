@@ -21,7 +21,7 @@ public class RemoveUserHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenUserIsNotFound_ThrowUserNotFoundException()
+    public async Task Handle_WhenUserIsNotFound_DoNotDeleteAndThrowUserNotFoundException()
     {
         // Given
         User? nullUser = null;
@@ -40,6 +40,8 @@ public class RemoveUserHandlerTests
 
         // Then
         await action.Should().ThrowAsync<UserNotFoundException>();
+        _userRepositoryMock
+            .Verify(repo => repo.DeleteUser(It.IsAny<User>()), Times.Never);
     }
 
     [Fact]
