@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Users.Commands;
 
@@ -21,6 +22,8 @@ public class RemoveUserHandlerTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenUserIsNotFound_DoNotDeleteAndThrowUserNotFoundException()
     {
         // Given
@@ -45,6 +48,8 @@ public class RemoveUserHandlerTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenUserIdExistsAndDeleteIsSuccessful_DeleteAndNotThrow()
     {
         // Given
@@ -68,6 +73,8 @@ public class RemoveUserHandlerTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenUserEmailExistsAndDeleteIsSuccessful_DeleteAndNotThrow()
     {
         // Given
@@ -91,6 +98,8 @@ public class RemoveUserHandlerTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenUserIdExistsButDeleteIsUnsuccessful_ThrowException()
     {
         // Given
@@ -112,6 +121,8 @@ public class RemoveUserHandlerTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task Handle_WhenUserEmailExistsButDeleteIsUnsuccessful_ThrowException()
     {
         // Given
