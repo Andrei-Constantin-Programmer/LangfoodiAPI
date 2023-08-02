@@ -26,13 +26,15 @@ internal static class ServicesConfiguration
         // Singletons
         builder.Services.AddSingleton(GenerateDatabaseConfiguration(builder.Configuration));
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
+        builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
+
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 
         // Transients
-        builder.Services.AddTransient<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
+        builder.Services.AddTransient<IRecipeRepository, RecipeRepository>();
+        builder.Services.AddTransient<IUserRepository, UserRepository>();
 
         // Scoped
         builder.Services.AddScoped<ICryptoService, CryptoService>();
