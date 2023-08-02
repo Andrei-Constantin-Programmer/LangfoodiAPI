@@ -2,7 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Core.Services.Interfaces;
-using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
+using RecipeSocialMediaAPI.TestInfrastructure.Traits;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Validators;
 

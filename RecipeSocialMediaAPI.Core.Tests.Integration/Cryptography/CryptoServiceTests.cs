@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Core.Cryptography;
-using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
+using RecipeSocialMediaAPI.TestInfrastructure.Traits;
 using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Cryptography;

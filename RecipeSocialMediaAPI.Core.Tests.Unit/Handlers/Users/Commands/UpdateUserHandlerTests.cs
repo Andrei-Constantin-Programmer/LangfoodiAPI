@@ -6,7 +6,7 @@ using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Model;
-using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
+using RecipeSocialMediaAPI.TestInfrastructure.Traits;
 using RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Users.Commands;

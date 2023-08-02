@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.Core.Contracts;
 using RecipeSocialMediaAPI.Core.DTO;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
-using RecipeSocialMediaAPI.TestInfrastructure.Shared.Traits;
+using RecipeSocialMediaAPI.TestInfrastructure.Traits;
 using System.Net;
 using System.Net.Http.Json;
 
