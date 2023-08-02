@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestInfrastructure", "TestI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeSocialMediaAPI.TestInfrastructure", "RecipeSocialMediaAPI.TestInfrastructure\RecipeSocialMediaAPI.TestInfrastructure.csproj", "{EA82B4A0-F815-4BD7-A0DE-4CF213608BD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeSocialMediaAPI.Core.Tests.Shared", "RecipeSocialMediaAPI.Core.Tests.Shared\RecipeSocialMediaAPI.Core.Tests.Shared.csproj", "{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -228,6 +230,26 @@ Global
 		{EA82B4A0-F815-4BD7-A0DE-4CF213608BD6}.Release|x64.Build.0 = Release|Any CPU
 		{EA82B4A0-F815-4BD7-A0DE-4CF213608BD6}.Release|x86.ActiveCfg = Release|Any CPU
 		{EA82B4A0-F815-4BD7-A0DE-4CF213608BD6}.Release|x86.Build.0 = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|ARM.Build.0 = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|x64.Build.0 = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Debug|x86.Build.0 = Debug|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|ARM.ActiveCfg = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|ARM.Build.0 = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|ARM64.Build.0 = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|x64.ActiveCfg = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|x64.Build.0 = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|x86.ActiveCfg = Release|Any CPU
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -242,6 +264,7 @@ Global
 		{69462261-D288-46DA-8CD0-B3E326F522D8} = {0E16065C-8FE1-4AA4-94B8-3C8087AED945}
 		{4DB228D1-83AD-459D-8033-E3CCD2B7608E} = {0E16065C-8FE1-4AA4-94B8-3C8087AED945}
 		{EA82B4A0-F815-4BD7-A0DE-4CF213608BD6} = {1B334E79-32C1-4299-8D86-E61E9FF10159}
+		{C87D3AB6-7EB9-4C99-BB75-CE1F38632966} = {6D1828D2-EB76-4815-BBF5-ACD54B7F8A57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A74ACEF-D531-41F0-A6D6-B9DCBC70C6B8}

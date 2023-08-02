@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Core.Services;
-using RecipeSocialMediaAPI.TestInfrastructure.Traits;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Services;
 

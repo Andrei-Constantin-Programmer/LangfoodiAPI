@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.TestInfrastructure.Traits;
+﻿namespace RecipeSocialMediaAPI.TestInfrastructure;
 
 public static class Traits
 {

@@ -6,8 +6,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Middleware;
-using RecipeSocialMediaAPI.TestInfrastructure.TestHelpers;
-using RecipeSocialMediaAPI.TestInfrastructure.Traits;
+using RecipeSocialMediaAPI.Core.Tests.Shared;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Middleware;
 

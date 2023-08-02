@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 using RecipeSocialMediaAPI.DataAccess.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
-using RecipeSocialMediaAPI.TestInfrastructure.Traits;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Integration.MongoConfiguration;
 

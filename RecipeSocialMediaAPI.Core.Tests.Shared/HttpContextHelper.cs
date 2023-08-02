@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace RecipeSocialMediaAPI.TestInfrastructure.TestHelpers;
+namespace RecipeSocialMediaAPI.Core.Tests.Shared;
 
 public class HttpContextHelper
 {
