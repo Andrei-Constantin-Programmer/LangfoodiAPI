@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Core.Contracts;
 using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Core.Exceptions;
-using RecipeSocialMediaAPI.Core.Services.Interfaces;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.Domain.Entities;
 
