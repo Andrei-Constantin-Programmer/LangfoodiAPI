@@ -5,10 +5,10 @@ using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Core.DTO;
 using RecipeSocialMediaAPI.Core.Exceptions;
-using RecipeSocialMediaAPI.Domain;
 using RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using RecipeSocialMediaAPI.Domain.Entities;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Authentication.Queries;
 

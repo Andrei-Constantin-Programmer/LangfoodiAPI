@@ -3,7 +3,7 @@ using Moq;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Domain;
+using RecipeSocialMediaAPI.Domain.Entities;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Users.Commands;

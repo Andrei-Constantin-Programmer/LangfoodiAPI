@@ -1,6 +1,6 @@
 ﻿using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
-using RecipeSocialMediaAPI.Domain;
+using RecipeSocialMediaAPI.Domain.Entities;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers;
 

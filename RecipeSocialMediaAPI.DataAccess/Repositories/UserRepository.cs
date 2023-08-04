@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Domain;
+using RecipeSocialMediaAPI.Domain.Entities;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 

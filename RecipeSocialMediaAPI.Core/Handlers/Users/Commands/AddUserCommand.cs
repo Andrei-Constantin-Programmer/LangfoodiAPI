@@ -6,9 +6,9 @@ using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Core.DTO;
 using RecipeSocialMediaAPI.Core.Exceptions;
-using RecipeSocialMediaAPI.Domain;
 using RecipeSocialMediaAPI.Core.Services.Interfaces;
 using RecipeSocialMediaAPI.Core.Validation;
+using RecipeSocialMediaAPI.Domain.Entities;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 
