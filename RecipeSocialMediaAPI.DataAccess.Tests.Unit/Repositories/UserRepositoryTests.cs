@@ -6,7 +6,7 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
-using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.Domain;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
 

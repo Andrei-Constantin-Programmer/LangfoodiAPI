@@ -1,6 +1,6 @@
 ﻿using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.Domain;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 

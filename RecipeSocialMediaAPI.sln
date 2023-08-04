@@ -18,9 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccess", "DataAccess", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.DataAccess", "RecipeSocialMediaAPI.DataAccess\RecipeSocialMediaAPI.DataAccess.csproj", "{82A03BEF-1D22-47A1-87FA-C539D5501A50}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{ABD1D235-E80E-4E44-98CE-6A596EA1B397}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{ABD1D235-E80E-4E44-98CE-6A596EA1B397}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Model", "RecipeSocialMediaAPI.Model\RecipeSocialMediaAPI.Model.csproj", "{E99384BB-0284-48D9-8DCA-A9DBA2C3720A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Domain", "RecipeSocialMediaAPI.Domain\RecipeSocialMediaAPI.Domain.csproj", "{E99384BB-0284-48D9-8DCA-A9DBA2C3720A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{6D1828D2-EB76-4815-BBF5-ACD54B7F8A57}"
 EndProject
@@ -32,9 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.DataAc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestInfrastructure", "TestInfrastructure", "{1B334E79-32C1-4299-8D86-E61E9FF10159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeSocialMediaAPI.TestInfrastructure", "RecipeSocialMediaAPI.TestInfrastructure\RecipeSocialMediaAPI.TestInfrastructure.csproj", "{EA82B4A0-F815-4BD7-A0DE-4CF213608BD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.TestInfrastructure", "RecipeSocialMediaAPI.TestInfrastructure\RecipeSocialMediaAPI.TestInfrastructure.csproj", "{EA82B4A0-F815-4BD7-A0DE-4CF213608BD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeSocialMediaAPI.Core.Tests.Shared", "RecipeSocialMediaAPI.Core.Tests.Shared\RecipeSocialMediaAPI.Core.Tests.Shared.csproj", "{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Core.Tests.Shared", "RecipeSocialMediaAPI.Core.Tests.Shared\RecipeSocialMediaAPI.Core.Tests.Shared.csproj", "{C87D3AB6-7EB9-4C99-BB75-CE1F38632966}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

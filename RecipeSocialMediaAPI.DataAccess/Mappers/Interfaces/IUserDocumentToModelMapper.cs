@@ -1,5 +1,5 @@
 ﻿using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
-using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.Domain;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 

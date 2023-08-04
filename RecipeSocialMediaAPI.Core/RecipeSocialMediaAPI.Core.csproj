@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RecipeSocialMediaAPI.DataAccess\RecipeSocialMediaAPI.DataAccess.csproj" />
-    <ProjectReference Include="..\RecipeSocialMediaAPI.Model\RecipeSocialMediaAPI.Model.csproj" />
+    <ProjectReference Include="..\RecipeSocialMediaAPI.Domain\RecipeSocialMediaAPI.Domain.csproj" />
   </ItemGroup>
 
 </Project>
