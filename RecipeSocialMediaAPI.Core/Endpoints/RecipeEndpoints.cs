@@ -13,22 +13,22 @@ public static class RecipeEndpoints
         app.MapGet("/recipe/get", async (
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetRecipesQuery()));
+            return Results.NotFound(/*await sender.Send(new GetRecipesQuery())*/);
         });
 
         app.MapPost("/recipe/getById/{id}", async (
             [FromRoute] int id, 
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetRecipeByIdQuery(id)));
+            return Results.NotFound(/*await sender.Send(new GetRecipeByIdQuery(id))*/);
         });
 
         app.MapPost("/recipe/create", async (
             [FromBody] RecipeDTO recipe,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new CreateRecipeCommand(recipe));
-            return Results.Ok();
+            //await sender.Send(new CreateRecipeCommand(recipe));
+            return Results.NotFound();
         });
     }
 }
