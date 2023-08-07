@@ -1,6 +1,4 @@
-﻿using DnsClient.Protocol;
-using FluentAssertions;
-using MongoDB.Bson.Serialization.Conventions;
+﻿using FluentAssertions;
 using Moq;
 using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
@@ -8,8 +6,8 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
-using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories;
@@ -34,6 +32,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetAllUsers_WhenNoUsersExist_ReturnsEmptyEnumerable()
     {
         // Given
@@ -54,6 +54,8 @@ public class UserRepositoryTests
     }
 
     [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(1)]
     [InlineData(5)]
     [InlineData(10)]
@@ -79,6 +81,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetUserById_WhenUserIsNotFound_ReturnNull()
     {
         // Given
@@ -97,6 +101,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetUserById_WhenUserIsFound_ReturnUser()
     {
         // Given
@@ -120,6 +126,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetUserByEmail_WhenUserIsNotFound_ReturnNull()
     {
         // Given
@@ -138,6 +146,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetUserByEmail_WhenUserIsFound_ReturnUser()
     {
         // Given
@@ -161,6 +171,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetUserByUsername_WhenUserIsNotFound_ReturnNull()
     {
         // Given
@@ -179,6 +191,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetUserByUsername_WhenUserIsFound_ReturnUser()
     {
         // Given
@@ -202,6 +216,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateException()
     {
         // Given
@@ -218,6 +234,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void CreateUser_CreatesUserAndReturnsNewlyCreatedUser()
     {
         // Given
@@ -240,6 +258,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
@@ -273,6 +293,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void UpdateUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
@@ -292,6 +314,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void UpdateUser_WhenCollectionCantUpdate_ReturnFalse()
     {
         // Given
@@ -313,6 +337,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
     {
         // Given
@@ -332,6 +358,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
     {
         // Given
@@ -351,6 +379,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void DeleteUser_WhenUserWithIdDoesNotExist_ReturnFalse()
     {
         // Given
@@ -366,6 +396,8 @@ public class UserRepositoryTests
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void DeleteUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given

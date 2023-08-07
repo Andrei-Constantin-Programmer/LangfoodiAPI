@@ -11,9 +11,9 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.11.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.9" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
     <PackageReference Include="Moq" Version="4.18.4" />
-    <PackageReference Include="Neleus.LambdaCompare" Version="1.0.3" />
     <PackageReference Include="xunit" Version="2.5.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,10 +23,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="XunitXml.TestLogger" Version="3.1.11" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RecipeSocialMediaAPI.DataAccess.Tests.Shared\RecipeSocialMediaAPI.DataAccess.Tests.Shared.csproj" />
+    <ProjectReference Include="..\RecipeSocialMediaAPI.Core\RecipeSocialMediaAPI.Core.csproj" />
     <ProjectReference Include="..\RecipeSocialMediaAPI.DataAccess\RecipeSocialMediaAPI.DataAccess.csproj" />
     <ProjectReference Include="..\RecipeSocialMediaAPI.TestInfrastructure\RecipeSocialMediaAPI.TestInfrastructure.csproj" />
   </ItemGroup>

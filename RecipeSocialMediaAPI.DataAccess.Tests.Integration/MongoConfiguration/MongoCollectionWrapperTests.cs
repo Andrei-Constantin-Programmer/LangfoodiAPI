@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 using RecipeSocialMediaAPI.DataAccess.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Integration.MongoConfiguration;
 
@@ -23,6 +24,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
     {
         // Given
@@ -43,6 +46,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetAll_WhenNoDocumentsMatch_ReturnEmptyList()
     {
         // Given
@@ -62,6 +67,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetAll_WhenThereAreNoDocuments_ReturnEmptyList()
     {
         // Given
@@ -74,6 +81,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Insert_AddsDocumentToTheDatabaseAndReturnsDocument()
     {
         // Given
@@ -89,6 +98,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsException()
     {
         // Given
@@ -103,6 +114,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrue()
     {
         // Given
@@ -118,6 +131,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Delete_WhenMultipleDocumentsWithConditionExist_DeleteFirstFittingDocumentAndReturnTrue()
     {
         // Given
@@ -141,6 +156,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Delete_WhenNoDocumentWithConditionExists_ReturnFalse()
     {
         // Given
@@ -156,6 +173,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Delete_WhenNoDocumentExists_ReturnFalse()
     {
         // Given
@@ -168,6 +187,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Find_WhenNoDocumentWithConditionExists_ReturnNull()
     {
         // Given
@@ -182,6 +203,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Find_WhenNoDocumentExists_ReturnNull()
     {
         // Given
@@ -194,6 +217,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Find_WhenDocumentWithConditionExists_ReturnDocument()
     {
         // Given
@@ -208,6 +233,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void Find_WhenMultipleDocumentsWithConditionExist_ReturnTheFirstOne()
     {
         // Given
@@ -228,6 +255,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdate()
     {
         // Given
@@ -246,6 +275,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdate()
     {
         // Given
@@ -260,6 +291,8 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     }
 
     [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdate()
     {
         // Given
