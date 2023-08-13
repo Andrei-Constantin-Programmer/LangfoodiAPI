@@ -14,7 +14,7 @@ public static class EndpointGroups
 {
     public static RouteGroupBuilder UserEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/user/create", async (
+        group.MapPost("/create", async (
             [FromBody] NewUserContract newUserContract,
             [FromServices] ISender sender) =>
         {
@@ -22,7 +22,7 @@ public static class EndpointGroups
             return Results.Ok(user);
         });
 
-        group.MapPost("/user/update", async (
+        group.MapPost("/update", async (
             [FromBody] UpdateUserContract updateUserContract,
             [FromServices] ISender sender) =>
         {
@@ -30,7 +30,7 @@ public static class EndpointGroups
             return Results.Ok();
         });
 
-        group.MapDelete("/user/remove", async (
+        group.MapDelete("/remove", async (
             [FromQuery] string emailOrId,
             [FromServices] ISender sender) =>
         {
@@ -38,14 +38,14 @@ public static class EndpointGroups
             return Results.Ok();
         });
 
-        group.MapPost("/user/username/exists", async (
+        group.MapPost("/username/exists", async (
             [FromQuery] string username,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new CheckUsernameExistsQuery(username)));
         });
 
-        group.MapPost("/user/email/exists", async (
+        group.MapPost("/email/exists", async (
             [FromQuery] string email,
             [FromServices] ISender sender) =>
         {
@@ -57,20 +57,20 @@ public static class EndpointGroups
 
     public static RouteGroupBuilder RecipeEndpoints(this RouteGroupBuilder group)
     {
-        group.MapGet("/recipe/get", async (
+        group.MapGet("/get", async (
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetRecipesQuery()));
         });
 
-        group.MapPost("/recipe/getById/{id}", async (
+        group.MapPost("/getById/{id}", async (
             [FromRoute] int id,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetRecipeByIdQuery(id)));
         });
 
-        group.MapPost("/recipe/create", async (
+        group.MapPost("/create", async (
             [FromBody] RecipeDTO recipe,
             [FromServices] ISender sender) =>
         {
@@ -83,7 +83,7 @@ public static class EndpointGroups
 
     public static RouteGroupBuilder AuthenticationEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/auth/authenticate", async (
+        group.MapPost("/authenticate", async (
             [FromBody] AuthenticationAttemptContract authenticationAttempt,
             [FromServices] ISender sender) =>
         {
@@ -96,7 +96,7 @@ public static class EndpointGroups
 
     public static RouteGroupBuilder TestEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/test/log", (ILogger<Program> logger) =>
+        group.MapPost("/log", (ILogger<Program> logger) =>
         {
             logger.LogInformation("Hello World");
         });
