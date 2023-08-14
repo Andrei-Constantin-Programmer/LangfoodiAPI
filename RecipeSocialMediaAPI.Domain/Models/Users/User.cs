@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Domain.Entities;
+﻿namespace RecipeSocialMediaAPI.Domain.Models.Users;
 
 public class User
 {

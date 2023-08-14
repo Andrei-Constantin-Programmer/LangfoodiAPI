@@ -1,11 +1,10 @@
-﻿using System.Collections.Immutable;
+﻿using RecipeSocialMediaAPI.Domain.Models.Users;
+using System.Collections.Immutable;
 
-namespace RecipeSocialMediaAPI.Domain.Entities.Recipe;
+namespace RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 public class RecipeAggregate
 {
-    private readonly ISet<string> _labels;
-
     public string Id { get; }
     public Recipe Recipe { get; }
     public string Title { get; }
@@ -14,7 +13,10 @@ public class RecipeAggregate
     public User Chef { get; }
     public DateTimeOffset CreationDate { get; }
     public DateTimeOffset LastUpdatedDate { get; set; }
+
+    private readonly ISet<string> _labels;
     public ISet<string> Labels => _labels.ToImmutableHashSet();
+
     public RecipeAggregate(
         string id,
         string title,

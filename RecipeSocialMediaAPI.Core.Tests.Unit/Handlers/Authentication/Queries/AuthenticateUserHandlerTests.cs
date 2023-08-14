@@ -8,7 +8,7 @@ using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Domain.Entities;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Authentication.Queries;
 

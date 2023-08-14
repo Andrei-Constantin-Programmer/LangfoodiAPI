@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace RecipeSocialMediaAPI.Domain.Entities.Recipe;
+namespace RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 public record Recipe
 {
@@ -15,7 +15,6 @@ public record Recipe
         _ingredients = ingredients;
         _steps = steps;
     }
-
 
     public void AddIngredient(Ingredient ingredient)
     {
