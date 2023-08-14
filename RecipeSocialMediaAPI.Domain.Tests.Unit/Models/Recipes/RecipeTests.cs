@@ -71,4 +71,28 @@ public class RecipeTests
         // Assert
         steps.Should().BeEquivalentTo(testSteps);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void AddIngredient_AddsIngredientAndDoesNotChangeReturnedSet()
+    {
+        // Arrange
+        Ingredient existingIngredient = new("Existing Ingredient", 1, "g");
+        Ingredient newIngredient = new("New ingredient", 3, "L");
+
+        List<Ingredient> testIngredients = new() { existingIngredient };
+        Recipe testRecipe = new(testIngredients, new());
+
+        var ingredientsBeforeAddition = testRecipe.Ingredients;
+
+        // Act
+        testRecipe.AddIngredient(newIngredient);
+
+        // Assert
+        var ingredientsAfterAddition = testRecipe.Ingredients;
+
+        ingredientsBeforeAddition.Should().NotContain(newIngredient);
+        ingredientsAfterAddition.Should().Contain(newIngredient);
+    }
 }
