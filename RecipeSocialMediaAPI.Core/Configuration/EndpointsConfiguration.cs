@@ -8,7 +8,7 @@ internal static class EndpointsConfiguration
     {
         app.MapUserEndpoints();
         app.MapRecipeEndpoints();
-        app.MapTestEndpoints();
         app.MapAuthenticationEndpoints();
+        app.MapTestEndpoints();
     }
 }

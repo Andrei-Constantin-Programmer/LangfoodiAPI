@@ -11,7 +11,14 @@ public static class UserEndpoints
 {
     public static void MapUserEndpoints(this WebApplication app)
     {
-        app.MapPost("/user/create", async (
+        app.MapGroup("/user")
+            .AddUserEndpoints()
+            .WithTags("User");
+    }
+
+    private static RouteGroupBuilder AddUserEndpoints(this RouteGroupBuilder group)
+    {
+        group.MapPost("/create", async (
             [FromBody] NewUserContract newUserContract,
             [FromServices] ISender sender) =>
         {
@@ -19,36 +26,36 @@ public static class UserEndpoints
             return Results.Ok(user);
         });
 
-        app.MapPost("/user/update", async (
-            [FromBody] UpdateUserContract updateUserContract, 
+        group.MapPost("/update", async (
+            [FromBody] UpdateUserContract updateUserContract,
             [FromServices] ISender sender) =>
         {
             await sender.Send(new UpdateUserCommand(updateUserContract));
             return Results.Ok();
         });
-        
-        app.MapDelete("/user/remove", async (
-            [FromQuery] string emailOrId, 
+
+        group.MapDelete("/remove", async (
+            [FromQuery] string emailOrId,
             [FromServices] ISender sender) =>
         {
             await sender.Send(new RemoveUserCommand(emailOrId));
             return Results.Ok();
         });
 
-        app.MapPost("/user/username/exists", async (
-            [FromQuery] string username, 
+        group.MapPost("/username/exists", async (
+            [FromQuery] string username,
             [FromServices] ISender sender) =>
-        {    
+        {
             return Results.Ok(await sender.Send(new CheckUsernameExistsQuery(username)));
         });
 
-        app.MapPost("/user/email/exists", async (
-            [FromQuery] string email, 
+        group.MapPost("/email/exists", async (
+            [FromQuery] string email,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new CheckEmailExistsQuery(email)));  
+            return Results.Ok(await sender.Send(new CheckEmailExistsQuery(email)));
         });
-    }
 
-    
+        return group;
+    }
 }

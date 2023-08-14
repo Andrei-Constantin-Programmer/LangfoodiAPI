@@ -1,13 +1,21 @@
-﻿namespace RecipeSocialMediaAPI.Core.Endpoints
+﻿namespace RecipeSocialMediaAPI.Core.Endpoints;
+
+public static class TestEndpoints
 {
-    public static class TestEndpoints
+    public static void MapTestEndpoints(this WebApplication app)
     {
-        public static void MapTestEndpoints(this WebApplication app)
+        app.MapGroup("/test")
+            .AddTestEndpoints()
+            .WithTags("Test");
+    }
+
+    private static RouteGroupBuilder AddTestEndpoints(this RouteGroupBuilder group)
+    {
+        group.MapPost("/log", (ILogger<Program> logger) =>
         {
-            app.MapPost("/test/log", (ILogger<Program> logger) =>
-            {
-                logger.LogInformation("Hello World");
-            });
-        }
+            logger.LogInformation("Hello World");
+        });
+
+        return group;
     }
 }

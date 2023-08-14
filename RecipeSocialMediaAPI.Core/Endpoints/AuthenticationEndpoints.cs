@@ -9,12 +9,21 @@ public static class AuthenticationEndpoints
 {
     public static void MapAuthenticationEndpoints(this WebApplication app)
     {
-        app.MapPost("/auth/authenticate", async (
+        app.MapGroup("/auth")
+            .AddAuthenticationEndpoints()
+            .WithTags("Authentication");
+    }
+
+    private static RouteGroupBuilder AddAuthenticationEndpoints(this RouteGroupBuilder group)
+    {
+        group.MapPost("/authenticate", async (
             [FromBody] AuthenticationAttemptContract authenticationAttempt,
             [FromServices] ISender sender) =>
         {
             var successfulLogin = await sender.Send(new AuthenticateUserQuery(authenticationAttempt.UsernameOrEmail, authenticationAttempt.Password));
             return Results.Ok(successfulLogin);
         });
+
+        return group;
     }
 }
