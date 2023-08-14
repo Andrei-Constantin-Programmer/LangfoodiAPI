@@ -15,4 +15,28 @@ public record Recipe
         _ingredients = ingredients;
         _steps = steps;
     }
+
+
+    public void AddIngredient(Ingredient ingredient)
+    {
+        _ingredients.Add(ingredient);
+    }
+
+    public void PushRecipeStep(RecipeStep step)
+    {
+        _steps.Push(step);
+    }
+
+    public void RemoveSteps(int stepsToRemove)
+    {
+        if (stepsToRemove <= 0 || stepsToRemove > _steps.Count)
+        {
+            throw new ArgumentException("Number of steps to remove must be greater than 0 and less than the total amount of steps.");
+        }
+
+        for(int i = 0; i < _steps.Count; i++)
+        {
+            _steps.Pop();
+        }
+    }
 }
