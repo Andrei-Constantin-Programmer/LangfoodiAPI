@@ -75,7 +75,7 @@ public class RecipeTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void AddIngredient_AddsIngredientAndDoesNotChangeReturnedSet()
+    public void AddIngredient_AddsIngredientAndDoesNotChangeReturnedList()
     {
         // Arrange
         Ingredient existingIngredient = new("Existing Ingredient", 1, "g");
@@ -94,5 +94,30 @@ public class RecipeTests
 
         ingredientsBeforeAddition.Should().NotContain(newIngredient);
         ingredientsAfterAddition.Should().Contain(newIngredient);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void PushRecipeStep_PushesStepToTheEndOfTheStackAndDoesNotChangeReturnedSet()
+    {
+        // Arrange
+        RecipeStep existingStep = new("Existing Step");
+        RecipeStep newStep = new("New Step");
+
+        Stack<RecipeStep> testSteps = new();
+        testSteps.Push(existingStep);
+        Recipe testRecipe = new(new(), testSteps);
+
+        var stepsBeforeAddition = testRecipe.Steps;
+
+        // Act
+        testRecipe.PushRecipeStep(newStep);
+
+        // Assert
+        var stepsAfterAddition = testRecipe.Steps;
+
+        stepsBeforeAddition.Should().NotContain(newStep);
+        stepsAfterAddition.Should().Contain(newStep);
     }
 }

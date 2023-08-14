@@ -8,7 +8,7 @@ public record Recipe
     private readonly Stack<RecipeStep> _steps;
 
     public ImmutableList<Ingredient> Ingredients => _ingredients.ToImmutableList();
-    public ImmutableHashSet<RecipeStep> Steps => _steps.ToImmutableHashSet();
+    public ImmutableStack<RecipeStep> Steps => ImmutableStack.CreateRange(_steps);
 
     public Recipe(List<Ingredient> ingredients, Stack<RecipeStep> steps)
     {
