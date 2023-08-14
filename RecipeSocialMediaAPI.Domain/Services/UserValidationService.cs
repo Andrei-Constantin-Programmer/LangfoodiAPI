@@ -1,7 +1,7 @@
-﻿using RecipeSocialMediaAPI.Core.Services.Interfaces;
+﻿using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using System.Text.RegularExpressions;
 
-namespace RecipeSocialMediaAPI.Core.Services;
+namespace RecipeSocialMediaAPI.Domain.Services;
 
 public class UserValidationService : IUserValidationService
 {

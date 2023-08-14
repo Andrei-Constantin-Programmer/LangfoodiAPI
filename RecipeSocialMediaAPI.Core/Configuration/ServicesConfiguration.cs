@@ -9,8 +9,8 @@ using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Core.Mappers.Profiles;
-using RecipeSocialMediaAPI.Core.Services;
-using RecipeSocialMediaAPI.Core.Services.Interfaces;
+using RecipeSocialMediaAPI.Domain.Services;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 

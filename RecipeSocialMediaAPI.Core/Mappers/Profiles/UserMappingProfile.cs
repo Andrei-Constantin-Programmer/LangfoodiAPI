@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using RecipeSocialMediaAPI.Core.DTO;
-using RecipeSocialMediaAPI.Model;
+using RecipeSocialMediaAPI.Domain.Entities;
 
 namespace RecipeSocialMediaAPI.Core.Mappers.Profiles;
 

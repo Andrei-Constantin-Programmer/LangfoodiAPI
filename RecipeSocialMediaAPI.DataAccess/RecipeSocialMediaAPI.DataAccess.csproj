@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RecipeSocialMediaAPI.Model\RecipeSocialMediaAPI.Model.csproj" />
+    <ProjectReference Include="..\RecipeSocialMediaAPI.Domain\RecipeSocialMediaAPI.Domain.csproj" />
   </ItemGroup>
 
 </Project>

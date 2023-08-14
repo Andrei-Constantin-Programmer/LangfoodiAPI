@@ -1,7 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Moq;
 using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Core.Services.Interfaces;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Validators;

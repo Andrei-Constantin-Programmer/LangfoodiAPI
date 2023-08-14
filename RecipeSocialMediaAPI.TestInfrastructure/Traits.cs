@@ -18,6 +18,6 @@ public static class Traits
     {
         public const string CORE = "Core";
         public const string DATA_ACCESS = "Data Access";
-        public const string MODEL = "Model";
+        public const string DOMAIN = "Domain";
     }
 }

@@ -1,4 +1,4 @@
-﻿using RecipeSocialMediaAPI.Model;
+﻿using RecipeSocialMediaAPI.Domain.Entities;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
