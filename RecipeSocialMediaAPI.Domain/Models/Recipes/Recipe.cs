@@ -33,7 +33,7 @@ public record Recipe
             throw new ArgumentException("Number of steps to remove must be greater than 0 and less than the total amount of steps.");
         }
 
-        for(int i = 0; i < _steps.Count; i++)
+        for(int i = 0; i < stepsToRemove; i++)
         {
             _steps.Pop();
         }

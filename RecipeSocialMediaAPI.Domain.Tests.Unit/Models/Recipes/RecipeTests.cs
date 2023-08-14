@@ -120,4 +120,75 @@ public class RecipeTests
         stepsBeforeAddition.Should().NotContain(newStep);
         stepsAfterAddition.Should().Contain(newStep);
     }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    [InlineData(1, 1)]
+    [InlineData(2, 1)]
+    [InlineData(3, 3)]
+    [InlineData(3, 2)]
+    [InlineData(5, 2)]
+    public void RemoveSteps_WhenNumberOfStepsIsValid_RemoveRequestedNumberOfSteps(int numberOfExistingSteps, int numberOfStepsToRemove)
+    {
+        // Arrange
+        Stack<RecipeStep> existingSteps = new();
+        for(int i = 0; i < numberOfExistingSteps; i++)
+        {
+            existingSteps.Push(new($"Step {i}"));
+        }
+
+        Recipe testRecipe = new(new(), existingSteps);
+
+        // Act
+        testRecipe.RemoveSteps(numberOfStepsToRemove);
+
+        // Assert
+        var remainingSteps = testRecipe.Steps;
+        var numberOfStepsRemaining = numberOfExistingSteps - numberOfStepsToRemove;
+        remainingSteps.Should().HaveCount(numberOfStepsRemaining);
+        remainingSteps.Should().NotContainEquivalentOf(existingSteps.Skip(numberOfStepsRemaining));
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-10)]
+    public void RemoveSteps_WhenNumberOfStepsIsZeroOrNegative_ThrowArgumentException(int numberOfStepsToRemove)
+    {
+        // Arrange
+        Recipe testRecipe = new(new(), new());
+
+        // Act
+        var action = () => testRecipe.RemoveSteps(numberOfStepsToRemove);
+
+        // Assert
+        action.Should().Throw<ArgumentException>();
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    [InlineData(1, 2)]
+    [InlineData(5, 6)]
+    [InlineData(10, 30)]
+    public void RemoveSteps_WhenNumberOfStepsIsHigherThanExistingStepCount_ThrowArgumentException(int numberOfExistingSteps, int numberOfStepsToRemove)
+    {
+        // Arrange
+        Stack<RecipeStep> existingSteps = new();
+        for (int i = 0; i < numberOfExistingSteps; i++)
+        {
+            existingSteps.Push(new($"Step {i}"));
+        }
+
+        Recipe testRecipe = new(new(), existingSteps);
+
+        // Act
+        var action = () => testRecipe.RemoveSteps(numberOfStepsToRemove);
+
+        // Assert
+        action.Should().Throw<ArgumentException>();
+    }
 }
