@@ -20,22 +20,22 @@ public static class RecipeEndpoints
         group.MapGet("/get", async (
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetRecipesQuery()));
+            return Results.NotFound(/*await sender.Send(new GetRecipesQuery())*/);
         });
 
         group.MapPost("/getById/{id}", async (
             [FromRoute] int id,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetRecipeByIdQuery(id)));
+            return Results.NotFound(/*await sender.Send(new GetRecipeByIdQuery(id))*/);
         });
 
         group.MapPost("/create", async (
             [FromBody] RecipeDTO recipe,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new CreateRecipeCommand(recipe));
-            return Results.Ok();
+            //await sender.Send(new CreateRecipeCommand(recipe));
+            return Results.NotFound();
         });
 
         return group;

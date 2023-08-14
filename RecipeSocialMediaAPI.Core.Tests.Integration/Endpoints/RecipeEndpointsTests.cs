@@ -12,7 +12,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 {
     public RecipeEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
-    [Fact]
+    [Fact (Skip = "Recipes under construction")]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeGet_WhenNoRecipesCreated_ReturnsEmptyList()
@@ -29,8 +29,8 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Should().NotBeNull();
         data.Should().BeEmpty();
     }
-    
-    [Fact]
+
+    [Fact(Skip = "Recipes under construction")]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeCreate_WhenValidRecipe_ReturnsOk()
@@ -51,7 +51,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    [Fact]
+    [Fact(Skip = "Recipes under construction")]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeCreateAndGet_AfterValidRecipeCreated_GetReturnsTheNewRecipe()
@@ -83,7 +83,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         data![0].CreationDate.Should().NotBeNull();
     }
 
-    [Fact]
+    [Fact(Skip = "Recipes under construction")]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeGetById_WhenRecipeDoesNotExist_ReturnsNotFound()
@@ -98,7 +98,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact]
+    [Fact(Skip = "Recipes under construction")]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeGetById_WhenRecipeDoesExist_ReturnsRecipe()

@@ -1,5 +1,5 @@
 ﻿using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Domain.Entities;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
@@ -24,8 +24,10 @@ internal class FakeRecipeRepository : IRecipeRepository
         return await Task.FromResult(_recipes);
     }
 
-    public async Task<Recipe?> GetRecipeById(int id)
-    {
-        return await Task.FromResult(_recipes.SingleOrDefault(r => r.Id == id));
-    }
+    public Task<Recipe?> GetRecipeById(int id) => throw new NotImplementedException();
+
+    //public async Task<Recipe?> GetRecipeById(int id)
+    //{
+    //    return await Task.FromResult(_recipes.SingleOrDefault(r => r.Id == id));
+    //}
 }
