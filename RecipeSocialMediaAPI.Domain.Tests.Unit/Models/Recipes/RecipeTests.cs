@@ -46,13 +46,13 @@ public class RecipeTests
     [MemberData(nameof(TestIngredientLists))]
     public void IngredientsProperty_IsEqualToConstructorValue(List<Ingredient> testIngredients)
     {
-        // Arrange
+        // Given
         Recipe testRecipe = new(testIngredients, new());
 
-        // Act
+        // When
         var ingredients = testRecipe.Ingredients;
 
-        // Assert
+        // Then
         ingredients.Should().BeEquivalentTo(testIngredients);
     }
 
@@ -62,13 +62,13 @@ public class RecipeTests
     [MemberData(nameof(TestStepLists))]
     public void StepsProperty_IsEqualToConstructorValue(Stack<RecipeStep> testSteps)
     {
-        // Arrange
+        // Given
         Recipe testRecipe = new(new(), testSteps);
 
-        // Act
+        // When
         var steps = testRecipe.Steps;
 
-        // Assert
+        // Then
         steps.Should().BeEquivalentTo(testSteps);
     }
 
@@ -77,7 +77,7 @@ public class RecipeTests
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
     public void AddIngredient_AddsIngredientAndDoesNotChangeReturnedList()
     {
-        // Arrange
+        // Given
         Ingredient existingIngredient = new("Existing Ingredient", 1, "g");
         Ingredient newIngredient = new("New ingredient", 3, "L");
 
@@ -86,10 +86,10 @@ public class RecipeTests
 
         var ingredientsBeforeAddition = testRecipe.Ingredients;
 
-        // Act
+        // When
         testRecipe.AddIngredient(newIngredient);
 
-        // Assert
+        // Then
         var ingredientsAfterAddition = testRecipe.Ingredients;
 
         ingredientsBeforeAddition.Should().NotContain(newIngredient);
@@ -101,7 +101,7 @@ public class RecipeTests
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
     public void PushRecipeStep_PushesStepToTheEndOfTheStackAndDoesNotChangeReturnedSet()
     {
-        // Arrange
+        // Given
         RecipeStep existingStep = new("Existing Step");
         RecipeStep newStep = new("New Step");
 
@@ -111,10 +111,10 @@ public class RecipeTests
 
         var stepsBeforeAddition = testRecipe.Steps;
 
-        // Act
+        // When
         testRecipe.PushRecipeStep(newStep);
 
-        // Assert
+        // Then
         var stepsAfterAddition = testRecipe.Steps;
 
         stepsBeforeAddition.Should().NotContain(newStep);
@@ -131,7 +131,7 @@ public class RecipeTests
     [InlineData(5, 2)]
     public void RemoveSteps_WhenNumberOfStepsIsValid_RemoveRequestedNumberOfSteps(int numberOfExistingSteps, int numberOfStepsToRemove)
     {
-        // Arrange
+        // Given
         Stack<RecipeStep> existingSteps = new();
         for(int i = 0; i < numberOfExistingSteps; i++)
         {
@@ -140,10 +140,10 @@ public class RecipeTests
 
         Recipe testRecipe = new(new(), existingSteps);
 
-        // Act
+        // When
         testRecipe.RemoveSteps(numberOfStepsToRemove);
 
-        // Assert
+        // Then
         var remainingSteps = testRecipe.Steps;
         var numberOfStepsRemaining = numberOfExistingSteps - numberOfStepsToRemove;
         remainingSteps.Should().HaveCount(numberOfStepsRemaining);
@@ -158,13 +158,13 @@ public class RecipeTests
     [InlineData(-10)]
     public void RemoveSteps_WhenNumberOfStepsIsZeroOrNegative_ThrowArgumentException(int numberOfStepsToRemove)
     {
-        // Arrange
+        // Given
         Recipe testRecipe = new(new(), new());
 
-        // Act
+        // When
         var action = () => testRecipe.RemoveSteps(numberOfStepsToRemove);
 
-        // Assert
+        // Then
         action.Should().Throw<ArgumentException>();
     }
 
@@ -176,7 +176,7 @@ public class RecipeTests
     [InlineData(10, 30)]
     public void RemoveSteps_WhenNumberOfStepsIsHigherThanExistingStepCount_ThrowArgumentException(int numberOfExistingSteps, int numberOfStepsToRemove)
     {
-        // Arrange
+        // Given
         Stack<RecipeStep> existingSteps = new();
         for (int i = 0; i < numberOfExistingSteps; i++)
         {
@@ -185,10 +185,10 @@ public class RecipeTests
 
         Recipe testRecipe = new(new(), existingSteps);
 
-        // Act
+        // When
         var action = () => testRecipe.RemoveSteps(numberOfStepsToRemove);
 
-        // Assert
+        // Then
         action.Should().Throw<ArgumentException>();
     }
 }

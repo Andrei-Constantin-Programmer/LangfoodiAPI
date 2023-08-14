@@ -20,19 +20,19 @@ public class RecipeAggregate
     public RecipeAggregate(
         string id,
         string title,
+        Recipe recipe,
         string shortDescription,
-        string description,
+        string longDescription,
         User chef,
         DateTimeOffset creationDate,
         DateTimeOffset lastUpdatedDate,
-        Recipe recipe,
-        ISet<string>? labels)
+        ISet<string>? labels = null)
     {
         Id = id;
-        Recipe = recipe;
         Title = title;
+        Recipe = recipe;
         ShortDescription = shortDescription;
-        LongDescription = description;
+        LongDescription = longDescription;
         Chef = chef;
         CreationDate = creationDate;
         LastUpdatedDate = lastUpdatedDate;
