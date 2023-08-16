@@ -5,15 +5,15 @@ using RecipeSocialMediaAPI.Core.DTO.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 
-internal record GetRecipeByIdQuery(int Id) : IRequest<RecipeDTO>;
+public record GetRecipeByIdQuery(int Id) : IRequest<RecipeDetailedDTO>;
 
-internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDTO>
+internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDetailedDTO>
 {
     public GetRecipeByIdHandler(IRecipeRepository recipeRepository)
     {
     }
 
-    public async Task<RecipeDTO> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)
+    public async Task<RecipeDetailedDTO> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
