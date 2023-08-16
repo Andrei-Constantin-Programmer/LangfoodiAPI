@@ -12,24 +12,6 @@ public class RecipeEndpointsTests : EndpointTestBase
 {
     public RecipeEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
-    [Fact (Skip = "Recipes under construction")]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeGet_WhenNoRecipesCreated_ReturnsEmptyList()
-    {
-        // Given
-        
-        // When
-        var result = await _client.GetAsync("/recipe/get");
-
-        // Then
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
-        data.Should().NotBeNull();
-        data.Should().BeEmpty();
-    }
-
     [Fact(Skip = "Recipes under construction")]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
