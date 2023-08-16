@@ -1,3 +1,3 @@
 ﻿namespace RecipeSocialMediaAPI.Domain.Models.Recipes;
 
-public record struct Ingredient(string Name, double Quantity, string UnitSymbol);
+public record struct Ingredient(string Name, double Quantity, string UnitOfMeasurement);

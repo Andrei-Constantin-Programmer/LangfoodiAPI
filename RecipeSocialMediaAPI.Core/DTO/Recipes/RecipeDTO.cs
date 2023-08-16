@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Core.DTO;
+﻿namespace RecipeSocialMediaAPI.Core.DTO.Recipes;
 
 public record RecipeDTO
 {
@@ -8,7 +8,7 @@ public record RecipeDTO
 
     required public string Description { get; set; }
 
-    required public string Chef { get; set; }
+    required public string ChefUsername { get; set; }
 
     public DateTimeOffset? CreationDate { get; set; }
 }
