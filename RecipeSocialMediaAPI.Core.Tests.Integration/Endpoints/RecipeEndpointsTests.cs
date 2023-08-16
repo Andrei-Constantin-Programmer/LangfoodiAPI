@@ -41,7 +41,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Id = 0,
             Title = "TestTitle",
             Description = "TestDescription",
-            Chef = "TestChef"
+            ChefUsername = "TestChef"
         };
 
         // When
@@ -62,7 +62,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Id = 0,
             Title = "TestTitle",
             Description = "TestDescription",
-            Chef = "TestChef"
+            ChefUsername = "TestChef"
         };
 
         // When
@@ -79,7 +79,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Should().HaveCount(1);
         data![0].Title.Should().Be(testRecipe.Title);
         data![0].Description.Should().Be(testRecipe.Description);
-        data![0].Chef.Should().Be(testRecipe.Chef);
+        data![0].ChefUsername.Should().Be(testRecipe.ChefUsername);
         data![0].CreationDate.Should().NotBeNull();
     }
 
@@ -109,7 +109,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Id = 1,
             Title = "TestTitle",
             Description = "TestDescription",
-            Chef = "TestChef"
+            ChefUsername = "TestChef"
         };
 
         await _client.PostAsJsonAsync("/recipe/create", testRecipe);
@@ -125,7 +125,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         data!.Id.Should().Be(testRecipe.Id);
         data!.Title.Should().Be(testRecipe.Title);
         data!.Description.Should().Be(testRecipe.Description);
-        data!.Chef.Should().Be(testRecipe.Chef);
+        data!.ChefUsername.Should().Be(testRecipe.ChefUsername);
         data!.CreationDate.Should().NotBeNull();
     }
 }
