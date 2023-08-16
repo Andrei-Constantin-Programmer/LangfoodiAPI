@@ -20,7 +20,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         var testRecipe = new RecipeDTO()
         {
-            Id = 0,
+            Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
             ChefUsername = "TestChef"
@@ -41,7 +41,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         RecipeDTO testRecipe = new()
         {
-            Id = 0,
+            Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
             ChefUsername = "TestChef"
@@ -88,7 +88,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         RecipeDTO testRecipe = new()
         {
-            Id = 1,
+            Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
             ChefUsername = "TestChef"

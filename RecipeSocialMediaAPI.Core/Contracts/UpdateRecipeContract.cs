@@ -5,7 +5,7 @@ namespace RecipeSocialMediaAPI.Core.Contracts;
 
 public record UpdateRecipeContract
 {
-    required public int Id { get; set; }
+    required public string Id { get; set; }
     required public string Title { get; set; }
     required public string Description { get; set; }
     required public ISet<string> Labels { get; set; }
