@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.Core.DTO.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 
-public record GetRecipeByIdQuery(int Id) : IRequest<RecipeDetailedDTO>;
+public record GetRecipeByIdQuery(string Id) : IRequest<RecipeDetailedDTO>;
 
 internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDetailedDTO>
 {

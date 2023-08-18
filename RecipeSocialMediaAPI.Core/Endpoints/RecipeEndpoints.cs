@@ -18,32 +18,32 @@ public static class RecipeEndpoints
 
     private static RouteGroupBuilder AddRecipeEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/getById/{id}", async (
-            [FromRoute] string id,
+        group.MapPost("/getById", async (
+            [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
-            return Results.NotFound(/*await sender.Send(new GetRecipeByIdQuery(id))*/);
+            return Results.NotFound(await sender.Send(new GetRecipeByIdQuery(id)));
         });
 
-        group.MapPost("/getRecipesFromUserId/{id}", async (
-            [FromRoute] string id,
+        group.MapPost("/getRecipesFromUserId", async (
+            [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
-            return Results.NotFound(/*await sender.Send(new GetRecipesFromUserIdQuery(id))*/);
+            return Results.NotFound(await sender.Send(new GetRecipesFromUserIdQuery(id)));
         });
 
         group.MapPost("/getRecipesFromUser", async (
             [FromQuery] string username,
             [FromServices] ISender sender) =>
         {
-            return Results.NotFound(/*await sender.Send(new GetRecipesFromUserQuery(username))*/);
+            return Results.NotFound(await sender.Send(new GetRecipesFromUserQuery(username)));
         });
 
         group.MapPost("/create", async (
             [FromBody] NewRecipeContract newRecipeContract,
             [FromServices] ISender sender) =>
         {
-            //await sender.Send(new AddRecipeCommand(recipe));
+            await sender.Send(new AddRecipeCommand(newRecipeContract));
             return Results.NotFound();
         });
 
@@ -51,7 +51,7 @@ public static class RecipeEndpoints
             [FromBody] UpdateRecipeContract updateRecipeContract,
             [FromServices] ISender sender) =>
         {
-            //await sender.Send(new CreateRecipeCommand(recipe));
+            await sender.Send(new UpdateRecipeCommand(updateRecipeContract));
             return Results.NotFound();
         });
 

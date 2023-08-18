@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 
-public record GetRecipesFromUserIdQuery(int Id) : IRequest<IEnumerable<RecipeDTO>>;
+public record GetRecipesFromUserIdQuery(string Id) : IRequest<IEnumerable<RecipeDTO>>;
 
 internal class GetRecipesFromUserIdHandler : IRequestHandler<GetRecipesFromUserIdQuery, IEnumerable<RecipeDTO>>
 {
