@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
@@ -12,24 +12,6 @@ public class RecipeEndpointsTests : EndpointTestBase
 {
     public RecipeEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
-    [Fact (Skip = "Recipes under construction")]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeGet_WhenNoRecipesCreated_ReturnsEmptyList()
-    {
-        // Given
-        
-        // When
-        var result = await _client.GetAsync("/recipe/get");
-
-        // Then
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
-        data.Should().NotBeNull();
-        data.Should().BeEmpty();
-    }
-
     [Fact(Skip = "Recipes under construction")]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
@@ -38,10 +20,10 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         var testRecipe = new RecipeDTO()
         {
-            Id = 0,
+            Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
-            Chef = "TestChef"
+            ChefUsername = "TestChef"
         };
 
         // When
@@ -59,10 +41,10 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         RecipeDTO testRecipe = new()
         {
-            Id = 0,
+            Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
-            Chef = "TestChef"
+            ChefUsername = "TestChef"
         };
 
         // When
@@ -79,7 +61,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Should().HaveCount(1);
         data![0].Title.Should().Be(testRecipe.Title);
         data![0].Description.Should().Be(testRecipe.Description);
-        data![0].Chef.Should().Be(testRecipe.Chef);
+        data![0].ChefUsername.Should().Be(testRecipe.ChefUsername);
         data![0].CreationDate.Should().NotBeNull();
     }
 
@@ -106,10 +88,10 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         RecipeDTO testRecipe = new()
         {
-            Id = 1,
+            Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
-            Chef = "TestChef"
+            ChefUsername = "TestChef"
         };
 
         await _client.PostAsJsonAsync("/recipe/create", testRecipe);
@@ -125,7 +107,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         data!.Id.Should().Be(testRecipe.Id);
         data!.Title.Should().Be(testRecipe.Title);
         data!.Description.Should().Be(testRecipe.Description);
-        data!.Chef.Should().Be(testRecipe.Chef);
+        data!.ChefUsername.Should().Be(testRecipe.ChefUsername);
         data!.CreationDate.Should().NotBeNull();
     }
 }

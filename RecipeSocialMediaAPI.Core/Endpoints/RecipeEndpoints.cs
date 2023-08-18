@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Core.Contracts;
+using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 
@@ -17,24 +18,40 @@ public static class RecipeEndpoints
 
     private static RouteGroupBuilder AddRecipeEndpoints(this RouteGroupBuilder group)
     {
-        group.MapGet("/get", async (
+        group.MapPost("/getById", async (
+            [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
-            return Results.NotFound(/*await sender.Send(new GetRecipesQuery())*/);
+            return Results.NotFound(await sender.Send(new GetRecipeByIdQuery(id)));
         });
 
-        group.MapPost("/getById/{id}", async (
-            [FromRoute] int id,
+        group.MapPost("/getRecipesFromUserId", async (
+            [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
-            return Results.NotFound(/*await sender.Send(new GetRecipeByIdQuery(id))*/);
+            return Results.NotFound(await sender.Send(new GetRecipesFromUserIdQuery(id)));
+        });
+
+        group.MapPost("/getRecipesFromUser", async (
+            [FromQuery] string username,
+            [FromServices] ISender sender) =>
+        {
+            return Results.NotFound(await sender.Send(new GetRecipesFromUserQuery(username)));
         });
 
         group.MapPost("/create", async (
-            [FromBody] RecipeDTO recipe,
+            [FromBody] NewRecipeContract newRecipeContract,
             [FromServices] ISender sender) =>
         {
-            //await sender.Send(new CreateRecipeCommand(recipe));
+            await sender.Send(new AddRecipeCommand(newRecipeContract));
+            return Results.NotFound();
+        });
+
+        group.MapPost("/update", async (
+            [FromBody] UpdateRecipeContract updateRecipeContract,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new UpdateRecipeCommand(updateRecipeContract));
             return Results.NotFound();
         });
 
