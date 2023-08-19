@@ -5,10 +5,10 @@ namespace RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
 public interface IRecipeRepository
 {
-    Recipe? GetRecipeById(string id);
-    IEnumerable<Recipe> GetRecipesByChef(string chefId);
-    Recipe CreateRecipe(Recipe recipe);
-    bool UpdateRecipe(Recipe recipe);
-    bool DeleteRecipe(Recipe recipe);
+    RecipeAggregate? GetRecipeById(string id);
+    IEnumerable<RecipeAggregate> GetRecipesByChef(string chefId);
+    RecipeAggregate CreateRecipe(RecipeAggregate recipe);
+    bool UpdateRecipe(RecipeAggregate recipe);
+    bool DeleteRecipe(RecipeAggregate recipe);
     bool DeleteRecipe(string id);
 }
