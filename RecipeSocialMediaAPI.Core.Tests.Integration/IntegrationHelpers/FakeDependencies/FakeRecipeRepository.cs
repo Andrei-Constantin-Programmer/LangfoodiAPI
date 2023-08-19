@@ -19,15 +19,16 @@ internal class FakeRecipeRepository : IRecipeRepository
         return Task.CompletedTask;
     }
 
-    public async Task<IEnumerable<Recipe>> GetAllRecipes()
+    public async Task<IEnumerable<Recipe>> GetRecipes()
     {
         return await Task.FromResult(_recipes);
     }
 
     public Task<Recipe?> GetRecipeById(int id) => throw new NotImplementedException();
-
-    //public async Task<Recipe?> GetRecipeById(int id)
-    //{
-    //    return await Task.FromResult(_recipes.SingleOrDefault(r => r.Id == id));
-    //}
+    public Recipe? GetRecipeById(string id) => throw new NotImplementedException();
+    public IEnumerable<Recipe> GetRecipesByChef(string chefId) => throw new NotImplementedException();
+    Recipe IRecipeRepository.CreateRecipe(Recipe recipe) => throw new NotImplementedException();
+    public bool UpdateRecipe(Recipe recipe) => throw new NotImplementedException();
+    public bool DeleteRecipe(Recipe recipe) => throw new NotImplementedException();
+    public bool DeleteRecipe(string id) => throw new NotImplementedException();
 }
