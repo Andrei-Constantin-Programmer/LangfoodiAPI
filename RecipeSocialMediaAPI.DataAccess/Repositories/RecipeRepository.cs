@@ -44,7 +44,23 @@ public class RecipeRepository : IRecipeRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public IEnumerable<RecipeAggregate> GetRecipesByChef(string chefId) => throw new NotImplementedException();
+    public IEnumerable<RecipeAggregate> GetRecipesByChef(string chefId)
+    {
+        User? chef = _userRepository.GetUserById(chefId);
+
+        if (chef is null)
+        {
+            return Enumerable.Empty<RecipeAggregate>();
+        }
+
+        var recipes = _recipeCollection
+            .GetAll(recipeDoc => recipeDoc.ChefId == chefId);
+
+        return recipes.Count == 0
+            ? Enumerable.Empty<RecipeAggregate>()
+            : recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
+    }
+
     public RecipeAggregate CreateRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
     public bool UpdateRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
     public bool DeleteRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
