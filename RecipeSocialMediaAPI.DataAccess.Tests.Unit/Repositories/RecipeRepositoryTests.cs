@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
@@ -20,6 +21,7 @@ public class RecipeRepositoryTests
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
     private readonly Mock<IRecipeDocumentToModelMapper> _mapperMock;
     private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<ILogger<RecipeRepository>> _loggerMock;
 
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
 
@@ -32,8 +34,13 @@ public class RecipeRepositoryTests
         _mongoCollectionFactoryMock
             .Setup(factory => factory.CreateCollection<RecipeDocument>())
             .Returns(_mongoCollectionWrapperMock.Object);
+        _loggerMock = new Mock<ILogger<RecipeRepository>>();
 
-        _recipeRepositorySUT = new(_mapperMock.Object, _mongoCollectionFactoryMock.Object, _userRepositoryMock.Object);
+        _recipeRepositorySUT = new(
+            _mapperMock.Object, 
+            _mongoCollectionFactoryMock.Object, 
+            _userRepositoryMock.Object, 
+            _loggerMock.Object);
     }
 
     [Fact]
@@ -112,7 +119,7 @@ public class RecipeRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipeById_WhenRecipeIsFoundButChefIsNotFound_ReturnNull()
+    public void GetRecipeById_WhenRecipeIsFoundButChefIsNotFound_LogWarningAndReturnNull()
     {
         // Given
         string id = "1";
@@ -157,5 +164,11 @@ public class RecipeRepositoryTests
 
         // Then
         result.Should().BeNull();
+        _loggerMock.Verify(logger => logger.Log(
+            LogLevel.Warning, 
+            It.IsAny<EventId>(), 
+            It.IsAny<It.IsAnyType>(), 
+            null, 
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()));
     }
 }
