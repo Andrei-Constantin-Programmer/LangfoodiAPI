@@ -1,5 +1,6 @@
 ﻿using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
@@ -12,7 +13,7 @@ internal class FakeRecipeRepository : IRecipeRepository
         _recipes = new List<Recipe>();
     }
 
-    public RecipeAggregate CreateRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string shortDescription, string longDescription, User chef, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, ISet<string> labels) => throw new NotImplementedException();
     public bool DeleteRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
     public bool DeleteRecipe(string id) => throw new NotImplementedException();
     public RecipeAggregate? GetRecipeById(string id) => throw new NotImplementedException();

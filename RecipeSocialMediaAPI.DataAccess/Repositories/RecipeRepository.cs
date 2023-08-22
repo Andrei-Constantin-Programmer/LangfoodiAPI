@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using System.Reflection.Emit;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 
@@ -61,7 +62,25 @@ public class RecipeRepository : IRecipeRepository
             : recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
     }
 
-    public RecipeAggregate CreateRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string shortDescription, string longDescription, User chef, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, ISet<string> labels)
+    {
+        var recipeDocument = _recipeCollection
+            .Insert(new RecipeDocument()
+            {
+                Title = title,
+                Ingredients = recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
+                Steps = recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
+                ShortDescription = shortDescription,
+                LongDescription = longDescription,
+                ChefId = chef.Id,
+                CreationDate = creationDate,
+                LastUpdatedDate = lastUpdatedDate,
+                Labels = labels.ToList()
+            });
+        
+        return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
+    }
+
     public bool UpdateRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
     public bool DeleteRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
     public bool DeleteRecipe(string id) => throw new NotImplementedException();

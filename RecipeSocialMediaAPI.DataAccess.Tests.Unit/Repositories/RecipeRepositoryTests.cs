@@ -12,6 +12,7 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories;
 
@@ -296,4 +297,69 @@ public class RecipeRepositoryTests
                 mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
                 Times.Never());
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipe()
+    {
+        // Given
+        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
+        string testLabel = "TestLabel";
+
+        RecipeAggregate expectedResult = new(
+            "TestId",
+            "TestTitle",
+            new(new(), new()),
+            "Short Description",
+            "Long Description",
+            testChef,
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new HashSet<string>() { testLabel }
+        );
+
+        RecipeDocument newRecipeDocument = new()
+        {
+            Id = expectedResult.Id,
+            Title = expectedResult.Title,
+            Ingredients = new List<(string, double, string)>(),
+            Steps = new List<(string, string?)>(),
+            ShortDescription = expectedResult.ShortDescription,
+            LongDescription = expectedResult.LongDescription,
+            ChefId = testChef.Id,
+            CreationDate = expectedResult.CreationDate,
+            LastUpdatedDate = expectedResult.LastUpdatedDate,
+            Labels = new List<string>() { testLabel }
+        };
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.Insert(It.IsAny<RecipeDocument>()))
+            .Returns(newRecipeDocument);
+
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(newRecipeDocument, testChef))
+            .Returns(expectedResult);
+
+        // When
+        var result = _recipeRepositorySUT.CreateRecipe(expectedResult.Title, expectedResult.Recipe, expectedResult.ShortDescription, expectedResult.LongDescription, testChef, expectedResult.CreationDate, expectedResult.LastUpdatedDate, expectedResult.Labels);
+
+        // Then
+        result.Should().Be(expectedResult);
+        _mongoCollectionWrapperMock
+            .Verify(collection => collection.Insert(It.Is<RecipeDocument>(doc =>
+                    doc.Id == null
+                    && doc.Title == expectedResult.Title
+                    && doc.ShortDescription == expectedResult.ShortDescription
+                    && doc.LongDescription == expectedResult.LongDescription
+                    && doc.ChefId == testChef.Id
+                    && doc.CreationDate == expectedResult.CreationDate
+                    && doc.LastUpdatedDate == expectedResult.LastUpdatedDate
+                    && doc.Ingredients.Count == 0
+                    && doc.Steps.Count == 0
+                    && doc.Labels.Contains(testLabel) && doc.Labels.Count == 1
+                )), Times.Once());
+    }
+
+
 }
