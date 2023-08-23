@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using System.Reflection.Emit;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 
@@ -81,9 +82,7 @@ public class RecipeRepository : IRecipeRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public bool UpdateRecipe(RecipeAggregate recipe)
-    {
-        return _recipeCollection.UpdateRecord(
+    public bool UpdateRecipe(RecipeAggregate recipe) => _recipeCollection.UpdateRecord(
             new RecipeDocument()
             {
                 Id = recipe.Id,
@@ -99,8 +98,8 @@ public class RecipeRepository : IRecipeRepository
             },
             doc => doc.Id == recipe.Id
         );
-    }
 
-    public bool DeleteRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
-    public bool DeleteRecipe(string id) => throw new NotImplementedException();
+    public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);
+
+    public bool DeleteRecipe(string id) => _recipeCollection.Delete(recipeDoc => recipeDoc.Id == id);
 }

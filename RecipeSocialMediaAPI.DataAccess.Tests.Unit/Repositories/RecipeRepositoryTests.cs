@@ -441,4 +441,120 @@ public class RecipeRepositoryTests
         // Then
         result.Should().BeFalse();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteRecipeById_WhenRecipeIsDeleted_ReturnTrue()
+    {
+        // Given
+        string id = "1";
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _recipeRepositorySUT.DeleteRecipe(id);
+
+        // Then
+        result.Should().BeTrue();
+        _mongoCollectionWrapperMock
+            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+                Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteRecipeByRecipe_WhenRecipeIsDeleted_ReturnTrue()
+    {
+        // Given
+        string id = "1";
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
+
+        RecipeAggregate recipe = new(
+            id,
+            "TestTitle",
+            new(new(), new()),
+            "Short Description",
+            "Long Description",
+            new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new HashSet<string>()
+        );
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _recipeRepositorySUT.DeleteRecipe(recipe);
+
+        // Then
+        result.Should().BeTrue();
+        _mongoCollectionWrapperMock
+            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+                Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteRecipeById_WhenRecipeIsNotDeleted_ReturnFalse()
+    {
+        // Given
+        string id = "1";
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _recipeRepositorySUT.DeleteRecipe(id);
+
+        // Then
+        result.Should().BeFalse();
+        _mongoCollectionWrapperMock
+            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+                Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteRecipeByRecipe_WhenRecipeIsNotDeleted_ReturnFalse()
+    {
+        // Given
+        string id = "1";
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
+
+        RecipeAggregate recipe = new(
+            id,
+            "TestTitle",
+            new(new(), new()),
+            "Short Description",
+            "Long Description",
+            new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new HashSet<string>()
+        );
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _recipeRepositorySUT.DeleteRecipe(recipe);
+
+        // Then
+        result.Should().BeFalse();
+        _mongoCollectionWrapperMock
+            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+                Times.Once);
+    }
 }
