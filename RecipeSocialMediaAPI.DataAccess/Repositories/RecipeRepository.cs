@@ -81,7 +81,26 @@ public class RecipeRepository : IRecipeRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public bool UpdateRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
+    public bool UpdateRecipe(RecipeAggregate recipe)
+    {
+        return _recipeCollection.UpdateRecord(
+            new RecipeDocument()
+            {
+                Id = recipe.Id,
+                Title = recipe.Title,
+                Ingredients = recipe.Recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
+                Steps = recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
+                ShortDescription = recipe.ShortDescription,
+                LongDescription = recipe.LongDescription,
+                ChefId = recipe.Chef.Id,
+                CreationDate = recipe.CreationDate,
+                LastUpdatedDate = recipe.LastUpdatedDate,
+                Labels = recipe.Labels.ToList()
+            },
+            doc => doc.Id == recipe.Id
+        );
+    }
+
     public bool DeleteRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
     public bool DeleteRecipe(string id) => throw new NotImplementedException();
 }

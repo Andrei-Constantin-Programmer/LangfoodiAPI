@@ -7,12 +7,10 @@ using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
-using System.Reflection.Emit;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories;
 
@@ -166,12 +164,14 @@ public class RecipeRepositoryTests
 
         // Then
         result.Should().BeNull();
-        _loggerMock.Verify(logger => logger.Log(
-            LogLevel.Warning, 
-            It.IsAny<EventId>(), 
-            It.IsAny<It.IsAnyType>(), 
-            null, 
-            It.IsAny<Func<It.IsAnyType, Exception, string>>()));
+        _loggerMock.Verify(logger => 
+            logger.Log(
+                LogLevel.Warning, 
+                It.IsAny<EventId>(), 
+                It.IsAny<It.IsAnyType>(), 
+                null, 
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Once);
     }
 
     [Fact]
@@ -200,7 +200,7 @@ public class RecipeRepositoryTests
         _mapperMock
             .Verify(mapper => 
                 mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()), 
-                Times.Never());
+                Times.Never);
     }
 
     [Fact]
@@ -295,7 +295,7 @@ public class RecipeRepositoryTests
         _mapperMock
             .Verify(mapper =>
                 mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
-                Times.Never());
+                Times.Never);
     }
 
     [Fact]
@@ -358,8 +358,87 @@ public class RecipeRepositoryTests
                     && doc.Ingredients.Count == 0
                     && doc.Steps.Count == 0
                     && doc.Labels.Contains(testLabel) && doc.Labels.Count == 1
-                )), Times.Once());
+                )), Times.Once);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateRecipe_WhenRecipeIsSuccessfullyUpdated_ReturnTrue()
+    {
+        // Given
+        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
+        string testLabel = "TestLabel";
 
+        RecipeAggregate recipe = new(
+            "TestId",
+            "TestTitle",
+            new(new(), new()),
+            "Short Description",
+            "Long Description",
+            testChef,
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new HashSet<string>() { testLabel }
+        );
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.UpdateRecord(It.IsAny<RecipeDocument>(), It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _recipeRepositorySUT.UpdateRecipe(recipe);
+
+        // Then
+        result.Should().BeTrue();
+        _mongoCollectionWrapperMock
+            .Verify(collection => 
+                collection.UpdateRecord(
+                    It.Is<RecipeDocument>(recipeDoc => 
+                        recipeDoc.Id == recipe.Id
+                        && recipeDoc.Title == recipe.Title
+                        && recipeDoc.ShortDescription == recipe.ShortDescription
+                        && recipeDoc.LongDescription == recipe.LongDescription
+                        && recipeDoc.CreationDate == recipe.CreationDate
+                        && recipeDoc.LastUpdatedDate == recipe.LastUpdatedDate
+                        && recipeDoc.Labels.Contains(testLabel) && recipe.Labels.Count == 1
+                        && recipeDoc.Ingredients.Count == 0
+                        && recipeDoc.Steps.Count == 0),
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))), 
+                Times.Once);
+    }
+     
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateRecipe_WhenRecipeIsNotUpdated_ReturnFalse()
+    {
+        // Given
+        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
+        string testLabel = "TestLabel";
+
+        RecipeAggregate recipe = new(
+            "TestId",
+            "TestTitle",
+            new(new(), new()),
+            "Short Description",
+            "Long Description",
+            testChef,
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new HashSet<string>() { testLabel }
+        );
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.UpdateRecord(It.IsAny<RecipeDocument>(), It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _recipeRepositorySUT.UpdateRecipe(recipe);
+
+        // Then
+        result.Should().BeFalse();
+    }
 }

@@ -55,7 +55,14 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
 
     public bool UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr)
     {
-        return _collection?.ReplaceOne(expr, record).ModifiedCount > 0;
+        try
+        {
+            return _collection?.ReplaceOne(expr, record).ModifiedCount > 0;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     private protected static string GetCollectionName(Type documentType) =>
