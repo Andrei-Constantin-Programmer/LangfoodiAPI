@@ -1,39 +1,105 @@
-﻿using RecipeSocialMediaAPI.DataAccess.Helpers;
+﻿using Microsoft.Extensions.Logging;
+using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
+using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
+using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using System.Reflection.Emit;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 
-// TODO This class is a stub. To be replaced with a real repository once the Recipe model has been set.
 public class RecipeRepository : IRecipeRepository
 {
-    //private readonly DatabaseConfiguration _databaseConfiguration;
+    private readonly IRecipeDocumentToModelMapper _mapper;
+    private readonly IMongoCollectionWrapper<RecipeDocument> _recipeCollection;
+    private readonly IUserRepository _userRepository;
+    private readonly ILogger<RecipeRepository> _logger;
 
-    //private readonly List<Recipe> _recipes;
+    public RecipeRepository(IRecipeDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory, IUserRepository userRepository, ILogger<RecipeRepository> logger)
+    {
+        _mapper = mapper;
+        _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
+        _userRepository = userRepository;
+        _logger = logger;
+    }
 
-    //public RecipeRepository(DatabaseConfiguration databaseConfiguration)
-    //{
-    //    _databaseConfiguration = databaseConfiguration;
+    public RecipeAggregate? GetRecipeById(string id)
+    {
+        RecipeDocument? recipeDocument = _recipeCollection
+            .Find(recipeDoc => recipeDoc.Id == id);
 
-    //    _recipes = new List<Recipe>()
-    //    {
-    //        new Recipe(10, "TestTitle1", "TestDesc1", "TestChef1", DateTimeOffset.UtcNow),
-    //        new Recipe(20, "TestTitle2", "TestDesc2", "TestChef2", DateTimeOffset.UtcNow),
-    //        new Recipe(30, "TestTitle3", "TestDesc3", "TestChef3", DateTimeOffset.UtcNow),
-    //    };
-    //}
+        if (recipeDocument is null)
+        {
+            return null;
+        }
 
-    //public async Task<IEnumerable<Recipe>> GetAllRecipes() => await Task.FromResult(_recipes);
+        User? chef = _userRepository.GetUserById(recipeDocument.ChefId);
 
-    //public async Task<Recipe?> GetRecipeById(int id) => await Task.FromResult(_recipes.SingleOrDefault(recipe => recipe.Id == id));
+        if (chef is null)
+        {
+            _logger.LogWarning("The chef with id {ChefId} was not found for recipe with id {RecipeId}", recipeDocument.ChefId, recipeDocument.Id);
+            return null;
+        }
 
-    //public async Task CreateRecipe(Recipe recipe)
-    //{
-    //    _recipes.Add(recipe);
+        return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
+    }
 
-    //    await Task.CompletedTask;
-    //}
-    public Task CreateRecipe(Recipe recipe) => throw new NotImplementedException();
-    public Task<IEnumerable<Recipe>> GetAllRecipes() => throw new NotImplementedException();
-    public Task<Recipe?> GetRecipeById(int id) => throw new NotImplementedException();
+    public IEnumerable<RecipeAggregate> GetRecipesByChef(string chefId)
+    {
+        User? chef = _userRepository.GetUserById(chefId);
+
+        if (chef is null)
+        {
+            return Enumerable.Empty<RecipeAggregate>();
+        }
+
+        var recipes = _recipeCollection
+            .GetAll(recipeDoc => recipeDoc.ChefId == chefId);
+
+        return recipes.Count == 0
+            ? Enumerable.Empty<RecipeAggregate>()
+            : recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
+    }
+
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string shortDescription, string longDescription, User chef, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, ISet<string> labels)
+    {
+        var recipeDocument = _recipeCollection
+            .Insert(new RecipeDocument()
+            {
+                Title = title,
+                Ingredients = recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
+                Steps = recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
+                ShortDescription = shortDescription,
+                LongDescription = longDescription,
+                ChefId = chef.Id,
+                CreationDate = creationDate,
+                LastUpdatedDate = lastUpdatedDate,
+                Labels = labels.ToList()
+            });
+        
+        return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
+    }
+
+    public bool UpdateRecipe(RecipeAggregate recipe) => _recipeCollection.UpdateRecord(
+            new RecipeDocument()
+            {
+                Id = recipe.Id,
+                Title = recipe.Title,
+                Ingredients = recipe.Recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
+                Steps = recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
+                ShortDescription = recipe.ShortDescription,
+                LongDescription = recipe.LongDescription,
+                ChefId = recipe.Chef.Id,
+                CreationDate = recipe.CreationDate,
+                LastUpdatedDate = recipe.LastUpdatedDate,
+                Labels = recipe.Labels.ToList()
+            },
+            doc => doc.Id == recipe.Id
+        );
+
+    public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);
+
+    public bool DeleteRecipe(string id) => _recipeCollection.Delete(recipeDoc => recipeDoc.Id == id);
 }

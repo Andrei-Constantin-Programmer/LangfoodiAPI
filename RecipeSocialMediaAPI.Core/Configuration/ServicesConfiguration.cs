@@ -29,6 +29,7 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
+        builder.Services.AddSingleton<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 
