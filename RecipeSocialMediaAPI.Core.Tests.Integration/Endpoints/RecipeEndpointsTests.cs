@@ -23,7 +23,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
-            ChefUsername = "TestChef"
+            ChefUsername = "TestChef",
+            Labels = new HashSet<string>()
         };
 
         // When
@@ -44,7 +45,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
-            ChefUsername = "TestChef"
+            ChefUsername = "TestChef",
+            Labels = new HashSet<string>()
         };
 
         // When
@@ -91,7 +93,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Id = "0",
             Title = "TestTitle",
             Description = "TestDescription",
-            ChefUsername = "TestChef"
+            ChefUsername = "TestChef",
+            Labels = new HashSet<string>()
         };
 
         await _client.PostAsJsonAsync("/recipe/create", testRecipe);
