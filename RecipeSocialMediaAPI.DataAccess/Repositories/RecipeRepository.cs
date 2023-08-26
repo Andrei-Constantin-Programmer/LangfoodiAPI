@@ -5,8 +5,6 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using System.Reflection.Emit;
-using System.Security.Cryptography.X509Certificates;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 
@@ -76,7 +74,10 @@ public class RecipeRepository : IRecipeRepository
                 ChefId = chef.Id,
                 CreationDate = creationDate,
                 LastUpdatedDate = lastUpdatedDate,
-                Labels = labels.ToList()
+                Labels = labels.ToList(),
+                NumberOfServings = recipe.NumberOfServings,
+                CookingTimeInSeconds = recipe.CookingTimeInSeconds,
+                Kilocalories = recipe.Kilocalories
             });
         
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
@@ -94,7 +95,10 @@ public class RecipeRepository : IRecipeRepository
                 ChefId = recipe.Chef.Id,
                 CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate,
-                Labels = recipe.Labels.ToList()
+                Labels = recipe.Labels.ToList(),
+                NumberOfServings = recipe.Recipe.NumberOfServings,
+                CookingTimeInSeconds = recipe.Recipe.CookingTimeInSeconds,
+                Kilocalories = recipe.Recipe.Kilocalories
             },
             doc => doc.Id == recipe.Id
         );

@@ -83,7 +83,8 @@ public class RecipeRepositoryTests
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
             Labels = new List<string>(),
-            ChefId = chefId
+            ChefId = chefId,
+            NumberOfServings = 1
         };
         User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
 
@@ -136,7 +137,8 @@ public class RecipeRepositoryTests
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
             Labels = new List<string>(),
-            ChefId = chefId
+            ChefId = chefId,
+            NumberOfServings = 1
         };
         User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
 
@@ -224,7 +226,8 @@ public class RecipeRepositoryTests
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
             Labels = new List<string>(),
-            ChefId = chefId
+            ChefId = chefId,
+            NumberOfServings = 1
         };
 
         RecipeAggregate expectedResult = new(
@@ -279,7 +282,8 @@ public class RecipeRepositoryTests
                 CreationDate = _testDate,
                 LastUpdatedDate = _testDate,
                 Labels = new List<string>(),
-                ChefId = chefId
+                ChefId = chefId,
+                NumberOfServings = 1
             }
         };
 
@@ -310,7 +314,7 @@ public class RecipeRepositoryTests
         RecipeAggregate expectedResult = new(
             "TestId",
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 5, 120, 500),
             "Short Description",
             "Long Description",
             testChef,
@@ -330,7 +334,10 @@ public class RecipeRepositoryTests
             ChefId = testChef.Id,
             CreationDate = expectedResult.CreationDate,
             LastUpdatedDate = expectedResult.LastUpdatedDate,
-            Labels = new List<string>() { testLabel }
+            Labels = new List<string>() { testLabel },
+            NumberOfServings = 5,
+            CookingTimeInSeconds = 120,
+            Kilocalories = 500
         };
 
         _mongoCollectionWrapperMock
@@ -358,6 +365,9 @@ public class RecipeRepositoryTests
                     && doc.Ingredients.Count == 0
                     && doc.Steps.Count == 0
                     && doc.Labels.Contains(testLabel) && doc.Labels.Count == 1
+                    && doc.NumberOfServings == expectedResult.Recipe.NumberOfServings
+                    && doc.CookingTimeInSeconds == expectedResult.Recipe.CookingTimeInSeconds
+                    && doc.Kilocalories == expectedResult.Recipe.Kilocalories
                 )), Times.Once);
     }
 
@@ -373,7 +383,7 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 5, 180, 400),
             "Short Description",
             "Long Description",
             testChef,
@@ -404,7 +414,10 @@ public class RecipeRepositoryTests
                         && recipeDoc.LastUpdatedDate == recipe.LastUpdatedDate
                         && recipeDoc.Labels.Contains(testLabel) && recipe.Labels.Count == 1
                         && recipeDoc.Ingredients.Count == 0
-                        && recipeDoc.Steps.Count == 0),
+                        && recipeDoc.Steps.Count == 0
+                        && recipeDoc.NumberOfServings == recipe.Recipe.NumberOfServings
+                        && recipeDoc.CookingTimeInSeconds == recipe.Recipe.CookingTimeInSeconds
+                        && recipeDoc.Kilocalories == recipe.Recipe.Kilocalories),
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))), 
                 Times.Once);
     }
