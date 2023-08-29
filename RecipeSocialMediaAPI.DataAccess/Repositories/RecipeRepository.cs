@@ -5,8 +5,6 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using System.Reflection.Emit;
-using System.Security.Cryptography.X509Certificates;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 
