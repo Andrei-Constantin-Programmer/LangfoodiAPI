@@ -63,7 +63,7 @@ public class RecipeRepository : IRecipeRepository
             : recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string shortDescription, string longDescription, User chef, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, ISet<string> labels)
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, int? numberOfServings, int? cookingTime, int? kiloCalories, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
     {
         var recipeDocument = _recipeCollection
             .Insert(new RecipeDocument()
@@ -71,9 +71,11 @@ public class RecipeRepository : IRecipeRepository
                 Title = title,
                 Ingredients = recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
                 Steps = recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
-                ShortDescription = shortDescription,
-                LongDescription = longDescription,
+                Description = description,
                 ChefId = chef.Id,
+                NumberOfServings = numberOfServings,
+                CookingTimeInSeconds = cookingTime,
+                KiloCalories = kiloCalories,
                 CreationDate = creationDate,
                 LastUpdatedDate = lastUpdatedDate,
                 Labels = labels.ToList()
@@ -89,8 +91,7 @@ public class RecipeRepository : IRecipeRepository
                 Title = recipe.Title,
                 Ingredients = recipe.Recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
                 Steps = recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
-                ShortDescription = recipe.ShortDescription,
-                LongDescription = recipe.LongDescription,
+                Description = recipe.Description,
                 ChefId = recipe.Chef.Id,
                 CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate,

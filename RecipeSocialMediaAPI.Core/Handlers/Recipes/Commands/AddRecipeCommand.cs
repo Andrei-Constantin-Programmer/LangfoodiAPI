@@ -8,6 +8,9 @@ using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using FluentValidation;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using AutoMapper;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 
@@ -15,23 +18,42 @@ public record AddRecipeCommand(NewRecipeContract NewRecipeContract) : IValidatab
 
 internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetailedDTO>
 {
+    private readonly IMapper _mapper;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipeRepository _recipeRepository;
     private readonly IUserRepository _userRepository;
 
-    public AddRecipeHandler(IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public AddRecipeHandler(IMapper mapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
+        _dateTimeProvider = dateTimeProvider;
+        _mapper = mapper;
         _recipeRepository = recipeRepository;
         _userRepository = userRepository;
     }
 
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
-        if (_userRepository.GetUserById(request.NewRecipeContract.ChefId) is null)
+        User? queriedUser = _userRepository.GetUserById(request.NewRecipeContract.ChefId);
+        if (queriedUser is null)
         {
             throw new UserNotFoundException();
         }
 
-        _recipeRepository.CreateRecipe();
+        DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
+        RecipeAggregate insertedRecipe = _recipeRepository.CreateRecipe(
+            request.NewRecipeContract.Title,
+            _mapper.Map<Recipe>(request.NewRecipeContract),
+            request.NewRecipeContract.Description,
+            queriedUser,
+            request.NewRecipeContract.Labels,
+            request.NewRecipeContract.NumberOfServings,
+            request.NewRecipeContract.CookingTime,
+            request.NewRecipeContract.KiloCalories,
+            dateOfCreation,
+            dateOfCreation
+        );
+
+        return await Task.FromResult(_mapper.Map<RecipeDetailedDTO>(insertedRecipe));
     }
 }
 

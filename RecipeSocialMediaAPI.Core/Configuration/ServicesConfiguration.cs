@@ -22,6 +22,7 @@ internal static class ServicesConfiguration
     {
         // AutoMapper
         builder.Services.AddAutoMapper(typeof(UserMappingProfile));
+        builder.Services.AddAutoMapper(typeof(RecipeMappingProfile));
 
         // Singletons
         builder.Services.AddSingleton(GenerateDatabaseConfiguration(builder.Configuration));
