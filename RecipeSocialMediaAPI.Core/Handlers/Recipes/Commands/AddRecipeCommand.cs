@@ -25,8 +25,8 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
     public AddRecipeHandler(IMapper mapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
-        _dateTimeProvider = dateTimeProvider;
         _mapper = mapper;
+        _dateTimeProvider = dateTimeProvider;
         _recipeRepository = recipeRepository;
         _userRepository = userRepository;
     }
