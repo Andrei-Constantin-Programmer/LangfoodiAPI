@@ -10,6 +10,7 @@ internal class RecipeMappingProfile : Profile
     public RecipeMappingProfile() 
     {
         CreateMap<NewRecipeContract, Recipe>();
+        CreateMap<UpdateRecipeContract, Recipe>();
 
         CreateMap<RecipeAggregate, RecipeDetailedDTO>()
             .ForMember(
