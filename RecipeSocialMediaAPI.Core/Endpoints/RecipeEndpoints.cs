@@ -55,6 +55,14 @@ public static class RecipeEndpoints
             return Results.NotFound();
         });
 
+        group.MapDelete("/remove", async (
+            [FromQuery] string id,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new RemoveRecipeCommand(id));
+            return Results.Ok();
+        });
+
         return group;
     }
 }

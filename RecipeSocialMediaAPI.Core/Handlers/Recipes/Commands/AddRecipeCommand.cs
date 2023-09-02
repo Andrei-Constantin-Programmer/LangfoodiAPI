@@ -1,16 +1,14 @@
-﻿using MediatR;
-using RecipeSocialMediaAPI.Domain.Models;
-using RecipeSocialMediaAPI.Core.DTO;
-using RecipeSocialMediaAPI.Core.Utilities;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+﻿using AutoMapper;
+using FluentValidation;
+using MediatR;
 using RecipeSocialMediaAPI.Core.Contracts;
-using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
-using FluentValidation;
+using RecipeSocialMediaAPI.Core.Utilities;
+using RecipeSocialMediaAPI.Core.Validation;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using AutoMapper;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 

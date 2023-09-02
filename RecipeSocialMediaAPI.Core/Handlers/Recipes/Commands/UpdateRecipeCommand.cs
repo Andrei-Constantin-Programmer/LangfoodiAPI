@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Core.Contracts;
-using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
-using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
-using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 
@@ -19,14 +17,12 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand, bool>
     private readonly IMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipeRepository _recipeRepository;
-    private readonly IUserRepository _userRepository;
 
-    public UpdateRecipeHandler(IMapper mapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public UpdateRecipeHandler(IMapper mapper, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
         _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;
         _recipeRepository = recipeRepository;
-        _userRepository = userRepository;
     }
 
     public async Task<bool> Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
@@ -49,5 +45,17 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand, bool>
         );
 
         return await Task.FromResult(_recipeRepository.UpdateRecipe(updatedRecipe));
+    }
+}
+
+public class UpdateRecipeCommandValidator : AbstractValidator<UpdateRecipeCommand>
+{
+    public UpdateRecipeCommandValidator()
+    {
+        RuleFor(x => x.UpdateRecipeContract.Ingredients)
+            .NotEmpty();
+
+        RuleFor(x => x.UpdateRecipeContract.RecipeSteps)
+            .NotEmpty();
     }
 }
