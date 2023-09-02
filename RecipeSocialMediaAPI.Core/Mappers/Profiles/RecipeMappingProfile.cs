@@ -10,9 +10,6 @@ internal class RecipeMappingProfile : Profile
     public RecipeMappingProfile() 
     {
         CreateMap<NewRecipeContract, Recipe>();
-        /*            .ForMember(
-                        dest => dest.Ingredients,
-                        opt => opt.MapFrom(src => src.Ingredients));*/
 
         CreateMap<RecipeAggregate, RecipeDetailedDTO>()
             .ForMember(
@@ -21,5 +18,10 @@ internal class RecipeMappingProfile : Profile
             .ForMember(
                 dest => dest.RecipeSteps,
                 opt => opt.MapFrom(src => src.Recipe.Steps));
+
+        CreateMap<RecipeAggregate, RecipeDTO>()
+            .ForMember(
+                dest => dest.ChefUsername,
+                opt => opt.MapFrom(src => src.Chef.UserName));
     }
 }
