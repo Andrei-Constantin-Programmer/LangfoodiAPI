@@ -46,21 +46,31 @@ public class RecipeRepository : IRecipeRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public IEnumerable<RecipeAggregate> GetRecipesByChef(string chefId)
+    public IEnumerable<RecipeAggregate> GetRecipesByChef(User? chef)
     {
-        User? chef = _userRepository.GetUserById(chefId);
-
         if (chef is null)
         {
             return Enumerable.Empty<RecipeAggregate>();
         }
 
         var recipes = _recipeCollection
-            .GetAll(recipeDoc => recipeDoc.ChefId == chefId);
+            .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id);
 
         return recipes.Count == 0
             ? Enumerable.Empty<RecipeAggregate>()
             : recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
+    }
+
+    public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId)
+    {
+        User? chef = _userRepository.GetUserById(chefId);
+        return GetRecipesByChef(chef);
+    }
+
+    public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName)
+    {
+        User? chef = _userRepository.GetUserByUsername(chefName);
+        return GetRecipesByChef(chef);
     }
 
     public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, int? numberOfServings, int? cookingTime, int? kiloCalories, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)

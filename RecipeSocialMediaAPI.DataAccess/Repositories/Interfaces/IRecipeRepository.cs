@@ -7,7 +7,9 @@ namespace RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 public interface IRecipeRepository
 {
     RecipeAggregate? GetRecipeById(string id);
-    IEnumerable<RecipeAggregate> GetRecipesByChef(string chefId);
+    IEnumerable<RecipeAggregate> GetRecipesByChef(User? user);
+    IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName);
+    IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId);
     RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, int? numberOfServings, int? cookingTime, int? kiloCalories, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate);
     bool UpdateRecipe(RecipeAggregate recipe);
     bool DeleteRecipe(RecipeAggregate recipe);

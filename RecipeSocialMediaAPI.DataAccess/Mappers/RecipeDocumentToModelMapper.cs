@@ -17,8 +17,7 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
         return new(
             id: recipeDocument.Id,
             title: recipeDocument.Title,
-            shortDescription: recipeDocument.ShortDescription,
-            longDescription: recipeDocument.LongDescription,
+            description: recipeDocument.Description,
             creationDate: recipeDocument.CreationDate,
             lastUpdatedDate: recipeDocument.LastUpdatedDate,
             labels: recipeDocument.Labels.ToHashSet(),
