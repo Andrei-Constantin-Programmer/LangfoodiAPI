@@ -9,7 +9,7 @@ public record RecipeDTO
     public DateTimeOffset? CreationDate { get; set; }
     public DateTimeOffset? LastUpdatedDate { get; set; }
     required public ISet<string> Labels { get; set; }
-    public int NumberOfServings { get; set; }
+    public int? NumberOfServings { get; set; }
     public int? CookingTime { get; set; }
     public int? Kilocalories { get; set; }
 }
