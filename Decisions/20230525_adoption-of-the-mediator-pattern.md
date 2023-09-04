@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Legend
+- **CQRS** - Command and Query Responsability Segregation
+
 ## Context
 In the context of our application, the separation of queries from commands (CQRS) can be simplified by the use of the mediator pattern. Additionally, our endpoints often require injecting multiple services, leading to unnecessary complexity in this essential part of the application.
 
