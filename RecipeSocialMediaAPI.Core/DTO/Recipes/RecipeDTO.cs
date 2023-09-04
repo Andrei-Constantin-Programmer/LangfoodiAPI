@@ -7,4 +7,9 @@ public record RecipeDTO
     required public string Description { get; set; }
     required public string ChefUsername { get; set; }
     public DateTimeOffset? CreationDate { get; set; }
+    public DateTimeOffset? LastUpdatedDate { get; set; }
+    required public ISet<string> Labels { get; set; }
+    public int? NumberOfServings { get; set; }
+    public int? CookingTime { get; set; }
+    public int? Kilocalories { get; set; }
 }

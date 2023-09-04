@@ -13,5 +13,7 @@ public record RecipeDetailedDTO
     required public ImmutableStack<RecipeDTO> RecipeSteps { get; set; }
     public DateTimeOffset? CreationDate { get; set; }
     public DateTimeOffset? LastUpdatedDate { get; set; }
+    public int? NumberOfServings { get; set; }
+    public int? CookingTime { get; set; }
+    public int? Kilocalories { get; set; }
 }
-

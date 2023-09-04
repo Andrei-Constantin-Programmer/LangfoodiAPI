@@ -1,6 +1,5 @@
 ﻿using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
