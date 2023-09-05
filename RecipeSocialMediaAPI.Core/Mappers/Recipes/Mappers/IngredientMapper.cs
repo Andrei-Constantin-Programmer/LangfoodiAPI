@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
-namespace RecipeSocialMediaAPI.Domain.Mappers;
+namespace RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
 public class IngredientMapper : IIngredientMapper
 {
     public Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO)
@@ -12,7 +12,8 @@ public class IngredientMapper : IIngredientMapper
 
     public IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient)
     {
-        return new IngredientDTO {
+        return new IngredientDTO
+        {
             Name = ingredient.Name,
             Quantity = ingredient.Quantity,
             UnitOfMeasurement = ingredient.UnitOfMeasurement

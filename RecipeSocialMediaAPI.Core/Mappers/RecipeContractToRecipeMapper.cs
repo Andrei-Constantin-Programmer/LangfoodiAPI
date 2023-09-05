@@ -1,4 +1,4 @@
-﻿using RecipeSocialMediaAPI.Core.Contracts;
+﻿using RecipeSocialMediaAPI.Core.Contracts.Recipes;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;

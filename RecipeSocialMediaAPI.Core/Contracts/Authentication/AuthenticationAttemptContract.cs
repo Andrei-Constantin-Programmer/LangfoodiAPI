@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Core.Contracts;
+﻿namespace RecipeSocialMediaAPI.Core.Contracts.Authentication;
 
 public record AuthenticationAttemptContract
 {

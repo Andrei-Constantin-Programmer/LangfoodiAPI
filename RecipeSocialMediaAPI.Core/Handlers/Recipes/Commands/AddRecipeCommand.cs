@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
-using RecipeSocialMediaAPI.Core.Contracts;
+using RecipeSocialMediaAPI.Core.Contracts.Recipes;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
@@ -18,15 +18,13 @@ public record AddRecipeCommand(NewRecipeContract NewRecipeContract) : IValidatab
 
 internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetailedDTO>
 {
-    private readonly IRecipeContractToRecipeMapper _contractMapper;
     private readonly IRecipeAggregateToRecipeDetailedDtoMapper _aggregateMapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipeRepository _recipeRepository;
     private readonly IUserRepository _userRepository;
 
-    public AddRecipeHandler(IRecipeAggregateToRecipeDetailedDtoMapper aggregateMapper, IRecipeContractToRecipeMapper contractMapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public AddRecipeHandler(IRecipeAggregateToRecipeDetailedDtoMapper aggregateMapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
-        _contractMapper = contractMapper;
         _aggregateMapper = aggregateMapper;
         _dateTimeProvider = dateTimeProvider;
         _recipeRepository = recipeRepository;

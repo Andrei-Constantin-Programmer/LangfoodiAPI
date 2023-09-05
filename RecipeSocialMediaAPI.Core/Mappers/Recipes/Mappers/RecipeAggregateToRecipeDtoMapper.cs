@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
-namespace RecipeSocialMediaAPI.Domain.Mappers;
+namespace RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
 public class RecipeAggregateToRecipeDtoMapper : IRecipeAggregateToRecipeDtoMapper
 {
     public RecipeDTO MapRecipeAggregateToRecipeDto(RecipeAggregate recipeAggregate)

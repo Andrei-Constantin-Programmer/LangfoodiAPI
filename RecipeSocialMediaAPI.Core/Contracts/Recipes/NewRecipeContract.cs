@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using System.Collections.Immutable;
 
-namespace RecipeSocialMediaAPI.Core.Contracts;
+namespace RecipeSocialMediaAPI.Core.Contracts.Recipes;
 
 public record NewRecipeContract
 {

@@ -17,6 +17,8 @@ using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Core.Mappers;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -37,9 +39,9 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IIngredientMapper, IngredientMapper>();
         builder.Services.AddSingleton<IRecipeStepMapper, RecipeStepMapper>();
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
-        builder.Services.AddSingleton<IRecipeContractToRecipeMapper, RecipeContractToRecipeMapper>();
         builder.Services.AddSingleton<IRecipeAggregateToRecipeDetailedDtoMapper, RecipeAggregateToRecipeDetailedDtoMapper>();
         builder.Services.AddSingleton<IRecipeAggregateToRecipeDtoMapper, RecipeAggregateToRecipeDtoMapper>();
+        builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 

@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using System.Collections.Immutable;
 
-namespace RecipeSocialMediaAPI.Domain.Mappers;
+namespace RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
 public class RecipeAggregateToRecipeDetailedDtoMapper : IRecipeAggregateToRecipeDetailedDtoMapper
 {
     private readonly IIngredientMapper _ingredientMapper;
