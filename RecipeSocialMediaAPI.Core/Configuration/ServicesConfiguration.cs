@@ -13,6 +13,10 @@ using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
+using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Core.Mappers;
+using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Domain.Mappers;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -22,7 +26,6 @@ internal static class ServicesConfiguration
     {
         // AutoMapper
         builder.Services.AddAutoMapper(typeof(UserMappingProfile));
-        builder.Services.AddAutoMapper(typeof(RecipeMappingProfile));
 
         // Singletons
         builder.Services.AddSingleton(GenerateDatabaseConfiguration(builder.Configuration));
@@ -31,6 +34,9 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
+        builder.Services.AddSingleton<IIngredientDtoToIngredientMapper, IngredientDtoToIngredientMapper>();
+        builder.Services.AddSingleton<IRecipeStepDtoToRecipeStepMapper, RecipeStepDtoToRecipeStepMapper>();
+        builder.Services.AddSingleton<IRecipeContractToRecipeMapper, RecipeContractToRecipeMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 

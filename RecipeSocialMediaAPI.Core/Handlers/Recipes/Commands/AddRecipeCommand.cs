@@ -4,6 +4,7 @@ using MediatR;
 using RecipeSocialMediaAPI.Core.Contracts;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
@@ -16,12 +17,12 @@ public record AddRecipeCommand(NewRecipeContract NewRecipeContract) : IValidatab
 
 internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetailedDTO>
 {
-    private readonly IMapper _mapper;
+    private readonly IRecipeContractToRecipeMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipeRepository _recipeRepository;
     private readonly IUserRepository _userRepository;
 
-    public AddRecipeHandler(IMapper mapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public AddRecipeHandler(IRecipeContractToRecipeMapper mapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
         _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;
@@ -40,7 +41,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
         RecipeAggregate insertedRecipe = _recipeRepository.CreateRecipe(
             request.NewRecipeContract.Title,
-            _mapper.Map<Recipe>(request.NewRecipeContract),
+            _mapper.MapNewRecipeContractToRecipe(request.NewRecipeContract),
             request.NewRecipeContract.Description,
             queriedUser,
             request.NewRecipeContract.Labels,

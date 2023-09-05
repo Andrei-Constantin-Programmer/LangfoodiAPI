@@ -10,7 +10,7 @@ public record RecipeDetailedDTO
     required public UserDTO Chef { get; set; }
     required public ISet<string> Labels { get; set; }
     required public ImmutableList<IngredientDTO> Ingredients { get; set; }
-    required public ImmutableStack<RecipeDTO> RecipeSteps { get; set; }
+    required public ImmutableStack<RecipeStepDTO> RecipeSteps { get; set; }
     public DateTimeOffset? CreationDate { get; set; }
     public DateTimeOffset? LastUpdatedDate { get; set; }
 }

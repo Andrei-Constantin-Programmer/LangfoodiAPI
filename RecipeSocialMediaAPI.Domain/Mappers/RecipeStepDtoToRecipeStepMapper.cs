@@ -9,4 +9,13 @@ public class RecipeStepDtoToRecipeStepMapper : IRecipeStepDtoToRecipeStepMapper
     {
         return new(recipeStepDTO.Text, new RecipeImage(recipeStepDTO.ImageUrl));
     }
+
+    public RecipeStepDTO MapRecipeStepToRecipeStepDto(RecipeStep recipeStep)
+    {
+        return new RecipeStepDTO()
+        {
+            Text = recipeStep.Text,
+            ImageUrl = recipeStep.Image?.ImageUrl
+        };
+    }
 }

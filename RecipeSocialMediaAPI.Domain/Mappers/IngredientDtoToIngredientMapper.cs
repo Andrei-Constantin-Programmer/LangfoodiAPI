@@ -9,4 +9,13 @@ public class IngredientDtoToIngredientMapper : IIngredientDtoToIngredientMapper
     {
         return new(ingredientDTO.Name, ingredientDTO.Quantity, ingredientDTO.UnitOfMeasurement);
     }
+
+    public IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient)
+    {
+        return new IngredientDTO {
+            Name = ingredient.Name,
+            Quantity = ingredient.Quantity,
+            UnitOfMeasurement = ingredient.UnitOfMeasurement
+        };
+    }
 }

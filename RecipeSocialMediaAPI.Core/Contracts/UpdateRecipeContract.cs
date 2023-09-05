@@ -9,6 +9,6 @@ public record UpdateRecipeContract
     required public string Title { get; set; }
     required public string Description { get; set; }
     required public ISet<string> Labels { get; set; }
-    required public ImmutableList<IngredientDTO> Ingredients { get; set; }
-    required public ImmutableStack<RecipeStepDTO> RecipeSteps { get; set; }
+    required public List<IngredientDTO> Ingredients { get; set; }
+    required public Stack<RecipeStepDTO> RecipeSteps { get; set; }
 }
