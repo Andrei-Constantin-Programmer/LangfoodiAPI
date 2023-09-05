@@ -1,6 +1,4 @@
-﻿using RecipeSocialMediaAPI.Core.DTO;
-using RecipeSocialMediaAPI.Core.DTO.Recipes;
-using System.Collections.Immutable;
+﻿using RecipeSocialMediaAPI.Core.DTO.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Contracts.Recipes;
 

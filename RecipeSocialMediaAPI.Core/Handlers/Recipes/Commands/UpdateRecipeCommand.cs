@@ -47,7 +47,10 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             existingRecipe.Chef,
             existingRecipe.CreationDate,
             _dateTimeProvider.Now,
-            request.UpdateRecipeContract.Labels
+            request.UpdateRecipeContract.Labels,
+            request.UpdateRecipeContract.NumberOfServings,
+            request.UpdateRecipeContract.CookingTime,
+            request.UpdateRecipeContract.KiloCalories
         );
 
         bool successful = _recipeRepository.UpdateRecipe(updatedRecipe);

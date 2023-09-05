@@ -101,6 +101,9 @@ public class RecipeRepository : IRecipeRepository
                 Steps = recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
                 Description = recipe.Description,
                 ChefId = recipe.Chef.Id,
+                NumberOfServings = recipe.NumberOfServings,
+                CookingTimeInSeconds = recipe.CookingTimeInSeconds,
+                KiloCalories = recipe.KiloCalories,
                 CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate,
                 Labels = recipe.Labels.ToList()

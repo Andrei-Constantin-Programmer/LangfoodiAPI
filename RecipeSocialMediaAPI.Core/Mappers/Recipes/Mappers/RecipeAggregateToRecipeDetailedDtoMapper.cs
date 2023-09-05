@@ -29,6 +29,9 @@ public class RecipeAggregateToRecipeDetailedDtoMapper : IRecipeAggregateToRecipe
                 .Select(_ingredientMapper.MapIngredientToIngredientDto)),
             RecipeSteps = ImmutableStack.CreateRange(recipeAggregate.Recipe.Steps
                 .Select(_recipeStepMapper.MapRecipeStepToRecipeStepDto)),
+            KiloCalories = recipeAggregate.KiloCalories,
+            NumberOfServings = recipeAggregate.NumberOfServings,
+            CookingTime = recipeAggregate.CookingTimeInSeconds,
             CreationDate = recipeAggregate.CreationDate,
             LastUpdatedDate = recipeAggregate.LastUpdatedDate,
         };
