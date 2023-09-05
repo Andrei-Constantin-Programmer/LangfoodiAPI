@@ -4,9 +4,9 @@ using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 
-public record RemoveRecipeCommand(string Id) : IRequest<bool>;
+public record RemoveRecipeCommand(string Id) : IRequest;
 
-internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand, bool>
+internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 {
     private readonly IRecipeRepository _recipeRepository;
 
@@ -15,13 +15,17 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand, bool>
         _recipeRepository = recipeRepository;
     }
 
-    public async Task<bool> Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
+    public Task Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
     {
         if (_recipeRepository.GetRecipeById(request.Id) is null)
         {
             throw new RecipeNotFoundException(request.Id);
         }
 
-        return await Task.FromResult(_recipeRepository.DeleteRecipe(request.Id));
+        bool successful = _recipeRepository.DeleteRecipe(request.Id);
+
+        return successful
+            ? Task.CompletedTask
+            : throw new Exception($"Could not remove recipe with id {request.Id}.");
     }
 }

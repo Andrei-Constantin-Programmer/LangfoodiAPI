@@ -19,10 +19,10 @@ internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
     public Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
     {
         User user = _userRepository.GetUserById(request.EmailOrId)
-                    ?? _userRepository.GetUserByEmail(request.EmailOrId)
+            ?? _userRepository.GetUserByEmail(request.EmailOrId)
             ?? throw new UserNotFoundException();
 
-        var successful = _userRepository.DeleteUser(user.Id);
+        bool successful = _userRepository.DeleteUser(user.Id);
 
         return successful 
             ? Task.CompletedTask 

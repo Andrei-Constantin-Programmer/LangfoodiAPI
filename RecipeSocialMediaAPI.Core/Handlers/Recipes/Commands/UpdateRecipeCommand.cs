@@ -11,9 +11,9 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 
-public record UpdateRecipeCommand(UpdateRecipeContract UpdateRecipeContract) : IValidatableRequest<bool>;
+public record UpdateRecipeCommand(UpdateRecipeContract UpdateRecipeContract) : IValidatableRequest;
 
-internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand, bool>
+internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 {
     private readonly IRecipeContractToRecipeMapper _contractMapper;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -26,7 +26,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand, bool>
         _recipeRepository = recipeRepository;
     }
 
-    public async Task<bool> Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
+    public Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
         RecipeAggregate? existingRecipe = _recipeRepository.GetRecipeById(request.UpdateRecipeContract.Id);
         if (existingRecipe == null)
@@ -45,7 +45,11 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand, bool>
             request.UpdateRecipeContract.Labels
         );
 
-        return await Task.FromResult(_recipeRepository.UpdateRecipe(updatedRecipe));
+        bool successful = _recipeRepository.UpdateRecipe(updatedRecipe);
+
+        return successful
+            ? Task.CompletedTask
+            : throw new Exception($"Could not update recipe with id {existingRecipe.Id}.");
     }
 }
 

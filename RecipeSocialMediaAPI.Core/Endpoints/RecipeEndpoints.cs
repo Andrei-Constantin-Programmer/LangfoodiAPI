@@ -22,29 +22,28 @@ public static class RecipeEndpoints
             [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
-            return Results.NotFound(await sender.Send(new GetRecipeByIdQuery(id)));
+            return Results.Ok(await sender.Send(new GetRecipeByIdQuery(id)));
         });
 
         group.MapPost("/getRecipesFromUserId", async (
             [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
-            return Results.NotFound(await sender.Send(new GetRecipesFromUserIdQuery(id)));
+            return Results.Ok(await sender.Send(new GetRecipesFromUserIdQuery(id)));
         });
 
         group.MapPost("/getRecipesFromUser", async (
             [FromQuery] string username,
             [FromServices] ISender sender) =>
         {
-            return Results.NotFound(await sender.Send(new GetRecipesFromUserQuery(username)));
+            return Results.Ok(await sender.Send(new GetRecipesFromUserQuery(username)));
         });
 
         group.MapPost("/create", async (
             [FromBody] NewRecipeContract newRecipeContract,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new AddRecipeCommand(newRecipeContract));
-            return Results.NotFound();
+            return Results.Ok(await sender.Send(new AddRecipeCommand(newRecipeContract)));
         });
 
         group.MapPost("/update", async (
@@ -52,7 +51,7 @@ public static class RecipeEndpoints
             [FromServices] ISender sender) =>
         {
             await sender.Send(new UpdateRecipeCommand(updateRecipeContract));
-            return Results.NotFound();
+            return Results.Ok();
         });
 
         group.MapDelete("/remove", async (
