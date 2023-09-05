@@ -18,21 +18,21 @@ public static class RecipeEndpoints
 
     private static RouteGroupBuilder AddRecipeEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/getById", async (
+        group.MapPost("/get/id", async (
             [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetRecipeByIdQuery(id)));
         });
 
-        group.MapPost("/getRecipesFromUserId", async (
+        group.MapPost("/get/userid", async (
             [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetRecipesFromUserIdQuery(id)));
         });
 
-        group.MapPost("/getRecipesFromUser", async (
+        group.MapPost("/get/username", async (
             [FromQuery] string username,
             [FromServices] ISender sender) =>
         {
