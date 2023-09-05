@@ -1,6 +1,12 @@
 ﻿using FluentValidation;
 using RecipeSocialMediaAPI.Core.Cryptography;
 using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Core.Mappers.Profiles;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
+using RecipeSocialMediaAPI.Core.Mappers.Users.Mappers;
+using RecipeSocialMediaAPI.Core.Utilities;
+using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
@@ -8,17 +14,9 @@ using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Core.Mappers.Profiles;
+using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
-using RecipeSocialMediaAPI.Core.Utilities;
-using RecipeSocialMediaAPI.Core.Validation;
-using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Core.Mappers;
-using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Domain.Mappers;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 

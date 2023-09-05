@@ -1,9 +1,8 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Core.Contracts.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
-using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
@@ -15,13 +14,13 @@ public record UpdateRecipeCommand(UpdateRecipeContract UpdateRecipeContract) : I
 
 internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 {
-    private readonly IRecipeContractToRecipeMapper _contractMapper;
+    private readonly IRecipeMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipeRepository _recipeRepository;
 
-    public UpdateRecipeHandler(IRecipeContractToRecipeMapper contractMapper, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public UpdateRecipeHandler(IRecipeMapper mapper, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
-        _contractMapper = contractMapper;
+        _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;
         _recipeRepository = recipeRepository;
     }
@@ -37,7 +36,13 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
         RecipeAggregate updatedRecipe = new(
             existingRecipe.Id,
             request.UpdateRecipeContract.Title,
-            _contractMapper.MapUpdateRecipeContractToRecipe(request.UpdateRecipeContract),
+            new Recipe(
+                request.UpdateRecipeContract.Ingredients
+                    .Select(_mapper.IngredientMapper.MapIngredientDtoToIngredient)
+                    .ToList(),
+                new Stack<RecipeStep>(request.UpdateRecipeContract.RecipeSteps
+                    .Select(_mapper.RecipeStepMapper.MapRecipeStepDtoToRecipeStep))
+            ),
             request.UpdateRecipeContract.Description,
             existingRecipe.Chef,
             existingRecipe.CreationDate,
