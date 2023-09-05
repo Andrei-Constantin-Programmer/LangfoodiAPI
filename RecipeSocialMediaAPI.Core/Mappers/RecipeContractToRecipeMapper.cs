@@ -8,9 +8,9 @@ namespace RecipeSocialMediaAPI.Core.Mappers;
 
 public class RecipeContractToRecipeMapper : IRecipeContractToRecipeMapper
 {
-    private readonly IIngredientDtoToIngredientMapper _ingredientMapper;
-    private readonly IRecipeStepDtoToRecipeStepMapper _recipeStepMapper;
-    public RecipeContractToRecipeMapper(IIngredientDtoToIngredientMapper ingredientMapper, IRecipeStepDtoToRecipeStepMapper recipeStepMapper)
+    private readonly IIngredientMapper _ingredientMapper;
+    private readonly IRecipeStepMapper _recipeStepMapper;
+    public RecipeContractToRecipeMapper(IIngredientMapper ingredientMapper, IRecipeStepMapper recipeStepMapper)
     {
         _ingredientMapper = ingredientMapper;
         _recipeStepMapper = recipeStepMapper;

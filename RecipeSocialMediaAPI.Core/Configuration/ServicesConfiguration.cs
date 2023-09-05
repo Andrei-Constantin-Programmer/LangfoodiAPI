@@ -34,9 +34,11 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
-        builder.Services.AddSingleton<IIngredientDtoToIngredientMapper, IngredientDtoToIngredientMapper>();
-        builder.Services.AddSingleton<IRecipeStepDtoToRecipeStepMapper, RecipeStepDtoToRecipeStepMapper>();
+        builder.Services.AddSingleton<IIngredientMapper, IngredientMapper>();
+        builder.Services.AddSingleton<IRecipeStepMapper, RecipeStepMapper>();
+        builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<IRecipeContractToRecipeMapper, RecipeContractToRecipeMapper>();
+        builder.Services.AddSingleton<IRecipeAggregateToRecipeDetailedDtoMapper, RecipeAggregateToRecipeDetailedDtoMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 

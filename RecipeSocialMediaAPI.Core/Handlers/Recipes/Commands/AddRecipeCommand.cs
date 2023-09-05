@@ -8,6 +8,7 @@ using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
@@ -17,14 +18,16 @@ public record AddRecipeCommand(NewRecipeContract NewRecipeContract) : IValidatab
 
 internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetailedDTO>
 {
-    private readonly IRecipeContractToRecipeMapper _mapper;
+    private readonly IRecipeContractToRecipeMapper _contractMapper;
+    private readonly IRecipeAggregateToRecipeDetailedDtoMapper _aggregateMapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipeRepository _recipeRepository;
     private readonly IUserRepository _userRepository;
 
-    public AddRecipeHandler(IRecipeContractToRecipeMapper mapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public AddRecipeHandler(IRecipeAggregateToRecipeDetailedDtoMapper aggregateMapper, IRecipeContractToRecipeMapper contractMapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
-        _mapper = mapper;
+        _contractMapper = contractMapper;
+        _aggregateMapper = aggregateMapper;
         _dateTimeProvider = dateTimeProvider;
         _recipeRepository = recipeRepository;
         _userRepository = userRepository;
@@ -41,7 +44,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
         RecipeAggregate insertedRecipe = _recipeRepository.CreateRecipe(
             request.NewRecipeContract.Title,
-            _mapper.MapNewRecipeContractToRecipe(request.NewRecipeContract),
+            _contractMapper.MapNewRecipeContractToRecipe(request.NewRecipeContract),
             request.NewRecipeContract.Description,
             queriedUser,
             request.NewRecipeContract.Labels,
@@ -52,7 +55,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             dateOfCreation
         );
 
-        return await Task.FromResult(_mapper.Map<RecipeDetailedDTO>(insertedRecipe));
+        return await Task.FromResult(_aggregateMapper.MapRecipeAggregateToRecipeDetailedDto(insertedRecipe));
     }
 }
 

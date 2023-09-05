@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Domain.Mappers;
-public class RecipeStepDtoToRecipeStepMapper : IRecipeStepDtoToRecipeStepMapper
+public class RecipeStepMapper : IRecipeStepMapper
 {
     public RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDTO recipeStepDTO)
     {

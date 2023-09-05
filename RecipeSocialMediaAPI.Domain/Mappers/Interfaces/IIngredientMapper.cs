@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
-public interface IIngredientDtoToIngredientMapper
+public interface IIngredientMapper
 {
     public Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO);
     public IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient);
