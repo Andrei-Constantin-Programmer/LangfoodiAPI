@@ -39,6 +39,7 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<IRecipeContractToRecipeMapper, RecipeContractToRecipeMapper>();
         builder.Services.AddSingleton<IRecipeAggregateToRecipeDetailedDtoMapper, RecipeAggregateToRecipeDetailedDtoMapper>();
+        builder.Services.AddSingleton<IRecipeAggregateToRecipeDtoMapper, RecipeAggregateToRecipeDtoMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 

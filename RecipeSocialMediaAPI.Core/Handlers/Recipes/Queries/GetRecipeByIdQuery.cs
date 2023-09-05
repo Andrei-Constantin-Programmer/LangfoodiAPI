@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
+using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
-using AutoMapper;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 
@@ -11,12 +11,12 @@ public record GetRecipeByIdQuery(string Id) : IRequest<RecipeDetailedDTO>;
 
 internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDetailedDTO>
 {
-    private readonly IMapper _mapper;
+    private readonly IRecipeAggregateToRecipeDetailedDtoMapper _aggregateMapper;
     private readonly IRecipeRepository _recipeRepository;
 
-    public GetRecipeByIdHandler(IMapper mapper, IRecipeRepository recipeRepository)
+    public GetRecipeByIdHandler(IRecipeAggregateToRecipeDetailedDtoMapper aggregateMapper, IRecipeRepository recipeRepository)
     {
-        _mapper = mapper;
+        _aggregateMapper = aggregateMapper;
         _recipeRepository = recipeRepository;
     }
 
@@ -29,6 +29,6 @@ internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, Recipe
             throw new RecipeNotFoundException(request.Id);
         }
 
-        return await Task.FromResult(_mapper.Map<RecipeDetailedDTO>(recipe));
+        return await Task.FromResult(_aggregateMapper.MapRecipeAggregateToRecipeDetailedDto(recipe));
     }
 }

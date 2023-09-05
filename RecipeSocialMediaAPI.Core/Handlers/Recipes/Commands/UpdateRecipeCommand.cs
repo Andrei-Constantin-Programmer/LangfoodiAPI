@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Core.Contracts;
 using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Core.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
@@ -14,13 +15,13 @@ public record UpdateRecipeCommand(UpdateRecipeContract UpdateRecipeContract) : I
 
 internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand, bool>
 {
-    private readonly IMapper _mapper;
+    private readonly IRecipeContractToRecipeMapper _contractMapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipeRepository _recipeRepository;
 
-    public UpdateRecipeHandler(IMapper mapper, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public UpdateRecipeHandler(IRecipeContractToRecipeMapper contractMapper, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
-        _mapper = mapper;
+        _contractMapper = contractMapper;
         _dateTimeProvider = dateTimeProvider;
         _recipeRepository = recipeRepository;
     }
@@ -36,7 +37,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand, bool>
         RecipeAggregate updatedRecipe = new(
             existingRecipe.Id,
             request.UpdateRecipeContract.Title,
-            _mapper.Map<Recipe>(request.UpdateRecipeContract),
+            _contractMapper.MapUpdateRecipeContractToRecipe(request.UpdateRecipeContract),
             request.UpdateRecipeContract.Description,
             existingRecipe.Chef,
             existingRecipe.CreationDate,
