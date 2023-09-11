@@ -52,31 +52,16 @@ public class RecipeAggregateTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void ShortDescription_CanBeModified()
-    {
-        // Given
-        string newShortDescription = "New short description";
-
-        // When
-        _recipeAggregateSUT.ShortDescription = newShortDescription;
-
-        // Then
-        _recipeAggregateSUT.ShortDescription.Should().Be(newShortDescription);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void LongDescription_CanBeModified()
+    public void Description_CanBeModified()
     {
         // Given
         string newLongDescription = "New, long, windy description";
 
         // When
-        _recipeAggregateSUT.LongDescription = newLongDescription;
+        _recipeAggregateSUT.Description = newLongDescription;
 
         // Then
-        _recipeAggregateSUT.LongDescription.Should().Be(newLongDescription);
+        _recipeAggregateSUT.Description.Should().Be(newLongDescription);
     }
 
     [Fact]

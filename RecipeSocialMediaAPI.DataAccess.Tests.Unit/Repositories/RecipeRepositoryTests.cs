@@ -231,8 +231,7 @@ public class RecipeRepositoryTests
             chefsRecipe.Id, 
             chefsRecipe.Title, 
             new Recipe(new(), new()), 
-            chefsRecipe.ShortDescription, 
-            chefsRecipe.LongDescription, 
+            chefsRecipe.Description,
             testChef, 
             chefsRecipe.CreationDate, 
             chefsRecipe.LastUpdatedDate, 
@@ -260,7 +259,7 @@ public class RecipeRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenChefDoesNotExist_ReturnEmptyList()
+    public void GetRecipesByChefId_WhenChefDoesNotExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -274,8 +273,7 @@ public class RecipeRepositoryTests
                 Title = "TestTitle",
                 Ingredients = new List<(string, double, string)>(),
                 Steps = new List<(string, string?)>(),
-                ShortDescription = "TestShortDesc",
-                LongDescription = "TestLongDesc",
+                Description = "TestShortDesc",
                 CreationDate = _testDate,
                 LastUpdatedDate = _testDate,
                 Labels = new List<string>(),
@@ -288,7 +286,7 @@ public class RecipeRepositoryTests
             .Returns(testDocuments);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChef(chefId);
+        var result = _recipeRepositorySUT.GetRecipesByChefId(chefId);
 
         // Then
         result.Should().BeEmpty();
@@ -312,11 +310,13 @@ public class RecipeRepositoryTests
             "TestTitle",
             new(new(), new()),
             "Short Description",
-            "Long Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
+            new HashSet<string>() { testLabel },
+            10,
+            500,
+            2300
         );
 
         RecipeDocument newRecipeDocument = new()
@@ -325,12 +325,14 @@ public class RecipeRepositoryTests
             Title = expectedResult.Title,
             Ingredients = new List<(string, double, string)>(),
             Steps = new List<(string, string?)>(),
-            ShortDescription = expectedResult.ShortDescription,
-            LongDescription = expectedResult.LongDescription,
+            Description = expectedResult.Description,
             ChefId = testChef.Id,
             CreationDate = expectedResult.CreationDate,
             LastUpdatedDate = expectedResult.LastUpdatedDate,
-            Labels = new List<string>() { testLabel }
+            Labels = new List<string>() { testLabel },
+            CookingTimeInSeconds = expectedResult.CookingTimeInSeconds, 
+            KiloCalories = expectedResult.KiloCalories,
+            NumberOfServings = expectedResult.NumberOfServings,
         };
 
         _mongoCollectionWrapperMock
@@ -342,7 +344,12 @@ public class RecipeRepositoryTests
             .Returns(expectedResult);
 
         // When
-        var result = _recipeRepositorySUT.CreateRecipe(expectedResult.Title, expectedResult.Recipe, expectedResult.ShortDescription, expectedResult.LongDescription, testChef, expectedResult.CreationDate, expectedResult.LastUpdatedDate, expectedResult.Labels);
+        var result = _recipeRepositorySUT.CreateRecipe(
+            expectedResult.Title, expectedResult.Recipe, 
+            expectedResult.Description, testChef, expectedResult.Labels, 
+            expectedResult.NumberOfServings, expectedResult.CookingTimeInSeconds, 
+            expectedResult.KiloCalories, expectedResult.CreationDate, 
+            expectedResult.LastUpdatedDate);
 
         // Then
         result.Should().Be(expectedResult);
@@ -350,8 +357,7 @@ public class RecipeRepositoryTests
             .Verify(collection => collection.Insert(It.Is<RecipeDocument>(doc =>
                     doc.Id == null
                     && doc.Title == expectedResult.Title
-                    && doc.ShortDescription == expectedResult.ShortDescription
-                    && doc.LongDescription == expectedResult.LongDescription
+                    && doc.Description == expectedResult.Description
                     && doc.ChefId == testChef.Id
                     && doc.CreationDate == expectedResult.CreationDate
                     && doc.LastUpdatedDate == expectedResult.LastUpdatedDate
@@ -375,11 +381,13 @@ public class RecipeRepositoryTests
             "TestTitle",
             new(new(), new()),
             "Short Description",
-            "Long Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
+            new HashSet<string>() { testLabel },
+            10,
+            500,
+            2300
         );
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
@@ -398,13 +406,15 @@ public class RecipeRepositoryTests
                     It.Is<RecipeDocument>(recipeDoc => 
                         recipeDoc.Id == recipe.Id
                         && recipeDoc.Title == recipe.Title
-                        && recipeDoc.ShortDescription == recipe.ShortDescription
-                        && recipeDoc.LongDescription == recipe.LongDescription
+                        && recipeDoc.Description == recipe.Description
                         && recipeDoc.CreationDate == recipe.CreationDate
                         && recipeDoc.LastUpdatedDate == recipe.LastUpdatedDate
                         && recipeDoc.Labels.Contains(testLabel) && recipe.Labels.Count == 1
                         && recipeDoc.Ingredients.Count == 0
-                        && recipeDoc.Steps.Count == 0),
+                        && recipeDoc.Steps.Count == 0
+                        && recipeDoc.NumberOfServings == recipe.NumberOfServings
+                        && recipeDoc.CookingTimeInSeconds == recipe.CookingTimeInSeconds
+                        && recipeDoc.KiloCalories == recipe.KiloCalories),
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))), 
                 Times.Once);
     }
@@ -422,12 +432,14 @@ public class RecipeRepositoryTests
             "TestId",
             "TestTitle",
             new(new(), new()),
-            "Short Description",
-            "Long Description",
+            "Short Description",            
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
+            new HashSet<string>() { testLabel },
+            10,
+            500,
+            2300
         );
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
@@ -479,11 +491,13 @@ public class RecipeRepositoryTests
             "TestTitle",
             new(new(), new()),
             "Short Description",
-            "Long Description",
             new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>()
+            new HashSet<string>(),
+            10,
+            500,
+            2300
         );
 
         _mongoCollectionWrapperMock
@@ -537,11 +551,13 @@ public class RecipeRepositoryTests
             "TestTitle",
             new(new(), new()),
             "Short Description",
-            "Long Description",
             new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>()
+            new HashSet<string>(),
+            10,
+            500,
+            2300
         );
 
         _mongoCollectionWrapperMock
