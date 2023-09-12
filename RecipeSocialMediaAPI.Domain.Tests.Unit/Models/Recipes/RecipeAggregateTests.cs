@@ -14,23 +14,27 @@ public class RecipeAggregateTests
         string testId = "AggId";
         string testTitle = "My Recipe";
         Recipe testRecipe = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step") }));
-        string testShortDescription = "";
-        string testLongDescription = "";
+        string testDescription = "";
         User testChef = new("TestId", "TestUsername", "TestEmail", "TestPassword");
         DateTimeOffset testCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
         DateTimeOffset testLastUpdatedDate = new(2023, 8, 30, 0, 0, 0, TimeSpan.Zero);
-        
+        int testKiloCalories = 2300;
+        int testCookingTimeInSeconds = 500;
+        int testNumberOfServings = 10;
+
         _recipeAggregateSUT = new
             (
                 testId,
                 testTitle,
                 testRecipe,
-                testShortDescription,
-                testLongDescription,
+                testDescription,
                 testChef,
                 testCreationDate,
                 testLastUpdatedDate,
-                null
+                null,
+                testNumberOfServings,
+                testCookingTimeInSeconds,
+                testKiloCalories
             );
     }
 
