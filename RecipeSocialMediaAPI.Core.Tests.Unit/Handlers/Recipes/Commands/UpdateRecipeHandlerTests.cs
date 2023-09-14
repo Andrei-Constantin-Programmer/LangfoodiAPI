@@ -75,6 +75,9 @@ public class UpdateRecipeHandlerTests
         await action.Should()
             .ThrowAsync<RecipeNotFoundException>()
             .WithMessage("The recipe with the id 1 was not found.");
+
+        _recipeRepositoryMock
+            .Verify(mapper => mapper.UpdateRecipe(It.IsAny<RecipeAggregate>()), Times.Never);
     }
 
     [Fact]
