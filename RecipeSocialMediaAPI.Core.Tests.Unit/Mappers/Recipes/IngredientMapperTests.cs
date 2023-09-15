@@ -2,6 +2,7 @@
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Mappers.Recipes;
@@ -16,7 +17,7 @@ public class IngredientMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void MapIngredientDtoToIngredient_GivenIngredientDto_ReturnIngredient()
     {
         // Given
@@ -37,12 +38,13 @@ public class IngredientMapperTests
         var result = _ingredientMapperSUT.MapIngredientDtoToIngredient(testIngredient);
 
         // Then
-        result.Should().Be(expectedResult);
+        result.Should().BeOfType<Ingredient>();
+        result.Should().BeEquivalentTo(expectedResult);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void MapIngredientToIngredientDto_GivenIngredient_ReturnIngredientDto()
     {
         // Given
@@ -59,6 +61,7 @@ public class IngredientMapperTests
         var result = _ingredientMapperSUT.MapIngredientToIngredientDto(testIngredient);
 
         // Then
-        result.Should().Be(expectedResult);
+        result.Should().BeOfType<IngredientDTO>();
+        result.Should().BeEquivalentTo(expectedResult);
     }
 }

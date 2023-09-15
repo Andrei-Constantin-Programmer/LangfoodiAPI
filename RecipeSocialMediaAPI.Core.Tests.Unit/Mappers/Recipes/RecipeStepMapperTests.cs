@@ -2,6 +2,7 @@
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Mappers.Recipes;
@@ -16,7 +17,7 @@ public class RecipeStepMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void MapRecipeStepDtoToRecipeStep_GivenRecipeStepDto_ReturnRecipeStep()
     {
         // Given
@@ -32,12 +33,13 @@ public class RecipeStepMapperTests
         var result = _recipeStepMapperSUT.MapRecipeStepDtoToRecipeStep(testStep);
 
         // Then
+        result.Should().BeOfType<RecipeStep>();
         result.Should().BeEquivalentTo(expectedResult);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void MapRecipeStepToRecipeStepDto_GivenRecipeStep_ReturnRecipeStepDto()
     {
         // Given
@@ -53,6 +55,7 @@ public class RecipeStepMapperTests
         var result = _recipeStepMapperSUT.MapRecipeStepToRecipeStepDto(testStep);
 
         // Then
+        result.Should().BeOfType<RecipeStepDTO>();
         result.Should().BeEquivalentTo(expectedResult);
     }
 

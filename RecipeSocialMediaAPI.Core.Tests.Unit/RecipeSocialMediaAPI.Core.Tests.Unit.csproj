@@ -33,8 +33,4 @@
     <ProjectReference Include="..\RecipeSocialMediaAPI.TestInfrastructure\RecipeSocialMediaAPI.TestInfrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mappers\Users\" />
-  </ItemGroup>
-
 </Project>
