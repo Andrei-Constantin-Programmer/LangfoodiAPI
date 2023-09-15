@@ -13,6 +13,7 @@ public class RecipeAggregateToRecipeDtoMapper : IRecipeAggregateToRecipeDtoMappe
             Title = recipeAggregate.Title,
             Description = recipeAggregate.Description,
             ChefUsername = recipeAggregate.Chef.UserName,
+            Labels = recipeAggregate.Labels,
             KiloCalories = recipeAggregate.KiloCalories,
             NumberOfServings = recipeAggregate.NumberOfServings,
             CookingTime = recipeAggregate.CookingTimeInSeconds,
