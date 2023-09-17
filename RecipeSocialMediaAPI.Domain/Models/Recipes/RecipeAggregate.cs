@@ -10,9 +10,6 @@ public class RecipeAggregate
     public string Title { get; set;  }
     public string Description { get; set; }
     public User Chef { get; }
-    public int? NumberOfServings { get; set; }
-    public int? CookingTimeInSeconds { get; set; }
-    public int? KiloCalories { get; set; }
     public DateTimeOffset CreationDate { get; }
     public DateTimeOffset LastUpdatedDate { get; set; }
 
@@ -27,10 +24,7 @@ public class RecipeAggregate
         User chef,
         DateTimeOffset creationDate,
         DateTimeOffset lastUpdatedDate,
-        ISet<string>? labels = null,
-        int? numberOfServings = null,
-        int? cookingTimeInSeconds = null,
-        int? kiloCalories = null)
+        ISet<string>? labels = null)
     {
         Id = id;
         Title = title;
@@ -40,9 +34,6 @@ public class RecipeAggregate
         CreationDate = creationDate;
         LastUpdatedDate = lastUpdatedDate;
         _labels = labels ?? new HashSet<string>();
-        NumberOfServings = numberOfServings;
-        CookingTimeInSeconds = cookingTimeInSeconds;
-        KiloCalories = kiloCalories;
     }
 
     public bool AddLabel(string label)
