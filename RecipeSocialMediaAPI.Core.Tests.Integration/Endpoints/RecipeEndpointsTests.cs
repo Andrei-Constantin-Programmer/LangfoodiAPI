@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using RecipeSocialMediaAPI.Core.Contracts.Recipes;
 using RecipeSocialMediaAPI.Core.Contracts.Users;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
@@ -272,12 +273,12 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // When
         var updateResult = await _client.PostAsJsonAsync($"/recipe/update", newRecipe);
-        var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
+        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
 
         // Then
         updateResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
+        getResult.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = getResult.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
 
         data.Should().NotBeNull();
         data.Id.Should().Be(recipeId);
@@ -323,10 +324,44 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // When
         var updateResult = await _client.PostAsJsonAsync($"/recipe/update", newRecipe);
-        var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
+        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
 
         // Then
         updateResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        getResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipeRemove_WhenRecipeDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        string recipeId = "0";
+        await _client.PostAsJsonAsync("/user/create", _testUserContract);
+        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+
+        // When
+        var removeResult = await _client.DeleteAsync($"/recipe/remove?id={recipeId}");
+        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
+
+        // Then
+        removeResult.StatusCode.Should().Be(HttpStatusCode.OK);
+        getResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipeRemove_WhenRecipeExists_RemoveRecipe()
+    {
+        // Given
+        string recipeId = "0";
+
+        // When
+        var removeResult = await _client.DeleteAsync($"/recipe/remove?id={recipeId}");
+
+        // Then
+        removeResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
