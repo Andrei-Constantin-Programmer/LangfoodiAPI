@@ -196,4 +196,49 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Should().NotBeNull();
         data.Should().BeEmpty();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipeCreate_WhenUserDoesNotExist_ReturnNotFound()
+    {
+        // When
+        var result = await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipeCreate_WhenUserExists_ReturnCreatedRecipe()
+    {
+        // Given
+        string recipeId = "0";
+        await _client.PostAsJsonAsync("/user/create", _testUserContract);
+
+        // When
+        var result = await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
+
+        data.Should().NotBeNull();
+        data.Id.Should().Be(recipeId);
+        data.Title.Should().Be(_testRecipeContract.Title);
+        data.Description.Should().Be(_testRecipeContract.Description);
+        data.KiloCalories.Should().Be(2300);
+        data.NumberOfServings.Should().Be(1);
+        data.CookingTime.Should().Be(500);
+        data.Chef.UserName.Should().Be(_testUserContract.UserName);
+        data.Chef.Email.Should().Be(_testUserContract.Email);
+        data.Chef.Password.Should().NotBeNull();
+        data.Ingredients.First().Name.Should().Be("eggs");
+        data.Ingredients.First().Quantity.Should().Be(1);
+        data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
+        data.RecipeSteps.First().Text.Should().Be("step");
+        data.RecipeSteps.First().ImageUrl.Should().Be("url");
+    }
 }
