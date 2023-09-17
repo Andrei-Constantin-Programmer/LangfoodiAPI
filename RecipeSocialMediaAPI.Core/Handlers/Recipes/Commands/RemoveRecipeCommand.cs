@@ -22,9 +22,9 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
             throw new RecipeNotFoundException(request.Id);
         }
 
-        bool successful = _recipeRepository.DeleteRecipe(request.Id);
+        bool isSuccessful = _recipeRepository.DeleteRecipe(request.Id);
 
-        return successful
+        return isSuccessful
             ? Task.CompletedTask
             : throw new Exception($"Could not remove recipe with id {request.Id}.");
     }

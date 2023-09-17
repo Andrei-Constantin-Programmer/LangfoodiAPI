@@ -31,8 +31,8 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
-        User? queriedUser = _userRepository.GetUserById(request.NewRecipeContract.ChefId);
-        if (queriedUser is null)
+        User? chef = _userRepository.GetUserById(request.NewRecipeContract.ChefId);
+        if (chef is null)
         {
             throw new UserNotFoundException();
         }
@@ -48,7 +48,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                     .Select(_mapper.RecipeStepMapper.MapRecipeStepDtoToRecipeStep))
             ),
             request.NewRecipeContract.Description,
-            queriedUser,
+            chef,
             request.NewRecipeContract.Labels,
             request.NewRecipeContract.NumberOfServings,
             request.NewRecipeContract.CookingTime,

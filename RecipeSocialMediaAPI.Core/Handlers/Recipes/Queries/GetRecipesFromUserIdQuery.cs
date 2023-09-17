@@ -23,7 +23,8 @@ internal class GetRecipesFromUserIdHandler : IRequestHandler<GetRecipesFromUserI
 
     public async Task<IEnumerable<RecipeDTO>> Handle(GetRecipesFromUserIdQuery request, CancellationToken cancellationToken)
     {
-        IEnumerable<RecipeAggregate> recipes = _recipeRepository.GetRecipesByChefId(request.Id);
-        return await Task.FromResult(recipes.Select(_mapper.RecipeAggregateToRecipeDtoMapper.MapRecipeAggregateToRecipeDto));
+        return await Task.FromResult(
+            _recipeRepository.GetRecipesByChefId(request.Id)
+            .Select(_mapper.RecipeAggregateToRecipeDtoMapper.MapRecipeAggregateToRecipeDto));
     }
 }

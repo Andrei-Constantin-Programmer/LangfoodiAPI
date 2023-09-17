@@ -53,9 +53,9 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             request.UpdateRecipeContract.KiloCalories ?? existingRecipe.KiloCalories
         );
 
-        bool successful = _recipeRepository.UpdateRecipe(updatedRecipe);
+        bool isSuccessful = _recipeRepository.UpdateRecipe(updatedRecipe);
 
-        return successful
+        return isSuccessful
             ? Task.CompletedTask
             : throw new Exception($"Could not update recipe with id {existingRecipe.Id}.");
     }

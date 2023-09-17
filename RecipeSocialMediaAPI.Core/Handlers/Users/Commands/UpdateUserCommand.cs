@@ -40,9 +40,9 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             encryptedPassword
         );
 
-        bool successful = _userRepository.UpdateUser(updatedUser);
+        bool isSuccessful = _userRepository.UpdateUser(updatedUser);
 
-        return successful
+        return isSuccessful
             ? Task.CompletedTask 
             : throw new Exception($"Could not update user with id {updatedUser.Id}.");
     }
