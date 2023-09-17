@@ -18,13 +18,6 @@ public static class RecipeEndpoints
 
     private static RouteGroupBuilder AddRecipeEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/create", async (
-            [FromBody] NewRecipeContract newRecipeContract,
-            [FromServices] ISender sender) =>
-        {
-            return Results.Ok(await sender.Send(new AddRecipeCommand(newRecipeContract)));
-        });
-
         group.MapPost("/get/id", async (
             [FromQuery] string id,
             [FromServices] ISender sender) =>
@@ -44,6 +37,13 @@ public static class RecipeEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetRecipesFromUserQuery(username)));
+        });
+
+        group.MapPost("/create", async (
+            [FromBody] NewRecipeContract newRecipeContract,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new AddRecipeCommand(newRecipeContract)));
         });
 
         group.MapPost("/update", async (
