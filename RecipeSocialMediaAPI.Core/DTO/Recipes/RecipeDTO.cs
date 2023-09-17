@@ -11,4 +11,5 @@ public record RecipeDTO
     public int? CookingTime { get; set; }
     public int? KiloCalories { get; set; }
     public DateTimeOffset? CreationDate { get; set; }
+    public DateTimeOffset? LastUpdatedDate { get; set; }
 }

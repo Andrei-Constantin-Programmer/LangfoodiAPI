@@ -17,4 +17,3 @@ public record RecipeDetailedDTO
     public DateTimeOffset? CreationDate { get; set; }
     public DateTimeOffset? LastUpdatedDate { get; set; }
 }
-

@@ -36,6 +36,7 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
                     .Select(x => new RecipeStep(
                         x.Text,
                         x.ImageLink is null ? null : new RecipeImage(x.ImageLink))))
-                ));
+                )
+            );
     }
 }

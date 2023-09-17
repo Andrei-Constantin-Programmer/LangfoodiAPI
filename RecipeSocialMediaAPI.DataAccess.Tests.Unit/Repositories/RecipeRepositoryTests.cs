@@ -82,7 +82,7 @@ public class RecipeRepositoryTests
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
             Labels = new List<string>(),
-            ChefId = chefId
+            ChefId = chefId,
         };
         User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
 

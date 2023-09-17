@@ -86,7 +86,7 @@ public class RecipeRepository : IRecipeRepository
                 KiloCalories = kiloCalories,
                 CreationDate = creationDate,
                 LastUpdatedDate = lastUpdatedDate,
-                Labels = labels.ToList()
+                Labels = labels.ToList(),
             });
         
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
@@ -106,7 +106,7 @@ public class RecipeRepository : IRecipeRepository
                 KiloCalories = recipe.KiloCalories,
                 CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate,
-                Labels = recipe.Labels.ToList()
+                Labels = recipe.Labels.ToList(),
             },
             doc => doc.Id == recipe.Id
         );
