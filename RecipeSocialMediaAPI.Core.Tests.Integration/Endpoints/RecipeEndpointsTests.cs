@@ -17,9 +17,10 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeGetById_WhenRecipeDoesNotExist_ReturnBadRequest()
+    public async void RecipeGetById_WhenRecipeExists_ReturnRecipe()
     {
         // Given
+        string recipeId = "0";
         NewRecipeContract testContract = new NewRecipeContract()
         {
             Title = "Test",
@@ -55,120 +56,145 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         await _client.PostAsJsonAsync("/user/create", testUserContract);
         await _client.PostAsJsonAsync("/recipe/create", testContract);
-        
+
         // When
-        var result = await _client.PostAsync("/recipe/get/id?id=0", null);
+        var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
 
         data.Should().NotBeNull();
-        data!.Id.Should().Be("1");
-        data!.Title.Should().Be(testContract.Title);
-        data!.Description.Should().Be(testContract.Description);
-
+        data.Id.Should().Be(recipeId);
+        data.Title.Should().Be(testContract.Title);
+        data.Description.Should().Be(testContract.Description);
+        data.KiloCalories.Should().Be(2300);
+        data.NumberOfServings.Should().Be(1);
+        data.CookingTime.Should().Be(500);
+        data.Chef.UserName.Should().Be(testUserContract.UserName);
+        data.Chef.Email.Should().Be(testUserContract.Email);
+        data.Chef.Password.Should().NotBeNull();
+        data.Ingredients.First().Name.Should().Be("eggs");
+        data.Ingredients.First().Quantity.Should().Be(1);
+        data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
+        data.RecipeSteps.First().Text.Should().Be("step");
+        data.RecipeSteps.First().ImageUrl.Should().Be("url");
     }
 
-    /*    [Fact(Skip = "Recipes under construction")]
-        [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-        [Trait(Traits.MODULE, Traits.Modules.CORE)]
-        public async void RecipeCreate_WhenValidRecipe_ReturnsOk()
-        {
-            // Given
-            var testRecipe = new RecipeDTO()
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipeGetById_WhenRecipeDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        string recipeId = "0";
+
+        // When
+        var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+        /*    [Fact(Skip = "Recipes under construction")]
+            [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+            [Trait(Traits.MODULE, Traits.Modules.CORE)]
+            public async void RecipeCreate_WhenValidRecipe_ReturnsOk()
             {
-                Id = "0",
-                Title = "TestTitle",
-                Description = "TestDescription",
-                ChefUsername = "TestChef",
-                Labels = new HashSet<string>()
-            };
+                // Given
+                var testRecipe = new RecipeDTO()
+                {
+                    Id = "0",
+                    Title = "TestTitle",
+                    Description = "TestDescription",
+                    ChefUsername = "TestChef",
+                    Labels = new HashSet<string>()
+                };
 
-            // When
-            var result = await _client.PostAsJsonAsync("/recipe/create", testRecipe);
+                // When
+                var result = await _client.PostAsJsonAsync("/recipe/create", testRecipe);
 
-            // Then
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
+                // Then
+                result.StatusCode.Should().Be(HttpStatusCode.OK);
+            }
 
-        [Fact(Skip = "Recipes under construction")]
-        [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-        [Trait(Traits.MODULE, Traits.Modules.CORE)]
-        public async void RecipeCreateAndGet_AfterValidRecipeCreated_GetReturnsTheNewRecipe()
-        {
-            // Given
-            RecipeDTO testRecipe = new()
+            [Fact(Skip = "Recipes under construction")]
+            [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+            [Trait(Traits.MODULE, Traits.Modules.CORE)]
+            public async void RecipeCreateAndGet_AfterValidRecipeCreated_GetReturnsTheNewRecipe()
             {
-                Id = "0",
-                Title = "TestTitle",
-                Description = "TestDescription",
-                ChefUsername = "TestChef",
-                Labels = new HashSet<string>()
-            };
+                // Given
+                RecipeDTO testRecipe = new()
+                {
+                    Id = "0",
+                    Title = "TestTitle",
+                    Description = "TestDescription",
+                    ChefUsername = "TestChef",
+                    Labels = new HashSet<string>()
+                };
 
-            // When
-            await _client.PostAsJsonAsync("/recipe/create", testRecipe);
+                // When
+                await _client.PostAsJsonAsync("/recipe/create", testRecipe);
 
-            var result = await _client.GetAsync("/recipe/get");
+                var result = await _client.GetAsync("/recipe/get");
 
-            // Then
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
+                // Then
+                result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+                var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
 
-            data.Should().NotBeNull();
-            data.Should().HaveCount(1);
-            data![0].Title.Should().Be(testRecipe.Title);
-            data![0].Description.Should().Be(testRecipe.Description);
-            data![0].ChefUsername.Should().Be(testRecipe.ChefUsername);
-            data![0].CreationDate.Should().NotBeNull();
-        }
+                data.Should().NotBeNull();
+                data.Should().HaveCount(1);
+                data![0].Title.Should().Be(testRecipe.Title);
+                data![0].Description.Should().Be(testRecipe.Description);
+                data![0].ChefUsername.Should().Be(testRecipe.ChefUsername);
+                data![0].CreationDate.Should().NotBeNull();
+            }
 
-        [Fact(Skip = "Recipes under construction")]
-        [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-        [Trait(Traits.MODULE, Traits.Modules.CORE)]
-        public async void RecipeGetById_WhenRecipeDoesNotExist_ReturnsNotFound()
-        {
-            // Given
-            int testId = 1;
-
-            // When
-            var result = await _client.PostAsync($"/recipe/getById/{testId}", null);
-
-            // Then
-            result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        }
-
-        [Fact(Skip = "Recipes under construction")]
-        [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-        [Trait(Traits.MODULE, Traits.Modules.CORE)]
-        public async void RecipeGetById_WhenRecipeDoesExist_ReturnsRecipe()
-        {
-            // Given
-            RecipeDTO testRecipe = new()
+            [Fact(Skip = "Recipes under construction")]
+            [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+            [Trait(Traits.MODULE, Traits.Modules.CORE)]
+            public async void RecipeGetById_WhenRecipeDoesNotExist_ReturnsNotFound()
             {
-                Id = "0",
-                Title = "TestTitle",
-                Description = "TestDescription",
-                ChefUsername = "TestChef",
-                Labels = new HashSet<string>()
-            };
+                // Given
+                int testId = 1;
 
-            await _client.PostAsJsonAsync("/recipe/create", testRecipe);
+                // When
+                var result = await _client.PostAsync($"/recipe/getById/{testId}", null);
 
-            // When
-            var result = await _client.PostAsync($"/recipe/getById/{testRecipe.Id}", null);
+                // Then
+                result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            }
 
-            // Then
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-            var data = result.Content.ReadFromJsonAsync<RecipeDTO>().Result;
+            [Fact(Skip = "Recipes under construction")]
+            [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+            [Trait(Traits.MODULE, Traits.Modules.CORE)]
+            public async void RecipeGetById_WhenRecipeDoesExist_ReturnsRecipe()
+            {
+                // Given
+                RecipeDTO testRecipe = new()
+                {
+                    Id = "0",
+                    Title = "TestTitle",
+                    Description = "TestDescription",
+                    ChefUsername = "TestChef",
+                    Labels = new HashSet<string>()
+                };
 
-            data.Should().NotBeNull();
-            data!.Id.Should().Be(testRecipe.Id);
-            data!.Title.Should().Be(testRecipe.Title);
-            data!.Description.Should().Be(testRecipe.Description);
-            data!.ChefUsername.Should().Be(testRecipe.ChefUsername);
-            data!.CreationDate.Should().NotBeNull();
-        }*/
-}
+                await _client.PostAsJsonAsync("/recipe/create", testRecipe);
+
+                // When
+                var result = await _client.PostAsync($"/recipe/getById/{testRecipe.Id}", null);
+
+                // Then
+                result.StatusCode.Should().Be(HttpStatusCode.OK);
+                var data = result.Content.ReadFromJsonAsync<RecipeDTO>().Result;
+
+                data.Should().NotBeNull();
+                data!.Id.Should().Be(testRecipe.Id);
+                data!.Title.Should().Be(testRecipe.Title);
+                data!.Description.Should().Be(testRecipe.Description);
+                data!.ChefUsername.Should().Be(testRecipe.ChefUsername);
+                data!.CreationDate.Should().NotBeNull();
+            }*/
+    }
