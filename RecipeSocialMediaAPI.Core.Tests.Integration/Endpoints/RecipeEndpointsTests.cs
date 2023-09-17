@@ -73,9 +73,9 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Id.Should().Be(recipeId);
         data.Title.Should().Be(_testRecipeContract.Title);
         data.Description.Should().Be(_testRecipeContract.Description);
-        data.KiloCalories.Should().Be(2300);
-        data.NumberOfServings.Should().Be(1);
-        data.CookingTime.Should().Be(500);
+        data.KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
+        data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
         data.Chef.UserName.Should().Be(_testUserContract.UserName);
         data.Chef.Email.Should().Be(_testUserContract.Email);
         data.Chef.Password.Should().NotBeNull();
@@ -229,9 +229,9 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Id.Should().Be(recipeId);
         data.Title.Should().Be(_testRecipeContract.Title);
         data.Description.Should().Be(_testRecipeContract.Description);
-        data.KiloCalories.Should().Be(2300);
-        data.NumberOfServings.Should().Be(1);
-        data.CookingTime.Should().Be(500);
+        data.KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
+        data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
         data.Chef.UserName.Should().Be(_testUserContract.UserName);
         data.Chef.Email.Should().Be(_testUserContract.Email);
         data.Chef.Password.Should().NotBeNull();
@@ -240,5 +240,93 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
         data.RecipeSteps.First().Text.Should().Be("step");
         data.RecipeSteps.First().ImageUrl.Should().Be("url");
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipeUpdate_WhenRecipeExists_UpdateTheRecipe()
+    {
+        // Given
+        string recipeId = "0";
+        UpdateRecipeContract newRecipe = new()
+        {
+            Id = recipeId,
+            Title = "New Title",
+            Description = "New Desc",
+            KiloCalories = 1000,
+            Ingredients = new List<IngredientDTO>() {
+                new IngredientDTO()
+                {
+                    Name = "lemons",
+                    Quantity = 2,
+                    UnitOfMeasurement = "whole"
+                }
+            },
+            RecipeSteps = _testRecipeContract.RecipeSteps,
+            Labels = new HashSet<string>()
+        };
+
+        await _client.PostAsJsonAsync("/user/create", _testUserContract);
+        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+
+        // When
+        var updateResult = await _client.PostAsJsonAsync($"/recipe/update", newRecipe);
+        var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
+
+        // Then
+        updateResult.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
+
+        data.Should().NotBeNull();
+        data.Id.Should().Be(recipeId);
+        data.Title.Should().Be(newRecipe.Title);
+        data.Description.Should().Be(newRecipe.Description);
+        data.KiloCalories.Should().Be(newRecipe.KiloCalories);
+        data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
+        data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
+        data.Chef.UserName.Should().Be(_testUserContract.UserName);
+        data.Chef.Email.Should().Be(_testUserContract.Email);
+        data.Chef.Password.Should().NotBeNull();
+        data.Ingredients.First().Name.Should().Be("lemons");
+        data.Ingredients.First().Quantity.Should().Be(2);
+        data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
+        data.RecipeSteps.First().Text.Should().Be("step");
+        data.RecipeSteps.First().ImageUrl.Should().Be("url");
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipeUpdate_WhenRecipeDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        string recipeId = "0";
+        UpdateRecipeContract newRecipe = new()
+        {
+            Id = recipeId,
+            Title = "New Title",
+            Description = "New Desc",
+            KiloCalories = 1000,
+            Ingredients = new List<IngredientDTO>() {
+                new IngredientDTO()
+                {
+                    Name = "lemons",
+                    Quantity = 2,
+                    UnitOfMeasurement = "whole"
+                }
+            },
+            RecipeSteps = _testRecipeContract.RecipeSteps,
+            Labels = new HashSet<string>()
+        };
+
+        // When
+        var updateResult = await _client.PostAsJsonAsync($"/recipe/update", newRecipe);
+        var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
+
+        // Then
+        updateResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
