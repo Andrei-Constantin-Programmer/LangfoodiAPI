@@ -6,19 +6,50 @@ namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDep
 
 internal class FakeRecipeRepository : IRecipeRepository
 {
-    private readonly List<Recipe> _recipes;
+    private readonly List<RecipeAggregate> _collection;
 
-    public FakeRecipeRepository() 
+    public FakeRecipeRepository()
     {
-        _recipes = new List<Recipe>();
+        _collection = new List<RecipeAggregate>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, int? numberOfServings, int? cookingTime, int? kiloCalories, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate) => throw new NotImplementedException();
-    public bool DeleteRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
-    public bool DeleteRecipe(string id) => throw new NotImplementedException();
-    public RecipeAggregate? GetRecipeById(string id) => throw new NotImplementedException();
-    public IEnumerable<RecipeAggregate> GetRecipesByChef(User? user) => throw new NotImplementedException();
-    public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId) => throw new NotImplementedException();
-    public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName) => throw new NotImplementedException();
-    public bool UpdateRecipe(RecipeAggregate recipe) => throw new NotImplementedException();
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, int? numberOfServings, int? cookingTime, int? kiloCalories, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
+    {
+       var id = _collection.Count.ToString();
+        RecipeAggregate newRecipe = new RecipeAggregate(
+            id, title, recipe, description, chef, 
+            creationDate, lastUpdatedDate, labels, 
+            numberOfServings, cookingTime, kiloCalories
+        );
+        _collection.Add(newRecipe);
+
+        return newRecipe;
+    }
+
+    public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);
+
+    public bool DeleteRecipe(string id) => _collection.RemoveAll(x => x.Id == id) > 0;
+
+    public RecipeAggregate? GetRecipeById(string id) => _collection.Find(x => x.Id == id);
+    public IEnumerable<RecipeAggregate> GetRecipesByChef(User? user) => GetRecipesByChefId(user!.Id);
+    public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId) => _collection.FindAll(x => x.Chef.Id == chefId);
+    public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName) => _collection.FindAll(x => x.Chef.UserName == chefName);
+    public bool UpdateRecipe(RecipeAggregate recipe)
+    {
+        RecipeAggregate? existingRecipe = _collection.FirstOrDefault(x => x.Id == recipe.Id);
+        if (existingRecipe is null)
+        {
+            return false;
+        }
+
+        existingRecipe.Title = recipe.Title;
+        existingRecipe.Recipe = recipe.Recipe;
+        existingRecipe.Description = recipe.Description;
+        existingRecipe.LastUpdatedDate = recipe.LastUpdatedDate;
+        existingRecipe.NumberOfServings = recipe.NumberOfServings;
+        existingRecipe.CookingTimeInSeconds = recipe.CookingTimeInSeconds;
+        existingRecipe.KiloCalories = recipe.KiloCalories;
+
+        return true;
+    }
 }

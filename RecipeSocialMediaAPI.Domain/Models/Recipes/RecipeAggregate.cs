@@ -6,8 +6,8 @@ namespace RecipeSocialMediaAPI.Domain.Models.Recipes;
 public class RecipeAggregate
 {
     public string Id { get; }
-    public Recipe Recipe { get; }
-    public string Title { get; }
+    public Recipe Recipe { get; set;  }
+    public string Title { get; set;  }
     public string Description { get; set; }
     public User Chef { get; }
     public int? NumberOfServings { get; set; }
