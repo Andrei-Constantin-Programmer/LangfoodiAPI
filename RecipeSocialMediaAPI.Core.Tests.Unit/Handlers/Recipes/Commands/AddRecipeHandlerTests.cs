@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.Core.DTO;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
@@ -20,9 +20,6 @@ public class AddRecipeHandlerTests
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
-    private readonly Mock<IRecipeAggregateToRecipeDetailedDtoMapper> _recipeAggregateToRecipeDetailedDtoMapperMock;
-    private readonly Mock<IIngredientMapper> _ingredientMapperMock;
-    private readonly Mock<IRecipeStepMapper> _recipeStepMapperMock;
     private readonly Mock<IDateTimeProvider> _timeProviderMock;
 
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
@@ -34,22 +31,7 @@ public class AddRecipeHandlerTests
         _recipeMapperMock = new Mock<IRecipeMapper>();
         _userRepositoryMock = new Mock<IUserRepository>();
         _timeProviderMock = new Mock<IDateTimeProvider>();
-        _ingredientMapperMock = new Mock<IIngredientMapper>();
-        _recipeStepMapperMock = new Mock<IRecipeStepMapper>();
-        _recipeAggregateToRecipeDetailedDtoMapperMock = new Mock<IRecipeAggregateToRecipeDetailedDtoMapper>();
         _recipeRepositoryMock = new Mock<IRecipeRepository>();
-
-        _recipeMapperMock
-            .Setup(x => x.RecipeAggregateToRecipeDetailedDtoMapper)
-            .Returns(_recipeAggregateToRecipeDetailedDtoMapperMock.Object);
-
-        _recipeMapperMock
-            .Setup(x => x.IngredientMapper)
-            .Returns(_ingredientMapperMock.Object);
-
-        _recipeMapperMock
-            .Setup(x => x.RecipeStepMapper)
-            .Returns(_recipeStepMapperMock.Object);
 
         _timeProviderMock
             .Setup(x => x.Now)
@@ -86,7 +68,7 @@ public class AddRecipeHandlerTests
         await action.Should()
             .ThrowAsync<UserNotFoundException>();
 
-        _recipeAggregateToRecipeDetailedDtoMapperMock
+        _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Never);
     }
 
@@ -128,48 +110,50 @@ public class AddRecipeHandlerTests
 
         _recipeRepositoryMock
             .Setup(x => x.CreateRecipe(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
-                It.IsAny<User>(), It.IsAny<ISet<string>>(), It.IsAny<int?>(),
-                It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTimeOffset>(),
+                It.IsAny<User>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
                 It.IsAny<DateTimeOffset>()))
             .Returns((
                 string title, Recipe recipe, string desc, 
-                User chef, ISet<string> labels, int? numberOfServings,
-                int? cookingTime, int? kiloCalories, DateTimeOffset creationDate,
+                User chef, ISet<string> labels, DateTimeOffset creationDate,
                 DateTimeOffset lastUpdatedDate) => new RecipeAggregate(
                     "1", title, recipe, desc, chef, creationDate, lastUpdatedDate,
-                    labels, numberOfServings, cookingTime, kiloCalories
+                    labels
                 )
             );
 
-        _ingredientMapperMock
+        _recipeMapperMock
             .Setup(x => x.MapIngredientDtoToIngredient(It.IsAny<IngredientDTO>()))
             .Returns((IngredientDTO ing) => new Ingredient(ing.Name, ing.Quantity, ing.UnitOfMeasurement));
 
-        _recipeStepMapperMock
+        _recipeMapperMock
             .Setup(x => x.MapRecipeStepDtoToRecipeStep(It.IsAny<RecipeStepDTO>()))
             .Returns((RecipeStepDTO step) => new RecipeStep(step.Text, new RecipeImage(step.ImageUrl)));
 
-        _recipeAggregateToRecipeDetailedDtoMapperMock
+        _recipeMapperMock
             .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
             .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO() {
                 Id = "1", Title = recipe.Title, Description = recipe.Description,
                 Chef = new UserDTO() { Id = "1", Email = "mail", UserName = "name", Password = "pass" },
-                NumberOfServings = recipe.NumberOfServings, CookingTime = recipe.CookingTimeInSeconds,
-                KiloCalories = recipe.KiloCalories, Labels = recipe.Labels, CreationDate = recipe.CreationDate,
+                Labels = recipe.Labels, CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate, 
-                Ingredients = ImmutableList.CreateRange(new List<IngredientDTO>() {
+                Ingredients = new List<IngredientDTO>() {
                     new IngredientDTO() { 
                         Name = recipe.Recipe.Ingredients.First().Name,
                         Quantity = recipe.Recipe.Ingredients.First().Quantity,
                         UnitOfMeasurement = recipe.Recipe.Ingredients.First().UnitOfMeasurement
                     }
-                }),
-                RecipeSteps = ImmutableStack.CreateRange(new List<RecipeStepDTO>() {
-                    new RecipeStepDTO() {
-                        Text = recipe.Recipe.Steps.First().Text,
-                        ImageUrl = recipe.Recipe.Steps.First().Image.ImageUrl
-                    }
-                })
+                },
+                RecipeSteps = new Stack<RecipeStepDTO>(
+                    new[] { new RecipeStepDTO()
+                        {
+                            Text = recipe.Recipe.Steps.First().Text,
+                            ImageUrl = recipe.Recipe.Steps.First().Image.ImageUrl
+                        }
+                    }    
+                ),
+                NumberOfServings = recipe.Recipe.NumberOfServings,
+                CookingTime = recipe.Recipe.CookingTimeInSeconds,
+                KiloCalories = recipe.Recipe.KiloCalories
             });
 
         // When
@@ -188,7 +172,7 @@ public class AddRecipeHandlerTests
         result.RecipeSteps.First().ImageUrl.Should().Be("url");
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
-        _recipeAggregateToRecipeDetailedDtoMapperMock
+        _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);
     }
 }

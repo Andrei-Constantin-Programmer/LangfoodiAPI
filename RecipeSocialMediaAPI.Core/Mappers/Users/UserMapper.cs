@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
-namespace RecipeSocialMediaAPI.Core.Mappers.Users.Mappers;
+namespace RecipeSocialMediaAPI.Core.Mappers.Users;
 public class UserMapper : IUserMapper
 {
     public UserDTO MapUserToUserDto(User user)

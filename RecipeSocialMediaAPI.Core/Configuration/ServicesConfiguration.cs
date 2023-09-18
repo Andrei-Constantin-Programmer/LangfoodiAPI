@@ -3,8 +3,8 @@ using RecipeSocialMediaAPI.Core.Cryptography;
 using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Core.Mappers.Profiles;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes.Mappers;
-using RecipeSocialMediaAPI.Core.Mappers.Users.Mappers;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Core.Mappers.Users;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
@@ -34,12 +34,8 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
-        builder.Services.AddSingleton<IIngredientMapper, IngredientMapper>();
-        builder.Services.AddSingleton<IRecipeStepMapper, RecipeStepMapper>();
-        builder.Services.AddSingleton<IUserMapper, UserMapper>();
-        builder.Services.AddSingleton<IRecipeAggregateToRecipeDetailedDtoMapper, RecipeAggregateToRecipeDetailedDtoMapper>();
-        builder.Services.AddSingleton<IRecipeAggregateToRecipeDtoMapper, RecipeAggregateToRecipeDtoMapper>();
         builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
+        builder.Services.AddSingleton<IUserMapper, UserMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 

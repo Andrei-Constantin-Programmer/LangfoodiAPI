@@ -3,7 +3,7 @@ using MediatR;
 using RecipeSocialMediaAPI.Core.Contracts.Recipes;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
@@ -42,22 +42,22 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             request.NewRecipeContract.Title,
             new Recipe(
                 request.NewRecipeContract.Ingredients
-                    .Select(_mapper.IngredientMapper.MapIngredientDtoToIngredient)
+                    .Select(_mapper.MapIngredientDtoToIngredient)
                     .ToList(),
                 new Stack<RecipeStep>(request.NewRecipeContract.RecipeSteps
-                    .Select(_mapper.RecipeStepMapper.MapRecipeStepDtoToRecipeStep))
+                    .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
+                request.NewRecipeContract.NumberOfServings,
+                request.NewRecipeContract.CookingTime,
+                request.NewRecipeContract.KiloCalories
             ),
             request.NewRecipeContract.Description,
             chef,
             request.NewRecipeContract.Labels,
-            request.NewRecipeContract.NumberOfServings,
-            request.NewRecipeContract.CookingTime,
-            request.NewRecipeContract.KiloCalories,
             dateOfCreation,
             dateOfCreation
         );
 
-        return await Task.FromResult(_mapper.RecipeAggregateToRecipeDetailedDtoMapper
+        return await Task.FromResult(_mapper
             .MapRecipeAggregateToRecipeDetailedDto(insertedRecipe));
     }
 }

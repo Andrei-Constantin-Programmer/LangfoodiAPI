@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Core.Contracts.Recipes;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
@@ -18,8 +18,6 @@ public class UpdateRecipeHandlerTests
 {
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
-    private readonly Mock<IIngredientMapper> _ingredientMapperMock;
-    private readonly Mock<IRecipeStepMapper> _recipeStepMapperMock;
     private readonly Mock<IDateTimeProvider> _timeProviderMock;
 
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
@@ -30,17 +28,7 @@ public class UpdateRecipeHandlerTests
     {
         _recipeMapperMock = new Mock<IRecipeMapper>();
         _recipeRepositoryMock = new Mock<IRecipeRepository>();
-        _ingredientMapperMock = new Mock<IIngredientMapper>();
-        _recipeStepMapperMock = new Mock<IRecipeStepMapper>();
         _timeProviderMock = new Mock<IDateTimeProvider>();
-
-        _recipeMapperMock
-            .Setup(x => x.IngredientMapper)
-            .Returns(_ingredientMapperMock.Object);
-
-        _recipeMapperMock
-            .Setup(x => x.RecipeStepMapper)
-            .Returns(_recipeStepMapperMock.Object);
 
         _timeProviderMock
             .Setup(x => x.Now)

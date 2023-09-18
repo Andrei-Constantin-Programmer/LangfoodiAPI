@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Core.DTO;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -14,7 +14,6 @@ using System.Collections.Immutable;
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Queries;
 public class GetRecipeByIdHandlerTests
 {
-    private readonly Mock<IRecipeAggregateToRecipeDetailedDtoMapper> _recipeAggregateToRecipeDetailedDtoMapperMock;
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
 
@@ -25,12 +24,7 @@ public class GetRecipeByIdHandlerTests
     public GetRecipeByIdHandlerTests()
     {
         _recipeMapperMock = new Mock<IRecipeMapper>();
-        _recipeAggregateToRecipeDetailedDtoMapperMock = new Mock<IRecipeAggregateToRecipeDetailedDtoMapper>();
         _recipeRepositoryMock = new Mock<IRecipeRepository>();
-
-        _recipeMapperMock
-            .Setup(x => x.RecipeAggregateToRecipeDetailedDtoMapper)
-            .Returns(_recipeAggregateToRecipeDetailedDtoMapperMock.Object);
 
         _getRecipeByIdHandlerSUT = new GetRecipeByIdHandler(_recipeMapperMock.Object, _recipeRepositoryMock.Object);
     }
@@ -51,7 +45,7 @@ public class GetRecipeByIdHandlerTests
             .ThrowAsync<RecipeNotFoundException>()
             .WithMessage("The recipe with the id 1 was not found.");
 
-        _recipeAggregateToRecipeDetailedDtoMapperMock
+        _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Never);
     }
 
@@ -86,15 +80,15 @@ public class GetRecipeByIdHandlerTests
                 Email = testRecipeAggregate.Chef.Email,
                 Password = testRecipeAggregate.Chef.Password,
             },
-            Ingredients = ImmutableList.CreateRange(new List<IngredientDTO>()),
-            RecipeSteps = ImmutableStack.CreateRange(new List<RecipeStepDTO>()),
+            Ingredients = new List<IngredientDTO>(),
+            RecipeSteps = new Stack<RecipeStepDTO>(new List<RecipeStepDTO>()),
             Labels = testRecipeAggregate.Labels
         };
 
         _recipeRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(testRecipeAggregate);
-        _recipeAggregateToRecipeDetailedDtoMapperMock
+        _recipeMapperMock
             .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
             .Returns(expectedResult);
 
@@ -102,7 +96,7 @@ public class GetRecipeByIdHandlerTests
         var result = await _getRecipeByIdHandlerSUT.Handle(new GetRecipeByIdQuery(recipeId), CancellationToken.None);
 
         // Then
-        _recipeAggregateToRecipeDetailedDtoMapperMock
+        _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);
         result.Should().Be(expectedResult);
     }

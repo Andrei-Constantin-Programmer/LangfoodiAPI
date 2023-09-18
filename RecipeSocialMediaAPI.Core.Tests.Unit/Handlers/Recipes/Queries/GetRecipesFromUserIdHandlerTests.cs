@@ -2,7 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -11,7 +11,6 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Queries;
 public class GetRecipesFromUserIdHandlerTests
 {
-    private readonly Mock<IRecipeAggregateToRecipeDtoMapper> _recipeAggregateToRecipeDtoMapperMock;
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
 
@@ -23,11 +22,6 @@ public class GetRecipesFromUserIdHandlerTests
     {
         _recipeMapperMock = new Mock<IRecipeMapper>();
         _recipeRepositoryMock = new Mock<IRecipeRepository>();
-        _recipeAggregateToRecipeDtoMapperMock = new Mock<IRecipeAggregateToRecipeDtoMapper>();
-
-        _recipeMapperMock
-            .Setup(x => x.RecipeAggregateToRecipeDtoMapper)
-            .Returns(_recipeAggregateToRecipeDtoMapperMock.Object);
 
         _getRecipesFromUserIdHandlerSUT = new GetRecipesFromUserIdHandler(_recipeMapperMock.Object, _recipeRepositoryMock.Object);
     }
@@ -45,7 +39,7 @@ public class GetRecipesFromUserIdHandlerTests
 
         // Then
         result.Should().BeEmpty();
-        _recipeAggregateToRecipeDtoMapperMock
+        _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()), Times.Never);
     }
 
@@ -79,7 +73,7 @@ public class GetRecipesFromUserIdHandlerTests
         _recipeRepositoryMock
             .Setup(x => x.GetRecipesByChefId(It.IsAny<string>()))
             .Returns(new List<RecipeAggregate> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
-        _recipeAggregateToRecipeDtoMapperMock
+        _recipeMapperMock
             .Setup(x => x.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()))
             .Returns(expectedResult);
 
@@ -90,7 +84,7 @@ public class GetRecipesFromUserIdHandlerTests
         result.Should().HaveCount(3);
         var first = result.First();
         first.Should().Be(expectedResult);
-        _recipeAggregateToRecipeDtoMapperMock
+        _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()), Times.AtLeast(3));
     }
 }

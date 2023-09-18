@@ -13,13 +13,12 @@ internal class FakeRecipeRepository : IRecipeRepository
         _collection = new List<RecipeAggregate>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, int? numberOfServings, int? cookingTime, int? kiloCalories, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
     {
        var id = _collection.Count.ToString();
         RecipeAggregate newRecipe = new RecipeAggregate(
             id, title, recipe, description, chef, 
-            creationDate, lastUpdatedDate, labels, 
-            numberOfServings, cookingTime, kiloCalories
+            creationDate, lastUpdatedDate, labels
         );
         _collection.Add(newRecipe);
 
@@ -46,9 +45,9 @@ internal class FakeRecipeRepository : IRecipeRepository
         existingRecipe.Recipe = recipe.Recipe;
         existingRecipe.Description = recipe.Description;
         existingRecipe.LastUpdatedDate = recipe.LastUpdatedDate;
-        existingRecipe.NumberOfServings = recipe.NumberOfServings;
-        existingRecipe.CookingTimeInSeconds = recipe.CookingTimeInSeconds;
-        existingRecipe.KiloCalories = recipe.KiloCalories;
+        existingRecipe.Recipe.NumberOfServings = recipe.Recipe.NumberOfServings;
+        existingRecipe.Recipe.CookingTimeInSeconds = recipe.Recipe.CookingTimeInSeconds;
+        existingRecipe.Recipe.KiloCalories = recipe.Recipe.KiloCalories;
 
         return true;
     }

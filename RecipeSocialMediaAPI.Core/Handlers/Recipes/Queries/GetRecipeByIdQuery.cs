@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -30,6 +30,6 @@ internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, Recipe
             throw new RecipeNotFoundException(request.Id);
         }
 
-        return await Task.FromResult(_mapper.RecipeAggregateToRecipeDetailedDtoMapper.MapRecipeAggregateToRecipeDetailedDto(recipe));
+        return await Task.FromResult(_mapper.MapRecipeAggregateToRecipeDetailedDto(recipe));
     }
 }

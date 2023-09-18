@@ -71,7 +71,7 @@ public class RecipeRepository : IRecipeRepository
         return GetRecipesByChef(chef);
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, int? numberOfServings, int? cookingTime, int? kiloCalories, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
     {
         var recipeDocument = _recipeCollection
             .Insert(new RecipeDocument()
@@ -81,9 +81,6 @@ public class RecipeRepository : IRecipeRepository
                 Steps = recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
                 Description = description,
                 ChefId = chef.Id,
-                NumberOfServings = numberOfServings,
-                CookingTimeInSeconds = cookingTime,
-                KiloCalories = kiloCalories,
                 CreationDate = creationDate,
                 LastUpdatedDate = lastUpdatedDate,
                 Labels = labels.ToList(),
@@ -101,9 +98,9 @@ public class RecipeRepository : IRecipeRepository
                 Steps = recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
                 Description = recipe.Description,
                 ChefId = recipe.Chef.Id,
-                NumberOfServings = recipe.NumberOfServings,
-                CookingTimeInSeconds = recipe.CookingTimeInSeconds,
-                KiloCalories = recipe.KiloCalories,
+                NumberOfServings = recipe.Recipe.NumberOfServings,
+                CookingTimeInSeconds = recipe.Recipe.CookingTimeInSeconds,
+                KiloCalories = recipe.Recipe.KiloCalories,
                 CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate,
                 Labels = recipe.Labels.ToList(),

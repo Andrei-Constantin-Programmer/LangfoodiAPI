@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using RecipeSocialMediaAPI.Core.DTO.Recipes;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -25,6 +25,6 @@ internal class GetRecipesFromUserIdHandler : IRequestHandler<GetRecipesFromUserI
     {
         return await Task.FromResult(
             _recipeRepository.GetRecipesByChefId(request.Id)
-            .Select(_mapper.RecipeAggregateToRecipeDtoMapper.MapRecipeAggregateToRecipeDto));
+            .Select(_mapper.MapRecipeAggregateToRecipeDto));
     }
 }

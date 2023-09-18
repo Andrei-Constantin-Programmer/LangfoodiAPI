@@ -2,7 +2,7 @@
 using MediatR;
 using RecipeSocialMediaAPI.Core.Contracts.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
+using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
@@ -38,19 +38,19 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             request.UpdateRecipeContract.Title,
             new Recipe(
                 request.UpdateRecipeContract.Ingredients
-                    .Select(_mapper.IngredientMapper.MapIngredientDtoToIngredient)
+                    .Select(_mapper.MapIngredientDtoToIngredient)
                     .ToList(),
                 new Stack<RecipeStep>(request.UpdateRecipeContract.RecipeSteps
-                    .Select(_mapper.RecipeStepMapper.MapRecipeStepDtoToRecipeStep))
+                    .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
+                request.UpdateRecipeContract.NumberOfServings ?? existingRecipe.Recipe.NumberOfServings,
+                request.UpdateRecipeContract.CookingTime ?? existingRecipe.Recipe.CookingTimeInSeconds,
+                request.UpdateRecipeContract.KiloCalories ?? existingRecipe.Recipe.KiloCalories
             ),
             request.UpdateRecipeContract.Description,
             existingRecipe.Chef,
             existingRecipe.CreationDate,
             _dateTimeProvider.Now,
-            request.UpdateRecipeContract.Labels,
-            request.UpdateRecipeContract.NumberOfServings ?? existingRecipe.NumberOfServings,
-            request.UpdateRecipeContract.CookingTime ?? existingRecipe.CookingTimeInSeconds,
-            request.UpdateRecipeContract.KiloCalories ?? existingRecipe.KiloCalories
+            request.UpdateRecipeContract.Labels
         );
 
         bool isSuccessful = _recipeRepository.UpdateRecipe(updatedRecipe);

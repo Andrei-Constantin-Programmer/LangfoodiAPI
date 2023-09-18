@@ -520,15 +520,12 @@ public class RecipeRepositoryTests
         RecipeAggregate expectedResult = new(
             "TestId",
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel },
-            10,
-            500,
-            2300
+            new HashSet<string>() { testLabel }
         );
 
         RecipeDocument newRecipeDocument = new()
@@ -542,9 +539,9 @@ public class RecipeRepositoryTests
             CreationDate = expectedResult.CreationDate,
             LastUpdatedDate = expectedResult.LastUpdatedDate,
             Labels = new List<string>() { testLabel },
-            CookingTimeInSeconds = expectedResult.CookingTimeInSeconds, 
-            KiloCalories = expectedResult.KiloCalories,
-            NumberOfServings = expectedResult.NumberOfServings,
+            CookingTimeInSeconds = expectedResult.Recipe.CookingTimeInSeconds, 
+            KiloCalories = expectedResult.Recipe.KiloCalories,
+            NumberOfServings = expectedResult.Recipe.NumberOfServings,
         };
 
         _mongoCollectionWrapperMock
@@ -557,11 +554,9 @@ public class RecipeRepositoryTests
 
         // When
         var result = _recipeRepositorySUT.CreateRecipe(
-            expectedResult.Title, expectedResult.Recipe, 
+            expectedResult.Title, expectedResult.Recipe,
             expectedResult.Description, testChef, expectedResult.Labels, 
-            expectedResult.NumberOfServings, expectedResult.CookingTimeInSeconds, 
-            expectedResult.KiloCalories, expectedResult.CreationDate, 
-            expectedResult.LastUpdatedDate);
+            expectedResult.CreationDate, expectedResult.LastUpdatedDate);
 
         // Then
         result.Should().Be(expectedResult);
@@ -591,15 +586,12 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel },
-            10,
-            500,
-            2300
+            new HashSet<string>() { testLabel }
         );
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
@@ -624,9 +616,9 @@ public class RecipeRepositoryTests
                         && recipeDoc.Labels.Contains(testLabel) && recipe.Labels.Count == 1
                         && recipeDoc.Ingredients.Count == 0
                         && recipeDoc.Steps.Count == 0
-                        && recipeDoc.NumberOfServings == recipe.NumberOfServings
-                        && recipeDoc.CookingTimeInSeconds == recipe.CookingTimeInSeconds
-                        && recipeDoc.KiloCalories == recipe.KiloCalories),
+                        && recipeDoc.NumberOfServings == recipe.Recipe.NumberOfServings
+                        && recipeDoc.CookingTimeInSeconds == recipe.Recipe.CookingTimeInSeconds
+                        && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories),
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))), 
                 Times.Once);
     }
@@ -643,15 +635,12 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",            
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel },
-            10,
-            500,
-            2300
+            new HashSet<string>() { testLabel }
         );
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
@@ -701,15 +690,12 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             id,
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",
             new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>(),
-            10,
-            500,
-            2300
+            new HashSet<string>()
         );
 
         _mongoCollectionWrapperMock
@@ -761,15 +747,12 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             id,
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",
             new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>(),
-            10,
-            500,
-            2300
+            new HashSet<string>()
         );
 
         _mongoCollectionWrapperMock
