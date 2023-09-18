@@ -9,6 +9,7 @@ using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 
@@ -64,8 +65,28 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
 public class AddRecipeCommandValidator : AbstractValidator<AddRecipeCommand>
 {
-    public AddRecipeCommandValidator()
+    private readonly IRecipeValidationService _recipeValidationService;
+
+    public AddRecipeCommandValidator(IRecipeValidationService recipeValidationService)
     {
+        _recipeValidationService = recipeValidationService;
+
+        RuleFor(x => x.NewRecipeContract.Title)
+            .NotEmpty()
+            .Must(_recipeValidationService.ValidTitle);
+
+        RuleFor(x => x.NewRecipeContract.NumberOfServings)
+            .GreaterThanOrEqualTo(1)
+            .When(x => x.NewRecipeContract.NumberOfServings is not null);
+
+        RuleFor(x => x.NewRecipeContract.CookingTime)
+            .GreaterThanOrEqualTo(0)
+            .When(x => x.NewRecipeContract.CookingTime is not null);
+
+        RuleFor(x => x.NewRecipeContract.KiloCalories)
+            .GreaterThanOrEqualTo(0)
+            .When(x => x.NewRecipeContract.KiloCalories is not null);
+
         RuleFor(x => x.NewRecipeContract.Ingredients)
             .NotEmpty();
 
