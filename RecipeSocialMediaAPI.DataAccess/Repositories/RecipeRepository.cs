@@ -84,6 +84,9 @@ public class RecipeRepository : IRecipeRepository
                 CreationDate = creationDate,
                 LastUpdatedDate = lastUpdatedDate,
                 Labels = labels.ToList(),
+                NumberOfServings = recipe.NumberOfServings,
+                CookingTimeInSeconds = recipe.CookingTimeInSeconds,
+                KiloCalories = recipe.KiloCalories
             });
         
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
