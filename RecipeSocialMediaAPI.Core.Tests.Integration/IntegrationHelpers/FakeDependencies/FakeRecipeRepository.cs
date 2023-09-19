@@ -41,13 +41,15 @@ internal class FakeRecipeRepository : IRecipeRepository
             return false;
         }
 
-        existingRecipe.Title = recipe.Title;
-        existingRecipe.Recipe = recipe.Recipe;
-        existingRecipe.Description = recipe.Description;
-        existingRecipe.LastUpdatedDate = recipe.LastUpdatedDate;
-        existingRecipe.Recipe.NumberOfServings = recipe.Recipe.NumberOfServings;
-        existingRecipe.Recipe.CookingTimeInSeconds = recipe.Recipe.CookingTimeInSeconds;
-        existingRecipe.Recipe.KiloCalories = recipe.Recipe.KiloCalories;
+        RecipeAggregate updatedRecipe = new RecipeAggregate(
+            existingRecipe.Id, recipe.Title,
+            recipe.Recipe, recipe.Description,
+            existingRecipe.Chef, existingRecipe.CreationDate,
+            existingRecipe.LastUpdatedDate, existingRecipe.Labels
+        );
+
+        _collection.Remove(existingRecipe);
+        _collection.Add(updatedRecipe);
 
         return true;
     }

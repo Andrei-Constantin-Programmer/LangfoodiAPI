@@ -38,7 +38,9 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             throw new UserNotFoundException();
         }
 
+        chef.Password = string.Empty;
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
+
         RecipeAggregate insertedRecipe = _recipeRepository.CreateRecipe(
             request.NewRecipeContract.Title,
             new Recipe(
@@ -72,7 +74,6 @@ public class AddRecipeCommandValidator : AbstractValidator<AddRecipeCommand>
         _recipeValidationService = recipeValidationService;
 
         RuleFor(x => x.NewRecipeContract.Title)
-            .NotEmpty()
             .Must(_recipeValidationService.ValidTitle);
 
         RuleFor(x => x.NewRecipeContract.NumberOfServings)

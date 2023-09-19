@@ -35,14 +35,15 @@ public class RecipeEndpointsTests : EndpointTestBase
                     UnitOfMeasurement = "whole"
                 }
             },
-            RecipeSteps = new Stack<RecipeStepDTO>(),
+            RecipeSteps = new Stack<RecipeStepDTO>(new[] 
+            { 
+                new RecipeStepDTO()
+                {
+                    Text = "step",
+                    ImageUrl = "url"
+                }
+            }),
         };
-
-        _testRecipeContract.RecipeSteps.Push(new RecipeStepDTO()
-        {
-            Text = "step",
-            ImageUrl = "url"
-        });
 
         _testUserContract = new()
         {
@@ -105,7 +106,74 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUserId_WhenAtLeastOneRecipeExists_ReturnAllFoundRecipes()
+    public async void RecipesGetFromUserId_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
+    {
+        // Given
+        string userid = "0";
+
+        NewRecipeContract secondTestRecipe = new()
+        {
+            Title = "Test",
+            Description = "Test",
+            ChefId = "0",
+            Labels = new HashSet<string>(),
+            NumberOfServings = 1,
+            KiloCalories = 2300,
+            CookingTime = 500,
+            Ingredients = new List<IngredientDTO>() {
+                new IngredientDTO()
+                {
+                    Name = "eggs",
+                    Quantity = 1,
+                    UnitOfMeasurement = "whole"
+                }
+            },
+            RecipeSteps = new Stack<RecipeStepDTO>(new[]
+            {
+                new RecipeStepDTO()
+                {
+                    Text = "step",
+                    ImageUrl = "url"
+                }
+            }),
+        };
+
+        await _client.PostAsJsonAsync("/user/create", _testUserContract);
+        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        await _client.PostAsJsonAsync("/recipe/create", secondTestRecipe);
+
+        // When
+        var result = await _client.PostAsync($"/recipe/get/userid?id={userid}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+
+        data.Should().NotBeNull();
+        data.Should().NotBeEmpty();
+        data.Count.Should().Be(2);
+        
+        data.First().ChefUsername.Should().Be(_testUserContract.UserName);
+        data.First().Title.Should().Be(_testRecipeContract.Title);
+        data.First().Description.Should().Be(_testRecipeContract.Description);
+        data.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
+        data.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
+        data.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data.First().CreationDate.Should().NotBeNull();
+
+        data.Last().ChefUsername.Should().Be(_testUserContract.UserName);
+        data.Last().Title.Should().Be(secondTestRecipe.Title);
+        data.Last().Description.Should().Be(secondTestRecipe.Description);
+        data.Last().NumberOfServings.Should().Be(secondTestRecipe.NumberOfServings);
+        data.Last().CookingTime.Should().Be(secondTestRecipe.CookingTime);
+        data.Last().KiloCalories.Should().Be(secondTestRecipe.KiloCalories);
+        data.Last().CreationDate.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipesGetFromUserId_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
         string userid = "0";
@@ -153,7 +221,74 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUserName_WhenAtLeastOneRecipeExists_ReturnAllFoundRecipes()
+    public async void RecipesGetFromUsername_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
+    {
+        // Given
+        string username = "TestUsername";
+
+        NewRecipeContract secondTestRecipe = new()
+        {
+            Title = "Test",
+            Description = "Test",
+            ChefId = "0",
+            Labels = new HashSet<string>(),
+            NumberOfServings = 1,
+            KiloCalories = 2300,
+            CookingTime = 500,
+            Ingredients = new List<IngredientDTO>() {
+                new IngredientDTO()
+                {
+                    Name = "eggs",
+                    Quantity = 1,
+                    UnitOfMeasurement = "whole"
+                }
+            },
+            RecipeSteps = new Stack<RecipeStepDTO>(new[]
+            {
+                new RecipeStepDTO()
+                {
+                    Text = "step",
+                    ImageUrl = "url"
+                }
+            }),
+        };
+
+        await _client.PostAsJsonAsync("/user/create", _testUserContract);
+        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        await _client.PostAsJsonAsync("/recipe/create", secondTestRecipe);
+
+        // When
+        var result = await _client.PostAsync($"/recipe/get/username?username={username}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+
+        data.Should().NotBeNull();
+        data.Should().NotBeEmpty();
+        data.Count.Should().Be(2);
+
+        data.First().ChefUsername.Should().Be(_testUserContract.UserName);
+        data.First().Title.Should().Be(_testRecipeContract.Title);
+        data.First().Description.Should().Be(_testRecipeContract.Description);
+        data.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
+        data.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
+        data.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data.First().CreationDate.Should().NotBeNull();
+
+        data.Last().ChefUsername.Should().Be(_testUserContract.UserName);
+        data.Last().Title.Should().Be(secondTestRecipe.Title);
+        data.Last().Description.Should().Be(secondTestRecipe.Description);
+        data.Last().NumberOfServings.Should().Be(secondTestRecipe.NumberOfServings);
+        data.Last().CookingTime.Should().Be(secondTestRecipe.CookingTime);
+        data.Last().KiloCalories.Should().Be(secondTestRecipe.KiloCalories);
+        data.Last().CreationDate.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipesGetFromUserName_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
         string username = "TestUsername";
@@ -273,9 +408,9 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // When
         var updateResult = await _client.PostAsJsonAsync($"/recipe/update", newRecipe);
-        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
 
         // Then
+        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
         updateResult.StatusCode.Should().Be(HttpStatusCode.OK);
         getResult.StatusCode.Should().Be(HttpStatusCode.OK);
         var data = getResult.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
@@ -324,9 +459,9 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // When
         var updateResult = await _client.PostAsJsonAsync($"/recipe/update", newRecipe);
-        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
 
         // Then
+        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
         updateResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
         getResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

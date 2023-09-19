@@ -133,7 +133,7 @@ public class AddRecipeHandlerTests
             .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
             .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO() {
                 Id = "1", Title = recipe.Title, Description = recipe.Description,
-                Chef = new UserDTO() { Id = "1", Email = "mail", UserName = "name", Password = "pass" },
+                Chef = new UserDTO() { Id = "1", Email = "mail", UserName = "name", Password = "" },
                 Labels = recipe.Labels, CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate, 
                 Ingredients = new List<IngredientDTO>() {
@@ -172,6 +172,7 @@ public class AddRecipeHandlerTests
         result.RecipeSteps.First().ImageUrl.Should().Be("url");
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
+        result.Chef.Password.Should().BeEmpty();
         _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);
     }

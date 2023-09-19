@@ -35,7 +35,7 @@ public class RecipeMapperTests
             ImageUrl = "image url"
         };
 
-        RecipeStep expectedResult = new RecipeStep(testStep.Text, new RecipeImage(testStep.ImageUrl));
+        RecipeStep expectedResult = new(testStep.Text, new RecipeImage(testStep.ImageUrl));
 
         // When
         var result = _mapperSUT.MapRecipeStepDtoToRecipeStep(testStep);
@@ -51,9 +51,9 @@ public class RecipeMapperTests
     public void MapRecipeStepToRecipeStepDto_GivenRecipeStep_ReturnRecipeStepDto()
     {
         // Given
-        RecipeStep testStep = new RecipeStep("Step 1", new RecipeImage("image url"));
+        RecipeStep testStep = new("Step 1", new RecipeImage("image url"));
 
-        RecipeStepDTO expectedResult = new RecipeStepDTO()
+        RecipeStepDTO expectedResult = new()
         {
             Text = testStep.Text,
             ImageUrl = testStep.Image.ImageUrl
@@ -146,23 +146,6 @@ public class RecipeMapperTests
                 UserName = user.UserName,
                 Password = user.Password
             });
-
-/*        _ingredientMapperMock
-            .Setup(x => x.MapIngredientToIngredientDto(It.IsAny<Ingredient>()))
-            .Returns((Ingredient ing) => new IngredientDTO()
-            {
-                Name = ing.Name,
-                Quantity = ing.Quantity,
-                UnitOfMeasurement = ing.UnitOfMeasurement,
-            });
-
-        _recipeStepMapperMock
-            .Setup(x => x.MapRecipeStepToRecipeStepDto(It.IsAny<RecipeStep>()))
-            .Returns((RecipeStep step) => new RecipeStepDTO()
-            {
-                Text = step.Text,
-                ImageUrl = step.Image.ImageUrl
-            });*/
 
         // When
         var result = _mapperSUT.MapRecipeAggregateToRecipeDetailedDto(testRecipe);

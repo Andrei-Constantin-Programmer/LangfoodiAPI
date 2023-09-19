@@ -14,8 +14,6 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
             throw new ArgumentException("Cannot map Recipe Document with null ID to Recipe Aggregate");
         }
 
-        chef.Password = string.Empty;
-
         return new(
             id: recipeDocument.Id,
             title: recipeDocument.Title,

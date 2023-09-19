@@ -1,3 +1,3 @@
 ﻿namespace RecipeSocialMediaAPI.Domain.Models.Recipes;
 
-public record RecipeImage(string? ImageUrl);
+public record RecipeImage(string ImageUrl);

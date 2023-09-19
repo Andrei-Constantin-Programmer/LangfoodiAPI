@@ -29,7 +29,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
     public Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
         RecipeAggregate? existingRecipe = _recipeRepository.GetRecipeById(request.UpdateRecipeContract.Id);
-        if (existingRecipe == null)
+        if (existingRecipe is null)
         {
             throw new RecipeNotFoundException(request.UpdateRecipeContract.Id);
         }
@@ -70,7 +70,6 @@ public class UpdateRecipeCommandValidator : AbstractValidator<UpdateRecipeComman
         _recipeValidationService = recipeValidationService;
 
         RuleFor(x => x.UpdateRecipeContract.Title)
-            .NotEmpty()
             .Must(_recipeValidationService.ValidTitle);
 
         RuleFor(x => x.UpdateRecipeContract.NumberOfServings)
