@@ -6,5 +6,5 @@ public class RecipeValidationService : IRecipeValidationService
 {
     public bool ValidTitle(string title) =>
         new Regex("^(?=.*[a-zA-Z0-9])[a-zA-Z0-9:,.()!?;'\\-\\/ ]{3,100}$", RegexOptions.Compiled)
-        .IsMatch(title) && string.IsNullOrWhiteSpace(title);
+        .IsMatch(title);
 }
