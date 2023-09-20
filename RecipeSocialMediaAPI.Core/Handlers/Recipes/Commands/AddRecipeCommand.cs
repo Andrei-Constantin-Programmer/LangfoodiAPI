@@ -38,9 +38,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             throw new UserNotFoundException();
         }
 
-        chef.Password = string.Empty;
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
-
         RecipeAggregate insertedRecipe = _recipeRepository.CreateRecipe(
             request.NewRecipeContract.Title,
             new Recipe(
