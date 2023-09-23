@@ -156,7 +156,7 @@ public class ExceptionMappingMiddlewareTests
     public async Task InvokeAsync_WhenRequestThrowsRecipeNotFoundException_SetStatusCodeToNotFound()
     {
         // Given
-        int recipeId = 1;
+        string recipeId = "1";
         _nextMock
             .Setup(next => next(It.IsAny<HttpContext>()))
             .Throws(new RecipeNotFoundException(recipeId))

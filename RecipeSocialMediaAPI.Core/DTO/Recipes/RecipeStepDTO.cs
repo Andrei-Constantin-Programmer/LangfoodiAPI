@@ -3,5 +3,5 @@
 public record RecipeStepDTO
 {
     required public string Text { get; set; }
-    required public string ImageUrl { get; set; }
+    public string? ImageUrl { get; set; }
 }

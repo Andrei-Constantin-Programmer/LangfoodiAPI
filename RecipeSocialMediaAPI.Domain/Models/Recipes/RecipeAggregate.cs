@@ -7,9 +7,8 @@ public class RecipeAggregate
 {
     public string Id { get; }
     public Recipe Recipe { get; }
-    public string Title { get; }
-    public string ShortDescription { get; set; }
-    public string LongDescription { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
     public User Chef { get; }
     public DateTimeOffset CreationDate { get; }
     public DateTimeOffset LastUpdatedDate { get; set; }
@@ -21,8 +20,7 @@ public class RecipeAggregate
         string id,
         string title,
         Recipe recipe,
-        string shortDescription,
-        string longDescription,
+        string description,
         User chef,
         DateTimeOffset creationDate,
         DateTimeOffset lastUpdatedDate,
@@ -31,8 +29,7 @@ public class RecipeAggregate
         Id = id;
         Title = title;
         Recipe = recipe;
-        ShortDescription = shortDescription;
-        LongDescription = longDescription;
+        Description = description;
         Chef = chef;
         CreationDate = creationDate;
         LastUpdatedDate = lastUpdatedDate;

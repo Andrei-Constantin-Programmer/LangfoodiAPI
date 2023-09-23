@@ -44,24 +44,34 @@ public class RecipeRepository : IRecipeRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public IEnumerable<RecipeAggregate> GetRecipesByChef(string chefId)
+    public IEnumerable<RecipeAggregate> GetRecipesByChef(User? chef)
     {
-        User? chef = _userRepository.GetUserById(chefId);
-
         if (chef is null)
         {
             return Enumerable.Empty<RecipeAggregate>();
         }
 
         var recipes = _recipeCollection
-            .GetAll(recipeDoc => recipeDoc.ChefId == chefId);
+            .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id);
 
         return recipes.Count == 0
             ? Enumerable.Empty<RecipeAggregate>()
             : recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string shortDescription, string longDescription, User chef, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, ISet<string> labels)
+    public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId)
+    {
+        User? chef = _userRepository.GetUserById(chefId);
+        return GetRecipesByChef(chef);
+    }
+
+    public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName)
+    {
+        User? chef = _userRepository.GetUserByUsername(chefName);
+        return GetRecipesByChef(chef);
+    }
+
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
     {
         var recipeDocument = _recipeCollection
             .Insert(new RecipeDocument()
@@ -69,15 +79,14 @@ public class RecipeRepository : IRecipeRepository
                 Title = title,
                 Ingredients = recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
                 Steps = recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
-                ShortDescription = shortDescription,
-                LongDescription = longDescription,
+                Description = description,
                 ChefId = chef.Id,
                 CreationDate = creationDate,
                 LastUpdatedDate = lastUpdatedDate,
                 Labels = labels.ToList(),
                 NumberOfServings = recipe.NumberOfServings,
                 CookingTimeInSeconds = recipe.CookingTimeInSeconds,
-                Kilocalories = recipe.Kilocalories
+                KiloCalories = recipe.KiloCalories
             });
         
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
@@ -90,15 +99,14 @@ public class RecipeRepository : IRecipeRepository
                 Title = recipe.Title,
                 Ingredients = recipe.Recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
                 Steps = recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
-                ShortDescription = recipe.ShortDescription,
-                LongDescription = recipe.LongDescription,
+                Description = recipe.Description,
                 ChefId = recipe.Chef.Id,
+                NumberOfServings = recipe.Recipe.NumberOfServings,
+                CookingTimeInSeconds = recipe.Recipe.CookingTimeInSeconds,
+                KiloCalories = recipe.Recipe.KiloCalories,
                 CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate,
                 Labels = recipe.Labels.ToList(),
-                NumberOfServings = recipe.Recipe.NumberOfServings,
-                CookingTimeInSeconds = recipe.Recipe.CookingTimeInSeconds,
-                Kilocalories = recipe.Recipe.Kilocalories
             },
             doc => doc.Id == recipe.Id
         );

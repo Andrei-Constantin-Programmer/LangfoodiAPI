@@ -11,15 +11,15 @@ public record Recipe
     public ImmutableStack<RecipeStep> Steps => ImmutableStack.CreateRange(_steps);
     public int? NumberOfServings { get; set; }
     public int? CookingTimeInSeconds { get; set; }
-    public int? Kilocalories { get; set; }
+    public int? KiloCalories { get; set; }
 
-    public Recipe(List<Ingredient> ingredients, Stack<RecipeStep> steps, int? numberOfServings = null, int? cookingTimeInSeconds = null, int? kilocalories = null)
+    public Recipe(List<Ingredient> ingredients, Stack<RecipeStep> steps, int? numberOfServings = null, int? cookingTimeInSeconds = null, int? kiloCalories = null)
     {
         _ingredients = ingredients;
         _steps = steps;
         NumberOfServings = numberOfServings;
         CookingTimeInSeconds = cookingTimeInSeconds;
-        Kilocalories = kilocalories;
+        KiloCalories = kiloCalories;
     }
 
     public void AddIngredient(Ingredient ingredient)

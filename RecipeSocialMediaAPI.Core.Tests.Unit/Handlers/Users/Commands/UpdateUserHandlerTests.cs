@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Core.Contracts;
+using RecipeSocialMediaAPI.Core.Contracts.Users;
 using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;

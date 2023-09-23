@@ -13,24 +13,21 @@ public class RecipeAggregateTests
     {
         string testId = "AggId";
         string testTitle = "My Recipe";
-        Recipe testRecipe = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step") }));
-        string testShortDescription = "";
-        string testLongDescription = "";
+        Recipe testRecipe = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step")}), 10, 500, 2300);
+        string testDescription = "";
         User testChef = new("TestId", "TestUsername", "TestEmail", "TestPassword");
         DateTimeOffset testCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
         DateTimeOffset testLastUpdatedDate = new(2023, 8, 30, 0, 0, 0, TimeSpan.Zero);
-        
+
         _recipeAggregateSUT = new
             (
                 testId,
                 testTitle,
                 testRecipe,
-                testShortDescription,
-                testLongDescription,
+                testDescription,
                 testChef,
                 testCreationDate,
-                testLastUpdatedDate,
-                null
+                testLastUpdatedDate
             );
     }
 
@@ -52,31 +49,16 @@ public class RecipeAggregateTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void ShortDescription_CanBeModified()
-    {
-        // Given
-        string newShortDescription = "New short description";
-
-        // When
-        _recipeAggregateSUT.ShortDescription = newShortDescription;
-
-        // Then
-        _recipeAggregateSUT.ShortDescription.Should().Be(newShortDescription);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void LongDescription_CanBeModified()
+    public void Description_CanBeModified()
     {
         // Given
         string newLongDescription = "New, long, windy description";
 
         // When
-        _recipeAggregateSUT.LongDescription = newLongDescription;
+        _recipeAggregateSUT.Description = newLongDescription;
 
         // Then
-        _recipeAggregateSUT.LongDescription.Should().Be(newLongDescription);
+        _recipeAggregateSUT.Description.Should().Be(newLongDescription);
     }
 
     [Fact]

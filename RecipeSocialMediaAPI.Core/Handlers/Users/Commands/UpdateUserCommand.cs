@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using MediatR;
-using RecipeSocialMediaAPI.Core.Contracts;
 using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Core.Contracts.Users;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 
@@ -40,9 +40,9 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             encryptedPassword
         );
 
-        var result = _userRepository.UpdateUser(updatedUser);
+        bool isSuccessful = _userRepository.UpdateUser(updatedUser);
 
-        return result 
+        return isSuccessful
             ? Task.CompletedTask 
             : throw new Exception($"Could not update user with id {updatedUser.Id}.");
     }

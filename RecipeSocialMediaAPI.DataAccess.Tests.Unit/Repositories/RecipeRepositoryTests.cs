@@ -78,13 +78,11 @@ public class RecipeRepositoryTests
             Title = "TestTitle",
             Ingredients = new List<(string, double, string)>(),
             Steps = new List<(string, string?)>(),
-            ShortDescription = "TestShortDesc",
-            LongDescription = "TestLongDesc",
+            Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
             Labels = new List<string>(),
             ChefId = chefId,
-            NumberOfServings = 1
         };
         User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
 
@@ -92,8 +90,7 @@ public class RecipeRepositoryTests
                 id,
                 testDocument.Title,
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
-                testDocument.ShortDescription,
-                testDocument.LongDescription,
+                testDocument.Description,
                 testChef,
                 testDocument.CreationDate,
                 testDocument.LastUpdatedDate,
@@ -132,13 +129,11 @@ public class RecipeRepositoryTests
             Title = "TestTitle",
             Ingredients = new List<(string, double, string)>(),
             Steps = new List<(string, string?)>(),
-            ShortDescription = "TestShortDesc",
-            LongDescription = "TestLongDesc",
+            Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
             Labels = new List<string>(),
-            ChefId = chefId,
-            NumberOfServings = 1
+            ChefId = chefId
         };
         User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
 
@@ -146,8 +141,7 @@ public class RecipeRepositoryTests
                 id,
                 testDocument.Title,
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
-                testDocument.ShortDescription,
-                testDocument.LongDescription,
+                testDocument.Description,
                 testChef,
                 testDocument.CreationDate,
                 testDocument.LastUpdatedDate,
@@ -179,7 +173,7 @@ public class RecipeRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenChefExistsAndNoRecipesWithIdExist_ReturnEmptyList()
+    public void GetRecipesByChefId_WhenChefExistsAndNoRecipesWithIdExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -195,7 +189,7 @@ public class RecipeRepositoryTests
             .Returns(new List<RecipeDocument>());
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChef(chefId);
+        var result = _recipeRepositorySUT.GetRecipesByChefId(chefId);
 
         // Then
         result.Should().BeEmpty();
@@ -208,7 +202,7 @@ public class RecipeRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenChefExistsAndRecipesWithIdExist_ReturnRelatedRecipes()
+    public void GetRecipesByChefId_WhenChefExistsAndRecipesWithIdExist_ReturnRelatedRecipes()
     {
         // Given
         string chefId = "1";
@@ -221,21 +215,18 @@ public class RecipeRepositoryTests
             Title = "TestTitle",
             Ingredients = new List<(string, double, string)>(),
             Steps = new List<(string, string?)>(),
-            ShortDescription = "TestShortDesc",
-            LongDescription = "TestLongDesc",
+            Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
             Labels = new List<string>(),
-            ChefId = chefId,
-            NumberOfServings = 1
+            ChefId = chefId
         };
 
         RecipeAggregate expectedResult = new(
             chefsRecipe.Id, 
             chefsRecipe.Title, 
-            new Recipe(new(), new()), 
-            chefsRecipe.ShortDescription, 
-            chefsRecipe.LongDescription, 
+            new Recipe(new(), new()),
+            chefsRecipe.Description,
             testChef, 
             chefsRecipe.CreationDate, 
             chefsRecipe.LastUpdatedDate, 
@@ -252,7 +243,7 @@ public class RecipeRepositoryTests
             .Returns(expectedResult);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChef(chefId);
+        var result = _recipeRepositorySUT.GetRecipesByChefId(chefId);
 
         // Then
         result.Should().HaveCount(1);
@@ -263,7 +254,7 @@ public class RecipeRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenChefDoesNotExist_ReturnEmptyList()
+    public void GetRecipesByChefId_WhenChefDoesNotExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -277,13 +268,11 @@ public class RecipeRepositoryTests
                 Title = "TestTitle",
                 Ingredients = new List<(string, double, string)>(),
                 Steps = new List<(string, string?)>(),
-                ShortDescription = "TestShortDesc",
-                LongDescription = "TestLongDesc",
+                Description = "TestShortDesc",
                 CreationDate = _testDate,
                 LastUpdatedDate = _testDate,
                 Labels = new List<string>(),
-                ChefId = chefId,
-                NumberOfServings = 1
+                ChefId = chefId
             }
         };
 
@@ -292,7 +281,224 @@ public class RecipeRepositoryTests
             .Returns(testDocuments);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChef(chefId);
+        var result = _recipeRepositorySUT.GetRecipesByChefId(chefId);
+
+        // Then
+        result.Should().BeEmpty();
+        _mapperMock
+            .Verify(mapper =>
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChef_WhenChefIsNull_ReturnEmptyList()
+    {
+        // Given
+        User? chef = null;
+
+        // When
+        var result = _recipeRepositorySUT.GetRecipesByChef(chef);
+
+        // Then
+        result.Should().BeEmpty();
+        _mapperMock
+            .Verify(mapper =>
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChefUsername_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
+    {
+        // Given
+        string chefId = "1";
+        string chefUsername = "TestChef";
+        User testChef = new(chefId, chefUsername, "chef@mail.com", "TestPass");
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        RecipeDocument chefsRecipe = new()
+        {
+            Id = "10",
+            Title = "TestTitle",
+            Ingredients = new List<(string, double, string)>(),
+            Steps = new List<(string, string?)>(),
+            Description = "TestShortDesc",
+            CreationDate = _testDate,
+            LastUpdatedDate = _testDate,
+            Labels = new List<string>(),
+            ChefId = chefId
+        };
+
+        RecipeAggregate expectedResult = new(
+            chefsRecipe.Id,
+            chefsRecipe.Title,
+            new Recipe(new(), new()),
+            chefsRecipe.Description,
+            testChef,
+            chefsRecipe.CreationDate,
+            chefsRecipe.LastUpdatedDate,
+            new HashSet<string>());
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(new List<RecipeDocument>() { chefsRecipe });
+        _userRepositoryMock
+            .Setup(repo => repo.GetUserByUsername(It.Is<string>(x => x == chefUsername)))
+            .Returns(testChef);
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Returns(expectedResult);
+
+        // When
+        var result = _recipeRepositorySUT.GetRecipesByChefName(chefUsername);
+
+        // Then
+        result.Should().HaveCount(1);
+        var recipe = result.First();
+        recipe.Should().Be(expectedResult);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChefUsername_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
+    {
+        // Given
+        string chefId = "1";
+        string chefUsername = "TestChef";
+        User testChef = new(chefId, chefUsername, "chef@mail.com", "TestPass");
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        _userRepositoryMock
+            .Setup(repo => repo.GetUserByUsername(chefUsername))
+            .Returns(testChef);
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(new List<RecipeDocument>());
+
+        // When
+        var result = _recipeRepositorySUT.GetRecipesByChefName(chefUsername);
+
+        // Then
+        result.Should().BeEmpty();
+        _mapperMock
+            .Verify(mapper =>
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChefUsername_WhenChefDoesNotExist_ReturnEmptyList()
+    {
+        // Given
+        string chefId = "1";
+        string chefUsername = "TestChef";
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        List<RecipeDocument> testDocuments = new()
+        {
+            new()
+            {
+                Id = "1",
+                Title = "TestTitle",
+                Ingredients = new List<(string, double, string)>(),
+                Steps = new List<(string, string?)>(),
+                Description = "TestShortDesc",
+                CreationDate = _testDate,
+                LastUpdatedDate = _testDate,
+                Labels = new List<string>(),
+                ChefId = chefId
+            }
+        };
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(testDocuments);
+
+        // When
+        var result = _recipeRepositorySUT.GetRecipesByChefName(chefUsername);
+
+        // Then
+        result.Should().BeEmpty();
+        _mapperMock
+            .Verify(mapper =>
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChef_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
+    {
+        // Given
+        string chefId = "1";
+        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        RecipeDocument chefsRecipe = new()
+        {
+            Id = "10",
+            Title = "TestTitle",
+            Ingredients = new List<(string, double, string)>(),
+            Steps = new List<(string, string?)>(),
+            Description = "TestShortDesc",
+            CreationDate = _testDate,
+            LastUpdatedDate = _testDate,
+            Labels = new List<string>(),
+            ChefId = chefId
+        };
+
+        RecipeAggregate expectedResult = new(
+            chefsRecipe.Id,
+            chefsRecipe.Title,
+            new Recipe(new(), new()),
+            chefsRecipe.Description,
+            testChef,
+            chefsRecipe.CreationDate,
+            chefsRecipe.LastUpdatedDate,
+            new HashSet<string>());
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(new List<RecipeDocument>() { chefsRecipe });
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Returns(expectedResult);
+
+        // When
+        var result = _recipeRepositorySUT.GetRecipesByChef(testChef);
+
+        // Then
+        result.Should().HaveCount(1);
+        var recipe = result.First();
+        recipe.Should().Be(expectedResult);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChef_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
+    {
+        // Given
+        string chefId = "1";
+        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(new List<RecipeDocument>());
+
+        // When
+        var result = _recipeRepositorySUT.GetRecipesByChef(testChef);
 
         // Then
         result.Should().BeEmpty();
@@ -314,9 +520,8 @@ public class RecipeRepositoryTests
         RecipeAggregate expectedResult = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 5, 120, 500),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",
-            "Long Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -329,15 +534,14 @@ public class RecipeRepositoryTests
             Title = expectedResult.Title,
             Ingredients = new List<(string, double, string)>(),
             Steps = new List<(string, string?)>(),
-            ShortDescription = expectedResult.ShortDescription,
-            LongDescription = expectedResult.LongDescription,
+            Description = expectedResult.Description,
             ChefId = testChef.Id,
             CreationDate = expectedResult.CreationDate,
             LastUpdatedDate = expectedResult.LastUpdatedDate,
             Labels = new List<string>() { testLabel },
-            NumberOfServings = 5,
-            CookingTimeInSeconds = 120,
-            Kilocalories = 500
+            CookingTimeInSeconds = expectedResult.Recipe.CookingTimeInSeconds, 
+            KiloCalories = expectedResult.Recipe.KiloCalories,
+            NumberOfServings = expectedResult.Recipe.NumberOfServings,
         };
 
         _mongoCollectionWrapperMock
@@ -349,7 +553,10 @@ public class RecipeRepositoryTests
             .Returns(expectedResult);
 
         // When
-        var result = _recipeRepositorySUT.CreateRecipe(expectedResult.Title, expectedResult.Recipe, expectedResult.ShortDescription, expectedResult.LongDescription, testChef, expectedResult.CreationDate, expectedResult.LastUpdatedDate, expectedResult.Labels);
+        var result = _recipeRepositorySUT.CreateRecipe(
+            expectedResult.Title, expectedResult.Recipe,
+            expectedResult.Description, testChef, expectedResult.Labels, 
+            expectedResult.CreationDate, expectedResult.LastUpdatedDate);
 
         // Then
         result.Should().Be(expectedResult);
@@ -357,17 +564,13 @@ public class RecipeRepositoryTests
             .Verify(collection => collection.Insert(It.Is<RecipeDocument>(doc =>
                     doc.Id == null
                     && doc.Title == expectedResult.Title
-                    && doc.ShortDescription == expectedResult.ShortDescription
-                    && doc.LongDescription == expectedResult.LongDescription
+                    && doc.Description == expectedResult.Description
                     && doc.ChefId == testChef.Id
                     && doc.CreationDate == expectedResult.CreationDate
                     && doc.LastUpdatedDate == expectedResult.LastUpdatedDate
                     && doc.Ingredients.Count == 0
                     && doc.Steps.Count == 0
                     && doc.Labels.Contains(testLabel) && doc.Labels.Count == 1
-                    && doc.NumberOfServings == expectedResult.Recipe.NumberOfServings
-                    && doc.CookingTimeInSeconds == expectedResult.Recipe.CookingTimeInSeconds
-                    && doc.Kilocalories == expectedResult.Recipe.Kilocalories
                 )), Times.Once);
     }
 
@@ -383,9 +586,8 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 5, 180, 400),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",
-            "Long Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -408,8 +610,7 @@ public class RecipeRepositoryTests
                     It.Is<RecipeDocument>(recipeDoc => 
                         recipeDoc.Id == recipe.Id
                         && recipeDoc.Title == recipe.Title
-                        && recipeDoc.ShortDescription == recipe.ShortDescription
-                        && recipeDoc.LongDescription == recipe.LongDescription
+                        && recipeDoc.Description == recipe.Description
                         && recipeDoc.CreationDate == recipe.CreationDate
                         && recipeDoc.LastUpdatedDate == recipe.LastUpdatedDate
                         && recipeDoc.Labels.Contains(testLabel) && recipe.Labels.Count == 1
@@ -417,7 +618,7 @@ public class RecipeRepositoryTests
                         && recipeDoc.Steps.Count == 0
                         && recipeDoc.NumberOfServings == recipe.Recipe.NumberOfServings
                         && recipeDoc.CookingTimeInSeconds == recipe.Recipe.CookingTimeInSeconds
-                        && recipeDoc.Kilocalories == recipe.Recipe.Kilocalories),
+                        && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories),
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))), 
                 Times.Once);
     }
@@ -434,9 +635,8 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new()),
-            "Short Description",
-            "Long Description",
+            new(new(), new(), 10, 500, 2300),
+            "Short Description",            
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -490,9 +690,8 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             id,
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",
-            "Long Description",
             new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -548,9 +747,8 @@ public class RecipeRepositoryTests
         RecipeAggregate recipe = new(
             id,
             "TestTitle",
-            new(new(), new()),
+            new(new(), new(), 10, 500, 2300),
             "Short Description",
-            "Long Description",
             new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),

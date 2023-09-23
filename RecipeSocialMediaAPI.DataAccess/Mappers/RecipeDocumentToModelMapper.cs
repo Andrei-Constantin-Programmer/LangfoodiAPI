@@ -17,8 +17,7 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
         return new(
             id: recipeDocument.Id,
             title: recipeDocument.Title,
-            shortDescription: recipeDocument.ShortDescription,
-            longDescription: recipeDocument.LongDescription,
+            description: recipeDocument.Description,
             creationDate: recipeDocument.CreationDate,
             lastUpdatedDate: recipeDocument.LastUpdatedDate,
             labels: recipeDocument.Labels.ToHashSet(),
@@ -32,9 +31,9 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
                     .Select(x => new RecipeStep(
                         x.Text,
                         x.ImageLink is null ? null : new RecipeImage(x.ImageLink)))),
-                recipeDocument.NumberOfServings,
-                recipeDocument.CookingTimeInSeconds,
-                recipeDocument.Kilocalories
+                numberOfServings: recipeDocument.NumberOfServings,
+                cookingTimeInSeconds: recipeDocument.CookingTimeInSeconds,
+                kiloCalories: recipeDocument.KiloCalories
                 )
             );
     }
