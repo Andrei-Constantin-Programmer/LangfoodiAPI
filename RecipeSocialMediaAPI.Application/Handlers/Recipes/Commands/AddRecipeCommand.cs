@@ -11,7 +11,7 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
-namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
+namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
 public record AddRecipeCommand(NewRecipeContract NewRecipeContract) : IValidatableRequest<RecipeDetailedDTO>;
 

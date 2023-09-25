@@ -9,7 +9,7 @@ using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
-namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
+namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
 public record UpdateRecipeCommand(UpdateRecipeContract UpdateRecipeContract) : IValidatableRequest;
 

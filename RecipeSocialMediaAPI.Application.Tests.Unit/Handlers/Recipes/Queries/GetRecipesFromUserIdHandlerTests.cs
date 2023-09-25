@@ -1,40 +1,40 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
-using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Queries;
-public class GetRecipesFromUserHandlerTests
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Queries;
+public class GetRecipesFromUserIdHandlerTests
 {
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
 
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
 
-    private readonly GetRecipesFromUserHandler _getRecipesFromUserHandlerSUT;
+    private readonly GetRecipesFromUserIdHandler _getRecipesFromUserIdHandlerSUT;
 
-    public GetRecipesFromUserHandlerTests()
+    public GetRecipesFromUserIdHandlerTests()
     {
         _recipeMapperMock = new Mock<IRecipeMapper>();
         _recipeRepositoryMock = new Mock<IRecipeRepository>();
 
-        _getRecipesFromUserHandlerSUT = new GetRecipesFromUserHandler(_recipeMapperMock.Object, _recipeRepositoryMock.Object);
+        _getRecipesFromUserIdHandlerSUT = new GetRecipesFromUserIdHandler(_recipeMapperMock.Object, _recipeRepositoryMock.Object);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUserHasNoRecipes_ReturnEmptyList()
     {
         // Given
-        string chefUsername = "user1";
+        string chefId = "1";
 
         // When
-        var result = await _getRecipesFromUserHandlerSUT.Handle(new GetRecipesFromUserQuery(chefUsername), CancellationToken.None);
+        var result = await _getRecipesFromUserIdHandlerSUT.Handle(new GetRecipesFromUserIdQuery(chefId), CancellationToken.None);
 
         // Then
         result.Should().BeEmpty();
@@ -44,17 +44,17 @@ public class GetRecipesFromUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUserHasRecipes_ReturnRelatedRecipes()
     {
         // Given
-        string chefUsername = "user1";
+        string chefId = "1";
         RecipeAggregate testRecipeAggregate = new(
             "1",
             "test title",
             new(new(), new()),
             "test desc",
-            new("1", chefUsername, "mail", "pass"),
+            new(chefId, "user", "mail", "pass"),
             _testDate,
             _testDate
         );
@@ -63,21 +63,21 @@ public class GetRecipesFromUserHandlerTests
         {
             Id = testRecipeAggregate.Id,
             Title = testRecipeAggregate.Title,
-            Labels = testRecipeAggregate.Labels,
             Description = testRecipeAggregate.Description,
             ChefUsername = testRecipeAggregate.Chef.UserName,
             CreationDate = testRecipeAggregate.CreationDate,
+            Labels = testRecipeAggregate.Labels,
         };
 
         _recipeRepositoryMock
-            .Setup(x => x.GetRecipesByChefName(It.IsAny<string>()))
+            .Setup(x => x.GetRecipesByChefId(It.IsAny<string>()))
             .Returns(new List<RecipeAggregate> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
         _recipeMapperMock
             .Setup(x => x.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()))
             .Returns(expectedResult);
 
         // When
-        var result = await _getRecipesFromUserHandlerSUT.Handle(new GetRecipesFromUserQuery(chefUsername), CancellationToken.None);
+        var result = await _getRecipesFromUserIdHandlerSUT.Handle(new GetRecipesFromUserIdQuery(chefId), CancellationToken.None);
 
         // Then
         result.Should().HaveCount(3);

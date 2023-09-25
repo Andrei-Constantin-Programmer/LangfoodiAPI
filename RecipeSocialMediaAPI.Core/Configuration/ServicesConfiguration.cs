@@ -40,6 +40,7 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
+        builder.Services.AddValidatorsFromAssemblyContaining<IDateTimeProvider>(ServiceLifetime.Singleton);
 
         // Transients
         builder.Services.AddTransient<IRecipeRepository, RecipeRepository>();

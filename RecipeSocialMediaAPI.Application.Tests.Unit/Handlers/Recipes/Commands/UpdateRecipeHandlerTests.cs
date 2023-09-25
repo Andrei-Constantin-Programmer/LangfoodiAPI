@@ -3,7 +3,7 @@ using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories;
@@ -11,7 +11,7 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Commands;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class UpdateRecipeHandlerTests
 {
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
@@ -40,7 +40,7 @@ public class UpdateRecipeHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenRecipeDoesNotExist_ThrowRecipeNotFoundException()
     {
         // Given
@@ -68,7 +68,7 @@ public class UpdateRecipeHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenRecipeExistsButUpdateFails_ThrowNewGeneralException()
     {
         // Given
@@ -106,7 +106,7 @@ public class UpdateRecipeHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenRecipeExistsAndUpdateSucceeds_ReturnsCompletedTask()
     {
         // Given

@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
-using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
 

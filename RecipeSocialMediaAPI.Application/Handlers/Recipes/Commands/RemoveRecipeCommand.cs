@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories;
 
-namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
+namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
 public record RemoveRecipeCommand(string Id) : IRequest;
 

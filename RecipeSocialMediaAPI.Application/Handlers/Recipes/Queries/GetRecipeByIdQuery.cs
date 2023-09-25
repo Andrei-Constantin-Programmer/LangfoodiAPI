@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
-namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
+namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 
 public record GetRecipeByIdQuery(string Id) : IRequest<RecipeDetailedDTO>;
 
@@ -24,11 +24,8 @@ internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, Recipe
     {
         RecipeAggregate? recipe = _recipeRepository.GetRecipeById(request.Id);
 
-        if (recipe is null)
-        {
-            throw new RecipeNotFoundException(request.Id);
-        }
-
-        return await Task.FromResult(_mapper.MapRecipeAggregateToRecipeDetailedDto(recipe));
+        return recipe is null
+            ? throw new RecipeNotFoundException(request.Id)
+            : await Task.FromResult(_mapper.MapRecipeAggregateToRecipeDetailedDto(recipe));
     }
 }

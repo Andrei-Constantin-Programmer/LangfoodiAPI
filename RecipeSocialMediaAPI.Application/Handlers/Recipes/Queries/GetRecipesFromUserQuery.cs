@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories;
 
-namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
+namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 
 public record GetRecipesFromUserQuery(string Username) : IRequest<IEnumerable<RecipeDTO>>;
 

@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Commands;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class RemoveRecipeHandlerTests
 {
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
@@ -24,7 +24,7 @@ public class RemoveRecipeHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_RecipeDoesNotExist_ThrowRecipeNotFoundException()
     {
         // Given
@@ -44,7 +44,7 @@ public class RemoveRecipeHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_RecipeExistsButDeletionFailed_ThrowGeneralException()
     {
         // Given
@@ -74,7 +74,7 @@ public class RemoveRecipeHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_RecipeExistsAndIsDeleted_ReturnTaskCompleted()
     {
         // Given

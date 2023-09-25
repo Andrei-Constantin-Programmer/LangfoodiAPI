@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -12,7 +12,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Commands;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class AddRecipeHandlerTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
@@ -45,7 +45,7 @@ public class AddRecipeHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUserDoesNotExist_ThrowUserNotFoundException()
     {
         // Given
@@ -72,7 +72,7 @@ public class AddRecipeHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUserExists_CreateAndReturnRecipe()
     {
         // Given

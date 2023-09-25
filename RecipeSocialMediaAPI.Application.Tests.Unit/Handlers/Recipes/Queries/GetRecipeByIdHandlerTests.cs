@@ -3,13 +3,13 @@ using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Queries;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Queries;
 public class GetRecipeByIdHandlerTests
 {
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
@@ -29,7 +29,7 @@ public class GetRecipeByIdHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenRecipeIsNull_ThrowRecipeNotFoundException()
     {
         // Given
@@ -49,7 +49,7 @@ public class GetRecipeByIdHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenRecipeIsFound_MapAndReturnRecipeDetailedDto()
     {
         // Given
