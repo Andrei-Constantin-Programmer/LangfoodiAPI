@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Core.Handlers.Users.Queries;
+using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Users.Queries;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Queries;
 
 public class CheckUsernameExistsHandlerTests
 {
@@ -22,7 +22,7 @@ public class CheckUsernameExistsHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUserWithUsernameExists_ReturnTrue()
     {
         // Given
@@ -40,7 +40,7 @@ public class CheckUsernameExistsHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUserWithUsernameDoesNotExist_ReturnFalse()
     {
         // Given

@@ -3,13 +3,13 @@ using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Core.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Users.Commands;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
 public class UpdateUserHandlerTests
 {
@@ -28,7 +28,7 @@ public class UpdateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUserIsNotFound_DoNotUpdateAndThrowUserNotFoundException()
     {
         // Given
@@ -58,7 +58,7 @@ public class UpdateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUpdateContractIsValid_UpdateAndNotThrow()
     {
         // Given
@@ -94,7 +94,7 @@ public class UpdateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUpdateContractIsValidButOperationUnsuccessful_ThrowException()
     {
         // Given

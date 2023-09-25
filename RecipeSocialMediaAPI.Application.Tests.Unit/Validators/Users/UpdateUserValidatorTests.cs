@@ -1,10 +1,10 @@
 ﻿using FluentValidation.TestHelper;
 using Moq;
-using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Validators.Users;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Validators.Users;
 
 public class UpdateUserValidatorTests
 {
@@ -20,7 +20,7 @@ public class UpdateUserValidatorTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void UpdateUserValidation_WhenValidUser_DontThrow()
     {
         // Given
@@ -56,7 +56,7 @@ public class UpdateUserValidatorTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void UpdateUserValidation_WhenInvalidUser_ThrowsValidationException()
     {
         // Given

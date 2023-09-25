@@ -8,7 +8,7 @@ using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
 
-namespace RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
+namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
 public record UpdateUserCommand(UpdateUserContract UpdateUserContract) : IValidatableRequest;
 
