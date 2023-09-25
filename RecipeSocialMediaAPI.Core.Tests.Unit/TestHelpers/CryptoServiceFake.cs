@@ -1,4 +1,4 @@
-﻿using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
+﻿using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 
 namespace RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
 

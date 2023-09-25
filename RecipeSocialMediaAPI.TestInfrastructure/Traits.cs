@@ -19,5 +19,6 @@ public static class Traits
         public const string CORE = "Core";
         public const string DATA_ACCESS = "Data Access";
         public const string DOMAIN = "Domain";
+        public const string APPLICATION = "Application";
     }
 }

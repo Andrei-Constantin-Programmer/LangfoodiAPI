@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
-using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;

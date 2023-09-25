@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using RecipeSocialMediaAPI.Core.Cryptography;
-using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.Cryptography;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Core.Mappers.Profiles;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;

@@ -1,7 +1,7 @@
-﻿using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
+﻿using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using BCrypter = BCrypt.Net.BCrypt;
 
-namespace RecipeSocialMediaAPI.Core.Cryptography;
+namespace RecipeSocialMediaAPI.Application.Cryptography;
 
 public class CryptoService : ICryptoService
 {

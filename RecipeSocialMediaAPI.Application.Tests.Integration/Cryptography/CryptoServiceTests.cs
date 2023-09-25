@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
-using RecipeSocialMediaAPI.Core.Cryptography;
+using RecipeSocialMediaAPI.Application.Cryptography;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using BCrypter = BCrypt.Net.BCrypt;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Integration.Cryptography;
+namespace RecipeSocialMediaAPI.Application.Tests.Integration.Cryptography;
 
 public class CryptoServiceTests
 {
@@ -16,7 +16,7 @@ public class CryptoServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void ArePasswordsTheSame_WhenValidPasswordAndHash_ReturnsTrue()
     {
         // Given
@@ -32,7 +32,7 @@ public class CryptoServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void ArePasswordsTheSame_WhenInvalidPasswordAndHash_ReturnsFalse()
     {
         // Given
@@ -48,7 +48,7 @@ public class CryptoServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void Encrypt_ReturnsEncryptedPassword()
     {
         // Given
