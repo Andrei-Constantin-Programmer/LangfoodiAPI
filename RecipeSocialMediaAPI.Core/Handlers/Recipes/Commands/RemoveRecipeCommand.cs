@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;

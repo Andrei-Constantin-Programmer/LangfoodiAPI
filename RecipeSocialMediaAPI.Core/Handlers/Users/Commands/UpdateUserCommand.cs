@@ -2,7 +2,7 @@
 using MediatR;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Users;

@@ -2,7 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
-using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;

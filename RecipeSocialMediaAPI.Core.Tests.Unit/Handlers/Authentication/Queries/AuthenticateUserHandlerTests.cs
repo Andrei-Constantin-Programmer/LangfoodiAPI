@@ -4,7 +4,7 @@ using Moq;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Application.DTO.Users;
-using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.TestInfrastructure;

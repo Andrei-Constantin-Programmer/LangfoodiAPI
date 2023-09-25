@@ -2,7 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.DTO.Users;
-using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
