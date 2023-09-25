@@ -1,6 +1,6 @@
 ﻿using RecipeSocialMediaAPI.Domain.Models.Users;
 
-namespace RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+namespace RecipeSocialMediaAPI.Application.Repositories;
 
 public interface IUserRepository
 {

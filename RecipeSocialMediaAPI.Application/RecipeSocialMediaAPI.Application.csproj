@@ -15,4 +15,8 @@
     <ProjectReference Include="..\RecipeSocialMediaAPI.Domain\RecipeSocialMediaAPI.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Handlers\Authentication\Queries\" />
+  </ItemGroup>
+
 </Project>

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Domain.Models.Users;

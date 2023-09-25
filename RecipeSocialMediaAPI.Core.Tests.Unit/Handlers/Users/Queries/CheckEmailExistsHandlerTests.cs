@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Core.Handlers.Users.Queries;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 

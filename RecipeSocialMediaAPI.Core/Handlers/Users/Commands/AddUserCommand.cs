@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Core.Validation;
@@ -33,6 +33,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
         {
             throw new UsernameAlreadyInUseException(request.NewUserContract.UserName);
         }
+
         if (_userRepository.GetUserByEmail(request.NewUserContract.Email) is not null)
         {
             throw new EmailAlreadyInUseException(request.NewUserContract.Email);
