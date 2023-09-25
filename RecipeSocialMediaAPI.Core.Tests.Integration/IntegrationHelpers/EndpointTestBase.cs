@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 

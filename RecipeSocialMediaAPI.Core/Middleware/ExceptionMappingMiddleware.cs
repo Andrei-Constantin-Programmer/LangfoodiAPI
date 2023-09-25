@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using System.Text.Json;
 
 namespace RecipeSocialMediaAPI.Core.Middleware;

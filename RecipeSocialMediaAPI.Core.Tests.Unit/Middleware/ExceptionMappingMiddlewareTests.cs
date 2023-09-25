@@ -4,7 +4,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
-using RecipeSocialMediaAPI.Core.Exceptions;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Core.Middleware;
 using RecipeSocialMediaAPI.Core.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;

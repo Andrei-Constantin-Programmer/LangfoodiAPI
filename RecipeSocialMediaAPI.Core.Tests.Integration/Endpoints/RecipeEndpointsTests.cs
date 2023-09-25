@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using RecipeSocialMediaAPI.Core.Contracts.Recipes;
-using RecipeSocialMediaAPI.Core.Contracts.Users;
-using RecipeSocialMediaAPI.Core.DTO.Recipes;
+using RecipeSocialMediaAPI.Application.Contracts.Recipes;
+using RecipeSocialMediaAPI.Application.Contracts.Users;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
@@ -69,7 +69,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
+        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result!;
 
         data.Should().NotBeNull();
         data.Id.Should().Be(recipeId);
@@ -147,7 +147,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result!;
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
@@ -186,7 +186,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result!;
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
@@ -262,7 +262,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result!;
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
@@ -301,7 +301,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result!;
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
@@ -359,7 +359,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
+        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result!;
 
         data.Should().NotBeNull();
         data.Id.Should().Be(recipeId);
@@ -413,7 +413,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
         updateResult.StatusCode.Should().Be(HttpStatusCode.OK);
         getResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = getResult.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result;
+        var data = getResult.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result!;
 
         data.Should().NotBeNull();
         data.Id.Should().Be(recipeId);
