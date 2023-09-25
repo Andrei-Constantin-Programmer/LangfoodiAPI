@@ -21,7 +21,7 @@ public class UserMapperTests
     public void MapUserDtoToUser_GivenUserDto_ReturnUser()
     {
         // Given
-        UserDTO testUser = new UserDTO()
+        UserDTO testUser = new()
         {
             Id = "1",
             UserName = "user",
@@ -29,7 +29,7 @@ public class UserMapperTests
             Password = "password",
         };
 
-        User expectedResult = new User(testUser.Id, testUser.UserName, testUser.Email, testUser.Password);
+        User expectedResult = new(testUser.Id, testUser.UserName, testUser.Email, testUser.Password);
 
         // When
         var result = _userMapperSUT.MapUserDtoToUser(testUser);
@@ -45,9 +45,9 @@ public class UserMapperTests
     public void MapUserToUserDto_GivenUser_ReturnUserDto()
     {
         // Given
-        User testUser = new User("1", "user", "mail", "password");
+        User testUser = new("1", "user", "mail", "password");
 
-        UserDTO expectedResult = new UserDTO()
+        UserDTO expectedResult = new()
         {
             Id = testUser.Id,
             UserName = testUser.UserName,
