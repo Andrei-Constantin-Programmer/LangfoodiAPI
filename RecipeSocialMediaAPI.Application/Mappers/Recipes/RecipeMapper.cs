@@ -1,9 +1,9 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Recipes;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
-namespace RecipeSocialMediaAPI.Core.Mappers.Recipes;
+namespace RecipeSocialMediaAPI.Application.Mappers.Recipes;
 
 public class RecipeMapper : IRecipeMapper
 {

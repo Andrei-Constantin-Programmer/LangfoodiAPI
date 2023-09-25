@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Application.DTO.Users;
-using RecipeSocialMediaAPI.Core.Mappers.Users;
+using RecipeSocialMediaAPI.Application.Mappers.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Mappers.Users;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Mappers.Users;
+
 public class UserMapperTests
 {
     private readonly UserMapper _userMapperSUT;
@@ -16,7 +17,7 @@ public class UserMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapUserDtoToUser_GivenUserDto_ReturnUser()
     {
         // Given
@@ -40,7 +41,7 @@ public class UserMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapUserToUserDto_GivenUser_ReturnUserDto()
     {
         // Given

@@ -9,7 +9,7 @@ using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Core.Tests.Unit.TestHelpers;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Users.Commands;
 

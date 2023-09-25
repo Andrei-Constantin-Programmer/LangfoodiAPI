@@ -2,7 +2,7 @@
 using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;

@@ -2,7 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.TestInfrastructure;

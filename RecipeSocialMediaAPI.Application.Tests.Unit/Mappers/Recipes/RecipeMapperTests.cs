@@ -2,13 +2,14 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes;
-using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Mappers.Recipes;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Mappers.Recipes;
+
 public class RecipeMapperTests
 {
     private readonly Mock<IUserMapper> _userMapperMock;
@@ -25,7 +26,7 @@ public class RecipeMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapRecipeStepDtoToRecipeStep_GivenRecipeStepDto_ReturnRecipeStep()
     {
         // Given
@@ -47,7 +48,7 @@ public class RecipeMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapRecipeStepToRecipeStepDto_GivenRecipeStep_ReturnRecipeStepDto()
     {
         // Given
@@ -69,7 +70,7 @@ public class RecipeMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapIngredientDtoToIngredient_GivenIngredientDto_ReturnIngredient()
     {
         // Given
@@ -96,7 +97,7 @@ public class RecipeMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapIngredientToIngredientDto_GivenIngredient_ReturnIngredientDto()
     {
         // Given
@@ -119,7 +120,7 @@ public class RecipeMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapRecipeAggregateToRecipeDetailedDto_GivenRecipeAggregate_ReturnRecipeDetailedDto()
     {
         // Given
@@ -173,7 +174,7 @@ public class RecipeMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapRecipeAggregateToRecipeDto_GivenRecipeAggregate_ReturnRecipeDto()
     {
         // Given

@@ -2,9 +2,9 @@
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
-namespace RecipeSocialMediaAPI.Core.Mappers.Profiles;
+namespace RecipeSocialMediaAPI.Application.Mappers.Profiles;
 
-internal class UserMappingProfile : Profile
+public class UserMappingProfile : Profile
 {
     public UserMappingProfile()
     {

@@ -1,6 +1,6 @@
 ﻿using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 
-namespace RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
+namespace RecipeSocialMediaAPI.Core.Tests.Unit.TestHelpers;
 
 internal class CryptoServiceFake : ICryptoService
 {

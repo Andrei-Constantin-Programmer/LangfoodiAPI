@@ -5,12 +5,12 @@ using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Commands;
 public class AddRecipeHandlerTests
