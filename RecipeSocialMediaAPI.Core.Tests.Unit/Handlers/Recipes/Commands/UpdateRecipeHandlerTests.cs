@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Core.Utilities;
+using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
@@ -44,7 +44,7 @@ public class UpdateRecipeHandlerTests
     public async Task Handle_WhenRecipeDoesNotExist_ThrowRecipeNotFoundException()
     {
         // Given
-        UpdateRecipeContract testContract = new UpdateRecipeContract()
+        UpdateRecipeContract testContract = new()
         {
             Id = "1",
             Title = "Test",
@@ -72,7 +72,7 @@ public class UpdateRecipeHandlerTests
     public async Task Handle_WhenRecipeExistsButUpdateFails_ThrowNewGeneralException()
     {
         // Given
-        UpdateRecipeContract testContract = new UpdateRecipeContract()
+        UpdateRecipeContract testContract = new()
         {
             Id = "1",
             Title = "Test",
@@ -110,7 +110,7 @@ public class UpdateRecipeHandlerTests
     public async Task Handle_WhenRecipeExistsAndUpdateSucceeds_ReturnsCompletedTask()
     {
         // Given
-        UpdateRecipeContract testContract = new UpdateRecipeContract()
+        UpdateRecipeContract testContract = new()
         {
             Id = "1",
             Title = "Test",

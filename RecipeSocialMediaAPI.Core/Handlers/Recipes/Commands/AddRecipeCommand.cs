@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Core.Utilities;
+using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -32,11 +32,9 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
-        User? chef = _userRepository.GetUserById(request.NewRecipeContract.ChefId);
-        if (chef is null)
-        {
-            throw new UserNotFoundException();
-        }
+        User? chef = 
+            _userRepository.GetUserById(request.NewRecipeContract.ChefId) 
+            ?? throw new UserNotFoundException();
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
         RecipeAggregate insertedRecipe = _recipeRepository.CreateRecipe(

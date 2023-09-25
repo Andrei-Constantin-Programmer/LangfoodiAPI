@@ -3,7 +3,7 @@ using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Core.Utilities;
+using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -28,11 +28,9 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
     public Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate? existingRecipe = _recipeRepository.GetRecipeById(request.UpdateRecipeContract.Id);
-        if (existingRecipe is null)
-        {
-            throw new RecipeNotFoundException(request.UpdateRecipeContract.Id);
-        }
+        RecipeAggregate? existingRecipe = 
+            _recipeRepository.GetRecipeById(request.UpdateRecipeContract.Id) 
+            ?? throw new RecipeNotFoundException(request.UpdateRecipeContract.Id);
 
         RecipeAggregate updatedRecipe = new(
             existingRecipe.Id,

@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Core.Utilities;
+using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
@@ -49,7 +49,7 @@ public class AddRecipeHandlerTests
     public async Task Handle_WhenUserDoesNotExist_ThrowUserNotFoundException()
     {
         // Given
-        NewRecipeContract testContract = new NewRecipeContract()
+        NewRecipeContract testContract = new()
         {
             Title = "Test",
             Description = "Test",
@@ -76,7 +76,7 @@ public class AddRecipeHandlerTests
     public async Task Handle_WhenUserExists_CreateAndReturnRecipe()
     {
         // Given
-        NewRecipeContract testContract = new NewRecipeContract()
+        NewRecipeContract testContract = new()
         {
             Title = "Test",
             Description = "Test",
