@@ -10,7 +10,7 @@ using RecipeSocialMediaAPI.Application.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Authentication.Queries;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 
 public class AuthenticateUserHandlerTests
 {
