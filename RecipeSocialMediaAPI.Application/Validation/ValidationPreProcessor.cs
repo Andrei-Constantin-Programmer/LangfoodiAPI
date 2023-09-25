@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MediatR.Pipeline;
 
-namespace RecipeSocialMediaAPI.Core.Validation;
+namespace RecipeSocialMediaAPI.Application.Validation;
 
 public class ValidationPreProcessor<TRequest> : IRequestPreProcessor<TRequest> where TRequest : IValidatableRequest
 {

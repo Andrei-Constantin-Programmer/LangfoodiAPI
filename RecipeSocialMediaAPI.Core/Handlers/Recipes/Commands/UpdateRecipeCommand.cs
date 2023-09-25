@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
-using RecipeSocialMediaAPI.Core.Validation;
+using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
