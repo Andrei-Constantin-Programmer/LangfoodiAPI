@@ -3,7 +3,7 @@ using MediatR.Pipeline;
 
 namespace RecipeSocialMediaAPI.Application.Validation;
 
-public class ValidationPreProcessor<TRequest> : IRequestPreProcessor<TRequest> where TRequest : IValidatableRequest
+public class ValidationPreProcessor<TRequest> : IRequestPreProcessor<TRequest> where TRequest : IValidatableRequestBase
 {
     private readonly IValidator<TRequest> _validator;
 

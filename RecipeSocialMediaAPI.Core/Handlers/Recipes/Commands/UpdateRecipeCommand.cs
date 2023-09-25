@@ -11,7 +11,7 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 
-public record UpdateRecipeCommand(UpdateRecipeContract UpdateRecipeContract) : IValidatableRequestVoid;
+public record UpdateRecipeCommand(UpdateRecipeContract UpdateRecipeContract) : IValidatableRequest;
 
 internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 {

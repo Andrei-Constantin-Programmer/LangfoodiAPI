@@ -10,7 +10,7 @@ using RecipeSocialMediaAPI.Application.Contracts.Users;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 
-public record UpdateUserCommand(UpdateUserContract UpdateUserContract) : IValidatableRequestVoid;
+public record UpdateUserCommand(UpdateUserContract UpdateUserContract) : IValidatableRequest;
 
 internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
