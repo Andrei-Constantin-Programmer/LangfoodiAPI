@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.Core.Contracts.Authentication;
+using RecipeSocialMediaAPI.Application.Contracts.Authentication;
 using RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.Core.Contracts.Recipes;
-using RecipeSocialMediaAPI.Core.DTO.Recipes;
+using RecipeSocialMediaAPI.Application.Contracts.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 

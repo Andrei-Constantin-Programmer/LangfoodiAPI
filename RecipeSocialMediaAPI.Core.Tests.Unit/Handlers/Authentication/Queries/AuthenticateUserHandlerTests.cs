@@ -3,7 +3,7 @@ using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.TestInfrastructure.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;

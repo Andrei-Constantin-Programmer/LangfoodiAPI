@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Core.Contracts.Users;
+using RecipeSocialMediaAPI.Application.DTO.Users;
+using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
-using RecipeSocialMediaAPI.Core.DTO;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;

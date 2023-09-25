@@ -1,4 +1,4 @@
-﻿using RecipeSocialMediaAPI.Core.DTO.Recipes;
+﻿using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -31,7 +31,7 @@ public class RecipeMapper : IRecipeMapper
 
     public RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDTO recipeStepDTO)
     {
-        return new(recipeStepDTO.Text, new RecipeImage(recipeStepDTO.ImageUrl));
+        return new(recipeStepDTO.Text, recipeStepDTO.ImageUrl is null ? null : new RecipeImage(recipeStepDTO.ImageUrl));
     }
 
     public RecipeStepDTO MapRecipeStepToRecipeStepDto(RecipeStep recipeStep)

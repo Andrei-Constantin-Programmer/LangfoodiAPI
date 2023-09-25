@@ -1,10 +1,7 @@
-﻿using AutoMapper;
-using MediatR;
-using RecipeSocialMediaAPI.Core.DTO.Recipes;
+﻿using MediatR;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 

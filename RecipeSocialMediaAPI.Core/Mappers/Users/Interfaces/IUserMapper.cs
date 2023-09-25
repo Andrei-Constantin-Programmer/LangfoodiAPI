@@ -1,4 +1,4 @@
-﻿using RecipeSocialMediaAPI.Core.DTO;
+﻿using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Domain.Mappers.Interfaces;

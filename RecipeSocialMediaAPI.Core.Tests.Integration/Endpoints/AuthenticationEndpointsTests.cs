@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.Core.Contracts.Authentication;
-using RecipeSocialMediaAPI.Core.Contracts.Users;
-using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Application.DTO.Users;
+using RecipeSocialMediaAPI.Application.Contracts.Authentication;
+using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;

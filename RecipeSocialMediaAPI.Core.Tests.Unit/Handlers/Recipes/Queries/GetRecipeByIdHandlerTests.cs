@@ -1,15 +1,13 @@
 ﻿using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Core.DTO;
-using RecipeSocialMediaAPI.Core.DTO.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Handlers.Recipes.Queries;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using System.Collections.Immutable;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Unit.Handlers.Recipes.Queries;
 public class GetRecipeByIdHandlerTests

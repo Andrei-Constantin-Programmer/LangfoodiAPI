@@ -1,6 +1,6 @@
-﻿using RecipeSocialMediaAPI.Core.DTO.Recipes;
+﻿using RecipeSocialMediaAPI.Application.DTO.Recipes;
 
-namespace RecipeSocialMediaAPI.Core.Contracts.Recipes;
+namespace RecipeSocialMediaAPI.Application.Contracts.Recipes;
 
 public record NewRecipeContract
 {

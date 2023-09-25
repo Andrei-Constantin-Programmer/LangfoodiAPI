@@ -3,12 +3,12 @@ using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Core.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Interfaces;
-using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Validation;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Core.Contracts.Users;
+using RecipeSocialMediaAPI.Application.Contracts.Users;
 
 namespace RecipeSocialMediaAPI.Core.Handlers.Users.Commands;
 

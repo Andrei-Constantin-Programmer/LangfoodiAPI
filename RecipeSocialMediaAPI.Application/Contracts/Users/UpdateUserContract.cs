@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Core.Contracts.Users;
+﻿namespace RecipeSocialMediaAPI.Application.Contracts.Users;
 
 public record UpdateUserContract
 {

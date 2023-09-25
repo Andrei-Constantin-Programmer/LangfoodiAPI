@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
-using RecipeSocialMediaAPI.Core.Contracts.Recipes;
+using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Core.Exceptions;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Core.Utilities;

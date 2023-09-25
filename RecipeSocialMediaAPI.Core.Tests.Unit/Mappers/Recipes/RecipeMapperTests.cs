@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Core.DTO;
-using RecipeSocialMediaAPI.Core.DTO.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Users;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Mappers.Recipes;
 using RecipeSocialMediaAPI.Domain.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -56,7 +56,7 @@ public class RecipeMapperTests
         RecipeStepDTO expectedResult = new()
         {
             Text = testStep.Text,
-            ImageUrl = testStep.Image.ImageUrl
+            ImageUrl = testStep.Image!.ImageUrl
         };
 
         // When

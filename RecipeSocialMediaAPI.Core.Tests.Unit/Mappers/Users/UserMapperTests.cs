@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using RecipeSocialMediaAPI.Core.DTO;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Core.Mappers.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
