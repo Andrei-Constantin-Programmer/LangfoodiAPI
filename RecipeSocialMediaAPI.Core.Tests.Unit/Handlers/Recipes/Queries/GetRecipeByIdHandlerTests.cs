@@ -64,7 +64,7 @@ public class GetRecipeByIdHandlerTests
             _testDate
         );
 
-        RecipeDetailedDTO expectedResult = new RecipeDetailedDTO
+        RecipeDetailedDTO expectedResult = new()
         {
             Id = recipeId,
             Title = testRecipeAggregate.Title,

@@ -5,8 +5,8 @@ using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Core.Tests.Unit.TestHelpers;
-using RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Application.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
@@ -31,7 +31,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUserIsNotFound_ThrowUserNotFoundException()
     {
         // Given
@@ -54,7 +54,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUsernameIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
     {
         // Given
@@ -75,7 +75,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenEmailIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
     {
         // Given
@@ -96,7 +96,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUsernameIsFoundAndCredentialsPass_ReturnMappedDTO()
     {
         // Given
@@ -124,7 +124,7 @@ public class AuthenticateUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenEmailIsFoundAndCredentialsPass_ReturnMappedDTO()
     {
         // Given

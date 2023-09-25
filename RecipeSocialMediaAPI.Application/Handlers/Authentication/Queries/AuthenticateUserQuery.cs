@@ -6,11 +6,11 @@ using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
-namespace RecipeSocialMediaAPI.Core.Handlers.Authentication.Querries;
+namespace RecipeSocialMediaAPI.Application.Handlers.Authentication.Querries;
 
-internal record AuthenticateUserQuery(string UsernameOrEmail, string Password) : IRequest<UserDTO>;
+public record AuthenticateUserQuery(string UsernameOrEmail, string Password) : IRequest<UserDTO>;
 
-internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, UserDTO>
+public class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, UserDTO>
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;

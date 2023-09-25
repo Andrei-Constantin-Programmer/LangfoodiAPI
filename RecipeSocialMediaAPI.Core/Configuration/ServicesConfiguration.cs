@@ -52,6 +52,7 @@ internal static class ServicesConfiguration
         builder.Services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblyContaining<Program>();
+            config.RegisterServicesFromAssemblyContaining<IDateTimeProvider>();
             config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>));
         });
     }

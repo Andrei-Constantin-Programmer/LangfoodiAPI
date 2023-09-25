@@ -16,7 +16,7 @@ internal class FakeRecipeRepository : IRecipeRepository
     public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
     {
        var id = _collection.Count.ToString();
-        RecipeAggregate newRecipe = new RecipeAggregate(
+        RecipeAggregate newRecipe = new(
             id, title, recipe, description, chef, 
             creationDate, lastUpdatedDate, labels
         );
@@ -41,7 +41,7 @@ internal class FakeRecipeRepository : IRecipeRepository
             return false;
         }
 
-        RecipeAggregate updatedRecipe = new RecipeAggregate(
+        RecipeAggregate updatedRecipe = new(
             existingRecipe.Id, recipe.Title,
             recipe.Recipe, recipe.Description,
             existingRecipe.Chef, existingRecipe.CreationDate,
