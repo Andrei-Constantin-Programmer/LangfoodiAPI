@@ -12,9 +12,9 @@ internal class GetRecipesFromUserIdHandler : IRequestHandler<GetRecipesFromUserI
     private readonly IRecipeMapper _mapper;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
 
-    public GetRecipesFromUserIdHandler(IRecipeMapper mapper, IRecipeQueryRepository recipeRepository)
+    public GetRecipesFromUserIdHandler(IRecipeMapper mapper, IRecipeQueryRepository recipeQueryRepository)
     {
-        _recipeQueryRepository = recipeRepository;
+        _recipeQueryRepository = recipeQueryRepository;
         _mapper = mapper;
     }
 

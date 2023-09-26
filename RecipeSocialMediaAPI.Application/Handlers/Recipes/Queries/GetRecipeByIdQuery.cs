@@ -14,10 +14,10 @@ internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, Recipe
     private readonly IRecipeMapper _mapper;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
 
-    public GetRecipeByIdHandler(IRecipeMapper mapper, IRecipeQueryRepository recipeRepository)
+    public GetRecipeByIdHandler(IRecipeMapper mapper, IRecipeQueryRepository recipeQueryRepository)
     {
         _mapper = mapper;
-        _recipeQueryRepository = recipeRepository;
+        _recipeQueryRepository = recipeQueryRepository;
     }
 
     public async Task<RecipeDetailedDTO> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)

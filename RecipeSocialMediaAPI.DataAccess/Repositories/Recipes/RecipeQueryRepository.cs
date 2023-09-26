@@ -13,14 +13,14 @@ public class RecipeQueryRepository : IRecipeQueryRepository
 {
     private readonly IRecipeDocumentToModelMapper _mapper;
     private readonly IMongoCollectionWrapper<RecipeDocument> _recipeCollection;
-    private readonly IUserQueryRepository _userRepository;
+    private readonly IUserQueryRepository _userQueryRepository;
     private readonly ILogger<RecipeQueryRepository> _logger;
 
-    public RecipeQueryRepository(IRecipeDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory, IUserQueryRepository userRepository, ILogger<RecipeQueryRepository> logger)
+    public RecipeQueryRepository(IRecipeDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory, IUserQueryRepository userQueryRepository, ILogger<RecipeQueryRepository> logger)
     {
         _mapper = mapper;
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
-        _userRepository = userRepository;
+        _userQueryRepository = userQueryRepository;
         _logger = logger;
     }
 
@@ -34,7 +34,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
             return null;
         }
 
-        User? chef = _userRepository.GetUserById(recipeDocument.ChefId);
+        User? chef = _userQueryRepository.GetUserById(recipeDocument.ChefId);
 
         if (chef is null)
         {
@@ -62,13 +62,13 @@ public class RecipeQueryRepository : IRecipeQueryRepository
 
     public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId)
     {
-        User? chef = _userRepository.GetUserById(chefId);
+        User? chef = _userQueryRepository.GetUserById(chefId);
         return GetRecipesByChef(chef);
     }
 
     public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName)
     {
-        User? chef = _userRepository.GetUserByUsername(chefName);
+        User? chef = _userQueryRepository.GetUserByUsername(chefName);
         return GetRecipesByChef(chef);
     }
 }

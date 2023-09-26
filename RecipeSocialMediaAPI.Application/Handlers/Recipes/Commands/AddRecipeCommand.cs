@@ -21,20 +21,20 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
     private readonly IRecipeMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipePersistenceRepository _recipePersistenceRepository;
-    private readonly IUserQueryRepository _userRepository;
+    private readonly IUserQueryRepository _userQueryRepository;
 
-    public AddRecipeHandler(IRecipeMapper mapper, IUserQueryRepository userRepository, IRecipePersistenceRepository recipePersistenceRepository, IDateTimeProvider dateTimeProvider)
+    public AddRecipeHandler(IRecipeMapper mapper, IUserQueryRepository userQueryRepository, IRecipePersistenceRepository recipePersistenceRepository, IDateTimeProvider dateTimeProvider)
     {
         _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;
         _recipePersistenceRepository = recipePersistenceRepository;
-        _userRepository = userRepository;
+        _userQueryRepository = userQueryRepository;
     }
 
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
         User? chef = 
-            _userRepository.GetUserById(request.NewRecipeContract.ChefId) 
+            _userQueryRepository.GetUserById(request.NewRecipeContract.ChefId) 
             ?? throw new UserNotFoundException();
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
