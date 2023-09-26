@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.Application.Repositories;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
 
@@ -7,15 +7,15 @@ public record CheckEmailExistsQuery(string Email) : IRequest<bool>;
 
 internal class CheckEmailExistsHandler : IRequestHandler<CheckEmailExistsQuery, bool>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IUserQueryRepository _userQueryRepository;
 
-    public CheckEmailExistsHandler(IUserRepository userRepository)
+    public CheckEmailExistsHandler(IUserQueryRepository userQueryRepository)
     {
-        _userRepository = userRepository;
+        _userQueryRepository = userQueryRepository;
     }
 
     public Task<bool> Handle(CheckEmailExistsQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(_userRepository.GetUserByEmail(request.Email) is not null);
+        return Task.FromResult(_userQueryRepository.GetUserByEmail(request.Email) is not null);
     }
 }

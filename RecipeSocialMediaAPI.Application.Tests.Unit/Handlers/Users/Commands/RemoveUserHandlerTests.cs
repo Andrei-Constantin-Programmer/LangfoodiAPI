@@ -2,7 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Application.Repositories;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
@@ -10,15 +10,17 @@ namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
 public class RemoveUserHandlerTests
 {
-    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserPersistenceRepository> _userPersistenceRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly RemoveUserHandler _removeUserHandlerSUT;
 
     public RemoveUserHandlerTests()
     {
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _removeUserHandlerSUT = new RemoveUserHandler(_userRepositoryMock.Object);
+        _removeUserHandlerSUT = new RemoveUserHandler(_userPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -29,10 +31,10 @@ public class RemoveUserHandlerTests
         // Given
         User? nullUser = null;
         
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
             .Returns(nullUser);
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
             .Returns(nullUser);
 
@@ -43,7 +45,7 @@ public class RemoveUserHandlerTests
 
         // Then
         await action.Should().ThrowAsync<UserNotFoundException>();
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Verify(repo => repo.DeleteUser(It.IsAny<User>()), Times.Never);
     }
 
@@ -54,10 +56,10 @@ public class RemoveUserHandlerTests
     {
         // Given
         User user = new("TestId", "TestUser", "TestEmail", "TestPass");
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Id)))
             .Returns(user);
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Setup(repo => repo.DeleteUser(It.IsAny<string>()))
             .Returns(true);
 
@@ -68,7 +70,7 @@ public class RemoveUserHandlerTests
         
         // Then
         await action.Should().NotThrowAsync();
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Id)), Times.Once);
     }
 
@@ -79,10 +81,10 @@ public class RemoveUserHandlerTests
     {
         // Given
         User user = new("TestId", "TestUser", "TestEmail", "TestPass");
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == user.Email)))
             .Returns(user);
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Setup(repo => repo.DeleteUser(It.IsAny<string>()))
             .Returns(true);
 
@@ -93,7 +95,7 @@ public class RemoveUserHandlerTests
 
         // Then
         await action.Should().NotThrowAsync();
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Id)), Times.Once);
     }
 
@@ -104,10 +106,10 @@ public class RemoveUserHandlerTests
     {
         // Given
         User user = new("TestId", "TestUser", "TestEmail", "TestPass");
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Id)))
             .Returns(user);
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Id)))
             .Returns(false);
 
@@ -127,10 +129,10 @@ public class RemoveUserHandlerTests
     {
         // Given
         User user = new("TestId", "TestUser", "TestEmail", "TestPass");
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == user.Email)))
             .Returns(user);
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Id)))
             .Returns(false);
 

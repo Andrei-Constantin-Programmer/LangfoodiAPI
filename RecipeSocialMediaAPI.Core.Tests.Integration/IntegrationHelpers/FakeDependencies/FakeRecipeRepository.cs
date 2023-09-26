@@ -1,10 +1,10 @@
-﻿using RecipeSocialMediaAPI.Application.Repositories;
+﻿using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
-internal class FakeRecipeRepository : IRecipeRepository
+internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistenceRepository
 {
     private readonly List<RecipeAggregate> _collection;
 

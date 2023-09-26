@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
-using RecipeSocialMediaAPI.Application.Repositories;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
@@ -9,15 +9,15 @@ namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Queries;
 
 public class CheckEmailExistsHandlerTests
 {
-    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly CheckEmailExistsHandler _checkEmailExistsHandlerSUT;
 
     public CheckEmailExistsHandlerTests()
     {
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _checkEmailExistsHandlerSUT = new CheckEmailExistsHandler(_userRepositoryMock.Object);
+        _checkEmailExistsHandlerSUT = new CheckEmailExistsHandler(_userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class CheckEmailExistsHandlerTests
     {
         // Given
         User testUser = new("TestId", "TestUser", "TestEmail", "TestPass");
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
             .Returns(testUser);
 
@@ -45,7 +45,7 @@ public class CheckEmailExistsHandlerTests
     {
         // Given
         User? nullUser = null;
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
             .Returns(nullUser);
 

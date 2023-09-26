@@ -6,15 +6,16 @@ using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class UpdateRecipeHandlerTests
 {
-    private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
+    private readonly Mock<IRecipePersistenceRepository> _recipePersistenceRepositoryMock;
+    private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
     private readonly Mock<IDateTimeProvider> _timeProviderMock;
 
@@ -25,7 +26,8 @@ public class UpdateRecipeHandlerTests
     public UpdateRecipeHandlerTests()
     {
         _recipeMapperMock = new Mock<IRecipeMapper>();
-        _recipeRepositoryMock = new Mock<IRecipeRepository>();
+        _recipePersistenceRepositoryMock = new Mock<IRecipePersistenceRepository>();
+        _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
         _timeProviderMock = new Mock<IDateTimeProvider>();
 
         _timeProviderMock
@@ -34,7 +36,8 @@ public class UpdateRecipeHandlerTests
 
         _updateRecipeHandlerSUT = new UpdateRecipeHandler(
             _recipeMapperMock.Object,
-            _recipeRepositoryMock.Object,
+            _recipePersistenceRepositoryMock.Object,
+            _recipeQueryRepositoryMock.Object,
             _timeProviderMock.Object);
     }
 
@@ -62,7 +65,7 @@ public class UpdateRecipeHandlerTests
             .ThrowAsync<RecipeNotFoundException>()
             .WithMessage("The recipe with the id 1 was not found.");
 
-        _recipeRepositoryMock
+        _recipePersistenceRepositoryMock
             .Verify(mapper => mapper.UpdateRecipe(It.IsAny<RecipeAggregate>()), Times.Never);
     }
 
@@ -82,7 +85,7 @@ public class UpdateRecipeHandlerTests
             RecipeSteps = new Stack<RecipeStepDTO>(),
         };
 
-        _recipeRepositoryMock
+        _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(new RecipeAggregate(
                 testContract.Id, testContract.Title,
@@ -91,7 +94,7 @@ public class UpdateRecipeHandlerTests
                 _testDate, _testDate
             ));
 
-        _recipeRepositoryMock
+        _recipePersistenceRepositoryMock
             .Setup(x => x.UpdateRecipe(It.IsAny<RecipeAggregate>()))
             .Returns(false);
 
@@ -120,7 +123,7 @@ public class UpdateRecipeHandlerTests
             RecipeSteps = new Stack<RecipeStepDTO>(),
         };
 
-        _recipeRepositoryMock
+        _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(new RecipeAggregate(
                 testContract.Id, testContract.Title,
@@ -129,7 +132,7 @@ public class UpdateRecipeHandlerTests
                 _testDate, _testDate
             ));
 
-        _recipeRepositoryMock
+        _recipePersistenceRepositoryMock
             .Setup(x => x.UpdateRecipe(It.IsAny<RecipeAggregate>()))
             .Returns(true);
 

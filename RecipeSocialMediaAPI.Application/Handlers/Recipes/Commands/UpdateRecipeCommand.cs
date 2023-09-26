@@ -5,9 +5,9 @@ using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
 using RecipeSocialMediaAPI.Application.Validation;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
@@ -17,19 +17,21 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 {
     private readonly IRecipeMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IRecipeRepository _recipeRepository;
+    private readonly IRecipePersistenceRepository _recipePersistenceRepository;
+    private readonly IRecipeQueryRepository _recipeQueryRepository;
 
-    public UpdateRecipeHandler(IRecipeMapper mapper, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public UpdateRecipeHandler(IRecipeMapper mapper, IRecipePersistenceRepository recipePersistenceRepository, IRecipeQueryRepository recipeQueryRepository, IDateTimeProvider dateTimeProvider)
     {
         _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;
-        _recipeRepository = recipeRepository;
+        _recipePersistenceRepository = recipePersistenceRepository;
+        _recipeQueryRepository = recipeQueryRepository;
     }
 
     public Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
         RecipeAggregate? existingRecipe = 
-            _recipeRepository.GetRecipeById(request.UpdateRecipeContract.Id) 
+            _recipeQueryRepository.GetRecipeById(request.UpdateRecipeContract.Id) 
             ?? throw new RecipeNotFoundException(request.UpdateRecipeContract.Id);
 
         RecipeAggregate updatedRecipe = new(
@@ -52,7 +54,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             request.UpdateRecipeContract.Labels
         );
 
-        bool isSuccessful = _recipeRepository.UpdateRecipe(updatedRecipe);
+        bool isSuccessful = _recipePersistenceRepository.UpdateRecipe(updatedRecipe);
 
         return isSuccessful
             ? Task.CompletedTask

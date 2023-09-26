@@ -2,7 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Application.Repositories;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -10,7 +10,8 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class RemoveRecipeHandlerTests
 {
-    private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
+    private readonly Mock<IRecipePersistenceRepository> _recipePersistenceRepositoryMock;
+    private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
 
     private readonly RemoveRecipeHandler _removeRecipeHandler;
 
@@ -18,8 +19,9 @@ public class RemoveRecipeHandlerTests
 
     public RemoveRecipeHandlerTests()
     {
-        _recipeRepositoryMock = new Mock<IRecipeRepository>();
-        _removeRecipeHandler = new RemoveRecipeHandler(_recipeRepositoryMock.Object);
+        _recipePersistenceRepositoryMock = new Mock<IRecipePersistenceRepository>();
+        _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
+        _removeRecipeHandler = new RemoveRecipeHandler(_recipePersistenceRepositoryMock.Object, _recipeQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -38,7 +40,7 @@ public class RemoveRecipeHandlerTests
             .ThrowAsync<RecipeNotFoundException>()
             .WithMessage("The recipe with the id 1 was not found.");
 
-        _recipeRepositoryMock
+        _recipePersistenceRepositoryMock
             .Verify(mapper => mapper.DeleteRecipe(It.IsAny<string>()), Times.Never);
     }
 
@@ -50,7 +52,7 @@ public class RemoveRecipeHandlerTests
         // Given
         string recipeId = "1";
 
-        _recipeRepositoryMock
+        _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(new RecipeAggregate(
                 "1", "title",
@@ -59,7 +61,7 @@ public class RemoveRecipeHandlerTests
                 _testDate, _testDate
             ));
 
-        _recipeRepositoryMock
+        _recipePersistenceRepositoryMock
             .Setup(x => x.DeleteRecipe(It.IsAny<string>()))
             .Returns(false);
 
@@ -80,7 +82,7 @@ public class RemoveRecipeHandlerTests
         // Given
         string recipeId = "1";
 
-        _recipeRepositoryMock
+        _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(new RecipeAggregate(
                 "1", "title",
@@ -89,7 +91,7 @@ public class RemoveRecipeHandlerTests
                 _testDate, _testDate
             ));
 
-        _recipeRepositoryMock
+        _recipePersistenceRepositoryMock
             .Setup(x => x.DeleteRecipe(It.IsAny<string>()))
             .Returns(true);
 

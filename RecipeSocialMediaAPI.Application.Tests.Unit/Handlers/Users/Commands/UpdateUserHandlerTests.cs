@@ -4,26 +4,28 @@ using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
 public class UpdateUserHandlerTests
 {
     private readonly ICryptoService _cryptoServiceFake;
-    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserPersistenceRepository> _userPersistenceRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly UpdateUserHandler _updateUserHandlerSUT;
 
     public UpdateUserHandlerTests()
     {
         _cryptoServiceFake = new CryptoServiceFake();
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _updateUserHandlerSUT = new UpdateUserHandler(_cryptoServiceFake, _userRepositoryMock.Object);
+        _updateUserHandlerSUT = new UpdateUserHandler(_cryptoServiceFake, _userPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -41,7 +43,7 @@ public class UpdateUserHandlerTests
         };
 
         User? nullUser = null;
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
             .Returns(nullUser);
 
@@ -52,7 +54,7 @@ public class UpdateUserHandlerTests
 
         // Then
         await action.Should().ThrowAsync<UserNotFoundException>();
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Verify(repo => repo.UpdateUser(It.IsAny<User>()), Times.Never);
     }
 
@@ -70,10 +72,10 @@ public class UpdateUserHandlerTests
             Password = "TestPass"
         };
 
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
             .Returns(new User(contract.Id, contract.UserName, contract.Email, contract.Password));
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Setup(repo => repo.UpdateUser(It.IsAny<User>()))
             .Returns(true);
 
@@ -84,7 +86,7 @@ public class UpdateUserHandlerTests
 
         // Then
         await action.Should().NotThrowAsync();
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Verify(repo => repo.UpdateUser(It.Is<User>(user =>
                 user.Id == contract.Id
                 && user.UserName == contract.UserName
@@ -106,10 +108,10 @@ public class UpdateUserHandlerTests
             Password = "TestPass"
         };
 
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
             .Returns(new User(contract.Id, contract.UserName, contract.Email, contract.Password));
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Setup(repo => repo.UpdateUser(It.IsAny<User>()))
             .Returns(false);
 

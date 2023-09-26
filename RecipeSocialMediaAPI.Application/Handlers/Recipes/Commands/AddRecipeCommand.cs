@@ -6,10 +6,11 @@ using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
 using RecipeSocialMediaAPI.Application.Validation;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
@@ -19,25 +20,25 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 {
     private readonly IRecipeMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IRecipeRepository _recipeRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly IRecipePersistenceRepository _recipePersistenceRepository;
+    private readonly IUserQueryRepository _userQueryRepository;
 
-    public AddRecipeHandler(IRecipeMapper mapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public AddRecipeHandler(IRecipeMapper mapper, IUserQueryRepository userQueryRepository, IRecipePersistenceRepository recipePersistenceRepository, IDateTimeProvider dateTimeProvider)
     {
         _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;
-        _recipeRepository = recipeRepository;
-        _userRepository = userRepository;
+        _recipePersistenceRepository = recipePersistenceRepository;
+        _userQueryRepository = userQueryRepository;
     }
 
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
         User? chef = 
-            _userRepository.GetUserById(request.NewRecipeContract.ChefId) 
+            _userQueryRepository.GetUserById(request.NewRecipeContract.ChefId) 
             ?? throw new UserNotFoundException();
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
-        RecipeAggregate insertedRecipe = _recipeRepository.CreateRecipe(
+        RecipeAggregate insertedRecipe = _recipePersistenceRepository.CreateRecipe(
             request.NewRecipeContract.Title,
             new Recipe(
                 request.NewRecipeContract.Ingredients

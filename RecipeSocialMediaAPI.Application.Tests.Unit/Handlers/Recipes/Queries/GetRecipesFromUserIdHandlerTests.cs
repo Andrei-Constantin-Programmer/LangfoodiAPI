@@ -3,14 +3,14 @@ using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Queries;
 public class GetRecipesFromUserIdHandlerTests
 {
-    private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
+    private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
 
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
@@ -20,9 +20,9 @@ public class GetRecipesFromUserIdHandlerTests
     public GetRecipesFromUserIdHandlerTests()
     {
         _recipeMapperMock = new Mock<IRecipeMapper>();
-        _recipeRepositoryMock = new Mock<IRecipeRepository>();
+        _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
 
-        _getRecipesFromUserIdHandlerSUT = new GetRecipesFromUserIdHandler(_recipeMapperMock.Object, _recipeRepositoryMock.Object);
+        _getRecipesFromUserIdHandlerSUT = new GetRecipesFromUserIdHandler(_recipeMapperMock.Object, _recipeQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class GetRecipesFromUserIdHandlerTests
             Labels = testRecipeAggregate.Labels,
         };
 
-        _recipeRepositoryMock
+        _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipesByChefId(It.IsAny<string>()))
             .Returns(new List<RecipeAggregate> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
         _recipeMapperMock

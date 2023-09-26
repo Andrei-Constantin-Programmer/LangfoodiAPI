@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 
@@ -10,18 +10,18 @@ public record GetRecipesFromUserIdQuery(string Id) : IRequest<IEnumerable<Recipe
 internal class GetRecipesFromUserIdHandler : IRequestHandler<GetRecipesFromUserIdQuery, IEnumerable<RecipeDTO>>
 {
     private readonly IRecipeMapper _mapper;
-    private readonly IRecipeRepository _recipeRepository;
+    private readonly IRecipeQueryRepository _recipeQueryRepository;
 
-    public GetRecipesFromUserIdHandler(IRecipeMapper mapper, IRecipeRepository recipeRepository)
+    public GetRecipesFromUserIdHandler(IRecipeMapper mapper, IRecipeQueryRepository recipeQueryRepository)
     {
-        _recipeRepository = recipeRepository;
+        _recipeQueryRepository = recipeQueryRepository;
         _mapper = mapper;
     }
 
     public async Task<IEnumerable<RecipeDTO>> Handle(GetRecipesFromUserIdQuery request, CancellationToken cancellationToken)
     {
         return await Task.FromResult(
-            _recipeRepository.GetRecipesByChefId(request.Id)
+            _recipeQueryRepository.GetRecipesByChefId(request.Id)
             .Select(_mapper.MapRecipeAggregateToRecipeDto));
     }
 }

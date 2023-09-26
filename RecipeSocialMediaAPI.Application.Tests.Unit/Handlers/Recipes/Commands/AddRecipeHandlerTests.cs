@@ -6,17 +6,18 @@ using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class AddRecipeHandlerTests
 {
-    private readonly Mock<IUserRepository> _userRepositoryMock;
-    private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
+    private readonly Mock<IRecipePersistenceRepository> _recipePersistenceRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
     private readonly Mock<IDateTimeProvider> _timeProviderMock;
 
@@ -27,9 +28,9 @@ public class AddRecipeHandlerTests
     public AddRecipeHandlerTests()
     {
         _recipeMapperMock = new Mock<IRecipeMapper>();
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _timeProviderMock = new Mock<IDateTimeProvider>();
-        _recipeRepositoryMock = new Mock<IRecipeRepository>();
+        _recipePersistenceRepositoryMock = new Mock<IRecipePersistenceRepository>();
 
         _timeProviderMock
             .Setup(x => x.Now)
@@ -37,8 +38,8 @@ public class AddRecipeHandlerTests
 
         _addRecipeHandlerSUT = new AddRecipeHandler(
             _recipeMapperMock.Object,
-            _userRepositoryMock.Object,
-            _recipeRepositoryMock.Object,
+            _userQueryRepositoryMock.Object,
+            _recipePersistenceRepositoryMock.Object,
             _timeProviderMock.Object
         );
     }
@@ -102,11 +103,11 @@ public class AddRecipeHandlerTests
             ImageUrl = "url"
         });
 
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(x => x.GetUserById(It.IsAny<string>()))
             .Returns(new User("1", "user", "mail", "pass"));
 
-        _recipeRepositoryMock
+        _recipePersistenceRepositoryMock
             .Setup(x => x.CreateRecipe(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
                 It.IsAny<User>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
                 It.IsAny<DateTimeOffset>()))

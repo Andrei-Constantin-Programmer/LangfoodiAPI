@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
-using RecipeSocialMediaAPI.Application.Repositories;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
@@ -9,15 +9,15 @@ namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Queries;
 
 public class CheckUsernameExistsHandlerTests
 {
-    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly CheckUsernameExistsHandler _checkUsernameExistsHandlerSUT;
 
     public CheckUsernameExistsHandlerTests()
     {
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _checkUsernameExistsHandlerSUT = new CheckUsernameExistsHandler(_userRepositoryMock.Object);
+        _checkUsernameExistsHandlerSUT = new CheckUsernameExistsHandler(_userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class CheckUsernameExistsHandlerTests
     {
         // Given
         User testUser = new("TestId", "TestUser", "TestEmail", "TestPass");
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.UserName)))
             .Returns(testUser);
 
@@ -45,7 +45,7 @@ public class CheckUsernameExistsHandlerTests
     {
         // Given
         User? nullUser = null;
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
             .Returns(nullUser);
 

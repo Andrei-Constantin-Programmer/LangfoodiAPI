@@ -1,9 +1,9 @@
-﻿using RecipeSocialMediaAPI.Application.Repositories;
+﻿using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
-internal class FakeUserRepository : IUserRepository
+internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceRepository
 {
     private readonly List<User> _collection;
 
