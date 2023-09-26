@@ -42,12 +42,12 @@ internal static class ServicesConfiguration
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
         builder.Services.AddValidatorsFromAssemblyContaining<IDateTimeProvider>(ServiceLifetime.Singleton);
 
-        // Transients
-        builder.Services.AddTransient<IRecipeRepository, RecipeRepository>();
-        builder.Services.AddTransient<IUserRepository, UserRepository>();
-
         // Scoped
-        builder.Services.AddScoped<ICryptoService, CryptoService>();
+        builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+        // Transients
+        builder.Services.AddTransient<ICryptoService, CryptoService>();
 
         // MediatR
         builder.Services.AddMediatR(config =>
