@@ -16,8 +16,4 @@
     <ProjectReference Include="..\RecipeSocialMediaAPI.Domain\RecipeSocialMediaAPI.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\Recipes\" />
-  </ItemGroup>
-
 </Project>

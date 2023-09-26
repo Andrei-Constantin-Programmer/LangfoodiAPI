@@ -12,14 +12,14 @@ using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
-using RecipeSocialMediaAPI.DataAccess.Repositories;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Profiles;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -45,7 +45,9 @@ internal static class ServicesConfiguration
         builder.Services.AddValidatorsFromAssemblyContaining<IDateTimeProvider>(ServiceLifetime.Singleton);
 
         // Scoped
-        builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+        builder.Services.AddScoped<IRecipeQueryRepository, RecipeQueryRepository>();
+        builder.Services.AddScoped<IRecipePersistenceRepository, RecipePersistenceRepository>();
+
         builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         builder.Services.AddScoped<IUserPersistenceRepository, UserPersistenceRepository>();
 

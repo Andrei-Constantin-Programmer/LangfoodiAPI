@@ -5,41 +5,41 @@ using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
-using RecipeSocialMediaAPI.DataAccess.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
 
-namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories;
+namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories.Recipes;
 
-public class RecipeRepositoryTests
+public class RecipeQueryRepositoryTests
 {
-    private readonly RecipeRepository _recipeRepositorySUT;
+    private readonly RecipeQueryRepository _recipeQueryRepositorySUT;
     private readonly Mock<IMongoCollectionWrapper<RecipeDocument>> _mongoCollectionWrapperMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
     private readonly Mock<IRecipeDocumentToModelMapper> _mapperMock;
-    private readonly Mock<IUserQueryRepository> _userRepositoryMock;
-    private readonly Mock<ILogger<RecipeRepository>> _loggerMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
+    private readonly Mock<ILogger<RecipeQueryRepository>> _loggerMock;
 
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
 
-    public RecipeRepositoryTests() 
+    public RecipeQueryRepositoryTests()
     {
         _mapperMock = new Mock<IRecipeDocumentToModelMapper>();
-        _userRepositoryMock = new Mock<IUserQueryRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _mongoCollectionWrapperMock = new Mock<IMongoCollectionWrapper<RecipeDocument>>();
         _mongoCollectionFactoryMock = new Mock<IMongoCollectionFactory>();
         _mongoCollectionFactoryMock
             .Setup(factory => factory.CreateCollection<RecipeDocument>())
             .Returns(_mongoCollectionWrapperMock.Object);
-        _loggerMock = new Mock<ILogger<RecipeRepository>>();
+        _loggerMock = new Mock<ILogger<RecipeQueryRepository>>();
 
-        _recipeRepositorySUT = new(
-            _mapperMock.Object, 
-            _mongoCollectionFactoryMock.Object, 
-            _userRepositoryMock.Object, 
+        _recipeQueryRepositorySUT = new(
+            _mapperMock.Object,
+            _mongoCollectionFactoryMock.Object,
+            _userQueryRepositoryMock.Object,
             _loggerMock.Object);
     }
 
@@ -57,7 +57,7 @@ public class RecipeRepositoryTests
             .Returns(nullRecipeDocument);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipeById(id);
+        var result = _recipeQueryRepositorySUT.GetRecipeById(id);
 
         // Then
         result.Should().BeNull();
@@ -100,7 +100,7 @@ public class RecipeRepositoryTests
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
             .Returns(testChef);
         _mapperMock
@@ -108,7 +108,7 @@ public class RecipeRepositoryTests
             .Returns(testRecipe);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipeById(id);
+        var result = _recipeQueryRepositorySUT.GetRecipeById(id);
 
         // Then
         result.Should().Be(testRecipe);
@@ -156,16 +156,16 @@ public class RecipeRepositoryTests
             .Returns(testRecipe);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipeById(id);
+        var result = _recipeQueryRepositorySUT.GetRecipeById(id);
 
         // Then
         result.Should().BeNull();
-        _loggerMock.Verify(logger => 
+        _loggerMock.Verify(logger =>
             logger.Log(
-                LogLevel.Warning, 
-                It.IsAny<EventId>(), 
-                It.IsAny<It.IsAnyType>(), 
-                null, 
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                null,
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()),
             Times.Once);
     }
@@ -180,7 +180,7 @@ public class RecipeRepositoryTests
         User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(chefId))
             .Returns(testChef);
 
@@ -189,13 +189,13 @@ public class RecipeRepositoryTests
             .Returns(new List<RecipeDocument>());
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChefId(chefId);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChefId(chefId);
 
         // Then
         result.Should().BeEmpty();
         _mapperMock
-            .Verify(mapper => 
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()), 
+            .Verify(mapper =>
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
                 Times.Never);
     }
 
@@ -223,19 +223,19 @@ public class RecipeRepositoryTests
         };
 
         RecipeAggregate expectedResult = new(
-            chefsRecipe.Id, 
-            chefsRecipe.Title, 
+            chefsRecipe.Id,
+            chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
-            testChef, 
-            chefsRecipe.CreationDate, 
-            chefsRecipe.LastUpdatedDate, 
+            testChef,
+            chefsRecipe.CreationDate,
+            chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<RecipeDocument>() { chefsRecipe });
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
             .Returns(testChef);
         _mapperMock
@@ -243,7 +243,7 @@ public class RecipeRepositoryTests
             .Returns(expectedResult);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChefId(chefId);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChefId(chefId);
 
         // Then
         result.Should().HaveCount(1);
@@ -281,7 +281,7 @@ public class RecipeRepositoryTests
             .Returns(testDocuments);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChefId(chefId);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChefId(chefId);
 
         // Then
         result.Should().BeEmpty();
@@ -300,7 +300,7 @@ public class RecipeRepositoryTests
         User? chef = null;
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChef(chef);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChef(chef);
 
         // Then
         result.Should().BeEmpty();
@@ -347,7 +347,7 @@ public class RecipeRepositoryTests
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<RecipeDocument>() { chefsRecipe });
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(x => x == chefUsername)))
             .Returns(testChef);
         _mapperMock
@@ -355,7 +355,7 @@ public class RecipeRepositoryTests
             .Returns(expectedResult);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChefName(chefUsername);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChefName(chefUsername);
 
         // Then
         result.Should().HaveCount(1);
@@ -374,7 +374,7 @@ public class RecipeRepositoryTests
         User testChef = new(chefId, chefUsername, "chef@mail.com", "TestPass");
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(chefUsername))
             .Returns(testChef);
 
@@ -383,7 +383,7 @@ public class RecipeRepositoryTests
             .Returns(new List<RecipeDocument>());
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChefName(chefUsername);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChefName(chefUsername);
 
         // Then
         result.Should().BeEmpty();
@@ -424,7 +424,7 @@ public class RecipeRepositoryTests
             .Returns(testDocuments);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChefName(chefUsername);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChefName(chefUsername);
 
         // Then
         result.Should().BeEmpty();
@@ -475,7 +475,7 @@ public class RecipeRepositoryTests
             .Returns(expectedResult);
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChef(testChef);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChef(testChef);
 
         // Then
         result.Should().HaveCount(1);
@@ -498,7 +498,7 @@ public class RecipeRepositoryTests
             .Returns(new List<RecipeDocument>());
 
         // When
-        var result = _recipeRepositorySUT.GetRecipesByChef(testChef);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChef(testChef);
 
         // Then
         result.Should().BeEmpty();
@@ -506,266 +506,5 @@ public class RecipeRepositoryTests
             .Verify(mapper =>
                 mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
                 Times.Never);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipe()
-    {
-        // Given
-        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
-        string testLabel = "TestLabel";
-
-        RecipeAggregate expectedResult = new(
-            "TestId",
-            "TestTitle",
-            new(new(), new(), 10, 500, 2300),
-            "Short Description",
-            testChef,
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
-        );
-
-        RecipeDocument newRecipeDocument = new()
-        {
-            Id = expectedResult.Id,
-            Title = expectedResult.Title,
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = expectedResult.Description,
-            ChefId = testChef.Id,
-            CreationDate = expectedResult.CreationDate,
-            LastUpdatedDate = expectedResult.LastUpdatedDate,
-            Labels = new List<string>() { testLabel },
-            CookingTimeInSeconds = expectedResult.Recipe.CookingTimeInSeconds, 
-            KiloCalories = expectedResult.Recipe.KiloCalories,
-            NumberOfServings = expectedResult.Recipe.NumberOfServings,
-        };
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.IsAny<RecipeDocument>()))
-            .Returns(newRecipeDocument);
-
-        _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(newRecipeDocument, testChef))
-            .Returns(expectedResult);
-
-        // When
-        var result = _recipeRepositorySUT.CreateRecipe(
-            expectedResult.Title, expectedResult.Recipe,
-            expectedResult.Description, testChef, expectedResult.Labels, 
-            expectedResult.CreationDate, expectedResult.LastUpdatedDate);
-
-        // Then
-        result.Should().Be(expectedResult);
-        _mongoCollectionWrapperMock
-            .Verify(collection => collection.Insert(It.Is<RecipeDocument>(doc =>
-                    doc.Id == null
-                    && doc.Title == expectedResult.Title
-                    && doc.Description == expectedResult.Description
-                    && doc.ChefId == testChef.Id
-                    && doc.CreationDate == expectedResult.CreationDate
-                    && doc.LastUpdatedDate == expectedResult.LastUpdatedDate
-                    && doc.Ingredients.Count == 0
-                    && doc.Steps.Count == 0
-                    && doc.Labels.Contains(testLabel) && doc.Labels.Count == 1
-                )), Times.Once);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecipe_WhenRecipeIsSuccessfullyUpdated_ReturnTrue()
-    {
-        // Given
-        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
-        string testLabel = "TestLabel";
-
-        RecipeAggregate recipe = new(
-            "TestId",
-            "TestTitle",
-            new(new(), new(), 10, 500, 2300),
-            "Short Description",
-            testChef,
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
-        );
-        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<RecipeDocument>(), It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(true);
-
-        // When
-        var result = _recipeRepositorySUT.UpdateRecipe(recipe);
-
-        // Then
-        result.Should().BeTrue();
-        _mongoCollectionWrapperMock
-            .Verify(collection => 
-                collection.UpdateRecord(
-                    It.Is<RecipeDocument>(recipeDoc => 
-                        recipeDoc.Id == recipe.Id
-                        && recipeDoc.Title == recipe.Title
-                        && recipeDoc.Description == recipe.Description
-                        && recipeDoc.CreationDate == recipe.CreationDate
-                        && recipeDoc.LastUpdatedDate == recipe.LastUpdatedDate
-                        && recipeDoc.Labels.Contains(testLabel) && recipe.Labels.Count == 1
-                        && recipeDoc.Ingredients.Count == 0
-                        && recipeDoc.Steps.Count == 0
-                        && recipeDoc.NumberOfServings == recipe.Recipe.NumberOfServings
-                        && recipeDoc.CookingTimeInSeconds == recipe.Recipe.CookingTimeInSeconds
-                        && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories),
-                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))), 
-                Times.Once);
-    }
-     
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecipe_WhenRecipeIsNotUpdated_ReturnFalse()
-    {
-        // Given
-        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
-        string testLabel = "TestLabel";
-
-        RecipeAggregate recipe = new(
-            "TestId",
-            "TestTitle",
-            new(new(), new(), 10, 500, 2300),
-            "Short Description",            
-            testChef,
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
-        );
-        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<RecipeDocument>(), It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(false);
-
-        // When
-        var result = _recipeRepositorySUT.UpdateRecipe(recipe);
-
-        // Then
-        result.Should().BeFalse();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteRecipeById_WhenRecipeIsDeleted_ReturnTrue()
-    {
-        // Given
-        string id = "1";
-        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(true);
-
-        // When
-        var result = _recipeRepositorySUT.DeleteRecipe(id);
-
-        // Then
-        result.Should().BeTrue();
-        _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
-                Times.Once);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteRecipeByRecipe_WhenRecipeIsDeleted_ReturnTrue()
-    {
-        // Given
-        string id = "1";
-        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
-
-        RecipeAggregate recipe = new(
-            id,
-            "TestTitle",
-            new(new(), new(), 10, 500, 2300),
-            "Short Description",
-            new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>()
-        );
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(true);
-
-        // When
-        var result = _recipeRepositorySUT.DeleteRecipe(recipe);
-
-        // Then
-        result.Should().BeTrue();
-        _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
-                Times.Once);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteRecipeById_WhenRecipeIsNotDeleted_ReturnFalse()
-    {
-        // Given
-        string id = "1";
-        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(false);
-
-        // When
-        var result = _recipeRepositorySUT.DeleteRecipe(id);
-
-        // Then
-        result.Should().BeFalse();
-        _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
-                Times.Once);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteRecipeByRecipe_WhenRecipeIsNotDeleted_ReturnFalse()
-    {
-        // Given
-        string id = "1";
-        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
-
-        RecipeAggregate recipe = new(
-            id,
-            "TestTitle",
-            new(new(), new(), 10, 500, 2300),
-            "Short Description",
-            new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>()
-        );
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(false);
-
-        // When
-        var result = _recipeRepositorySUT.DeleteRecipe(recipe);
-
-        // Then
-        result.Should().BeFalse();
-        _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
-                Times.Once);
     }
 }
