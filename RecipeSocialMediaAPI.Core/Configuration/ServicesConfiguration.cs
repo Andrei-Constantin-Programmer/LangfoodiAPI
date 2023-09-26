@@ -18,6 +18,8 @@ using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Profiles;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -44,7 +46,8 @@ internal static class ServicesConfiguration
 
         // Scoped
         builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
+        builder.Services.AddScoped<IUserPersistenceRepository, UserPersistenceRepository>();
 
         // Transients
         builder.Services.AddTransient<ICryptoService, CryptoService>();

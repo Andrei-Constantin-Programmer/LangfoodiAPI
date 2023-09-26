@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
@@ -16,17 +16,19 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
     private readonly ICryptoService _cryptoService;
 
-    private readonly IUserRepository _userRepository;
+    private readonly IUserQueryRepository _userQueryRepository;
+    private readonly IUserPersistenceRepository _userPersistenceRepository;
 
-    public UpdateUserHandler(ICryptoService cryptoService, IUserRepository userRepository)
+    public UpdateUserHandler(ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
     {
         _cryptoService = cryptoService;
-        _userRepository = userRepository;
+        _userPersistenceRepository = userPersistenceRepository;
+        _userQueryRepository = userQueryRepository;
     }
 
     public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var doesUserExist = _userRepository.GetUserById(request.UpdateUserContract.Id) is not null;
+        var doesUserExist = _userQueryRepository.GetUserById(request.UpdateUserContract.Id) is not null;
         if (!doesUserExist)
         {
             throw new UserNotFoundException();
@@ -40,7 +42,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             encryptedPassword
         );
 
-        bool isSuccessful = _userRepository.UpdateUser(updatedUser);
+        bool isSuccessful = _userPersistenceRepository.UpdateUser(updatedUser);
 
         return isSuccessful
             ? Task.CompletedTask 

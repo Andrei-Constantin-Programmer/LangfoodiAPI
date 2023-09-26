@@ -6,10 +6,10 @@ using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
@@ -18,18 +18,20 @@ public class AddUserHandlerTests
     private readonly AddUserHandler _userHandlerSUT;
 
     private readonly Mock<IMapper> _mapperMock;
-    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserPersistenceRepository> _userPersistenceRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly ICryptoService _cryptoServiceFake;
 
     public AddUserHandlerTests()
     {
         _mapperMock = new Mock<IMapper>();
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
+        _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
 
         _cryptoServiceFake = new CryptoServiceFake();
 
-        _userHandlerSUT = new AddUserHandler(_mapperMock.Object, _cryptoServiceFake, _userRepositoryMock.Object);
+        _userHandlerSUT = new AddUserHandler(_mapperMock.Object, _cryptoServiceFake, _userPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -39,7 +41,7 @@ public class AddUserHandlerTests
     {
         // Given
         User existingUser = new("TestId", "TestUser", "TestEmail", "TestPass");
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
             .Returns(existingUser);
         AddUserCommand command = new(
@@ -50,7 +52,7 @@ public class AddUserHandlerTests
 
         // Then
         await action.Should().ThrowAsync<UsernameAlreadyInUseException>();
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -61,7 +63,7 @@ public class AddUserHandlerTests
     {
         // Given
         User existingUser = new("TestId", "TestUser", "TestEmail", "TestPass");
-        _userRepositoryMock
+        _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
             .Returns(existingUser);
         NewUserContract contract = new() { UserName = "NewUser", Email = existingUser.Email, Password = "NewPass" };
@@ -71,7 +73,7 @@ public class AddUserHandlerTests
 
         // Then
         await action.Should().ThrowAsync<EmailAlreadyInUseException>();
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -83,7 +85,7 @@ public class AddUserHandlerTests
         // Given
         NewUserContract contract = new() { UserName = "NewUser", Email = "NewEmail", Password = "NewPass" };
         
-        _userRepositoryMock
+        _userPersistenceRepositoryMock
             .Setup(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string user, string email, string password) => new User("TestId", user, email, password));
 

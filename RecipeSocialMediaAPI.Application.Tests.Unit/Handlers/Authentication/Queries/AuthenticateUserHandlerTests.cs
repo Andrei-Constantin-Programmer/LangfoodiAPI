@@ -2,19 +2,19 @@
 using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 
 public class AuthenticateUserHandlerTests
 {
-    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly ICryptoService _cryptoServiceFake;
 
@@ -22,7 +22,7 @@ public class AuthenticateUserHandlerTests
 
     public AuthenticateUserHandlerTests()
     {
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userRepositoryMock = new Mock<IUserQueryRepository>();
         _mapperMock = new Mock<IMapper>();
         _cryptoServiceFake = new CryptoServiceFake();
 

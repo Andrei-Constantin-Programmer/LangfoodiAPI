@@ -6,11 +6,11 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories;
 
@@ -20,7 +20,7 @@ public class RecipeRepositoryTests
     private readonly Mock<IMongoCollectionWrapper<RecipeDocument>> _mongoCollectionWrapperMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
     private readonly Mock<IRecipeDocumentToModelMapper> _mapperMock;
-    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userRepositoryMock;
     private readonly Mock<ILogger<RecipeRepository>> _loggerMock;
 
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
@@ -28,7 +28,7 @@ public class RecipeRepositoryTests
     public RecipeRepositoryTests() 
     {
         _mapperMock = new Mock<IRecipeDocumentToModelMapper>();
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userRepositoryMock = new Mock<IUserQueryRepository>();
         _mongoCollectionWrapperMock = new Mock<IMongoCollectionWrapper<RecipeDocument>>();
         _mongoCollectionFactoryMock = new Mock<IMongoCollectionFactory>();
         _mongoCollectionFactoryMock

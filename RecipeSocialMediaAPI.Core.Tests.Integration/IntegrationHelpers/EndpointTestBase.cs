@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 using RecipeSocialMediaAPI.Application.Repositories;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 
@@ -15,7 +16,10 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
             .WithWebHostBuilder(builder => builder.ConfigureServices(services =>
             {
                 services.AddSingleton<IRecipeRepository, FakeRecipeRepository>();
-                services.AddSingleton<IUserRepository, FakeUserRepository>();
+
+                var fakeUserRepository = new FakeUserRepository();
+                services.AddSingleton<IUserQueryRepository>(fakeUserRepository);
+                services.AddSingleton<IUserPersistenceRepository>(fakeUserRepository);
             }))
             .CreateClient();
     }

@@ -2,13 +2,13 @@
 using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
@@ -18,29 +18,31 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 {
     private readonly IMapper _mapper;
     private readonly ICryptoService _cryptoService;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserQueryRepository _userQueryRepository;
+    private readonly IUserPersistenceRepository _userPersistenceRepository;
 
-    public AddUserHandler(IMapper mapper, ICryptoService cryptoService, IUserRepository userRepository)
+    public AddUserHandler(IMapper mapper, ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
     {
         _mapper = mapper;
         _cryptoService = cryptoService;
-        _userRepository = userRepository;
+        _userPersistenceRepository = userPersistenceRepository;
+        _userQueryRepository = userQueryRepository;
     }
 
     public async Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if (_userRepository.GetUserByUsername(request.NewUserContract.UserName) is not null)
+        if (_userQueryRepository.GetUserByUsername(request.NewUserContract.UserName) is not null)
         {
             throw new UsernameAlreadyInUseException(request.NewUserContract.UserName);
         }
 
-        if (_userRepository.GetUserByEmail(request.NewUserContract.Email) is not null)
+        if (_userQueryRepository.GetUserByEmail(request.NewUserContract.Email) is not null)
         {
             throw new EmailAlreadyInUseException(request.NewUserContract.Email);
         }
 
         var encryptedPassword = _cryptoService.Encrypt(request.NewUserContract.Password);
-        User insertedUser = _userRepository.CreateUser(request.NewUserContract.UserName,
+        User insertedUser = _userPersistenceRepository.CreateUser(request.NewUserContract.UserName,
                                                        request.NewUserContract.Email,
                                                        encryptedPassword);
 

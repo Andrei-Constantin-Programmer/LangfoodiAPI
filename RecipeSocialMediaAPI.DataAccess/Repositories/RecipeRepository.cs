@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories;
 
@@ -12,10 +13,10 @@ public class RecipeRepository : IRecipeRepository
 {
     private readonly IRecipeDocumentToModelMapper _mapper;
     private readonly IMongoCollectionWrapper<RecipeDocument> _recipeCollection;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserQueryRepository _userRepository;
     private readonly ILogger<RecipeRepository> _logger;
 
-    public RecipeRepository(IRecipeDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory, IUserRepository userRepository, ILogger<RecipeRepository> logger)
+    public RecipeRepository(IRecipeDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory, IUserQueryRepository userRepository, ILogger<RecipeRepository> logger)
     {
         _mapper = mapper;
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();

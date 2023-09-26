@@ -10,6 +10,7 @@ using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
@@ -20,9 +21,9 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
     private readonly IRecipeMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRecipeRepository _recipeRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserQueryRepository _userRepository;
 
-    public AddRecipeHandler(IRecipeMapper mapper, IUserRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
+    public AddRecipeHandler(IRecipeMapper mapper, IUserQueryRepository userRepository, IRecipeRepository recipeRepository, IDateTimeProvider dateTimeProvider)
     {
         _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;

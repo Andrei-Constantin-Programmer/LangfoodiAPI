@@ -1,7 +1,6 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.Application.Repositories;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
@@ -9,23 +8,25 @@ public record RemoveUserCommand(string EmailOrId) : IRequest;
 
 internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IUserQueryRepository _userQueryRepository;
+    private readonly IUserPersistenceRepository _userPersistenceRepository;
 
-    public RemoveUserHandler(IUserRepository userRepository)
+    public RemoveUserHandler(IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
     {
-        _userRepository = userRepository;
+        _userPersistenceRepository = userPersistenceRepository;
+        _userQueryRepository = userQueryRepository;
     }
 
     public Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
     {
-        User user = _userRepository.GetUserById(request.EmailOrId)
-            ?? _userRepository.GetUserByEmail(request.EmailOrId)
-            ?? throw new UserNotFoundException();
+        var userId = (_userQueryRepository.GetUserById(request.EmailOrId)
+            ?? _userQueryRepository.GetUserByEmail(request.EmailOrId)
+            ?? throw new UserNotFoundException()).Id;
 
-        bool isSuccessful = _userRepository.DeleteUser(user.Id);
+        bool isSuccessful = _userPersistenceRepository.DeleteUser(userId);
 
         return isSuccessful
             ? Task.CompletedTask 
-            : throw new Exception($"Could not remove user with id {user.Id}.");
+            : throw new Exception($"Could not remove user with id {userId}.");
     }
 }

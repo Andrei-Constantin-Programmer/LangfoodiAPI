@@ -11,11 +11,12 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class AddRecipeHandlerTests
 {
-    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userRepositoryMock;
     private readonly Mock<IRecipeRepository> _recipeRepositoryMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
     private readonly Mock<IDateTimeProvider> _timeProviderMock;
@@ -27,7 +28,7 @@ public class AddRecipeHandlerTests
     public AddRecipeHandlerTests()
     {
         _recipeMapperMock = new Mock<IRecipeMapper>();
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userRepositoryMock = new Mock<IUserQueryRepository>();
         _timeProviderMock = new Mock<IDateTimeProvider>();
         _recipeRepositoryMock = new Mock<IRecipeRepository>();
 
