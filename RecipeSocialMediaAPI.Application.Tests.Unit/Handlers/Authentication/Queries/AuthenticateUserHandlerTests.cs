@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.DTO.Users;
@@ -9,13 +8,14 @@ using RecipeSocialMediaAPI.Application.Handlers.Authentication.Querries;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 
 public class AuthenticateUserHandlerTests
 {
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
-    private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<IUserMapper> _mapperMock;
     private readonly ICryptoService _cryptoServiceFake;
 
     private readonly AuthenticateUserHandler _authenticateUserHandlerSUT;
@@ -23,7 +23,7 @@ public class AuthenticateUserHandlerTests
     public AuthenticateUserHandlerTests()
     {
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
-        _mapperMock = new Mock<IMapper>();
+        _mapperMock = new Mock<IUserMapper>();
         _cryptoServiceFake = new CryptoServiceFake();
 
         _authenticateUserHandlerSUT = new AuthenticateUserHandler(_userQueryRepositoryMock.Object, _mapperMock.Object, _cryptoServiceFake);
@@ -110,7 +110,7 @@ public class AuthenticateUserHandlerTests
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.UserName)))
             .Returns(testUser);
         _mapperMock
-            .Setup(mapper => mapper.Map<UserDTO>(It.IsAny<User>()))
+            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<User>()))
             .Returns(expectedUserDto);
 
         AuthenticateUserQuery query = new(testUser.UserName, decryptedPassword);
@@ -138,7 +138,7 @@ public class AuthenticateUserHandlerTests
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(email => email == testUser.Email)))
             .Returns(testUser);
         _mapperMock
-            .Setup(mapper => mapper.Map<UserDTO>(It.IsAny<User>()))
+            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<User>()))
             .Returns(expectedUserDto);
 
         AuthenticateUserQuery query = new(testUser.Email, decryptedPassword);

@@ -15,7 +15,6 @@ using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
-using RecipeSocialMediaAPI.Application.Mappers.Profiles;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
@@ -27,9 +26,6 @@ internal static class ServicesConfiguration
 {
     internal static void ConfigureServices(this WebApplicationBuilder builder)
     {
-        // AutoMapper
-        builder.Services.AddAutoMapper(typeof(UserMappingProfile));
-
         // Singletons
         builder.Services.AddSingleton(GenerateDatabaseConfiguration(builder.Configuration));
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();

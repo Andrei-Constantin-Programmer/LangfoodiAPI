@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.DTO.Users;
@@ -9,6 +8,7 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
@@ -16,12 +16,12 @@ public record AddUserCommand(NewUserContract NewUserContract) : IValidatableRequ
 
 internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 {
-    private readonly IMapper _mapper;
+    private readonly IUserMapper _mapper;
     private readonly ICryptoService _cryptoService;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserPersistenceRepository _userPersistenceRepository;
 
-    public AddUserHandler(IMapper mapper, ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
+    public AddUserHandler(IUserMapper mapper, ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
     {
         _mapper = mapper;
         _cryptoService = cryptoService;
@@ -46,7 +46,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
                                                        request.NewUserContract.Email,
                                                        encryptedPassword);
 
-        return await Task.FromResult(_mapper.Map<UserDTO>(insertedUser));
+        return await Task.FromResult(_mapper.MapUserToUserDto(insertedUser));
     }
 }
 
