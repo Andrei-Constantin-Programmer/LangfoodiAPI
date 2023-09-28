@@ -78,6 +78,7 @@ public class RecipeMapper : IRecipeMapper
             NumberOfServings = recipeAggregate.Recipe.NumberOfServings,
             CookingTime = recipeAggregate.Recipe.CookingTimeInSeconds,
             CreationDate = recipeAggregate.CreationDate,
+            LastUpdatedDate = recipeAggregate.LastUpdatedDate
         };
     }
 }

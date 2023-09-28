@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
@@ -10,6 +9,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
@@ -17,7 +17,7 @@ public class AddUserHandlerTests
 {
     private readonly AddUserHandler _userHandlerSUT;
 
-    private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<IUserMapper> _mapperMock;
     private readonly Mock<IUserPersistenceRepository> _userPersistenceRepositoryMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
@@ -25,7 +25,7 @@ public class AddUserHandlerTests
 
     public AddUserHandlerTests()
     {
-        _mapperMock = new Mock<IMapper>();
+        _mapperMock = new Mock<IUserMapper>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
 
@@ -90,7 +90,7 @@ public class AddUserHandlerTests
             .Returns((string user, string email, string password) => new User("TestId", user, email, password));
 
         _mapperMock
-            .Setup(mapper => mapper.Map<UserDTO>(It.IsAny<User>()))
+            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<User>()))
             .Returns((User user) => new UserDTO() { Id = user.Id, UserName = user.UserName, Email = user.Email, Password = user.Password});
 
         // When
