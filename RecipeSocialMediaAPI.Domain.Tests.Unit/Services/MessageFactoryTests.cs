@@ -40,7 +40,7 @@ public class MessageFactoryTests
         // Then
         result.Id.Should().Be(testId);
         result.Sender.Should().Be(testSender);
-        result.Text.Should().Be(testText);
+        result.TextContent.Should().Be(testText);
         result.SentDate.Should().Be(testSentDate);
         result.UpdatedDate.Should().Be(testUpdateDate);
         result.RepliedToMessage.Should().Be(testReplyMessage);

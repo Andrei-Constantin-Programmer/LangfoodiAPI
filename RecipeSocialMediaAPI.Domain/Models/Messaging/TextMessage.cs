@@ -6,7 +6,7 @@ namespace RecipeSocialMediaAPI.Domain.Models.Messaging;
 public record TextMessage : Message
 {
     private string _textContent;
-    public string Text 
+    public string TextContent 
     { 
         get => _textContent; 
         set
@@ -18,12 +18,12 @@ public record TextMessage : Message
         }
     }
 
-    internal TextMessage(IDateTimeProvider dateTimeProvider, string id, User sender, string text, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null)
+    internal TextMessage(IDateTimeProvider dateTimeProvider, string id, User sender, string textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null)
         : base(dateTimeProvider, id, sender, sentDate, updatedDate, repliedToMessage)
     {
-        ValidateTextContentAndThrow(text);
+        ValidateTextContentAndThrow(textContent);
 
-        _textContent = text;
+        _textContent = textContent;
     }
 
     private static void ValidateTextContentAndThrow(string textContent)
