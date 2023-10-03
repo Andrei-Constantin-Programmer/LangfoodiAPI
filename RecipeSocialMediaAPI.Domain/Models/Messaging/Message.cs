@@ -15,13 +15,16 @@ public abstract record Message
     public DateTimeOffset SentDate { get; }
     public DateTimeOffset? UpdatedDate { get; protected set; }
 
+    public Message? RepliedToMessage { get; }
+
     internal Message(IDateTimeProvider dateTimeProvider, 
-        string id, User sender, DateTimeOffset sentDate, DateTimeOffset? updatedDate)
+        string id, User sender, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null)
     {
         _dateTimeProvider = dateTimeProvider;
         Id = id;
         Sender = sender;
         SentDate = sentDate;
         UpdatedDate = updatedDate;
+        RepliedToMessage = repliedToMessage;
     }
 }

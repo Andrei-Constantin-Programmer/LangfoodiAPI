@@ -14,8 +14,8 @@ public class MessageFactory : IMessageFactory
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public TextMessage CreateTextMessage(string id, User sender, string text, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null)
+    public TextMessage CreateTextMessage(string id, User sender, string text, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null)
     {
-        return new TextMessage(_dateTimeProvider, id, sender, text, sentDate, updatedDate);
+        return new TextMessage(_dateTimeProvider, id, sender, text, sentDate, updatedDate, repliedToMessage);
     }
 }

@@ -18,8 +18,8 @@ public record TextMessage : Message
         }
     }
 
-    internal TextMessage(IDateTimeProvider dateTimeProvider, string id, User sender, string text, DateTimeOffset sentDate, DateTimeOffset? updatedDate)
-        : base(dateTimeProvider, id, sender, sentDate, updatedDate)
+    internal TextMessage(IDateTimeProvider dateTimeProvider, string id, User sender, string text, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null)
+        : base(dateTimeProvider, id, sender, sentDate, updatedDate, repliedToMessage)
     {
         ValidateTextContentAndThrow(text);
 

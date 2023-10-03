@@ -32,8 +32,10 @@ public class MessageFactoryTests
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
+        Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
+
         // When
-        TextMessage result = _messageFactorySUT.CreateTextMessage(testId, testSender, testText, testSentDate, testUpdateDate);
+        TextMessage result = _messageFactorySUT.CreateTextMessage(testId, testSender, testText, testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         result.Id.Should().Be(testId);
@@ -41,6 +43,7 @@ public class MessageFactoryTests
         result.Text.Should().Be(testText);
         result.SentDate.Should().Be(testSentDate);
         result.UpdatedDate.Should().Be(testUpdateDate);
+        result.RepliedToMessage.Should().Be(testReplyMessage);
     }
 
     [Theory]
