@@ -66,4 +66,57 @@ public class MessageFactoryTests
         // Then
         testAction.Should().Throw<ArgumentException>();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void CreateImageMessage_ReturnsImageMessageWithExpectedPropertyValues()
+    {
+        // Given
+        var testId = "TestId";
+        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        var testText = "Message content";
+        DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
+        DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
+
+        Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
+        List<string> images = new()
+        {
+            "Image 1"
+        };
+
+        // When
+        ImageMessage result = _messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
+
+        // Then
+        result.Id.Should().Be(testId);
+        result.Sender.Should().Be(testSender);
+        result.ImageURLs.Should().BeEquivalentTo(images);
+        result.TextContent.Should().Be(testText);
+        result.SentDate.Should().Be(testSentDate);
+        result.UpdatedDate.Should().Be(testUpdateDate);
+        result.RepliedToMessage.Should().Be(testReplyMessage);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void CreateImageMessage_WithNoImages_ThrowsArgumentException()
+    {
+        // Given
+        var testId = "TestId";
+        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        var testText = "Message content";
+        DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
+        DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
+
+        Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
+        List<string> images = new();
+
+        // When
+        var testAction = () => _messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
+
+        // Then
+        testAction.Should().Throw<ArgumentException>();
+    }
 }
