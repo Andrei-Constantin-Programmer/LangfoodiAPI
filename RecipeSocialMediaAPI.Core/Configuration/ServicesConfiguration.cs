@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Users;
-using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
+using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Application.Utilities;
 using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
@@ -38,7 +38,7 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
-        builder.Services.AddValidatorsFromAssemblyContaining<IDateTimeProvider>(ServiceLifetime.Singleton);
+        builder.Services.AddValidatorsFromAssemblyContaining<DateTimeProvider>(ServiceLifetime.Singleton);
 
         // Scoped
         builder.Services.AddScoped<IRecipeQueryRepository, RecipeQueryRepository>();
@@ -54,7 +54,7 @@ internal static class ServicesConfiguration
         builder.Services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblyContaining<Program>();
-            config.RegisterServicesFromAssemblyContaining<IDateTimeProvider>();
+            config.RegisterServicesFromAssemblyContaining<DateTimeProvider>();
             config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>));
         });
     }

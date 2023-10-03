@@ -11,6 +11,7 @@ public static class Traits
         public const string AUTHENTICATION = "Authentication";
         public const string INFRASTRUCTURE = "Infrastructure";
         public const string RECIPE = "Recipe";
+        public const string MESSAGING = "Messaging";
         public const string CRYPTOGRAPHY = "Cryptography";
     }
 
