@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Application.Utilities.Interfaces;
+using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
