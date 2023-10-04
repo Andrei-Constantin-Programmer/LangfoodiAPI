@@ -170,6 +170,68 @@ public class RecipeQueryRepositoryTests
             Times.Once);
     }
 
+    
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipeById_WhenMongoThrowsException_LogExceptionAndReturnNull()
+    {
+        // Given
+        string id = "1";
+        string chefId = "50";
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
+        RecipeDocument testDocument = new()
+        {
+            Id = id,
+            Title = "TestTitle",
+            Ingredients = new List<(string, double, string)>(),
+            Steps = new List<(string, string?)>(),
+            Description = "TestShortDesc",
+            CreationDate = _testDate,
+            LastUpdatedDate = _testDate,
+            Labels = new List<string>(),
+            ChefId = chefId,
+        };
+        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+
+        RecipeAggregate testRecipe = new(
+                id,
+                testDocument.Title,
+                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                testDocument.Description,
+                testChef,
+                testDocument.CreationDate,
+                testDocument.LastUpdatedDate,
+                new HashSet<string>()
+            );
+
+        Exception testException = new("Test Exception");
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Throws(testException);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
+            .Returns(testChef);
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef))
+            .Returns(testRecipe);
+
+        // When
+        var result = _recipeQueryRepositorySUT.GetRecipeById(id);
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock
+            .Verify(logger =>
+                logger.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once());
+    }
+
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
@@ -294,20 +356,61 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenChefIsNull_ReturnEmptyList()
+    public void GetRecipesByChefId_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
-        User? chef = null;
+        string chefId = "1";
+        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        RecipeDocument chefsRecipe = new()
+        {
+            Id = "10",
+            Title = "TestTitle",
+            Ingredients = new List<(string, double, string)>(),
+            Steps = new List<(string, string?)>(),
+            Description = "TestShortDesc",
+            CreationDate = _testDate,
+            LastUpdatedDate = _testDate,
+            Labels = new List<string>(),
+            ChefId = chefId
+        };
+
+        RecipeAggregate expectedResult = new(
+            chefsRecipe.Id,
+            chefsRecipe.Title,
+            new Recipe(new(), new()),
+            chefsRecipe.Description,
+            testChef,
+            chefsRecipe.CreationDate,
+            chefsRecipe.LastUpdatedDate,
+            new HashSet<string>());
+
+        Exception testException = new("Test Exception");
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Throws(testException);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
+            .Returns(testChef);
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Returns(expectedResult);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChef(chef);
+        var result = _recipeQueryRepositorySUT.GetRecipesByChefId(chefId);
 
         // Then
         result.Should().BeEmpty();
-        _mapperMock
-            .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
-                Times.Never);
+        _loggerMock
+            .Verify(logger =>
+                logger.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once());
     }
 
     [Fact]
@@ -437,6 +540,86 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChefUsername_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
+    {
+        // Given
+        string chefId = "1";
+        string chefUsername = "TestChef";
+        User testChef = new(chefId, chefUsername, "chef@mail.com", "TestPass");
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        RecipeDocument chefsRecipe = new()
+        {
+            Id = "10",
+            Title = "TestTitle",
+            Ingredients = new List<(string, double, string)>(),
+            Steps = new List<(string, string?)>(),
+            Description = "TestShortDesc",
+            CreationDate = _testDate,
+            LastUpdatedDate = _testDate,
+            Labels = new List<string>(),
+            ChefId = chefId
+        };
+
+        RecipeAggregate expectedResult = new(
+            chefsRecipe.Id,
+            chefsRecipe.Title,
+            new Recipe(new(), new()),
+            chefsRecipe.Description,
+            testChef,
+            chefsRecipe.CreationDate,
+            chefsRecipe.LastUpdatedDate,
+            new HashSet<string>());
+
+        Exception testException = new("Test Exception");
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Throws(testException);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserByUsername(It.Is<string>(x => x == chefUsername)))
+            .Returns(testChef);
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Returns(expectedResult);
+
+        // When
+        var result = _recipeQueryRepositorySUT.GetRecipesByChefName(chefUsername);
+
+        // Then
+        result.Should().BeEmpty();
+        _loggerMock
+            .Verify(logger =>
+                logger.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once());
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChef_WhenChefIsNull_ReturnEmptyList()
+    {
+        // Given
+        User? chef = null;
+
+        // When
+        var result = _recipeQueryRepositorySUT.GetRecipesByChef(chef);
+
+        // Then
+        result.Should().BeEmpty();
+        _mapperMock
+            .Verify(mapper =>
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetRecipesByChef_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
     {
         // Given
@@ -506,5 +689,62 @@ public class RecipeQueryRepositoryTests
             .Verify(mapper =>
                 mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
                 Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetRecipesByChef_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
+    {
+        // Given
+        string chefId = "1";
+        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        RecipeDocument chefsRecipe = new()
+        {
+            Id = "10",
+            Title = "TestTitle",
+            Ingredients = new List<(string, double, string)>(),
+            Steps = new List<(string, string?)>(),
+            Description = "TestShortDesc",
+            CreationDate = _testDate,
+            LastUpdatedDate = _testDate,
+            Labels = new List<string>(),
+            ChefId = chefId
+        };
+
+        RecipeAggregate expectedResult = new(
+            chefsRecipe.Id,
+            chefsRecipe.Title,
+            new Recipe(new(), new()),
+            chefsRecipe.Description,
+            testChef,
+            chefsRecipe.CreationDate,
+            chefsRecipe.LastUpdatedDate,
+            new HashSet<string>());
+
+        Exception testException = new("Test Exception");
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
+            .Throws(testException);
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Returns(expectedResult);
+
+        // When
+        var result = _recipeQueryRepositorySUT.GetRecipesByChef(testChef);
+
+        // Then
+        result.Should().BeEmpty();
+        _loggerMock
+            .Verify(logger =>
+                logger.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once());
     }
 }

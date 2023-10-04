@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
 
@@ -26,8 +27,17 @@ public class RecipeQueryRepository : IRecipeQueryRepository
 
     public RecipeAggregate? GetRecipeById(string id)
     {
-        RecipeDocument? recipeDocument = _recipeCollection
-            .Find(recipeDoc => recipeDoc.Id == id);
+        RecipeDocument? recipeDocument;
+        try
+        {
+            recipeDocument = _recipeCollection
+                .Find(recipeDoc => recipeDoc.Id == id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex, "There was an error trying to get recipe by id {RecipeId}: {ErrorMessage}", id, ex.Message);
+            recipeDocument = null;
+        }
 
         if (recipeDocument is null)
         {
@@ -52,8 +62,17 @@ public class RecipeQueryRepository : IRecipeQueryRepository
             return Enumerable.Empty<RecipeAggregate>();
         }
 
-        var recipes = _recipeCollection
-            .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id);
+        List<RecipeDocument> recipes;
+        try
+        {
+            recipes = _recipeCollection
+                .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex, "There was an error trying to get recipes for chef with id {ChefId}: {ErrorMessage}", chef.Id, ex.Message);
+            recipes = new();
+        }
 
         return recipes.Count == 0
             ? Enumerable.Empty<RecipeAggregate>()
