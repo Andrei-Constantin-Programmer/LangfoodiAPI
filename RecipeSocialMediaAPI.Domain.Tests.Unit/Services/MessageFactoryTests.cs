@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Utilities;
@@ -115,6 +117,59 @@ public class MessageFactoryTests
 
         // When
         var testAction = () => _messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
+
+        // Then
+        testAction.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void CreateRecipeMessage_ReturnsRecipeMessageWithExpectedPropertyValues()
+    {
+        // Given
+        var testId = "TestId";
+        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        var testText = "Message content";
+        DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
+        DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
+
+        Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
+        List<RecipeAggregate> recipes = new()
+        {
+            new("RecipeId", "RecipeTitle", new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()), "RecipeDescription", testSender, testSentDate, testUpdateDate)
+        };
+
+        // When
+        RecipeMessage result = _messageFactorySUT.CreateRecipeMessage(testId, testSender, recipes, testText, testSentDate, testUpdateDate, testReplyMessage);
+
+        // Then
+        result.Id.Should().Be(testId);
+        result.Sender.Should().Be(testSender);
+        result.Recipes.Should().BeEquivalentTo(recipes);
+        result.TextContent.Should().Be(testText);
+        result.SentDate.Should().Be(testSentDate);
+        result.UpdatedDate.Should().Be(testUpdateDate);
+        result.RepliedToMessage.Should().Be(testReplyMessage);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void CreateRecipeMessage_WithNoRecipes_ThrowsArgumentException()
+    {
+        // Given
+        var testId = "TestId";
+        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        var testText = "Message content";
+        DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
+        DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
+
+        Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
+        List<RecipeAggregate> images = new();
+
+        // When
+        var testAction = () => _messageFactorySUT.CreateRecipeMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         testAction.Should().Throw<ArgumentException>();
