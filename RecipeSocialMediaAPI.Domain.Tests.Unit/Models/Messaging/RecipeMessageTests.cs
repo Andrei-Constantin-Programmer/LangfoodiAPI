@@ -1,28 +1,33 @@
 ﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging;
 
-public class ImageMessageTests
+public class RecipeMessageTests
 {
-    private readonly ImageMessage _imageMessageSUT;
+    private readonly RecipeMessage _recipeMessageSUT;
 
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
 
-    public ImageMessageTests()
+    public RecipeMessageTests()
     {
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
         User testUser = new("UserId", "Username", "UserEmail", "UserPassword");
         DateTimeOffset testDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
-        List<string> images = new() { "Image1" };
+        List<RecipeAggregate> recipes = new() 
+        { 
+            CreateTestRecipe("1", testUser, testDate)
+        };
 
-        _imageMessageSUT = new(_dateTimeProviderMock.Object, "MessageId", testUser, images, "Message Content", testDate, testDate);
+        _recipeMessageSUT = new(_dateTimeProviderMock.Object, "MessageId", testUser, recipes, "Message Content", testDate, testDate);
     }
 
     [Theory]
@@ -40,17 +45,17 @@ public class ImageMessageTests
             .Returns(testNow);
 
         // When
-        _imageMessageSUT.TextContent = newText;
+        _recipeMessageSUT.TextContent = newText;
 
         // Then
-        _imageMessageSUT.TextContent.Should().Be(newText);
-        _imageMessageSUT.UpdatedDate.Should().Be(testNow);
+        _recipeMessageSUT.TextContent.Should().Be(newText);
+        _recipeMessageSUT.UpdatedDate.Should().Be(testNow);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void AddImage_AddsImageToListAndUpdatesTime()
+    public void AddRecipe_AddsRecipeToListAndUpdatesTime()
     {
         // Given
         DateTimeOffset testNow = new(2023, 10, 3, 17, 0, 0, TimeSpan.Zero);
@@ -58,13 +63,17 @@ public class ImageMessageTests
             .Setup(provider => provider.Now)
             .Returns(testNow);
 
-        var newImage = "New Image";
+        RecipeAggregate newRecipe = CreateTestRecipe("2", _recipeMessageSUT.Sender, testNow);
 
         // When
-        _imageMessageSUT.AddImage(newImage);
+        _recipeMessageSUT.AddRecipe(newRecipe);
 
         // Then
-        _imageMessageSUT.ImageURLs.Should().Contain(newImage);
-        _imageMessageSUT.UpdatedDate.Should().Be(testNow);
+        _recipeMessageSUT.Recipes.Should().Contain(newRecipe);
+        _recipeMessageSUT.UpdatedDate.Should().Be(testNow);
     }
+
+
+    private static RecipeAggregate CreateTestRecipe(string id, User testUser, DateTimeOffset testDate) => 
+        new(id, "RecipeTitle", new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()), "RecipeDescription", testUser, testDate, testDate);
 }

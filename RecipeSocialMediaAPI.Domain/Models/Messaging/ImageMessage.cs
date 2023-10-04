@@ -20,7 +20,8 @@ public record ImageMessage : Message
     private readonly List<string> _imageURLs;
     public ImmutableList<string> ImageURLs => _imageURLs.ToImmutableList();
 
-    public ImageMessage(IDateTimeProvider dateTimeProvider, string id, User sender, IEnumerable<string> imageURLs, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
+    public ImageMessage(IDateTimeProvider dateTimeProvider, 
+        string id, User sender, IEnumerable<string> imageURLs, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
         : base(dateTimeProvider, id, sender, sentDate, updatedDate, repliedToMessage)
     {
         if (!imageURLs.Any())
