@@ -42,7 +42,7 @@ public class UpdateUserHandlerTests
             Password = "TestPass"
         };
 
-        User? nullUser = null;
+        UserCredentials? nullUser = null;
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
             .Returns(nullUser);
@@ -55,7 +55,7 @@ public class UpdateUserHandlerTests
         // Then
         await action.Should().ThrowAsync<UserNotFoundException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateUser(It.IsAny<User>()), Times.Never);
+            .Verify(repo => repo.UpdateUser(It.IsAny<UserCredentials>()), Times.Never);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class UpdateUserHandlerTests
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
             .Returns(new User(contract.Id, contract.UserName, contract.Email, contract.Password));
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateUser(It.IsAny<User>()))
+            .Setup(repo => repo.UpdateUser(It.IsAny<UserCredentials>()))
             .Returns(true);
 
         UpdateUserCommand command = new(contract);
@@ -87,7 +87,7 @@ public class UpdateUserHandlerTests
         // Then
         await action.Should().NotThrowAsync();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateUser(It.Is<User>(user =>
+            .Verify(repo => repo.UpdateUser(It.Is<UserCredentials>(user =>
                 user.Id == contract.Id
                 && user.UserName == contract.UserName
                 && user.Email == contract.Email
@@ -112,7 +112,7 @@ public class UpdateUserHandlerTests
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
             .Returns(new User(contract.Id, contract.UserName, contract.Email, contract.Password));
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateUser(It.IsAny<User>()))
+            .Setup(repo => repo.UpdateUser(It.IsAny<UserCredentials>()))
             .Returns(false);
 
         UpdateUserCommand command = new(contract);

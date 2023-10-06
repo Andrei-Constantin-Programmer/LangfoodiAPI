@@ -5,5 +5,5 @@ namespace RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 
 public interface IUserDocumentToModelMapper
 {
-    User MapUserDocumentToUser(UserDocument userDocument);
+    IUserCredentials MapUserDocumentToUser(UserDocument userDocument);
 }

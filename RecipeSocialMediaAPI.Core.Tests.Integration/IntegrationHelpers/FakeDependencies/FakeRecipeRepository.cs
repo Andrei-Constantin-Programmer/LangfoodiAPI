@@ -13,7 +13,7 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         _collection = new List<RecipeAggregate>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, User chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, UserCredentials chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
     {
        var id = _collection.Count.ToString();
         RecipeAggregate newRecipe = new(
@@ -30,7 +30,7 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
     public bool DeleteRecipe(string id) => _collection.RemoveAll(x => x.Id == id) > 0;
 
     public RecipeAggregate? GetRecipeById(string id) => _collection.Find(x => x.Id == id);
-    public IEnumerable<RecipeAggregate> GetRecipesByChef(User? user) => GetRecipesByChefId(user!.Id);
+    public IEnumerable<RecipeAggregate> GetRecipesByChef(UserCredentials? user) => GetRecipesByChefId(user!.Id);
     public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId) => _collection.FindAll(x => x.Chef.Id == chefId);
     public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName) => _collection.FindAll(x => x.Chef.UserName == chefName);
     public bool UpdateRecipe(RecipeAggregate recipe)

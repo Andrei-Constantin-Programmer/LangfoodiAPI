@@ -29,7 +29,7 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserIsNotFound_DoNotDeleteAndThrowUserNotFoundException()
     {
         // Given
-        User? nullUser = null;
+        UserCredentials? nullUser = null;
         
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
@@ -46,7 +46,7 @@ public class RemoveUserHandlerTests
         // Then
         await action.Should().ThrowAsync<UserNotFoundException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.DeleteUser(It.IsAny<User>()), Times.Never);
+            .Verify(repo => repo.DeleteUser(It.IsAny<UserCredentials>()), Times.Never);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserIdExistsAndDeleteIsSuccessful_DeleteAndNotThrow()
     {
         // Given
-        User user = new("TestId", "TestUser", "TestEmail", "TestPass");
+        UserCredentials user = new("TestId", "TestUser", "TestEmail", "TestPass");
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Id)))
             .Returns(user);
@@ -80,7 +80,7 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserEmailExistsAndDeleteIsSuccessful_DeleteAndNotThrow()
     {
         // Given
-        User user = new("TestId", "TestUser", "TestEmail", "TestPass");
+        UserCredentials user = new("TestId", "TestUser", "TestEmail", "TestPass");
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == user.Email)))
             .Returns(user);
@@ -105,7 +105,7 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserIdExistsButDeleteIsUnsuccessful_ThrowException()
     {
         // Given
-        User user = new("TestId", "TestUser", "TestEmail", "TestPass");
+        UserCredentials user = new("TestId", "TestUser", "TestEmail", "TestPass");
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Id)))
             .Returns(user);
@@ -128,7 +128,7 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserEmailExistsButDeleteIsUnsuccessful_ThrowException()
     {
         // Given
-        User user = new("TestId", "TestUser", "TestEmail", "TestPass");
+        UserCredentials user = new("TestId", "TestUser", "TestEmail", "TestPass");
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == user.Email)))
             .Returns(user);

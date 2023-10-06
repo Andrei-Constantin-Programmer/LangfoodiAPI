@@ -42,7 +42,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
         }
 
         var encryptedPassword = _cryptoService.Encrypt(request.NewUserContract.Password);
-        User insertedUser = _userPersistenceRepository.CreateUser(request.NewUserContract.UserName,
+        UserCredentials insertedUser = _userPersistenceRepository.CreateUser(request.NewUserContract.UserName,
                                                        request.NewUserContract.Email,
                                                        encryptedPassword);
 

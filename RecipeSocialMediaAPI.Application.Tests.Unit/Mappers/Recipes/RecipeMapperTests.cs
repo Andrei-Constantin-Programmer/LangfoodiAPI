@@ -124,7 +124,7 @@ public class RecipeMapperTests
     public void MapRecipeAggregateToRecipeDetailedDto_GivenRecipeAggregate_ReturnRecipeDetailedDto()
     {
         // Given
-        User testChef = new("1", "TestChef", "chef@mail.com", "TestPass");
+        UserCredentials testChef = new("1", "TestChef", "chef@mail.com", "TestPass");
         RecipeAggregate testRecipe = new(
             "1",
             "title",
@@ -139,8 +139,8 @@ public class RecipeMapperTests
             new HashSet<string>());
 
         _userMapperMock
-            .Setup(x => x.MapUserToUserDto(It.IsAny<User>()))
-            .Returns((User user) => new UserDTO()
+            .Setup(x => x.MapUserToUserDto(It.IsAny<UserCredentials>()))
+            .Returns((UserCredentials user) => new UserDTO()
             {
                 Id = user.Id,
                 Email = user.Email,
@@ -178,7 +178,7 @@ public class RecipeMapperTests
     public void MapRecipeAggregateToRecipeDto_GivenRecipeAggregate_ReturnRecipeDto()
     {
         // Given
-        User testChef = new("1", "TestChef", "chef@mail.com", "TestPass");
+        UserCredentials testChef = new("1", "TestChef", "chef@mail.com", "TestPass");
         RecipeAggregate testRecipe = new(
             "1",
             "title",

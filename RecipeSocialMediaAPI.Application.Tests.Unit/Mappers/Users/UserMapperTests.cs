@@ -29,13 +29,13 @@ public class UserMapperTests
             Password = "password",
         };
 
-        User expectedResult = new(testUser.Id, testUser.UserName, testUser.Email, testUser.Password);
+        UserCredentials expectedResult = new(testUser.Id, testUser.UserName, testUser.Email, testUser.Password);
 
         // When
         var result = _userMapperSUT.MapUserDtoToUser(testUser);
 
         // Then
-        result.Should().BeOfType<User>();
+        result.Should().BeOfType<UserCredentials>();
         result.Should().BeEquivalentTo(expectedResult);
     }
 
@@ -45,7 +45,7 @@ public class UserMapperTests
     public void MapUserToUserDto_GivenUser_ReturnUserDto()
     {
         // Given
-        User testUser = new("1", "user", "mail", "password");
+        UserCredentials testUser = new("1", "user", "mail", "password");
 
         UserDTO expectedResult = new()
         {

@@ -22,7 +22,7 @@ public record RecipeMessage : Message
     public ImmutableList<RecipeAggregate> Recipes => _recipes.ToImmutableList();
 
     public RecipeMessage(IDateTimeProvider dateTimeProvider, 
-        string id, User sender, IEnumerable<RecipeAggregate> recipes, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
+        string id, UserCredentials sender, IEnumerable<RecipeAggregate> recipes, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
         : base(dateTimeProvider, id, sender, sentDate, updatedDate, repliedToMessage)
     {
         if (!recipes.Any())

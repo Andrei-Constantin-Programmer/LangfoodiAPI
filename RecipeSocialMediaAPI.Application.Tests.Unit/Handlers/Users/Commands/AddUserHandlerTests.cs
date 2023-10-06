@@ -40,7 +40,7 @@ public class AddUserHandlerTests
     public async Task Handle_WhenUsernameIsAlreadyInUse_DoNotCreateAndThrowUsernameAlreadyInUseException()
     {
         // Given
-        User existingUser = new("TestId", "TestUser", "TestEmail", "TestPass");
+        UserCredentials existingUser = new("TestId", "TestUser", "TestEmail", "TestPass");
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
             .Returns(existingUser);
@@ -62,7 +62,7 @@ public class AddUserHandlerTests
     public async Task Handle_WhenEmailIsAlreadyInUse_DoNotCreateAndThrowEmailAlreadyInUseException()
     {
         // Given
-        User existingUser = new("TestId", "TestUser", "TestEmail", "TestPass");
+        UserCredentials existingUser = new("TestId", "TestUser", "TestEmail", "TestPass");
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
             .Returns(existingUser);
@@ -90,8 +90,8 @@ public class AddUserHandlerTests
             .Returns((string user, string email, string password) => new User("TestId", user, email, password));
 
         _mapperMock
-            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<User>()))
-            .Returns((User user) => new UserDTO() { Id = user.Id, UserName = user.UserName, Email = user.Email, Password = user.Password});
+            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<UserCredentials>()))
+            .Returns((UserCredentials user) => new UserDTO() { Id = user.Id, UserName = user.UserName, Email = user.Email, Password = user.Password});
 
         // When
         var result = await _userHandlerSUT.Handle(new AddUserCommand(contract), CancellationToken.None);

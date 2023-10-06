@@ -35,7 +35,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
         }
 
         var encryptedPassword = _cryptoService.Encrypt(request.UpdateUserContract.Password);
-        User updatedUser = new(
+        UserCredentials updatedUser = new(
             request.UpdateUserContract.Id,
             request.UpdateUserContract.UserName,
             request.UpdateUserContract.Email,

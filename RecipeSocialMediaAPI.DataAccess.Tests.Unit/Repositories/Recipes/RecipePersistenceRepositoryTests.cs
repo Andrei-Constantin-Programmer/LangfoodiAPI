@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
 
@@ -40,7 +41,14 @@ public class RecipePersistenceRepositoryTests
     public void CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipe()
     {
         // Given
-        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount() 
+        {
+            Id = "ChefId",
+            Handler = "TestHandler",
+            UserName = "TestChef",
+            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        };
+
         string testLabel = "TestLabel";
 
         RecipeAggregate expectedResult = new(
@@ -106,7 +114,13 @@ public class RecipePersistenceRepositoryTests
     public void UpdateRecipe_WhenRecipeIsSuccessfullyUpdated_ReturnTrue()
     {
         // Given
-        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount()
+        {
+            Id = "ChefId",
+            Handler = "TestHandler",
+            UserName = "TestChef",
+            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        };
         string testLabel = "TestLabel";
 
         RecipeAggregate recipe = new(
@@ -155,7 +169,14 @@ public class RecipePersistenceRepositoryTests
     public void UpdateRecipe_WhenRecipeIsNotUpdated_ReturnFalse()
     {
         // Given
-        User testChef = new("ChefId", "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount()
+        {
+            Id = "ChefId",
+            Handler = "TestHandler",
+            UserName = "TestChef",
+            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        };
+
         string testLabel = "TestLabel";
 
         RecipeAggregate recipe = new(
@@ -218,7 +239,13 @@ public class RecipePersistenceRepositoryTests
             "TestTitle",
             new(new(), new(), 10, 500, 2300),
             "Short Description",
-            new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
+            new TestUserAccount()
+            {
+                Id = "ChefId",
+                Handler = "TestHandler",
+                UserName = "TestChef",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new HashSet<string>()
@@ -275,7 +302,13 @@ public class RecipePersistenceRepositoryTests
             "TestTitle",
             new(new(), new(), 10, 500, 2300),
             "Short Description",
-            new("ChefId", "TestChef", "chef@mail.com", "TestPass"),
+            new TestUserAccount()
+            {
+                Id = "ChefId",
+                Handler = "TestHandler",
+                UserName = "TestChef",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new HashSet<string>()

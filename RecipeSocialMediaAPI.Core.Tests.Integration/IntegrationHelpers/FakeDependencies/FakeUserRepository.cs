@@ -5,37 +5,37 @@ namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDep
 
 internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceRepository
 {
-    private readonly List<User> _collection;
+    private readonly List<UserCredentials> _collection;
 
     public FakeUserRepository()
     {
-        _collection = new List<User>();
+        _collection = new List<UserCredentials>();
     }
 
-    public User CreateUser(string username, string email, string password) 
+    public UserCredentials CreateUser(string username, string email, string password) 
     {
         var id = _collection.Count.ToString();
-        User newUser = new(id, username, email, password);
+        UserCredentials newUser = new(id, username, email, password);
         _collection.Add(newUser);
 
         return newUser;
     }
 
-    public bool DeleteUser(User user) => DeleteUser(user.Id);
+    public bool DeleteUser(UserCredentials user) => DeleteUser(user.Id);
 
     public bool DeleteUser(string id) => _collection.RemoveAll(user => user.Id == id) > 0;
 
-    public IEnumerable<User> GetAllUsers() => _collection;
+    public IEnumerable<UserCredentials> GetAllUsers() => _collection;
 
-    public User? GetUserById(string id) => _collection.Find(user => user.Id == id);
+    public UserCredentials? GetUserById(string id) => _collection.Find(user => user.Id == id);
 
-    public User? GetUserByEmail(string email) => _collection.Find(user => user.Email == email);
+    public UserCredentials? GetUserByEmail(string email) => _collection.Find(user => user.Email == email);
 
-    public User? GetUserByUsername(string username) => _collection.Find(user => user.UserName == username);
+    public UserCredentials? GetUserByUsername(string username) => _collection.Find(user => user.UserName == username);
 
-    public bool UpdateUser(User user)
+    public bool UpdateUser(UserCredentials user)
     {
-        User? updatedUser = _collection.FirstOrDefault(u => u.Id == user.Id);
+        UserCredentials? updatedUser = _collection.FirstOrDefault(u => u.Id == user.Id);
         if(updatedUser is null) 
         {
             return false;

@@ -15,7 +15,7 @@ public class TextMessageTests
     public TextMessageTests() 
     {
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
-        User testUser = new("UserId", "Username", "UserEmail", "UserPassword");
+        UserCredentials testUser = new("UserId", "Username", "UserEmail", "UserPassword");
 
         DateTimeOffset testDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 

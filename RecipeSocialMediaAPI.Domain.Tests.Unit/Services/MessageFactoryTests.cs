@@ -29,7 +29,7 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
@@ -58,7 +58,7 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
@@ -76,7 +76,7 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
@@ -107,7 +107,7 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
@@ -129,7 +129,7 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
@@ -160,7 +160,7 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        User testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);

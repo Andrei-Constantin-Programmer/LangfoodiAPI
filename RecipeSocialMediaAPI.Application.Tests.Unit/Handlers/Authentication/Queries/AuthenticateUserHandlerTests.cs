@@ -35,7 +35,7 @@ public class AuthenticateUserHandlerTests
     public async Task Handle_WhenUserIsNotFound_ThrowUserNotFoundException()
     {
         // Given
-        User? nullUser = null;
+        UserCredentials? nullUser = null;
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
             .Returns(nullUser);
@@ -59,7 +59,7 @@ public class AuthenticateUserHandlerTests
     {
         // Given
         var encryptedPassword = _cryptoServiceFake.Encrypt("TestPass");
-        User testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
+        UserCredentials testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.UserName)))
             .Returns(testUser);
@@ -80,7 +80,7 @@ public class AuthenticateUserHandlerTests
     {
         // Given
         var encryptedPassword = _cryptoServiceFake.Encrypt("TestPass");
-        User testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
+        UserCredentials testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
             .Returns(testUser);
@@ -102,7 +102,7 @@ public class AuthenticateUserHandlerTests
         // Given
         var decryptedPassword = "TestPass";
         var encryptedPassword = _cryptoServiceFake.Encrypt(decryptedPassword);
-        User testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
+        UserCredentials testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
 
         UserDTO expectedUserDto = new() 
         { Id = testUser.Id, UserName = testUser.UserName, Email = testUser.Email, Password = testUser.Password };
@@ -110,7 +110,7 @@ public class AuthenticateUserHandlerTests
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.UserName)))
             .Returns(testUser);
         _mapperMock
-            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<User>()))
+            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<UserCredentials>()))
             .Returns(expectedUserDto);
 
         AuthenticateUserQuery query = new(testUser.UserName, decryptedPassword);
@@ -130,7 +130,7 @@ public class AuthenticateUserHandlerTests
         // Given
         var decryptedPassword = "TestPass";
         var encryptedPassword = _cryptoServiceFake.Encrypt(decryptedPassword);
-        User testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
+        UserCredentials testUser = new("TestId", "TestUser", "TestEmail", encryptedPassword);
 
         UserDTO expectedUserDto = new()
         { Id = testUser.Id, UserName = testUser.UserName, Email = testUser.Email, Password = testUser.Password };
@@ -138,7 +138,7 @@ public class AuthenticateUserHandlerTests
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(email => email == testUser.Email)))
             .Returns(testUser);
         _mapperMock
-            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<User>()))
+            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<UserCredentials>()))
             .Returns(expectedUserDto);
 
         AuthenticateUserQuery query = new(testUser.Email, decryptedPassword);

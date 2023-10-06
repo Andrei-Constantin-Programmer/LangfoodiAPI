@@ -9,7 +9,7 @@ public class RecipeAggregate
     public Recipe Recipe { get; }
     public string Title { get; set; }
     public string Description { get; set; }
-    public User Chef { get; }
+    public IUserAccount Chef { get; }
     public DateTimeOffset CreationDate { get; }
     public DateTimeOffset LastUpdatedDate { get; set; }
 
@@ -21,7 +21,7 @@ public class RecipeAggregate
         string title,
         Recipe recipe,
         string description,
-        User chef,
+        IUserAccount chef,
         DateTimeOffset creationDate,
         DateTimeOffset lastUpdatedDate,
         ISet<string>? labels = null)

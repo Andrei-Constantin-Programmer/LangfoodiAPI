@@ -33,7 +33,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
-        User? chef = 
+        UserCredentials? chef = 
             _userQueryRepository.GetUserById(request.NewRecipeContract.ChefId) 
             ?? throw new UserNotFoundException();
 

@@ -111,7 +111,7 @@ public class UserQueryRepositoryTests
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
         UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        User testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
@@ -136,7 +136,7 @@ public class UserQueryRepositoryTests
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
         UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        User testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
 
         Exception testException = new("Test Exception");
 
@@ -192,7 +192,7 @@ public class UserQueryRepositoryTests
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
         UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        User testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
@@ -217,7 +217,7 @@ public class UserQueryRepositoryTests
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
         UserDocument testDocument = new() { UserName = "TestName", Email = email, Password = "TestPassword" };
-        User testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
 
         Exception testException = new("Test Exception");
 
@@ -273,7 +273,7 @@ public class UserQueryRepositoryTests
         string username = "WrongUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
         UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        User testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
@@ -298,7 +298,7 @@ public class UserQueryRepositoryTests
         string username = "TestUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == username;
         UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        User testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
 
         Exception testException = new("Test Exception");
 

@@ -26,7 +26,7 @@ public class CheckEmailExistsHandlerTests
     public async Task Handle_WhenUserWithEmailExists_ReturnTrue()
     {
         // Given
-        User testUser = new("TestId", "TestUser", "TestEmail", "TestPass");
+        UserCredentials testUser = new("TestId", "TestUser", "TestEmail", "TestPass");
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
             .Returns(testUser);
@@ -44,7 +44,7 @@ public class CheckEmailExistsHandlerTests
     public async Task Handle_WhenUserWithEmailDoesNotExist_ReturnFalse()
     {
         // Given
-        User? nullUser = null;
+        UserCredentials? nullUser = null;
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
             .Returns(nullUser);

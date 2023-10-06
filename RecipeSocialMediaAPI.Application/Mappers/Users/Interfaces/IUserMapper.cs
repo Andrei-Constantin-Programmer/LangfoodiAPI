@@ -4,6 +4,6 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 namespace RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 public interface IUserMapper
 {
-    public UserDTO MapUserToUserDto(User user);
-    public User MapUserDtoToUser(UserDTO userDto);
+    public UserDTO MapUserToUserDto(UserCredentials user);
+    public UserCredentials MapUserDtoToUser(UserDTO userDto);
 }
