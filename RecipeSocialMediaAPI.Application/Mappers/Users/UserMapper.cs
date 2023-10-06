@@ -1,23 +1,60 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Mappers.Users;
+
 public class UserMapper : IUserMapper
 {
-    public UserDTO MapUserToUserDto(UserCredentials user)
+    private readonly IUserFactory _userFactory;
+
+    public UserMapper(IUserFactory userFactory)
+    {
+        _userFactory = userFactory;
+    }
+
+    public UserDTO MapUserToUserDto(IUserCredentials userCredentials)
     {
         return new UserDTO()
         {
-            Id = user.Id,
-            Email = user.Email,
-            UserName = user.UserName,
-            Password = user.Password,
+            Id = userCredentials.Account.Id,
+            Handler = userCredentials.Account.Handler,
+            UserName = userCredentials.Account.UserName,
+            AccountCreationDate = userCredentials.Account.AccountCreationDate,
+            Email = userCredentials.Email,
+            Password = userCredentials.Password,
         };
     }
 
-    public UserCredentials MapUserDtoToUser(UserDTO userDto)
+    public IUserCredentials MapUserDtoToUser(UserDTO userDto)
     {
-        return new(userDto.Id, userDto.UserName, userDto.Email, userDto.Password);
+        return _userFactory.CreateUserCredentials(
+            userDto.Id, 
+            userDto.Handler, 
+            userDto.UserName, 
+            userDto.Email, 
+            userDto.Password, 
+            userDto.AccountCreationDate);
+    }
+
+    public UserAccountDTO MapUserAccountToUserAccountDto(IUserAccount userAccount)
+    {
+        return new UserAccountDTO()
+        {
+            Id = userAccount.Id,
+            Handler = userAccount.Handler,
+            UserName = userAccount.UserName,
+            AccountCreationDate = userAccount.AccountCreationDate,
+        };
+    }
+
+    public IUserAccount MapUserAccountDtoToUserAccount(UserAccountDTO userAccountDto)
+    {
+        return _userFactory.CreateUserAccount(
+            userAccountDto.Id,
+            userAccountDto.Handler,
+            userAccountDto.UserName,
+            userAccountDto.AccountCreationDate);
     }
 }

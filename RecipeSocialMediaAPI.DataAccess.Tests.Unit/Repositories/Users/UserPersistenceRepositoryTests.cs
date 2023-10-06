@@ -10,6 +10,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using System.Linq.Expressions;
+using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories.Users;
 
@@ -221,7 +222,7 @@ public class UserPersistenceRepositoryTests
     public void DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
     {
         // Given
-        UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
@@ -242,14 +243,27 @@ public class UserPersistenceRepositoryTests
     public void DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
     {
         // Given
-        UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
             .Returns(true);
 
+        IUserCredentials userCredentials = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = testDocument.Id!,
+                Handler = testDocument.Handler,
+                UserName = testDocument.UserName,
+                AccountCreationDate = testDocument.AccountCreationDate!
+            },
+            Email = testDocument.Email,
+            Password = testDocument.Password
+        };
+
         // When
-        var result = _userPersistenceRepositorySUT.DeleteUser(new User(testDocument.Id!, testDocument.UserName, testDocument.Email, testDocument.Password));
+        var result = _userPersistenceRepositorySUT.DeleteUser(userCredentials);
 
         // Then
         result.Should().BeTrue();
@@ -284,8 +298,21 @@ public class UserPersistenceRepositoryTests
             .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
             .Returns(false);
 
+        IUserCredentials userCredentials = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "1",
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "Test Email",
+            Password = "Test Password"
+        };
+
         // When
-        var result = _userPersistenceRepositorySUT.DeleteUser(new User("1", "Test Name", "Test Email", "Test Password"));
+        var result = _userPersistenceRepositorySUT.DeleteUser(userCredentials);
 
         // Then
         result.Should().BeFalse();

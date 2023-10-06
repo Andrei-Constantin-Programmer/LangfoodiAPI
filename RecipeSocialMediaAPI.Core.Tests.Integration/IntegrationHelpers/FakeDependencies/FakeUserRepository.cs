@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
-internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceRepository
+internal class FakeUserRepository //: IUserQueryRepository, IUserPersistenceRepository
 {
     private readonly List<UserCredentials> _collection;
 

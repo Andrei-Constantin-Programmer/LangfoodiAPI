@@ -50,7 +50,7 @@ public class RecipeMapper : IRecipeMapper
             Id = recipeAggregate.Id,
             Title = recipeAggregate.Title,
             Description = recipeAggregate.Description,
-            Chef = _userMapper.MapUserToUserDto(recipeAggregate.Chef),
+            Chef = _userMapper.MapUserAccountToUserAccountDto(recipeAggregate.Chef),
             Labels = recipeAggregate.Labels,
             Ingredients = recipeAggregate.Recipe.Ingredients
                 .Select(MapIngredientToIngredientDto)

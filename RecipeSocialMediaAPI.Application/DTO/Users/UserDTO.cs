@@ -7,5 +7,5 @@ public record UserDTO
     required public string UserName { get; set; }
     required public string Email { get; set; }
     required public string Password { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset AccountCreationDate { get; set; }
 }

@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
-internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistenceRepository
+internal class FakeRecipeRepository //: IRecipeQueryRepository, IRecipePersistenceRepository
 {
     private readonly List<RecipeAggregate> _collection;
 

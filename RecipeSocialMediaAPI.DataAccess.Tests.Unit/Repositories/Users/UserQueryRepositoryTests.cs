@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
 
@@ -68,7 +69,7 @@ public class UserQueryRepositoryTests
         List<UserDocument> existingUsers = new();
         for (int i = 0; i < numberOfUsers; i++)
         {
-            existingUsers.Add(new UserDocument { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" });
+            existingUsers.Add(new UserDocument { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" });
         }
 
         _mongoCollectionWrapperMock
@@ -110,9 +111,20 @@ public class UserQueryRepositoryTests
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
-        UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
-
+        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        IUserCredentials testUser = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = testDocument.Handler,
+                UserName = testDocument.UserName,
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = testDocument.Email,
+            Password = testDocument.Password
+        };
+            
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
@@ -135,8 +147,19 @@ public class UserQueryRepositoryTests
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
-        UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        IUserCredentials testUser = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = testDocument.Handler,
+                UserName = testDocument.UserName,
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = testDocument.Email,
+            Password = testDocument.Password
+        };
 
         Exception testException = new("Test Exception");
 
@@ -191,8 +214,20 @@ public class UserQueryRepositoryTests
         // Given
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        IUserCredentials testUser = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = testDocument.Handler,
+                UserName = testDocument.UserName,
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = testDocument.Email,
+            Password = testDocument.Password
+        };
+
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
@@ -216,8 +251,19 @@ public class UserQueryRepositoryTests
         // Given
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument testDocument = new() { UserName = "TestName", Email = email, Password = "TestPassword" };
-        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = email, Password = "TestPassword" };
+        IUserCredentials testUser = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = testDocument.Handler,
+                UserName = testDocument.UserName,
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = testDocument.Email,
+            Password = testDocument.Password
+        };
 
         Exception testException = new("Test Exception");
 
@@ -272,8 +318,19 @@ public class UserQueryRepositoryTests
         // Given
         string username = "WrongUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
-        UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        IUserCredentials testUser = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = testDocument.Handler,
+                UserName = testDocument.UserName,
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = testDocument.Email,
+            Password = testDocument.Password
+        };
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
@@ -297,8 +354,19 @@ public class UserQueryRepositoryTests
         // Given
         string username = "TestUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == username;
-        UserDocument testDocument = new() { UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
-        UserCredentials testUser = new("TestId", testDocument.UserName, testDocument.Email, testDocument.Password);
+        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        IUserCredentials testUser = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = testDocument.Handler,
+                UserName = testDocument.UserName,
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = testDocument.Email,
+            Password = testDocument.Password
+        };
 
         Exception testException = new("Test Exception");
 
