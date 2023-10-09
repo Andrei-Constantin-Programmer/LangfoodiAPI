@@ -4,8 +4,8 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Users;
 
 public interface IUserQueryRepository
 {
-    IEnumerable<User> GetAllUsers();
-    User? GetUserById(string id);
-    User? GetUserByEmail(string email);
-    User? GetUserByUsername(string username);
+    IEnumerable<IUserCredentials> GetAllUsers();
+    IUserCredentials? GetUserById(string id);
+    IUserCredentials? GetUserByEmail(string email);
+    IUserCredentials? GetUserByUsername(string username);
 }

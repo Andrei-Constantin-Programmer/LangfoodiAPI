@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Queries;
@@ -59,7 +60,7 @@ public class GetRecipeByIdHandlerTests
             "test title",
             new(new(), new()),
             "test desc",
-            new("2", "user", "mail", "pass"),
+            new TestUserAccount() { Id = "2", Handler = "handler", UserName = "user" },
             _testDate,
             _testDate
         );
@@ -71,12 +72,12 @@ public class GetRecipeByIdHandlerTests
             Description = testRecipeAggregate.Description,
             CreationDate = testRecipeAggregate.CreationDate,
             LastUpdatedDate = testRecipeAggregate.LastUpdatedDate,
-            Chef = new UserDTO
+            Chef = new UserAccountDTO
             {
                 Id = testRecipeAggregate.Chef.Id,
                 UserName = testRecipeAggregate.Chef.UserName,
-                Email = testRecipeAggregate.Chef.Email,
-                Password = testRecipeAggregate.Chef.Password,
+                Handler = testRecipeAggregate.Chef.Handler,
+                AccountCreationDate = testRecipeAggregate.Chef.AccountCreationDate
             },
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(new List<RecipeStepDTO>()),

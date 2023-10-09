@@ -20,12 +20,12 @@ public class UserQueryRepository : IUserQueryRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public IEnumerable<User> GetAllUsers() =>
+    public IEnumerable<IUserCredentials> GetAllUsers() =>
         _userCollection
             .GetAll((_) => true)
             .Select(_mapper.MapUserDocumentToUser);
 
-    public User? GetUserById(string id)
+    public IUserCredentials? GetUserById(string id)
     {
         UserDocument? userDocument;
         try
@@ -44,7 +44,7 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public User? GetUserByEmail(string email)
+    public IUserCredentials? GetUserByEmail(string email)
     {
         UserDocument? userDocument;
         try
@@ -63,7 +63,7 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public User? GetUserByUsername(string username)
+    public IUserCredentials? GetUserByUsername(string username)
     {
         UserDocument? userDocument;
 

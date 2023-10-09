@@ -2,6 +2,7 @@
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Recipes;
 
@@ -15,7 +16,7 @@ public class RecipeAggregateTests
         string testTitle = "My Recipe";
         Recipe testRecipe = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step")}), 10, 500, 2300);
         string testDescription = "";
-        User testChef = new("TestId", "TestUsername", "TestEmail", "TestPassword");
+        IUserAccount testChef = new TestUserAccount() { Id = "TestId", Handler = "TestHandler", UserName = "TestUsername" };
         DateTimeOffset testCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
         DateTimeOffset testLastUpdatedDate = new(2023, 8, 30, 0, 0, 0, TimeSpan.Zero);
 
@@ -67,14 +68,14 @@ public class RecipeAggregateTests
     public void Chef_CanBeModifiedThroughInstanceMethods()
     {
         // Given
-        var user = _recipeAggregateSUT.Chef;
-        string newEmail = "mynewemail@mail.com";
+        var chef = _recipeAggregateSUT.Chef;
+        string newUsername = "New Username";
 
         // When
-        user.Email = newEmail;
+        chef.UserName = newUsername;
 
         // Then
-        _recipeAggregateSUT.Chef.Email.Should().Be(newEmail);
+        _recipeAggregateSUT.Chef.UserName.Should().Be(newUsername);
     }
 
     [Fact]

@@ -12,6 +12,7 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class AddRecipeHandlerTests
@@ -105,19 +106,25 @@ public class AddRecipeHandlerTests
 
         _userQueryRepositoryMock
             .Setup(x => x.GetUserById(It.IsAny<string>()))
-            .Returns(new User("1", "user", "mail", "pass"));
+            .Returns(new TestUserCredentials
+            {
+                Account = new TestUserAccount
+                {
+                    Id = "1",
+                    Handler = "handler",
+                    UserName = "user",
+                    AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+                },
+                Email = "mail",
+                Password = "password"
+            });
 
         _recipePersistenceRepositoryMock
             .Setup(x => x.CreateRecipe(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
-                It.IsAny<User>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
+                It.IsAny<IUserAccount>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
                 It.IsAny<DateTimeOffset>()))
-            .Returns((
-                string title, Recipe recipe, string desc, 
-                User chef, ISet<string> labels, DateTimeOffset creationDate,
-                DateTimeOffset lastUpdatedDate) => new RecipeAggregate(
-                    "1", title, recipe, desc, chef, creationDate, lastUpdatedDate,
-                    labels
-                )
+            .Returns((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate) 
+                => new RecipeAggregate("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, labels)
             );
 
         _recipeMapperMock
@@ -132,7 +139,7 @@ public class AddRecipeHandlerTests
             .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
             .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO() {
                 Id = "1", Title = recipe.Title, Description = recipe.Description,
-                Chef = new UserDTO() { Id = "1", Email = "mail", UserName = "name", Password = "pass" },
+                Chef = new UserAccountDTO() { Id = "1", Handler = "handler", UserName = "name", AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) },
                 Labels = recipe.Labels, CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate, 
                 Ingredients = new List<IngredientDTO>() {
@@ -171,6 +178,7 @@ public class AddRecipeHandlerTests
         result.RecipeSteps.First().ImageUrl.Should().Be("url");
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
+
         _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);
     }

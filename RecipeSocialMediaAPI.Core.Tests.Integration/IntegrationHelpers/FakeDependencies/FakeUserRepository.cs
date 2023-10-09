@@ -1,47 +1,59 @@
 ﻿using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
 internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceRepository
 {
-    private readonly List<User> _collection;
+    private readonly List<IUserCredentials> _collection;
 
     public FakeUserRepository()
     {
-        _collection = new List<User>();
+        _collection = new List<IUserCredentials>();
     }
 
-    public User CreateUser(string username, string email, string password) 
+    public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate)
     {
         var id = _collection.Count.ToString();
-        User newUser = new(id, username, email, password);
+        IUserCredentials newUser = new TestUserCredentials
+        {
+            Account = new TestUserAccount
+            {
+                Id = id,
+                Handler = handler,
+                UserName = username,
+                AccountCreationDate = accountCreationDate
+            },
+            Email = email,
+            Password = password
+        };
         _collection.Add(newUser);
 
         return newUser;
     }
 
-    public bool DeleteUser(User user) => DeleteUser(user.Id);
+    public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);
 
-    public bool DeleteUser(string id) => _collection.RemoveAll(user => user.Id == id) > 0;
+    public bool DeleteUser(string id) => _collection.RemoveAll(user => user.Account.Id == id) > 0;
 
-    public IEnumerable<User> GetAllUsers() => _collection;
+    public IEnumerable<IUserCredentials> GetAllUsers() => _collection;
 
-    public User? GetUserById(string id) => _collection.Find(user => user.Id == id);
+    public IUserCredentials? GetUserById(string id) => _collection.Find(user => user.Account.Id == id);
 
-    public User? GetUserByEmail(string email) => _collection.Find(user => user.Email == email);
+    public IUserCredentials? GetUserByEmail(string email) => _collection.Find(user => user.Email == email);
 
-    public User? GetUserByUsername(string username) => _collection.Find(user => user.UserName == username);
+    public IUserCredentials? GetUserByUsername(string username) => _collection.Find(user => user.Account.UserName == username);
 
-    public bool UpdateUser(User user)
+    public bool UpdateUser(IUserCredentials user)
     {
-        User? updatedUser = _collection.FirstOrDefault(u => u.Id == user.Id);
-        if(updatedUser is null) 
+        IUserCredentials? updatedUser = _collection.FirstOrDefault(u => u.Account.Id == user.Account.Id);
+        if (updatedUser is null)
         {
             return false;
         }
 
-        updatedUser.UserName = user.UserName;
+        updatedUser.Account.UserName = user.Account.UserName;
         updatedUser.Email = user.Email;
         updatedUser.Password = user.Password;
 

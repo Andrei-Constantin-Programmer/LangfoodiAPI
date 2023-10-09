@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Queries;
@@ -54,7 +55,13 @@ public class GetRecipesFromUserHandlerTests
             "test title",
             new(new(), new()),
             "test desc",
-            new("1", chefUsername, "mail", "pass"),
+            new TestUserAccount
+            { 
+                Id = "1", 
+                Handler = "handler", 
+                UserName = "name", 
+                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) 
+            },
             _testDate,
             _testDate
         );

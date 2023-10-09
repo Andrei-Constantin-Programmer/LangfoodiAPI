@@ -1,11 +1,11 @@
-﻿namespace RecipeSocialMediaAPI.Application.DTO.Users;
+﻿using RecipeSocialMediaAPI.Domain.Models.Users;
 
-public record UserDTO
+namespace RecipeSocialMediaAPI.Domain.Tests.Shared;
+
+public class TestUserAccount : IUserAccount
 {
     required public string Id { get; set; }
     required public string Handler { get; set; }
     required public string UserName { get; set; }
-    required public string Email { get; set; }
-    required public string Password { get; set; }
     public DateTimeOffset AccountCreationDate { get; set; }
 }

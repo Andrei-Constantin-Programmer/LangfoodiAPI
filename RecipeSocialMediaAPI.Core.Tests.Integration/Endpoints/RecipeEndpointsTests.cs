@@ -47,6 +47,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         _testUserContract = new()
         {
+            Handler = "testHandler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -78,9 +79,8 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
         data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
         data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
+        data.Chef.Handler.Should().Be(_testUserContract.Handler);
         data.Chef.UserName.Should().Be(_testUserContract.UserName);
-        data.Chef.Email.Should().Be(_testUserContract.Email);
-        data.Chef.Password.Should().NotBeNull();
         data.Ingredients.First().Name.Should().Be("eggs");
         data.Ingredients.First().Quantity.Should().Be(1);
         data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
@@ -369,8 +369,6 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
         data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
         data.Chef.UserName.Should().Be(_testUserContract.UserName);
-        data.Chef.Email.Should().Be(_testUserContract.Email);
-        data.Chef.Password.Should().NotBeNull();
         data.Ingredients.First().Name.Should().Be("eggs");
         data.Ingredients.First().Quantity.Should().Be(1);
         data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
@@ -423,8 +421,6 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
         data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
         data.Chef.UserName.Should().Be(_testUserContract.UserName);
-        data.Chef.Email.Should().Be(_testUserContract.Email);
-        data.Chef.Password.Should().NotBeNull();
         data.Ingredients.First().Name.Should().Be("lemons");
         data.Ingredients.First().Quantity.Should().Be(2);
         data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");

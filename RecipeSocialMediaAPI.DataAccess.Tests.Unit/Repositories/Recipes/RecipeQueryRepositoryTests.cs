@@ -11,6 +11,7 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories.Recipes;
 
@@ -84,14 +85,25 @@ public class RecipeQueryRepositoryTests
             Labels = new List<string>(),
             ChefId = chefId,
         };
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserCredentials testChef = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "chef@mail.com", 
+            Password = "TestPass"
+        };
 
         RecipeAggregate testRecipe = new(
                 id,
                 testDocument.Title,
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testDocument.Description,
-                testChef,
+                testChef.Account,
                 testDocument.CreationDate,
                 testDocument.LastUpdatedDate,
                 new HashSet<string>()
@@ -104,7 +116,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
             .Returns(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef.Account))
             .Returns(testRecipe);
 
         // When
@@ -135,7 +147,13 @@ public class RecipeQueryRepositoryTests
             Labels = new List<string>(),
             ChefId = chefId
         };
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount()
+        {
+            Id = chefId, 
+            Handler = "TestHandler", 
+            UserName = "TestUsername",
+            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        };
 
         RecipeAggregate testRecipe = new(
                 id,
@@ -192,14 +210,25 @@ public class RecipeQueryRepositoryTests
             Labels = new List<string>(),
             ChefId = chefId,
         };
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserCredentials testChef = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "chef@mail.com",
+            Password = "TestPass"
+        };
 
         RecipeAggregate testRecipe = new(
                 id,
                 testDocument.Title,
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testDocument.Description,
-                testChef,
+                testChef.Account,
                 testDocument.CreationDate,
                 testDocument.LastUpdatedDate,
                 new HashSet<string>()
@@ -213,7 +242,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
             .Returns(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef.Account))
             .Returns(testRecipe);
 
         // When
@@ -239,7 +268,18 @@ public class RecipeQueryRepositoryTests
     {
         // Given
         string chefId = "1";
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserCredentials testChef = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = chefId,
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "chef@mail.com",
+            Password = "TestPass"
+        };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         _userQueryRepositoryMock
@@ -257,7 +297,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -268,7 +308,18 @@ public class RecipeQueryRepositoryTests
     {
         // Given
         string chefId = "1";
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserCredentials testChef = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = chefId,
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "chef@mail.com",
+            Password = "TestPass"
+        };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         RecipeDocument chefsRecipe = new()
@@ -289,7 +340,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
-            testChef,
+            testChef.Account,
             chefsRecipe.CreationDate,
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
@@ -301,7 +352,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
             .Returns(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -349,7 +400,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -360,7 +411,18 @@ public class RecipeQueryRepositoryTests
     {
         // Given
         string chefId = "1";
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserCredentials testChef = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "chef@mail.com",
+            Password = "TestPass"
+        };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         RecipeDocument chefsRecipe = new()
@@ -381,7 +443,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
-            testChef,
+            testChef.Account,
             chefsRecipe.CreationDate,
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
@@ -394,7 +456,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
             .Returns(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -421,7 +483,18 @@ public class RecipeQueryRepositoryTests
         // Given
         string chefId = "1";
         string chefUsername = "TestChef";
-        User testChef = new(chefId, chefUsername, "chef@mail.com", "TestPass");
+        IUserCredentials testChef = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = chefId,
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "chef@mail.com",
+            Password = "TestPass"
+        };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         RecipeDocument chefsRecipe = new()
@@ -442,7 +515,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
-            testChef,
+            testChef.Account,
             chefsRecipe.CreationDate,
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
@@ -454,7 +527,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(x => x == chefUsername)))
             .Returns(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -474,7 +547,18 @@ public class RecipeQueryRepositoryTests
         // Given
         string chefId = "1";
         string chefUsername = "TestChef";
-        User testChef = new(chefId, chefUsername, "chef@mail.com", "TestPass");
+        IUserCredentials testChef = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = chefId,
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "chef@mail.com",
+            Password = "TestPass"
+        };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         _userQueryRepositoryMock
@@ -492,7 +576,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -533,7 +617,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -545,7 +629,18 @@ public class RecipeQueryRepositoryTests
         // Given
         string chefId = "1";
         string chefUsername = "TestChef";
-        User testChef = new(chefId, chefUsername, "chef@mail.com", "TestPass");
+        IUserCredentials testChef = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "chef@mail.com",
+            Password = "TestPass"
+        };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         RecipeDocument chefsRecipe = new()
@@ -566,7 +661,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
-            testChef,
+            testChef.Account,
             chefsRecipe.CreationDate,
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
@@ -579,7 +674,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(x => x == chefUsername)))
             .Returns(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -604,7 +699,7 @@ public class RecipeQueryRepositoryTests
     public void GetRecipesByChef_WhenChefIsNull_ReturnEmptyList()
     {
         // Given
-        User? chef = null;
+        IUserAccount? chef = null;
 
         // When
         var result = _recipeQueryRepositorySUT.GetRecipesByChef(chef);
@@ -613,7 +708,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -624,7 +719,14 @@ public class RecipeQueryRepositoryTests
     {
         // Given
         string chefId = "1";
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount()
+        {
+            Id = chefId,
+            Handler = "TestHandler",
+            UserName = "TestUsername",
+            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        };
+            
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         RecipeDocument chefsRecipe = new()
@@ -673,7 +775,13 @@ public class RecipeQueryRepositoryTests
     {
         // Given
         string chefId = "1";
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount()
+        {
+            Id = chefId,
+            Handler = "TestHandler",
+            UserName = "TestUsername",
+            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         _mongoCollectionWrapperMock
@@ -687,7 +795,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<User>()),
+                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -698,7 +806,13 @@ public class RecipeQueryRepositoryTests
     {
         // Given
         string chefId = "1";
-        User testChef = new(chefId, "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount()
+        {
+            Id = "TestId",
+            Handler = "TestHandler",
+            UserName = "TestUsername",
+            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         RecipeDocument chefsRecipe = new()

@@ -15,38 +15,40 @@ public record UpdateUserCommand(UpdateUserContract UpdateUserContract) : IValida
 internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
     private readonly ICryptoService _cryptoService;
+    private readonly IUserFactory _userFactory;
 
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserPersistenceRepository _userPersistenceRepository;
 
-    public UpdateUserHandler(ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
+    public UpdateUserHandler(ICryptoService cryptoService, IUserFactory userFactory, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
     {
         _cryptoService = cryptoService;
+        _userFactory = userFactory;
         _userPersistenceRepository = userPersistenceRepository;
         _userQueryRepository = userQueryRepository;
     }
 
     public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var doesUserExist = _userQueryRepository.GetUserById(request.UpdateUserContract.Id) is not null;
-        if (!doesUserExist)
-        {
-            throw new UserNotFoundException();
-        }
+        IUserCredentials existingUser = 
+            _userQueryRepository.GetUserById(request.UpdateUserContract.Id)
+            ?? throw new UserNotFoundException();
 
         var encryptedPassword = _cryptoService.Encrypt(request.UpdateUserContract.Password);
-        User updatedUser = new(
+        IUserCredentials updatedUser = _userFactory.CreateUserCredentials(
             request.UpdateUserContract.Id,
+            existingUser.Account.Handler,
             request.UpdateUserContract.UserName,
             request.UpdateUserContract.Email,
-            encryptedPassword
+            encryptedPassword,
+            existingUser.Account.AccountCreationDate
         );
 
         bool isSuccessful = _userPersistenceRepository.UpdateUser(updatedUser);
 
         return isSuccessful
             ? Task.CompletedTask 
-            : throw new Exception($"Could not update user with id {updatedUser.Id}.");
+            : throw new Exception($"Could not update user with id {updatedUser.Account.Id}.");
     }
 }
 

@@ -2,6 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
@@ -17,7 +18,13 @@ public class ImageMessageTests
     {
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
-        User testUser = new("UserId", "Username", "UserEmail", "UserPassword");
+        IUserAccount testUser = new TestUserAccount
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "Username",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
         DateTimeOffset testDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
         List<string> images = new() { "Image1" };

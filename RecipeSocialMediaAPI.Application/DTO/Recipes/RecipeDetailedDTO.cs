@@ -7,7 +7,7 @@ public record RecipeDetailedDTO
     required public string Id { get; set; }
     required public string Title { get; set; }
     required public string Description { get; set; }
-    required public UserDTO Chef { get; set; }
+    required public UserAccountDTO Chef { get; set; }
     public int? NumberOfServings { get; set; }
     public int? CookingTime { get; set; }
     public int? KiloCalories { get; set; }

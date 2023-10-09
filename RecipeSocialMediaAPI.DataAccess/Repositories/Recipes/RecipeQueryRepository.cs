@@ -6,7 +6,6 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
 
@@ -44,7 +43,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
             return null;
         }
 
-        User? chef = _userQueryRepository.GetUserById(recipeDocument.ChefId);
+        IUserAccount? chef = _userQueryRepository.GetUserById(recipeDocument.ChefId)?.Account;
 
         if (chef is null)
         {
@@ -55,7 +54,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public IEnumerable<RecipeAggregate> GetRecipesByChef(User? chef)
+    public IEnumerable<RecipeAggregate> GetRecipesByChef(IUserAccount? chef)
     {
         if (chef is null)
         {
@@ -81,13 +80,13 @@ public class RecipeQueryRepository : IRecipeQueryRepository
 
     public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId)
     {
-        User? chef = _userQueryRepository.GetUserById(chefId);
+        IUserAccount? chef = _userQueryRepository.GetUserById(chefId)?.Account;
         return GetRecipesByChef(chef);
     }
 
     public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName)
     {
-        User? chef = _userQueryRepository.GetUserByUsername(chefName);
+        IUserAccount? chef = _userQueryRepository.GetUserByUsername(chefName)?.Account;
         return GetRecipesByChef(chef);
     }
 }

@@ -23,6 +23,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new()
         {
+            Handler = "TestHandler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -51,6 +52,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new()
         {
+            Handler = "handler",
             UserName = username,
             Email = email,
             Password = password
@@ -71,6 +73,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new()
         {
+            Handler = "handler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -97,6 +100,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new()
         {
+            Handler = "handler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -120,6 +124,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new()
         {
+            Handler = "handler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -146,6 +151,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new()
         {
+            Handler = "handler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -169,6 +175,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract createContract = new()
         {
+            Handler = "handler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -249,6 +256,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract createContract = new()
         {
+            Handler = "handler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -282,6 +290,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract createContract = new()
         {
+            Handler = "handler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -309,6 +318,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract createContract = new()
         {
+            Handler = "handler",
             UserName = "TestUsername",
             Email = "test@mail.com",
             Password = "Test@123"

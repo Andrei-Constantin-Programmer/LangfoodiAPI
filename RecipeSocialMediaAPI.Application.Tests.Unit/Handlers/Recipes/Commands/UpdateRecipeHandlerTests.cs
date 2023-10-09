@@ -10,6 +10,7 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 public class UpdateRecipeHandlerTests
@@ -88,10 +89,19 @@ public class UpdateRecipeHandlerTests
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(new RecipeAggregate(
-                testContract.Id, testContract.Title,
+                testContract.Id, 
+                testContract.Title,
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
-                testContract.Description, new User("1", "user", "mail", "pass"),
-                _testDate, _testDate
+                testContract.Description, 
+                new TestUserAccount 
+                { 
+                    Id = "1", 
+                    Handler = "handler", 
+                    UserName = "name", 
+                    AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) 
+                },
+                _testDate, 
+                _testDate
             ));
 
         _recipePersistenceRepositoryMock
@@ -126,10 +136,19 @@ public class UpdateRecipeHandlerTests
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(new RecipeAggregate(
-                testContract.Id, testContract.Title,
+                testContract.Id, 
+                testContract.Title,
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
-                testContract.Description, new User("1", "user", "mail", "pass"),
-                _testDate, _testDate
+                testContract.Description,
+                new TestUserAccount
+                {
+                    Id = "1",
+                    Handler = "handler",
+                    UserName = "name",
+                    AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+                },
+                _testDate, 
+                _testDate
             ));
 
         _recipePersistenceRepositoryMock

@@ -17,34 +17,36 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public User CreateUser(string username, string email, string password)
+    public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate)
     {
         UserDocument newUserDocument = new()
         {
+            Handler = handler,
             UserName = username,
             Email = email,
-            Password = password
+            Password = password,
+            AccountCreationDate = accountCreationDate,
         };
-
+        
         newUserDocument = _userCollection.Insert(newUserDocument);
 
         return _mapper.MapUserDocumentToUser(newUserDocument);
     }
 
-    public bool DeleteUser(User user) => DeleteUser(user.Id);
+    public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);
 
     public bool DeleteUser(string id) => _userCollection.Delete(userDoc => userDoc.Id == id);
 
-    public bool UpdateUser(User user)
+    public bool UpdateUser(IUserCredentials user)
     {
-        var userDocument = _userCollection.Find(userDoc => userDoc.Id == user.Id);
+        var userDocument = _userCollection.Find(userDoc => userDoc.Id == user.Account.Id);
 
         if (userDocument is null)
         {
             return false;
         }
 
-        userDocument.UserName = user.UserName;
+        userDocument.UserName = user.Account.UserName;
         userDocument.Email = user.Email;
         userDocument.Password = user.Password;
 

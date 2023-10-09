@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
@@ -29,7 +30,7 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserIsNotFound_DoNotDeleteAndThrowUserNotFoundException()
     {
         // Given
-        User? nullUser = null;
+        IUserCredentials? nullUser = null;
         
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
@@ -46,7 +47,7 @@ public class RemoveUserHandlerTests
         // Then
         await action.Should().ThrowAsync<UserNotFoundException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.DeleteUser(It.IsAny<User>()), Times.Never);
+            .Verify(repo => repo.DeleteUser(It.IsAny<IUserCredentials>()), Times.Never);
     }
 
     [Fact]
@@ -55,15 +56,27 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserIdExistsAndDeleteIsSuccessful_DeleteAndNotThrow()
     {
         // Given
-        User user = new("TestId", "TestUser", "TestEmail", "TestPass");
+        IUserCredentials user = new TestUserCredentials
+        {
+            Account = new TestUserAccount
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "TestEmail",
+            Password = "TestPassword"
+        };
+
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Id)))
+            .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Account.Id)))
             .Returns(user);
         _userPersistenceRepositoryMock
             .Setup(repo => repo.DeleteUser(It.IsAny<string>()))
             .Returns(true);
 
-        RemoveUserCommand command = new(user.Id);
+        RemoveUserCommand command = new(user.Account.Id);
 
         // When
         var action = async () => await _removeUserHandlerSUT.Handle(command, CancellationToken.None);
@@ -71,7 +84,7 @@ public class RemoveUserHandlerTests
         // Then
         await action.Should().NotThrowAsync();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Id)), Times.Once);
+            .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id)), Times.Once);
     }
 
     [Fact]
@@ -80,7 +93,19 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserEmailExistsAndDeleteIsSuccessful_DeleteAndNotThrow()
     {
         // Given
-        User user = new("TestId", "TestUser", "TestEmail", "TestPass");
+        IUserCredentials user = new TestUserCredentials
+        {
+            Account = new TestUserAccount
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "TestEmail",
+            Password = "TestPassword"
+        };
+
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == user.Email)))
             .Returns(user);
@@ -96,7 +121,7 @@ public class RemoveUserHandlerTests
         // Then
         await action.Should().NotThrowAsync();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Id)), Times.Once);
+            .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id)), Times.Once);
     }
 
     [Fact]
@@ -105,15 +130,27 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserIdExistsButDeleteIsUnsuccessful_ThrowException()
     {
         // Given
-        User user = new("TestId", "TestUser", "TestEmail", "TestPass");
+        IUserCredentials user = new TestUserCredentials
+        {
+            Account = new TestUserAccount
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "TestEmail",
+            Password = "TestPassword"
+        };
+
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Id)))
+            .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Account.Id)))
             .Returns(user);
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Id)))
+            .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id)))
             .Returns(false);
 
-        RemoveUserCommand command = new(user.Id);
+        RemoveUserCommand command = new(user.Account.Id);
 
         // When
         var action = async () => await _removeUserHandlerSUT.Handle(command, CancellationToken.None);
@@ -128,12 +165,24 @@ public class RemoveUserHandlerTests
     public async Task Handle_WhenUserEmailExistsButDeleteIsUnsuccessful_ThrowException()
     {
         // Given
-        User user = new("TestId", "TestUser", "TestEmail", "TestPass");
+        IUserCredentials user = new TestUserCredentials
+        {
+            Account = new TestUserAccount
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "TestEmail",
+            Password = "TestPassword"
+        };
+
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == user.Email)))
             .Returns(user);
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Id)))
+            .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id)))
             .Returns(false);
 
         RemoveUserCommand command = new(user.Email);
