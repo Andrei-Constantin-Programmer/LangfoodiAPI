@@ -33,8 +33,8 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
-        UserCredentials? chef = 
-            _userQueryRepository.GetUserById(request.NewRecipeContract.ChefId) 
+        IUserAccount? chef = 
+            _userQueryRepository.GetUserById(request.NewRecipeContract.ChefId)?.Account
             ?? throw new UserNotFoundException();
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;

@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
@@ -29,7 +30,13 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        IUserAccount testSender = new TestUserAccount
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "Username",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
@@ -58,7 +65,13 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        IUserAccount testSender = new TestUserAccount
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "Username",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
@@ -76,7 +89,13 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        IUserAccount testSender = new TestUserAccount
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "Username",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
@@ -107,7 +126,13 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        IUserAccount testSender = new TestUserAccount
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "Username",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
@@ -129,7 +154,13 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        IUserAccount testSender = new TestUserAccount
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "Username",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
@@ -160,7 +191,13 @@ public class MessageFactoryTests
     {
         // Given
         var testId = "TestId";
-        UserCredentials testSender = new("UserId", "Username", "UserEmail", "UserPassword");
+        IUserAccount testSender = new TestUserAccount
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "Username",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
         var testText = "Message content";
         DateTimeOffset testSentDate = new(2023, 9, 3, 16, 30, 0, TimeSpan.Zero);
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);

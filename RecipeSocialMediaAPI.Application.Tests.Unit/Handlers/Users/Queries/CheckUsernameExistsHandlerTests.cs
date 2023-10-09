@@ -3,6 +3,7 @@ using Moq;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Queries;
@@ -26,13 +27,24 @@ public class CheckUsernameExistsHandlerTests
     public async Task Handle_WhenUserWithUsernameExists_ReturnTrue()
     {
         // Given
-        UserCredentials testUser = new("TestId", "TestUser", "TestEmail", "TestPass");
+        IUserCredentials testUser = new TestUserCredentials
+        {
+            Account = new TestUserAccount
+            {
+                Id = "TestId",
+                Handler = "ExistingHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "TestEmail",
+            Password = "TestPassword"
+        };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.UserName)))
+            .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.Account.UserName)))
             .Returns(testUser);
 
         // When
-        var result = await _checkUsernameExistsHandlerSUT.Handle(new CheckUsernameExistsQuery(testUser.UserName), CancellationToken.None);
+        var result = await _checkUsernameExistsHandlerSUT.Handle(new CheckUsernameExistsQuery(testUser.Account.UserName), CancellationToken.None);
 
         // Then
         result.Should().BeTrue();
@@ -44,7 +56,7 @@ public class CheckUsernameExistsHandlerTests
     public async Task Handle_WhenUserWithUsernameDoesNotExist_ReturnFalse()
     {
         // Given
-        UserCredentials? nullUser = null;
+        IUserCredentials? nullUser = null;
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
             .Returns(nullUser);

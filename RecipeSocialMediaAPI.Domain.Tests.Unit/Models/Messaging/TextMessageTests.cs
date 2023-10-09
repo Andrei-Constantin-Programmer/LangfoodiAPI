@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.Domain.Utilities;
 using Moq;
 using FluentAssertions;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging;
 public class TextMessageTests
@@ -15,7 +16,13 @@ public class TextMessageTests
     public TextMessageTests() 
     {
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
-        UserCredentials testUser = new("UserId", "Username", "UserEmail", "UserPassword");
+        IUserAccount testUser = new TestUserAccount
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "Username",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
 
         DateTimeOffset testDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 

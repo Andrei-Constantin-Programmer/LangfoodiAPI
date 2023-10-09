@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
@@ -55,10 +56,19 @@ public class RemoveRecipeHandlerTests
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(new RecipeAggregate(
-                "1", "title",
+                "1", 
+                "title",
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
-                "desc", new User("1", "user", "mail", "pass"),
-                _testDate, _testDate
+                "desc", 
+                new TestUserAccount
+                {
+                    Id = "1",
+                    Handler = "handler",
+                    UserName = "name",
+                    AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+                },
+                _testDate, 
+                _testDate
             ));
 
         _recipePersistenceRepositoryMock
@@ -85,10 +95,19 @@ public class RemoveRecipeHandlerTests
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
             .Returns(new RecipeAggregate(
-                "1", "title",
+                "1", 
+                "title",
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
-                "desc", new User("1", "user", "mail", "pass"),
-                _testDate, _testDate
+                "desc", 
+                new TestUserAccount
+                {
+                    Id = "1",
+                    Handler = "handler",
+                    UserName = "name",
+                    AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+                },
+                _testDate, 
+                _testDate
             ));
 
         _recipePersistenceRepositoryMock

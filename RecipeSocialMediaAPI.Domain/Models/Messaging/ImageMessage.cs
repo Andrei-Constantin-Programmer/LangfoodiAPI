@@ -21,7 +21,7 @@ public record ImageMessage : Message
     public ImmutableList<string> ImageURLs => _imageURLs.ToImmutableList();
 
     public ImageMessage(IDateTimeProvider dateTimeProvider, 
-        string id, UserCredentials sender, IEnumerable<string> imageURLs, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
+        string id, IUserAccount sender, IEnumerable<string> imageURLs, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
         : base(dateTimeProvider, id, sender, sentDate, updatedDate, repliedToMessage)
     {
         if (!imageURLs.Any())

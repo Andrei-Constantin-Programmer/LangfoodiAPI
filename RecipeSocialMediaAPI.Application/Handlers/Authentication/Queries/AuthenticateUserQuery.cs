@@ -25,11 +25,11 @@ public class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, Us
 
     public Task<UserDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
-        UserCredentials user = (_userQueryRepository.GetUserByUsername(request.UsernameOrEmail)
+        IUserCredentials user = (_userQueryRepository.GetUserByUsername(request.UsernameOrEmail)
                     ?? _userQueryRepository.GetUserByEmail(request.UsernameOrEmail))
                     ?? throw new UserNotFoundException();
 
-        var successfulLogin = _cryptoService.ArePasswordsTheSame(request.Password, user?.Password ?? string.Empty);
+        var successfulLogin = _cryptoService.ArePasswordsTheSame(request.Password, user.Password ?? string.Empty);
 
         return !successfulLogin 
             ? throw new InvalidCredentialsException() 

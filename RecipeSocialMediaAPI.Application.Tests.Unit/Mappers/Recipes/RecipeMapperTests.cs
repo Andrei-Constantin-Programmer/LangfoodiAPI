@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Mappers.Recipes;
 
@@ -30,7 +31,7 @@ public class RecipeMapperTests
     public void MapRecipeStepDtoToRecipeStep_GivenRecipeStepDto_ReturnRecipeStep()
     {
         // Given
-        RecipeStepDTO testStep = new RecipeStepDTO()
+        RecipeStepDTO testStep = new()
         {
             Text = "Step 1",
             ImageUrl = "image url"
@@ -74,14 +75,14 @@ public class RecipeMapperTests
     public void MapIngredientDtoToIngredient_GivenIngredientDto_ReturnIngredient()
     {
         // Given
-        IngredientDTO testIngredient = new IngredientDTO()
+        IngredientDTO testIngredient = new()
         {
             Name = "eggs",
             Quantity = 1,
             UnitOfMeasurement = "whole"
         };
 
-        Ingredient expectedResult = new Ingredient(
+        Ingredient expectedResult = new(
             testIngredient.Name,
             testIngredient.Quantity,
             testIngredient.UnitOfMeasurement
@@ -101,9 +102,9 @@ public class RecipeMapperTests
     public void MapIngredientToIngredientDto_GivenIngredient_ReturnIngredientDto()
     {
         // Given
-        Ingredient testIngredient = new Ingredient("eggs", 1, "whole");
+        Ingredient testIngredient = new("eggs", 1, "whole");
 
-        IngredientDTO expectedResult = new IngredientDTO()
+        IngredientDTO expectedResult = new()
         {
             Name = "eggs",
             Quantity = 1,
@@ -124,7 +125,14 @@ public class RecipeMapperTests
     public void MapRecipeAggregateToRecipeDetailedDto_GivenRecipeAggregate_ReturnRecipeDetailedDto()
     {
         // Given
-        UserCredentials testChef = new("1", "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount
+        {
+            Id = "TestId",
+            Handler = "TestHandler",
+            UserName = "TestUsername",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
+
         RecipeAggregate testRecipe = new(
             "1",
             "title",
@@ -140,12 +148,14 @@ public class RecipeMapperTests
 
         _userMapperMock
             .Setup(x => x.MapUserToUserDto(It.IsAny<UserCredentials>()))
-            .Returns((UserCredentials user) => new UserDTO()
+            .Returns((IUserCredentials user) => new UserDTO()
             {
-                Id = user.Id,
+                Id = user.Account.Id,
+                Handler = user.Account.Handler,
+                UserName = user.Account.UserName,
                 Email = user.Email,
-                UserName = user.UserName,
-                Password = user.Password
+                Password = user.Password,
+                AccountCreationDate = user.Account.AccountCreationDate
             });
 
         // When
@@ -178,7 +188,14 @@ public class RecipeMapperTests
     public void MapRecipeAggregateToRecipeDto_GivenRecipeAggregate_ReturnRecipeDto()
     {
         // Given
-        UserCredentials testChef = new("1", "TestChef", "chef@mail.com", "TestPass");
+        IUserAccount testChef = new TestUserAccount
+        {
+            Id = "TestId",
+            Handler = "TestHandler",
+            UserName = "TestUsername",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
+        
         RecipeAggregate testRecipe = new(
             "1",
             "title",

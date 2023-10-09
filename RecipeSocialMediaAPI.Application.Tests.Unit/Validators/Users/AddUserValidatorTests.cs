@@ -27,6 +27,7 @@ public class AddUserValidatorTests
         AddUserCommand testCommand = new(
             new()
             {
+                Handler = "testHandler",
                 UserName = "testUser",
                 Email = "testEmail",
                 Password = "password"
@@ -62,6 +63,7 @@ public class AddUserValidatorTests
         AddUserCommand testCommand = new(
             new()
             {
+                Handler = "testHandler",
                 UserName = "testUser",
                 Email = "testEmail",
                 Password = "password"

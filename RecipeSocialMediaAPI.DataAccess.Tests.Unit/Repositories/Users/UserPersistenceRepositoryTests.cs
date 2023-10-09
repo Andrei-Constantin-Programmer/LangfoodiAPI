@@ -10,7 +10,6 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using System.Linq.Expressions;
-using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories.Users;
 

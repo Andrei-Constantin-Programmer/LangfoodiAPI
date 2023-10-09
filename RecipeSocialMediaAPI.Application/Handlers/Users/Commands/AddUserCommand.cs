@@ -9,6 +9,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
@@ -17,13 +18,15 @@ public record AddUserCommand(NewUserContract NewUserContract) : IValidatableRequ
 internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 {
     private readonly IUserMapper _mapper;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly ICryptoService _cryptoService;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserPersistenceRepository _userPersistenceRepository;
 
-    public AddUserHandler(IUserMapper mapper, ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
+    public AddUserHandler(IUserMapper mapper, IDateTimeProvider dateTimeProvider, ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
     {
         _mapper = mapper;
+        _dateTimeProvider = dateTimeProvider;
         _cryptoService = cryptoService;
         _userPersistenceRepository = userPersistenceRepository;
         _userQueryRepository = userQueryRepository;
@@ -42,9 +45,13 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
         }
 
         var encryptedPassword = _cryptoService.Encrypt(request.NewUserContract.Password);
-        UserCredentials insertedUser = _userPersistenceRepository.CreateUser(request.NewUserContract.UserName,
-                                                       request.NewUserContract.Email,
-                                                       encryptedPassword);
+        IUserCredentials insertedUser = _userPersistenceRepository
+            .CreateUser(
+                request.NewUserContract.Handler,
+                request.NewUserContract.UserName,
+                request.NewUserContract.Email,
+                encryptedPassword,
+                _dateTimeProvider.Now);
 
         return await Task.FromResult(_mapper.MapUserToUserDto(insertedUser));
     }

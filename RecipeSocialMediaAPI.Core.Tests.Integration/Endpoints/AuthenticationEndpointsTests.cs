@@ -22,6 +22,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         // Given
         NewUserContract userToCreate = new()
         {
+            Handler = "testHandler",
             UserName = "testUser",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -57,6 +58,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         // Given
         NewUserContract userToCreate = new()
         {
+            Handler = "testHandler",
             UserName = "testUser",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -92,6 +94,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         // Given
         NewUserContract userToCreate = new()
         {
+            Handler = "testHandler",
             UserName = "testUser",
             Email = "test@mail.com",
             Password = "Test@123"
@@ -121,6 +124,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         // Given
         NewUserContract userToCreate = new()
         {
+            Handler = "testHandler",
             UserName = "testUser",
             Email = "test@mail.com",
             Password = "Test@123"
