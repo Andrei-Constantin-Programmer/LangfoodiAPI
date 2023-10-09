@@ -272,7 +272,7 @@ public class RecipeQueryRepositoryTests
         {
             Account = new TestUserAccount()
             {
-                Id = "TestId",
+                Id = chefId,
                 Handler = "TestHandler",
                 UserName = "TestUsername",
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
@@ -312,7 +312,7 @@ public class RecipeQueryRepositoryTests
         {
             Account = new TestUserAccount()
             {
-                Id = "TestId",
+                Id = chefId,
                 Handler = "TestHandler",
                 UserName = "TestUsername",
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
@@ -487,7 +487,7 @@ public class RecipeQueryRepositoryTests
         {
             Account = new TestUserAccount()
             {
-                Id = "TestId",
+                Id = chefId,
                 Handler = "TestHandler",
                 UserName = "TestUsername",
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
@@ -551,7 +551,7 @@ public class RecipeQueryRepositoryTests
         {
             Account = new TestUserAccount()
             {
-                Id = "TestId",
+                Id = chefId,
                 Handler = "TestHandler",
                 UserName = "TestUsername",
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
@@ -721,7 +721,7 @@ public class RecipeQueryRepositoryTests
         string chefId = "1";
         IUserAccount testChef = new TestUserAccount()
         {
-            Id = "TestId",
+            Id = chefId,
             Handler = "TestHandler",
             UserName = "TestUsername",
             AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
@@ -777,7 +777,7 @@ public class RecipeQueryRepositoryTests
         string chefId = "1";
         IUserAccount testChef = new TestUserAccount()
         {
-            Id = "TestId",
+            Id = chefId,
             Handler = "TestHandler",
             UserName = "TestUsername",
             AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)

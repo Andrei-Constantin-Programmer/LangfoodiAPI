@@ -99,6 +99,23 @@ public class UpdateUserHandlerTests
             .Setup(repo => repo.UpdateUser(It.IsAny<IUserCredentials>()))
             .Returns(true);
 
+        var encryptedPassword = _cryptoServiceFake.Encrypt(contract.Password);
+        _userFactoryMock
+            .Setup(factory => factory
+                .CreateUserCredentials(contract.Id, existingHandler, contract.UserName, contract.Email, encryptedPassword, creationDate))
+            .Returns(new TestUserCredentials
+            {
+                Account = new TestUserAccount
+                {
+                    Id = contract.Id,
+                    Handler = existingHandler,
+                    UserName = contract.UserName,
+                    AccountCreationDate = creationDate
+                },
+                Email = contract.Email,
+                Password = encryptedPassword
+            });
+
         UpdateUserCommand command = new(contract);
 
         // When

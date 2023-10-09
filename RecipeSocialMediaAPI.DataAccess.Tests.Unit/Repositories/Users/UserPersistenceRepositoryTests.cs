@@ -52,7 +52,7 @@ public class UserPersistenceRepositoryTests
             .Throws(new DocumentAlreadyExistsException<UserDocument>(testDocument));
 
         // When
-        var action = () => _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!);
+        var action = () => _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate);
 
         // Then
         action.Should().Throw<DocumentAlreadyExistsException<UserDocument>>();
@@ -80,7 +80,7 @@ public class UserPersistenceRepositoryTests
                 Id = testDocument.Id!, 
                 Handler = testDocument.Handler, 
                 UserName = testDocument.UserName, 
-                AccountCreationDate = testDocument.AccountCreationDate!
+                AccountCreationDate = testDocument.AccountCreationDate
             },
             Email = testDocument.Email,
             Password = testDocument.Password
@@ -94,7 +94,7 @@ public class UserPersistenceRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!);
+        var result = _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate);
 
         // Then
         result.Should().Be(testUser);
@@ -108,7 +108,7 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
-        UserDocument testDocument = new() { Handler = "Initial Handler", UserName = "Initial Name", Email = "Initial Email", Password = "Initial Password" };
+        UserDocument testDocument = new() { Handler = "Handler", UserName = "Initial Name", Email = "Initial Email", Password = "Initial Password", AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero) };
         IUserCredentials updatedUser = new TestUserCredentials
         {
             Account = new TestUserAccount()
@@ -116,7 +116,7 @@ public class UserPersistenceRepositoryTests
                 Id = testDocument.Id!,
                 Handler = "New Handler",
                 UserName = "New Name",
-                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+                AccountCreationDate = testDocument.AccountCreationDate.AddDays(5)
             },
             Email = "New Email",
             Password = "New Password"
@@ -141,7 +141,9 @@ public class UserPersistenceRepositoryTests
             .Verify(collection => collection.UpdateRecord(
                     It.Is<UserDocument>(
                         doc => doc.Id == testDocument.Id
-                        && doc.Handler == updatedUser.Account.Handler
+                        && doc.Handler == testDocument.Handler
+                        && doc.AccountCreationDate == testDocument.AccountCreationDate
+
                         && doc.UserName == updatedUser.Account.UserName
                         && doc.Email == updatedUser.Email
                         && doc.Password == updatedUser.Password),
@@ -255,7 +257,7 @@ public class UserPersistenceRepositoryTests
                 Id = testDocument.Id!,
                 Handler = testDocument.Handler,
                 UserName = testDocument.UserName,
-                AccountCreationDate = testDocument.AccountCreationDate!
+                AccountCreationDate = testDocument.AccountCreationDate
             },
             Email = testDocument.Email,
             Password = testDocument.Password

@@ -150,7 +150,7 @@ public class AuthenticateUserHandlerTests
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.Account.UserName)))
             .Returns(testUser);
         _mapperMock
-            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<UserCredentials>()))
+            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
             .Returns(expectedUserDto);
 
         AuthenticateUserQuery query = new(testUser.Account.UserName, decryptedPassword);
@@ -196,7 +196,7 @@ public class AuthenticateUserHandlerTests
             .Setup(repo => repo.GetUserByUsername(It.Is<string>(email => email == testUser.Email)))
             .Returns(testUser);
         _mapperMock
-            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<UserCredentials>()))
+            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
             .Returns(expectedUserDto);
 
         AuthenticateUserQuery query = new(testUser.Email, decryptedPassword);

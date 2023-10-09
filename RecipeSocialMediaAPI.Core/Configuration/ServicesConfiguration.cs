@@ -49,6 +49,8 @@ internal static class ServicesConfiguration
 
         // Transients
         builder.Services.AddTransient<ICryptoService, CryptoService>();
+        builder.Services.AddTransient<IMessageFactory, MessageFactory>();
+        builder.Services.AddTransient<IUserFactory, UserFactory>();
 
         // MediatR
         builder.Services.AddMediatR(config =>

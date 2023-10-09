@@ -147,15 +147,13 @@ public class RecipeMapperTests
             new HashSet<string>());
 
         _userMapperMock
-            .Setup(x => x.MapUserToUserDto(It.IsAny<UserCredentials>()))
-            .Returns((IUserCredentials user) => new UserDTO()
+            .Setup(x => x.MapUserAccountToUserAccountDto(It.IsAny<IUserAccount>()))
+            .Returns((IUserAccount user) => new UserAccountDTO()
             {
-                Id = user.Account.Id,
-                Handler = user.Account.Handler,
-                UserName = user.Account.UserName,
-                Email = user.Email,
-                Password = user.Password,
-                AccountCreationDate = user.Account.AccountCreationDate
+                Id = user.Id,
+                Handler = user.Handler,
+                UserName = user.UserName,
+                AccountCreationDate = user.AccountCreationDate
             });
 
         // When
@@ -214,7 +212,7 @@ public class RecipeMapperTests
         result.Id.Should().Be("1");
         result.Title.Should().Be("title");
         result.Description.Should().Be("desc");
-        result.ChefUsername.Should().Be("TestChef");
+        result.ChefUsername.Should().Be(testChef.UserName);
         result.CreationDate.Should().Be(_testDate);
         result.NumberOfServings.Should().Be(1);
         result.Labels.Should().BeEmpty();
