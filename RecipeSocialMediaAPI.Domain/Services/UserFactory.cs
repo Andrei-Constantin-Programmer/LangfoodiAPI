@@ -15,7 +15,7 @@ public class UserFactory : IUserFactory
 
     public IUserAccount CreateUserAccount(string id, string handler, string username, DateTimeOffset? accountCreationDate = null)
     {
-        return new UserAccount(_dateTimeProvider, id, handler, username, accountCreationDate);
+        return new UserAccount(id, handler, username, accountCreationDate ?? _dateTimeProvider.Now);
     }
 
     public IUserCredentials CreateUserCredentials(IUserAccount userAccount, string email, string password)
