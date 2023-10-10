@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 

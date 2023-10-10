@@ -1,6 +1,6 @@
 ﻿using RecipeSocialMediaAPI.Domain.Models.Users;
 
-namespace RecipeSocialMediaAPI.Domain.Models.Messaging;
+namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 
 public class Connection : IConnection
 {

@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Domain.Models.Messaging;
+﻿namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 
 public enum ConnectionStatus
 {
