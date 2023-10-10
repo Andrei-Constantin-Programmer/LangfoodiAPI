@@ -11,12 +11,15 @@ public class Group
 
     public string GroupName { get; set; }
 
+    public string GroupDescription { get; set; }
+
     public ImmutableList<IUserAccount> Users { get => _users.ToImmutableList(); }
 
-    public Group(string groupId, string groupName, IEnumerable<IUserAccount>? users = null)
+    public Group(string groupId, string groupName, string groupDescription, IEnumerable<IUserAccount>? users = null)
     {
         GroupId = groupId;
         GroupName = groupName;
+        GroupDescription = groupDescription;
         _users = users?.ToHashSet() ?? new HashSet<IUserAccount>();
     }
 

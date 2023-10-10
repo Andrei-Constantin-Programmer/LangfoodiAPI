@@ -12,7 +12,7 @@ public class GroupTests
 
     public GroupTests()
     {
-        _groupSUT = new Group("GroupId", "GroupName");
+        _groupSUT = new Group("GroupId", "GroupName", "Description");
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class GroupTests
             AccountCreationDate = new (2023, 10, 10, 18, 0, 0, TimeSpan.Zero)
         };
 
-        _groupSUT = new(_groupSUT.GroupId, _groupSUT.GroupName, new List<IUserAccount>()
+        _groupSUT = new(_groupSUT.GroupId, _groupSUT.GroupName, _groupSUT.GroupDescription, new List<IUserAccount>()
         {
             account
         });
@@ -86,7 +86,7 @@ public class GroupTests
             AccountCreationDate = new(2023, 10, 10, 18, 0, 0, TimeSpan.Zero)
         };
 
-        _groupSUT = new(_groupSUT.GroupId, _groupSUT.GroupName, new List<IUserAccount>()
+        _groupSUT = new(_groupSUT.GroupId, _groupSUT.GroupName, _groupSUT.GroupDescription, new List<IUserAccount>()
         {
             testAccount, accountToRemove
         });
@@ -121,7 +121,7 @@ public class GroupTests
             AccountCreationDate = new(2023, 10, 10, 18, 0, 0, TimeSpan.Zero)
         };
 
-        _groupSUT = new(_groupSUT.GroupId, _groupSUT.GroupName, new List<IUserAccount>()
+        _groupSUT = new(_groupSUT.GroupId, _groupSUT.GroupName, _groupSUT.GroupDescription, new List<IUserAccount>()
         {
             testAccount
         });
