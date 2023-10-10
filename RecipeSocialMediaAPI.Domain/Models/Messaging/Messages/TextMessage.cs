@@ -1,7 +1,7 @@
 ﻿using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
-namespace RecipeSocialMediaAPI.Domain.Models.Messaging;
+namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 public record TextMessage : Message
 {

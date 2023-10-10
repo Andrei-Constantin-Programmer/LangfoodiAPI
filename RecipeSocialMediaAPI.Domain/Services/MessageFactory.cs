@@ -1,6 +1,6 @@
 ﻿using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Domain.Models.Messaging;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 

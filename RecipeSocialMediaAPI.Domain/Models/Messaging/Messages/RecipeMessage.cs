@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using System.Collections.Immutable;
 
-namespace RecipeSocialMediaAPI.Domain.Models.Messaging;
+namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 public record RecipeMessage : Message
 {

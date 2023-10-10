@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Domain.Tests.Unit")]
 
-namespace RecipeSocialMediaAPI.Domain.Models.Messaging;
+namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 public abstract record Message
 {
