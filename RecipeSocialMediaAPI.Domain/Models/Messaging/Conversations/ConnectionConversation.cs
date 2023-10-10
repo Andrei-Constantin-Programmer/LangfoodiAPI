@@ -1,4 +1,5 @@
-﻿using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+﻿using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 
