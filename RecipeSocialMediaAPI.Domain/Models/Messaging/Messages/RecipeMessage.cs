@@ -7,6 +7,8 @@ namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 public record RecipeMessage : Message
 {
+    private readonly IDateTimeProvider _dateTimeProvider;
+
     private string? _textContent;
     public string? TextContent
     {
@@ -23,8 +25,10 @@ public record RecipeMessage : Message
 
     public RecipeMessage(IDateTimeProvider dateTimeProvider, 
         string id, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
-        : base(dateTimeProvider, id, sender, sentDate, updatedDate, repliedToMessage)
+        : base(id, sender, sentDate, updatedDate, repliedToMessage)
     {
+        _dateTimeProvider = dateTimeProvider;
+
         if (!recipes.Any())
         {
             throw new ArgumentException("Cannot have an empty list of recipes for a Recipe Message");

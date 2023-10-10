@@ -6,14 +6,14 @@ using FluentAssertions;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
-namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging;
+namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging.Messages;
 public class TextMessageTests
 {
     private readonly TextMessage _textMessageSUT;
 
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
 
-    public TextMessageTests() 
+    public TextMessageTests()
     {
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
         IUserAccount testUser = new TestUserAccount

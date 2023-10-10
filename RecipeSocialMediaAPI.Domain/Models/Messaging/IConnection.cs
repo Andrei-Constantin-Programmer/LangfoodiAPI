@@ -8,5 +8,4 @@ public interface IConnection
     IUserAccount Account1 { get; }
     IUserAccount Account2 { get; }
     ConnectionStatus Status { get; set; }
-    bool BindConversation(ConnectionConversation conversation);
 }

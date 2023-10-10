@@ -6,14 +6,9 @@ public class ConnectionConversation : Conversation
 {
     private readonly IConnection _connection;
 
-    public ConnectionConversation(IConnection connection, string conversationId, IEnumerable<Message> messages) 
+    public ConnectionConversation(IConnection connection, string conversationId, IEnumerable<Message>? messages = null)
         : base(conversationId, messages)
     {
-        if (!connection.BindConversation(this))
-        {
-            throw new ArgumentException("Conversation could not be created, as the connection already has a binded conversation.");
-        }
-
         _connection = connection;
     }
 

@@ -6,6 +6,8 @@ namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 public record ImageMessage : Message
 {
+    private readonly IDateTimeProvider _dateTimeProvider;
+
     private string? _textContent;
     public string? TextContent
     {
@@ -22,8 +24,10 @@ public record ImageMessage : Message
 
     public ImageMessage(IDateTimeProvider dateTimeProvider, 
         string id, IUserAccount sender, IEnumerable<string> imageURLs, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
-        : base(dateTimeProvider, id, sender, sentDate, updatedDate, repliedToMessage)
+        : base(id, sender, sentDate, updatedDate, repliedToMessage)
     {
+        _dateTimeProvider = dateTimeProvider;
+
         if (!imageURLs.Any())
         {
             throw new ArgumentException("Cannot have an empty list of images for an Image Message");

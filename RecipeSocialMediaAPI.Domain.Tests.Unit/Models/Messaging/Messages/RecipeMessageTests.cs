@@ -8,7 +8,7 @@ using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging;
+namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging.Messages;
 
 public class RecipeMessageTests
 {
@@ -29,8 +29,8 @@ public class RecipeMessageTests
         };
         DateTimeOffset testDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
-        List<RecipeAggregate> recipes = new() 
-        { 
+        List<RecipeAggregate> recipes = new()
+        {
             CreateTestRecipe("1", testUser, testDate)
         };
 
@@ -81,6 +81,6 @@ public class RecipeMessageTests
     }
 
 
-    private static RecipeAggregate CreateTestRecipe(string id, IUserAccount testUser, DateTimeOffset testDate) => 
+    private static RecipeAggregate CreateTestRecipe(string id, IUserAccount testUser, DateTimeOffset testDate) =>
         new(id, "RecipeTitle", new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()), "RecipeDescription", testUser, testDate, testDate);
 }
