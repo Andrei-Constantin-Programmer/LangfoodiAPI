@@ -6,7 +6,7 @@ using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging;
+namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging.Messages;
 
 public class ImageMessageTests
 {

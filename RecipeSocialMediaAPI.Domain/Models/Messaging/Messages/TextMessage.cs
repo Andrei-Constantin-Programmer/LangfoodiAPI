@@ -5,6 +5,8 @@ namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 public record TextMessage : Message
 {
+    private readonly IDateTimeProvider _dateTimeProvider;
+
     private string _textContent;
     public string TextContent 
     { 
@@ -20,8 +22,10 @@ public record TextMessage : Message
 
     internal TextMessage(IDateTimeProvider dateTimeProvider, 
         string id, IUserAccount sender, string textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null)
-        : base(dateTimeProvider, id, sender, sentDate, updatedDate, repliedToMessage)
+        : base(id, sender, sentDate, updatedDate, repliedToMessage)
     {
+        _dateTimeProvider = dateTimeProvider;
+
         ValidateTextContentAndThrow(textContent);
 
         _textContent = textContent;

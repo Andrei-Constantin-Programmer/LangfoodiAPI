@@ -1,5 +1,4 @@
-﻿using RecipeSocialMediaAPI.Domain.Models.Messaging.Interfaces;
-using RecipeSocialMediaAPI.Domain.Models.Users;
+﻿using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Domain.Models.Messaging;
 
@@ -10,8 +9,14 @@ public class Connection : IConnection
 
     public ConnectionStatus Status { get; set; }
 
+
     public Connection(IUserAccount account1, IUserAccount account2, ConnectionStatus status)
     {
+        if (account1.Id == account2.Id)
+        {
+            throw new ArgumentException($"Cannot create connection between accounts with the same Id {account1.Id}.");
+        }
+
         Account1 = account1;
         Account2 = account2;
 
