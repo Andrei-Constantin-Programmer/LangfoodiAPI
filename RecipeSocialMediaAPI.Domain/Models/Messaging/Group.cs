@@ -5,27 +5,27 @@ namespace RecipeSocialMediaAPI.Domain.Models.Messaging;
 
 public class Group
 {
-    private readonly HashSet<UserAccount> _users;
+    private readonly HashSet<IUserAccount> _users;
 
     public string GroupId { get; }
 
     public string GroupName { get; set; }
 
-    public ImmutableList<UserAccount> Users { get => _users.ToImmutableList(); }
+    public ImmutableList<IUserAccount> Users { get => _users.ToImmutableList(); }
 
-    public Group(string groupId, string groupName, IEnumerable<UserAccount>? users = null)
+    public Group(string groupId, string groupName, IEnumerable<IUserAccount>? users = null)
     {
         GroupId = groupId;
         GroupName = groupName;
-        _users = users?.ToHashSet() ?? new HashSet<UserAccount>();
+        _users = users?.ToHashSet() ?? new HashSet<IUserAccount>();
     }
 
-    public bool AddUser(UserAccount user)
+    public bool AddUser(IUserAccount user)
     {
         return _users.Add(user);
     }
 
-    public bool RemoveUser(UserAccount user)
+    public bool RemoveUser(IUserAccount user)
     {
         return _users.Remove(user);
     }
