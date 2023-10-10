@@ -64,4 +64,74 @@ public class GroupTests
         result.Should().BeFalse();
         _groupSUT.Users.Should().HaveCount(1);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void RemoveUser_WhenUserExists_RemoveUserAndReturnTrue()
+    {
+        // Given
+        TestUserAccount testAccount = new()
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "UserName",
+            AccountCreationDate = new (2023, 10, 10, 18, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount accountToRemove = new()
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "UserName",
+            AccountCreationDate = new(2023, 10, 10, 18, 0, 0, TimeSpan.Zero)
+        };
+
+        _groupSUT = new(_groupSUT.GroupId, _groupSUT.GroupName, new List<IUserAccount>()
+        {
+            testAccount, accountToRemove
+        });
+
+        // When
+        var result = _groupSUT.RemoveUser(accountToRemove);
+
+        // Then
+        result.Should().BeTrue();
+        _groupSUT.Users.Should().HaveCount(1);
+        _groupSUT.Users.Should().Contain(testAccount);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void RemoveUser_WhenUserDoesNotExist_DoNotChangeUserListAndReturnFalse()
+    {
+        // Given
+        TestUserAccount testAccount = new()
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "UserName",
+            AccountCreationDate = new(2023, 10, 10, 18, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount accountToRemove = new()
+        {
+            Id = "UserId",
+            Handler = "UserHandler",
+            UserName = "UserName",
+            AccountCreationDate = new(2023, 10, 10, 18, 0, 0, TimeSpan.Zero)
+        };
+
+        _groupSUT = new(_groupSUT.GroupId, _groupSUT.GroupName, new List<IUserAccount>()
+        {
+            testAccount
+        });
+
+        // When
+        var result = _groupSUT.RemoveUser(accountToRemove);
+
+        // Then
+        result.Should().BeFalse();
+        _groupSUT.Users.Should().HaveCount(1);
+        _groupSUT.Users.Should().Contain(testAccount);
+    }
 }
