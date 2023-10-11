@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Authentication;
+using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Querries;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
@@ -25,10 +26,9 @@ public static class AuthenticationEndpoints
         });
 
         group.MapPost("/get/cloudinary-signature", async (
-            [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send());
+            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery()));
         });
 
         return group;
