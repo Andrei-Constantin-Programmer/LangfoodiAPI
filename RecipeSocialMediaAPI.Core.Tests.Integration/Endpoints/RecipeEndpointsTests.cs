@@ -405,7 +405,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
 
         // When
-        var updateResult = await _client.PostAsJsonAsync($"/recipe/update", newRecipe);
+        var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);
 
         // Then
         var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
@@ -454,7 +454,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         };
 
         // When
-        var updateResult = await _client.PostAsJsonAsync($"/recipe/update", newRecipe);
+        var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);
 
         // Then
         var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);

@@ -195,7 +195,7 @@ public class UserEndpointsTests : EndpointTestBase
         };
 
         // When
-        var result = await _client.PostAsJsonAsync("user/update", updateContract);
+        var result = await _client.PutAsJsonAsync("user/update", updateContract);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -230,7 +230,7 @@ public class UserEndpointsTests : EndpointTestBase
         };
 
         // When
-        var result = await _client.PostAsJsonAsync("user/update", updateContract);
+        var result = await _client.PutAsJsonAsync("user/update", updateContract);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -276,7 +276,7 @@ public class UserEndpointsTests : EndpointTestBase
         };
 
         // When
-        var result = await _client.PostAsJsonAsync("user/update", updateContract);
+        var result = await _client.PutAsJsonAsync("user/update", updateContract);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);

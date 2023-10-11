@@ -26,7 +26,7 @@ public static class UserEndpoints
             return Results.Ok(user);
         });
 
-        group.MapPost("/update", async (
+        group.MapPut("/update", async (
             [FromBody] UpdateUserContract updateUserContract,
             [FromServices] ISender sender) =>
         {

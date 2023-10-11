@@ -46,7 +46,7 @@ public static class RecipeEndpoints
             return Results.Ok(await sender.Send(new AddRecipeCommand(newRecipeContract)));
         });
 
-        group.MapPost("/update", async (
+        group.MapPut("/update", async (
             [FromBody] UpdateRecipeContract updateRecipeContract,
             [FromServices] ISender sender) =>
         {
