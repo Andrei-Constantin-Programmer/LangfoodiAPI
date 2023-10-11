@@ -19,6 +19,8 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
+using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -48,6 +50,8 @@ internal static class ServicesConfiguration
         builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         builder.Services.AddScoped<IUserPersistenceRepository, UserPersistenceRepository>();
 
+        builder.Services.AddScoped<IImageHostingQueryRepository, ImageHostingQueryRepository>();
+
         // Transients
         builder.Services.AddTransient<ICryptoService, CryptoService>();
         builder.Services.AddTransient<IMessageFactory, MessageFactory>();
@@ -62,7 +66,9 @@ internal static class ServicesConfiguration
         });
     }
 
-    private static CloudinaryConfiguration GenerateCloudinaryConfiguration(ConfigurationManager configurationManager) => new(
+    private static CloudinaryApiConfiguration GenerateCloudinaryConfiguration(ConfigurationManager configurationManager) => new(
+        configurationManager.GetSection("Cloudinary").GetValue<string>("CloudName") ?? string.Empty,
+        configurationManager.GetSection("Cloudinary").GetValue<string>("ApiKey") ?? string.Empty,
         configurationManager.GetSection("Cloudinary").GetValue<string>("ApiSecret") ?? string.Empty);
 
     private static MongoDatabaseConfiguration GenerateMongoConfiguration(ConfigurationManager configurationManager) => new(
