@@ -27,7 +27,8 @@ internal static class ServicesConfiguration
     internal static void ConfigureServices(this WebApplicationBuilder builder)
     {
         // Singletons
-        builder.Services.AddSingleton(GenerateDatabaseConfiguration(builder.Configuration));
+        builder.Services.AddSingleton(GenerateMongoConfiguration(builder.Configuration));
+        builder.Services.AddSingleton(GenerateCloudinaryConfiguration(builder.Configuration));
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IRecipeValidationService, RecipeValidationService>();
@@ -61,7 +62,10 @@ internal static class ServicesConfiguration
         });
     }
 
-    private static DatabaseConfiguration GenerateDatabaseConfiguration(ConfigurationManager configurationManager) => new(
+    private static CloudinaryConfiguration GenerateCloudinaryConfiguration(ConfigurationManager configurationManager) => new(
+        configurationManager.GetSection("Cloudinary").GetValue<string>("ApiSecret") ?? string.Empty);
+
+    private static MongoDatabaseConfiguration GenerateMongoConfiguration(ConfigurationManager configurationManager) => new(
         configurationManager.GetSection("MongoDB").GetValue<string>("Connection") ?? string.Empty,
         configurationManager.GetSection("MongoDB").GetValue<string>("ClusterName") ?? string.Empty);
 }

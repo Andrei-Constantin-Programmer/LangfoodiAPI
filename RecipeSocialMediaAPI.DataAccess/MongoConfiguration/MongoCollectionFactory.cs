@@ -6,9 +6,9 @@ namespace RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 
 public class MongoCollectionFactory : IMongoCollectionFactory
 {
-    private readonly DatabaseConfiguration _databaseConfiguration;
+    private readonly MongoDatabaseConfiguration _databaseConfiguration;
 
-    public MongoCollectionFactory(DatabaseConfiguration databaseConfiguration)
+    public MongoCollectionFactory(MongoDatabaseConfiguration databaseConfiguration)
     {
         _databaseConfiguration = databaseConfiguration;
     }
