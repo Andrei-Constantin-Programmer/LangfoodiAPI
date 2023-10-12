@@ -2,5 +2,5 @@
 public record CloudinarySignatureDTO
 {
     required public string Signature { get; set; }
-    required public DateTimeOffset CreationDate { get; set; }
+    required public long TimeStamp { get; set; }
 }
