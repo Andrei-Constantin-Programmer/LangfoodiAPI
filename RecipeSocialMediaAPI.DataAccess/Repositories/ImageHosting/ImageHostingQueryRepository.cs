@@ -30,17 +30,13 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
     {
         try
         {
-            DateTimeOffset timestamp = _dateTimeProvider.Now;
+            long timestamp = _dateTimeProvider.Now.ToUnixTimeSeconds();
             Dictionary<string, object> sigParams = new Dictionary<string, object>() {
-                { "cloud_name", _cloudinaryConfiguration.CloudName },
-                { "api_key", _cloudinaryConfiguration.ApiKey },
-                { "api_secret", _cloudinaryConfiguration.ApiSecret },
-                { "timestamp",  timestamp.ToUnixTimeSeconds() }
+                { "timestamp", timestamp }
             };
-            string signature = _connection.Api.SignParameters(sigParams);
 
-            return new() { Signature = signature, CreationDate = timestamp };
-
+            string signature = _connection.Api.SignParameters(sigParams);           
+            return new() { Signature = signature, TimeStamp = timestamp };
         }
         catch (Exception ex)
         {
