@@ -3,5 +3,5 @@
 namespace RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 public interface IImageHostingQueryRepository
 {
-    public CloudinarySignatureDTO? GenerateClientSignature();
+    public CloudinarySignatureDTO? GenerateClientSignature(string? publicId);
 }
