@@ -19,7 +19,7 @@ internal class GetCloudinarySignatureHandler : IRequestHandler<GetCloudinarySign
         CloudinarySignatureDTO? signature = _imageHostingQueryRepository.GenerateClientSignature();
         
         return signature is null
-            ? throw new InvalidOperationException("failed to generate signature")
+            ? throw new InvalidOperationException("Failed to generate signature")
             : await Task.FromResult(signature);
     }
 }
