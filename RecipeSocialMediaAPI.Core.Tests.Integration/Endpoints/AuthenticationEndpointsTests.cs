@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
 using System.Net.Http.Json;
+using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
@@ -144,5 +145,23 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetCloudinarySignature_WhenValidCall_ReturnGeneratedCloudinarySignature()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync("auth/get/cloudinary-signature", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        CloudinarySignatureDTO generatedSignature = (await result.Content.ReadFromJsonAsync<CloudinarySignatureDTO>())!;
+
+        generatedSignature.Signature.Length.Should().BeGreaterThan(0);
+        generatedSignature.TimeStamp.Should().BeGreaterThan(0);
     }
 }

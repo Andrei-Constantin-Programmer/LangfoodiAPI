@@ -33,7 +33,7 @@ public class ImageHostingQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async void GenerateClientSignature_WhenParametersGivenAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
+    public void GenerateClientSignature_WhenParametersGivenAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
     {
         // Given
         _dateTimeProviderMock
@@ -51,7 +51,7 @@ public class ImageHostingQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async void GenerateClientSignature_WhenExceptionThrownForAnyReason_LogInformationAndReturnNull()
+    public void GenerateClientSignature_WhenExceptionThrownForAnyReason_LogInformationAndReturnNull()
     {
         // Given
         Exception testException = new("exception here");
