@@ -26,9 +26,10 @@ public static class AuthenticationEndpoints
         });
 
         group.MapPost("/get/cloudinary-signature", async (
+            [FromQuery] string? publicId,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery()));
+            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery(publicId)));
         });
 
         return group;

@@ -26,14 +26,18 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
         ));
     }
 
-    public CloudinarySignatureDTO? GenerateClientSignature()
+    public CloudinarySignatureDTO? GenerateClientSignature(string? publicId)
     {
         try
         {
             long timestamp = _dateTimeProvider.Now.ToUnixTimeSeconds();
-            Dictionary<string, object> sigParams = new Dictionary<string, object>() {
-                { "timestamp", timestamp }
-            };
+            Dictionary<string, object> sigParams = new Dictionary<string, object>() {};
+
+            if (publicId is not null)
+            {
+                sigParams.Add("public_id", publicId);
+            }
+            sigParams.Add("timestamp", timestamp);
 
             string signature = _connection.Api.SignParameters(sigParams);           
             return new() { Signature = signature, TimeStamp = timestamp };
