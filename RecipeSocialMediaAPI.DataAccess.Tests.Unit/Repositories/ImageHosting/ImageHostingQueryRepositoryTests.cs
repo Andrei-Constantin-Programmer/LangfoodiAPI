@@ -33,7 +33,7 @@ public class ImageHostingQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GenerateClientSignature_WhenParametersGivenAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
+    public void GenerateClientSignature_WhenPublicIdIsNullAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
     {
         // Given
         _dateTimeProviderMock
@@ -41,7 +41,7 @@ public class ImageHostingQueryRepositoryTests
             .Returns(_testDate);
 
         // When
-        var result = _imageHostingQueryRepositorySUT.GenerateClientSignature();
+        var result = _imageHostingQueryRepositorySUT.GenerateClientSignature(null);
 
         // Then
         result.Signature.Length.Should().BeGreaterThan(0);
@@ -51,7 +51,25 @@ public class ImageHostingQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GenerateClientSignature_WhenExceptionThrownForAnyReason_LogInformationAndReturnNull()
+    public void GenerateClientSignature_WhenPublicIdIsNotNullAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
+    {
+        // Given
+        _dateTimeProviderMock
+            .Setup(x => x.Now)
+            .Returns(_testDate);
+
+        // When
+        var result = _imageHostingQueryRepositorySUT.GenerateClientSignature("sdfsdgs43534");
+
+        // Then
+        result.Signature.Length.Should().BeGreaterThan(0);
+        result.TimeStamp.Should().Be(_testDate.ToUnixTimeSeconds());
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GenerateClientSignature_WhenPublicIdIsNotNullAndExceptionThrownForAnyReason_LogInformationAndReturnNull()
     {
         // Given
         Exception testException = new("exception here");
@@ -60,7 +78,34 @@ public class ImageHostingQueryRepositoryTests
             .Throws(testException);
 
         // When
-        var result = _imageHostingQueryRepositorySUT.GenerateClientSignature();
+        var result = _imageHostingQueryRepositorySUT.GenerateClientSignature("sdfsdfsdg43453");
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock
+           .Verify(logger =>
+               logger.Log(
+                   LogLevel.Information,
+                   It.IsAny<EventId>(),
+                   It.IsAny<It.IsAnyType>(),
+                   testException,
+                   It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+               Times.Once());
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GenerateClientSignature_WhenPublicIdIsNullAndExceptionThrownForAnyReason_LogInformationAndReturnNull()
+    {
+        // Given
+        Exception testException = new("exception here");
+        _dateTimeProviderMock
+            .Setup(x => x.Now)
+            .Throws(testException);
+
+        // When
+        var result = _imageHostingQueryRepositorySUT.GenerateClientSignature(null);
 
         // Then
         result.Should().BeNull();

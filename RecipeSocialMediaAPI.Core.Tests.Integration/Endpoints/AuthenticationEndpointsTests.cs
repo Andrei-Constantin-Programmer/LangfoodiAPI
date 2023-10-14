@@ -150,12 +150,30 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_WhenValidCall_ReturnGeneratedCloudinarySignature()
+    public async void GetCloudinarySignature_WhenPublicIdIsNullAndValidCall_ReturnGeneratedCloudinarySignature()
     {
         // Given
 
         // When
         var result = await _client.PostAsync("auth/get/cloudinary-signature", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        CloudinarySignatureDTO generatedSignature = (await result.Content.ReadFromJsonAsync<CloudinarySignatureDTO>())!;
+
+        generatedSignature.Signature.Length.Should().BeGreaterThan(0);
+        generatedSignature.TimeStamp.Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetCloudinarySignature_WhenPublicIdIsNotNullAndValidCall_ReturnGeneratedCloudinarySignature()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync("auth/get/cloudinary-signature?publicId=fsd34534jsdf3", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
