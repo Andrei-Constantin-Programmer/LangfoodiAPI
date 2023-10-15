@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.DataAccess.Helpers;
 
-public record DatabaseConfiguration
+public record MongoDatabaseConfiguration
 (
     string MongoConnectionString,
     string MongoDatabaseName

@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
 using System.Net.Http.Json;
+using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
