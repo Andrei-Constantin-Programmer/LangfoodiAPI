@@ -13,13 +13,16 @@ public record Recipe
     public int? CookingTimeInSeconds { get; set; }
     public int? KiloCalories { get; set; }
 
-    public Recipe(List<Ingredient> ingredients, Stack<RecipeStep> steps, int? numberOfServings = null, int? cookingTimeInSeconds = null, int? kiloCalories = null)
+    public ServingSize? ServingSize { get; set; }
+
+    public Recipe(List<Ingredient> ingredients, Stack<RecipeStep> steps, int? numberOfServings = null, int? cookingTimeInSeconds = null, int? kiloCalories = null, ServingSize? servingSize = null)
     {
         _ingredients = ingredients;
         _steps = steps;
         NumberOfServings = numberOfServings;
         CookingTimeInSeconds = cookingTimeInSeconds;
         KiloCalories = kiloCalories;
+        ServingSize = servingSize;
     }
 
     public void AddIngredient(Ingredient ingredient)
