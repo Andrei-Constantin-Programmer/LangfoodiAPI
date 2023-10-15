@@ -9,6 +9,7 @@ internal static class EndpointsConfiguration
         app.MapUserEndpoints();
         app.MapRecipeEndpoints();
         app.MapAuthenticationEndpoints();
+        app.MapImageEndpoints();
         app.MapTestEndpoints();
     }
 }

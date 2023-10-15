@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
-using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
+using RecipeSocialMediaAPI.Application.Handlers.Images.Queries;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
+namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Images.Queries;
 public class GetCloudinarySignatureHandlerTests
 {
     private readonly Mock<IImageHostingQueryRepository> _imageHostingQueryRepositoryMock;
@@ -19,7 +19,7 @@ public class GetCloudinarySignatureHandlerTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenPublicIdIsNullAndGenerateClientSignatureWorks_ReturnSignatureDTO()
     {
@@ -37,7 +37,7 @@ public class GetCloudinarySignatureHandlerTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenPublicIdIsNotNullAndGenerateClientSignatureWorks_ReturnSignatureDTO()
     {
@@ -56,7 +56,7 @@ public class GetCloudinarySignatureHandlerTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenPublicIdIsNotNullAndNoSignatureGenerated_ThrowInvalidOperationException()
     {
@@ -76,7 +76,7 @@ public class GetCloudinarySignatureHandlerTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenPublicIdIsNullAndNoSignatureGenerated_ThrowInvalidOperationException()
     {

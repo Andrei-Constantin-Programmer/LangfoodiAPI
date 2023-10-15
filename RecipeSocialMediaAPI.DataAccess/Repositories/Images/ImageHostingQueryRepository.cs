@@ -10,19 +10,17 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
 {
     private readonly ILogger _logger;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly CloudinaryApiConfiguration _cloudinaryConfiguration;
     private readonly Cloudinary _connection;    
 
     public ImageHostingQueryRepository(ILogger<ImageHostingQueryRepository> logger, IDateTimeProvider dateTimeProvider, CloudinaryApiConfiguration cloudinaryConfiguration)
     {
         _dateTimeProvider = dateTimeProvider;
-        _cloudinaryConfiguration = cloudinaryConfiguration;
         _logger = logger;
 
         _connection = new Cloudinary(new Account(
-            _cloudinaryConfiguration.CloudName,
-            _cloudinaryConfiguration.ApiKey,
-            _cloudinaryConfiguration.ApiSecret
+            cloudinaryConfiguration.CloudName,
+            cloudinaryConfiguration.ApiKey,
+            cloudinaryConfiguration.ApiSecret
         ));
     }
 
@@ -31,20 +29,20 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
         try
         {
             long timestamp = _dateTimeProvider.Now.ToUnixTimeSeconds();
-            Dictionary<string, object> sigParams = new Dictionary<string, object>() {};
+            Dictionary<string, object> signingParameters = new();
 
             if (publicId is not null)
             {
-                sigParams.Add("public_id", publicId);
+                signingParameters.Add("public_id", publicId);
             }
-            sigParams.Add("timestamp", timestamp);
+            signingParameters.Add("timestamp", timestamp);
 
-            string signature = _connection.Api.SignParameters(sigParams);           
+            string signature = _connection.Api.SignParameters(signingParameters);           
             return new() { Signature = signature, TimeStamp = timestamp };
         }
         catch (Exception ex)
         {
-            _logger.LogInformation(ex, "There was error trying to generate a cloudinary client signature");
+            _logger.LogError(ex, "There was error trying to generate a cloudinary client signature");
             return null;
         }
     }

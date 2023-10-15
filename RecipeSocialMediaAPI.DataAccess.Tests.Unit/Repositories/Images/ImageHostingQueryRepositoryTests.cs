@@ -12,7 +12,6 @@ public class ImageHostingQueryRepositoryTests
 {
     private readonly Mock<ILogger<ImageHostingQueryRepository>> _loggerMock;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
-    private readonly CloudinaryApiConfiguration _cloudinaryApiConfiguration;
 
     private readonly ImageHostingQueryRepository _imageHostingQueryRepositorySUT;
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
@@ -21,53 +20,51 @@ public class ImageHostingQueryRepositoryTests
     {
         _loggerMock = new Mock<ILogger<ImageHostingQueryRepository>>();
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
-        _cloudinaryApiConfiguration = new CloudinaryApiConfiguration("cloudname", "apikey", "apisecret");
+
+        _dateTimeProviderMock
+            .Setup(x => x.Now)
+            .Returns(_testDate);
 
         _imageHostingQueryRepositorySUT = new ImageHostingQueryRepository(
             _loggerMock.Object, 
             _dateTimeProviderMock.Object,
-            _cloudinaryApiConfiguration
+            new CloudinaryApiConfiguration("cloudname", "apikey", "apisecret")
         );
+
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GenerateClientSignature_WhenPublicIdIsNullAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
     {
         // Given
-        _dateTimeProviderMock
-            .Setup(x => x.Now)
-            .Returns(_testDate);
 
         // When
         var result = _imageHostingQueryRepositorySUT.GenerateClientSignature(null);
 
         // Then
-        result.Signature.Length.Should().BeGreaterThan(0);
+        result.Signature.Should().NotBeEmpty();
         result.TimeStamp.Should().Be(_testDate.ToUnixTimeSeconds());
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GenerateClientSignature_WhenPublicIdIsNotNullAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
     {
         // Given
-        _dateTimeProviderMock
-            .Setup(x => x.Now)
-            .Returns(_testDate);
 
         // When
         var result = _imageHostingQueryRepositorySUT.GenerateClientSignature("sdfsdgs43534");
 
         // Then
-        result.Signature.Length.Should().BeGreaterThan(0);
+        result.Signature.Should().NotBeEmpty();
         result.TimeStamp.Should().Be(_testDate.ToUnixTimeSeconds());
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GenerateClientSignature_WhenPublicIdIsNotNullAndExceptionThrownForAnyReason_LogInformationAndReturnNull()
     {
@@ -85,7 +82,7 @@ public class ImageHostingQueryRepositoryTests
         _loggerMock
            .Verify(logger =>
                logger.Log(
-                   LogLevel.Information,
+                   LogLevel.Error,
                    It.IsAny<EventId>(),
                    It.IsAny<It.IsAnyType>(),
                    testException,
@@ -94,7 +91,7 @@ public class ImageHostingQueryRepositoryTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
+    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GenerateClientSignature_WhenPublicIdIsNullAndExceptionThrownForAnyReason_LogInformationAndReturnNull()
     {
@@ -112,7 +109,7 @@ public class ImageHostingQueryRepositoryTests
         _loggerMock
            .Verify(logger =>
                logger.Log(
-                   LogLevel.Information,
+                   LogLevel.Error,
                    It.IsAny<EventId>(),
                    It.IsAny<It.IsAnyType>(),
                    testException,
