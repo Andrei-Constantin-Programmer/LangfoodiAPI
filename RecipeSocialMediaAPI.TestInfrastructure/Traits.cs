@@ -13,6 +13,7 @@ public static class Traits
         public const string RECIPE = "Recipe";
         public const string MESSAGING = "Messaging";
         public const string CRYPTOGRAPHY = "Cryptography";
+        public const string IMAGE = "Image";
     }
 
     public static class Modules
