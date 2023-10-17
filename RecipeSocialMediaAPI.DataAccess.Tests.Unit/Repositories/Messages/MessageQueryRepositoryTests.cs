@@ -4,6 +4,7 @@ using Moq;
 using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Utilities;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
@@ -422,9 +423,97 @@ public class MessageQueryRepositoryTests
             Times.Exactly(2));
     }
 
-    [Fact]
+    [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(5)]
+    [InlineData(10)]
+    public void GetMessage_WhenMessageIsReply_ReturnMessageWithRepliedToMessage(int nestingLevel)
+    {
+        // Given
+        string messageId = "1";
+        string senderId = "50";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
+
+        MessageDocument testDocument = new()
+        {
+            Id = messageId,
+            MessageContent = new("Text"),
+            SenderId = senderId,
+            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+        TestUserAccount innerMessageSender = new()
+        {
+            Id = "60",
+            Handler = "Inner Handler",
+            UserName = "Inner Username",
+            AccountCreationDate = new(2022, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestMessage testMessage = GenerateReplyTree(testDocument.Id, testSender.Account, innerMessageSender, testDocument.SentDate, nestingLevel);
+            
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageDocumentToTextMessage(testDocument, testSender.Account, null))
+            .Returns(testMessage);
+        _messageCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(testDocument);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns(testSender);
+
+        // When
+        var result = (TestMessage?)_messageQueryRepositorySUT.GetMessage(messageId);
+
+        // Then
+        result.Should().Be(testMessage);
+        var currentMessage = result;
+
+        TestMessage GenerateReplyTree(string id, IUserAccount sender, IUserAccount repliedToSender, DateTimeOffset sentDate, int nestingLevel)
+        {
+            TestMessage newMessage = new(id, sender, sentDate, null, nestingLevel == 0 ? null :
+                GenerateReplyTree(
+                    id + "+",
+                    repliedToSender,
+                    sender,
+                    sentDate.AddMinutes(1),
+                    nestingLevel - 1));
+
+            Expression<Func<MessageDocument, bool>> innerExpression = x => x.Id == id;
+            _messageCollectionMock
+                .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(innerExpression, expr))))
+                .Returns(new MessageDocument()
+                {
+                    Id = newMessage.Id,
+                    SenderId = newMessage.Sender.Id,
+                    MessageContent = new(),
+                    SentDate = newMessage.SentDate,
+                    MessageRepliedToId = newMessage.RepliedToMessage?.Id
+                });
+
+            return newMessage;
+        }
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     public void GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
