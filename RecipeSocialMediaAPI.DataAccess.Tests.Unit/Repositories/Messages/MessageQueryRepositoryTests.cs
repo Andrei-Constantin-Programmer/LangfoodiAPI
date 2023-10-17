@@ -8,7 +8,7 @@ using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.DataAccess.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -54,15 +54,15 @@ public class MessageQueryRepositoryTests
     public void GetMessage_WhenMessageWithIdNotFound_ReturnNull()
     {
         // Given
-        string id = "1";
-        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == id;
+        string messageId = "1";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
         MessageDocument? nullMessageDocument = null;
         _messageCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(nullMessageDocument);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessage(id);
+        var result = _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().BeNull();
@@ -74,12 +74,12 @@ public class MessageQueryRepositoryTests
     public void GetMessage_WhenMessageIsFoundButSenderIsNotFound_LogWarningAndReturnNull()
     {
         // Given
-        string id = "1";
+        string messageId = "1";
         string senderId = "50";
-        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == id;
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
         MessageDocument testDocument = new()
         {
-            Id = id,
+            Id = messageId,
             MessageContent = new("Text"),
             SenderId = "1",
             SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
@@ -107,7 +107,7 @@ public class MessageQueryRepositoryTests
             .Returns(testMessage);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessage(id);
+        var result = _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().BeNull();
@@ -124,16 +124,223 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetMessage_WhenOnlyTextIsPresent_ReturnTextMessage()
+    {
+        // Given
+        string messageId = "1";
+        string senderId = "50";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
+
+        MessageDocument testDocument = new()
+        {
+            Id = messageId,
+            MessageContent = new("Text"),
+            SenderId = senderId,
+            SentDate = new (2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new (2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+    
+        TestTextMessage textMessage = new(
+            testDocument.Id, 
+            testSender.Account, 
+            testDocument.MessageContent.Text!, 
+            testDocument.SentDate, 
+            null);
+
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageDocumentToTextMessage(testDocument, testSender.Account, null))
+            .Returns(textMessage);
+        _messageCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(testDocument);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns(testSender);
+        
+        // When
+        var result = (TestTextMessage?) _messageQueryRepositorySUT.GetMessage(messageId);
+
+        // Then
+        result.Should().Be(textMessage);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void GetMessage_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
+    {
+        // Given
+        string messageId = "1";
+        string senderId = "50";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
+
+        List<string> imageURLs = new()
+        {
+            "Image1",
+            "Image2"
+        };
+
+        MessageDocument testDocument = new()
+        {
+            Id = messageId,
+            MessageContent = new(hasText ? "Text" : null, null, imageURLs),
+            SenderId = senderId,
+            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+
+        TestImageMessage imageMessage = new(
+            testDocument.Id, 
+            testSender.Account, 
+            testDocument.MessageContent.Text!, 
+            testDocument.MessageContent.ImageURLs!, 
+            testDocument.SentDate, 
+            null);
+
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageDocumentToImageMessage(testDocument, testSender.Account, null))
+            .Returns(imageMessage);
+        _messageCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(testDocument);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns(testSender);
+
+        // When
+        var result = (TestImageMessage?)_messageQueryRepositorySUT.GetMessage(messageId);
+
+        // Then
+        result.Should().Be(imageMessage);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void GetMessage_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessage(bool hasText)
+    {
+        // Given
+        string messageId = "1";
+        string senderId = "50";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
+
+        List<string> recipeIds = new()
+        {
+            "id1",
+            "id2"
+        };
+
+        MessageDocument testDocument = new()
+        {
+            Id = messageId,
+            MessageContent = new(hasText ? "Text" : null, recipeIds, null),
+            SenderId = senderId,
+            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+
+        List<RecipeAggregate> recipes = new()
+        {
+            new(
+                recipeIds[0], 
+                "Recipe1", 
+                new(new(), new()), 
+                "Description1", 
+                testSender.Account,
+                new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero), 
+                new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)),
+            new(
+                recipeIds[1],
+                "Recipe2",
+                new(new(), new()),
+                "Description2",
+                testSender.Account,
+                new(2023, 1, 15, 0, 0, 0, TimeSpan.Zero),
+                new(2023, 1, 15, 0, 0, 0, TimeSpan.Zero))
+        };
+
+        TestRecipeMessage recipeMessage = new(
+            testDocument.Id, 
+            testSender.Account, 
+            testDocument.MessageContent.Text!,
+            recipes,
+            testDocument.SentDate, 
+            null);
+
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageDocumentToRecipeMessage(testDocument, testSender.Account, recipes,  null))
+            .Returns(recipeMessage);
+        _messageCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(testDocument);
+        _recipeQueryRepositoryMock
+            .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
+            .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns(testSender);
+
+        // When
+        var result = (TestRecipeMessage?)_messageQueryRepositorySUT.GetMessage(messageId);
+
+        // Then
+        result.Should().Be(recipeMessage);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
+        string messageId = "1";
         Exception testException = new("Test exception message");
         _messageCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
             .Throws(testException);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessage("1");
+        var result = _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().BeNull();
