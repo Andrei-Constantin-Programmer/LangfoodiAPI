@@ -8,7 +8,6 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using System.Runtime.CompilerServices;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 

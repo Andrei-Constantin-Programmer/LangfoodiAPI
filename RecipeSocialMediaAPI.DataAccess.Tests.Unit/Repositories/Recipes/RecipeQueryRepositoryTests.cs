@@ -18,7 +18,7 @@ namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories.Recipes;
 public class RecipeQueryRepositoryTests
 {
     private readonly RecipeQueryRepository _recipeQueryRepositorySUT;
-    private readonly Mock<IMongoCollectionWrapper<RecipeDocument>> _mongoCollectionWrapperMock;
+    private readonly Mock<IMongoCollectionWrapper<RecipeDocument>> _recipeCollectionMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
     private readonly Mock<IRecipeDocumentToModelMapper> _mapperMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
@@ -30,11 +30,11 @@ public class RecipeQueryRepositoryTests
     {
         _mapperMock = new Mock<IRecipeDocumentToModelMapper>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
-        _mongoCollectionWrapperMock = new Mock<IMongoCollectionWrapper<RecipeDocument>>();
+        _recipeCollectionMock = new Mock<IMongoCollectionWrapper<RecipeDocument>>();
         _mongoCollectionFactoryMock = new Mock<IMongoCollectionFactory>();
         _mongoCollectionFactoryMock
             .Setup(factory => factory.CreateCollection<RecipeDocument>())
-            .Returns(_mongoCollectionWrapperMock.Object);
+            .Returns(_recipeCollectionMock.Object);
         _loggerMock = new Mock<ILogger<RecipeQueryRepository>>();
 
         _recipeQueryRepositorySUT = new(
@@ -53,7 +53,7 @@ public class RecipeQueryRepositoryTests
         string id = "1";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
         RecipeDocument? nullRecipeDocument = null;
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(nullRecipeDocument);
 
@@ -109,7 +109,7 @@ public class RecipeQueryRepositoryTests
                 new HashSet<string>()
             );
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
         _userQueryRepositoryMock
@@ -166,7 +166,7 @@ public class RecipeQueryRepositoryTests
                 new HashSet<string>()
             );
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
         _mapperMock
@@ -235,7 +235,7 @@ public class RecipeQueryRepositoryTests
             );
 
         Exception testException = new("Test Exception");
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
             .Throws(testException);
         _userQueryRepositoryMock
@@ -286,7 +286,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserById(chefId))
             .Returns(testChef);
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<RecipeDocument>());
 
@@ -345,7 +345,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<RecipeDocument>() { chefsRecipe });
         _userQueryRepositoryMock
@@ -389,7 +389,7 @@ public class RecipeQueryRepositoryTests
             }
         };
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocuments);
 
@@ -449,7 +449,7 @@ public class RecipeQueryRepositoryTests
             new HashSet<string>());
 
         Exception testException = new("Test Exception");
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
             .Throws(testException);
         _userQueryRepositoryMock
@@ -520,7 +520,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<RecipeDocument>() { chefsRecipe });
         _userQueryRepositoryMock
@@ -565,7 +565,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByUsername(chefUsername))
             .Returns(testChef);
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<RecipeDocument>());
 
@@ -606,7 +606,7 @@ public class RecipeQueryRepositoryTests
             }
         };
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocuments);
 
@@ -667,7 +667,7 @@ public class RecipeQueryRepositoryTests
             new HashSet<string>());
 
         Exception testException = new("Test Exception");
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
             .Throws(testException);
         _userQueryRepositoryMock
@@ -752,7 +752,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<RecipeDocument>() { chefsRecipe });
         _mapperMock
@@ -784,7 +784,7 @@ public class RecipeQueryRepositoryTests
         };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<RecipeDocument>());
 
@@ -839,7 +839,7 @@ public class RecipeQueryRepositoryTests
             new HashSet<string>());
 
         Exception testException = new("Test Exception");
-        _mongoCollectionWrapperMock
+        _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
             .Throws(testException);
         _mapperMock
