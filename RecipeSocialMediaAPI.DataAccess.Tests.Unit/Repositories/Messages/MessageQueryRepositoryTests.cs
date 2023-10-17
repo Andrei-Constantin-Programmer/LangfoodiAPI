@@ -4,12 +4,13 @@ using Moq;
 using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Application.Utilities;
+using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 using RecipeSocialMediaAPI.DataAccess.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -509,6 +510,76 @@ public class MessageQueryRepositoryTests
 
             return newMessage;
         }
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [InlineData(true, true, true)]
+    [InlineData(false, false, false)]
+    [InlineData(true, false, false)]
+    public void GetMessage_WhenMessageContentIsMalformed_ThrowMalformedMessageDocumentException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
+    {
+        // Given
+        string messageId = "1";
+        string senderId = "50";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
+
+        MessageDocument testDocument = new()
+        {
+            Id = messageId,
+            MessageContent = new(
+                isTextNull ? null : "Test Text",
+                isRecipeListNull ? null : new List<string>(),
+                isImageListNull ? null : new List<string>()),
+            SenderId = senderId,
+            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+
+        TestTextMessage textMessage = new(
+            testDocument.Id,
+            testSender.Account,
+            testDocument.MessageContent.Text!,
+            testDocument.SentDate,
+            null);
+
+        _messageCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(testDocument);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns(testSender);
+
+        // When
+        var action = () => _messageQueryRepositorySUT.GetMessage(messageId);
+
+        // Then
+        action.Should().Throw<MalformedMessageDocumentException>();
+        _mapperMock
+            .Verify(mapper =>
+                mapper.MapMessageDocumentToTextMessage(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<Message>()), 
+                Times.Never);
+        _mapperMock
+            .Verify(mapper =>
+                mapper.MapMessageDocumentToImageMessage(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<Message>()),
+                Times.Never);
+        _mapperMock
+            .Verify(mapper =>
+                mapper.MapMessageDocumentToRecipeMessage(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<IEnumerable<RecipeAggregate>>(), It.IsAny<Message>()),
+                Times.Never);
     }
 
     [Fact]
