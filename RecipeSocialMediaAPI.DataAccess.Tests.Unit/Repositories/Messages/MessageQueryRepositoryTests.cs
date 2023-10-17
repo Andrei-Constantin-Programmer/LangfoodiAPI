@@ -330,6 +330,101 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetMessage_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAndLogWarningForRecipesNotFound()
+    {
+        // Given
+        string messageId = "1";
+        string senderId = "50";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
+
+        List<string> recipeIds = new()
+        {
+            "id1",
+            "id2",
+            "inexistent1",
+            "inexistent2"
+        };
+
+        MessageDocument testDocument = new()
+        {
+            Id = messageId,
+            MessageContent = new(null, recipeIds, null),
+            SenderId = senderId,
+            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+
+        List<RecipeAggregate> recipes = new()
+        {
+            new(
+                recipeIds[0],
+                "Recipe1",
+                new(new(), new()),
+                "Description1",
+                testSender.Account,
+                new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+                new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)),
+            new(
+                recipeIds[1],
+                "Recipe2",
+                new(new(), new()),
+                "Description2",
+                testSender.Account,
+                new(2023, 1, 15, 0, 0, 0, TimeSpan.Zero),
+                new(2023, 1, 15, 0, 0, 0, TimeSpan.Zero))
+        };
+
+        TestRecipeMessage recipeMessage = new(
+            testDocument.Id,
+            testSender.Account,
+            testDocument.MessageContent.Text!,
+            recipes,
+            testDocument.SentDate,
+            null);
+
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageDocumentToRecipeMessage(testDocument, testSender.Account, recipes, null))
+            .Returns(recipeMessage);
+        _messageCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(testDocument);
+        _recipeQueryRepositoryMock
+            .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
+            .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns(testSender);
+
+        // When
+        var result = (TestRecipeMessage?)_messageQueryRepositorySUT.GetMessage(messageId);
+
+        // Then
+        result.Should().Be(recipeMessage);
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Exactly(2));
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given

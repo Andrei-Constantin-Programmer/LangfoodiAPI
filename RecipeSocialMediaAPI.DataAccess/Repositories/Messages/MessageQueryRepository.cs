@@ -75,9 +75,18 @@ public class MessageQueryRepository
         Message GetRecipeMessage(Message? repliedToMessage)
         {
             var recipes = recipeIds
-                .Select(_recipeQueryRepository.GetRecipeById)
-                .OfType<RecipeAggregate>();
+                .Select(id => 
+                {
+                    var recipe = _recipeQueryRepository.GetRecipeById(id);
+                    if (recipe is null)
+                    {
+                        _logger.LogWarning("No recipe with id {RecipeId} found for message with id {MessageId}", id, messageDocument.Id);
+                    }
 
+                    return recipe;
+                })
+                .OfType<RecipeAggregate>();
+                
             return _mapper.MapMessageDocumentToRecipeMessage(messageDocument, sender, recipes, repliedToMessage);
         }
     }
