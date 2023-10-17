@@ -253,7 +253,7 @@ public class RecipeQueryRepositoryTests
         _loggerMock
             .Verify(logger =>
                 logger.Log(
-                    LogLevel.Information,
+                    LogLevel.Error,
                     It.IsAny<EventId>(),
                     It.IsAny<It.IsAnyType>(),
                     testException,
