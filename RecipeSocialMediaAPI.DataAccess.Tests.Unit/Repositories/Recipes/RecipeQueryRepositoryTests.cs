@@ -187,7 +187,6 @@ public class RecipeQueryRepositoryTests
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()),
             Times.Once);
     }
-
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]

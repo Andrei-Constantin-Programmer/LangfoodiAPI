@@ -72,7 +72,7 @@ public class MessageQueryRepository
             _ => throw new MalformedMessageDocumentException(messageDocument)
         };
 
-        RecipeMessage GetRecipeMessage(Message? repliedToMessage)
+        Message GetRecipeMessage(Message? repliedToMessage)
         {
             var recipes = recipeIds
                 .Select(_recipeQueryRepository.GetRecipeById)

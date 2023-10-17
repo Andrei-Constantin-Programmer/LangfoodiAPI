@@ -15,7 +15,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
         _messageFactory = messageFactory;
     }
 
-    public TextMessage MapMessageDocumentToTextMessage(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null)
+    public Message MapMessageDocumentToTextMessage(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null)
     {
         if (messageDocument.Id is null)
         {
@@ -31,7 +31,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             messageRepliedTo);
     }
 
-    public ImageMessage MapMessageDocumentToImageMessage(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null)
+    public Message MapMessageDocumentToImageMessage(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null)
     {
         if (messageDocument.Id is null)
         {
@@ -48,7 +48,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             messageRepliedTo);
     }
 
-    public RecipeMessage MapMessageDocumentToRecipeMessage(MessageDocument messageDocument, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, Message? messageRepliedTo = null)
+    public Message MapMessageDocumentToRecipeMessage(MessageDocument messageDocument, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, Message? messageRepliedTo = null)
     {
         if (messageDocument.Id is null)
         {
