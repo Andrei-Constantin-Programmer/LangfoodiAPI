@@ -23,17 +23,17 @@ public class MessagePersistenceRepositoryTests
 {
     private readonly MessagePersistenceRepository _messagePersistenceRepositorySUT;
 
-    private readonly Mock<ILogger<MessagePersistenceRepository>> _logger;
+    private readonly Mock<ILogger<MessagePersistenceRepository>> _loggerMock;
     private readonly Mock<IMessageDocumentToModelMapper> _messageDocumentToModelMapperMock;
     private readonly Mock<IMongoCollectionWrapper<MessageDocument>> _messageCollectionMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
-
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+
     private readonly IMessageFactory _messageFactory;
 
     public MessagePersistenceRepositoryTests()
     {
-        _logger = new Mock<ILogger<MessagePersistenceRepository>>();
+        _loggerMock = new Mock<ILogger<MessagePersistenceRepository>>();
         _messageDocumentToModelMapperMock = new Mock<IMessageDocumentToModelMapper>();
         _messageCollectionMock = new Mock<IMongoCollectionWrapper<MessageDocument>>();
         _mongoCollectionFactoryMock = new Mock<IMongoCollectionFactory>();
@@ -47,7 +47,7 @@ public class MessagePersistenceRepositoryTests
             .Returns(new DateTimeOffset(2023, 10, 22, 21, 30, 0, TimeSpan.Zero));
         _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
 
-        _messagePersistenceRepositorySUT = new(_logger.Object, _messageDocumentToModelMapperMock.Object, _mongoCollectionFactoryMock.Object);
+        _messagePersistenceRepositorySUT = new(_loggerMock.Object, _messageDocumentToModelMapperMock.Object, _mongoCollectionFactoryMock.Object);
     }
 
     [Fact]
@@ -243,5 +243,68 @@ public class MessagePersistenceRepositoryTests
                     ),
                     It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
                 Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateMessage_WhenMessageIsOfUnexpectedType_LogErrorAndReturnFalse()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "TestSender",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestMessage message = new("MessageId", testSender, _dateTimeProviderMock.Object.Now, null);
+
+        _messageCollectionMock
+            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+
+        // Then
+        result.Should().BeFalse();
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Exactly(1));
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateMessage_WhenUpdateIsUnsuccessful_ReturnFalse()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "TestSender",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        var message = (TextMessage)_messageFactory
+            .CreateTextMessage("MessageId", testSender, "Test Text", _dateTimeProviderMock.Object.Now);
+
+        _messageCollectionMock
+            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+
+        // Then
+        result.Should().BeFalse();
     }
 }
