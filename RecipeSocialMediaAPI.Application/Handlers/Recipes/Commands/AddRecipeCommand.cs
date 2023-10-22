@@ -48,7 +48,8 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                     .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
                 request.NewRecipeContract.NumberOfServings,
                 request.NewRecipeContract.CookingTime,
-                request.NewRecipeContract.KiloCalories
+                request.NewRecipeContract.KiloCalories,
+                request.NewRecipeContract.ServingSize
             ),
             request.NewRecipeContract.Description,
             chef,

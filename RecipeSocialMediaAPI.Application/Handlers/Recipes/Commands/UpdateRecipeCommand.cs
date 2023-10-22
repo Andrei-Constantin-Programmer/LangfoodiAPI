@@ -45,7 +45,8 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
                     .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
                 request.UpdateRecipeContract.NumberOfServings ?? existingRecipe.Recipe.NumberOfServings,
                 request.UpdateRecipeContract.CookingTime ?? existingRecipe.Recipe.CookingTimeInSeconds,
-                request.UpdateRecipeContract.KiloCalories ?? existingRecipe.Recipe.KiloCalories
+                request.UpdateRecipeContract.KiloCalories ?? existingRecipe.Recipe.KiloCalories,
+                request.UpdateRecipeContract.ServingSize ?? existingRecipe.Recipe.ServingSize
             ),
             request.UpdateRecipeContract.Description,
             existingRecipe.Chef,
