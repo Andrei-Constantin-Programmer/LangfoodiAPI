@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
