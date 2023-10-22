@@ -113,7 +113,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateMessage_WhenIsTextMessage_UpdatesAndReturnsTrue()
+    public void UpdateMessage_WhenMessageIsTextMessage_UpdatesAndReturnsTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -149,6 +149,55 @@ public class MessagePersistenceRepositoryTests
                         && doc.SentDate == message.SentDate                    
                     ),
                     It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))), 
+                Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateMessage_WhenMessageIsRecipeMessage_UpdatesAndReturnsTrue()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "TestSender",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        List<RecipeAggregate> recipes = new()
+        {
+            new("Recipe1", "Recipe 1", new(new(), new()), "Description", testSender, new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero), new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)),
+            new("Recipe2", "Recipe 2", new(new(), new()), "Description", testSender, new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero), new(2023, 4, 4, 0, 0, 0, TimeSpan.Zero)),
+            new("Recipe3", "Recipe 3", new(new(), new()), "Description", testSender, new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero), new(2023, 5, 5, 0, 0, 0, TimeSpan.Zero)),
+        };
+
+        var message = (RecipeMessage)_messageFactory
+            .CreateRecipeMessage("MessageId", testSender, recipes, "Test Text", _dateTimeProviderMock.Object.Now);
+
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
+
+        _messageCollectionMock
+            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+
+        // Then
+        result.Should().BeTrue();
+        _messageCollectionMock
+            .Verify(collection =>
+                collection.UpdateRecord(
+                    It.Is<MessageDocument>(doc =>
+                        doc.Id == message.Id
+                        && doc.MessageContent.Text == message.TextContent
+                        && doc.MessageContent.RecipeIds!.SequenceEqual(recipes.Select(r => r.Id))
+                        && doc.MessageContent.ImageURLs == null
+                        && doc.SentDate == message.SentDate
+                    ),
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
                 Times.Once);
     }
 }
