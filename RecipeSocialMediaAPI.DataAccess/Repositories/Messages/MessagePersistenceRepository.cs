@@ -29,6 +29,6 @@ public class MessagePersistenceRepository
             MessageRepliedToId = messageRepliedTo.Id
         });
 
-        return _mapper.MapMessageDocumentToTextMessage(messageDocument, sender, messageRepliedTo);
+        return _mapper.MapMessageFromDocument(messageDocument, sender, messageRepliedTo);
     }
 }

@@ -2,9 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Neleus.LambdaCompare;
-using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
@@ -28,8 +26,7 @@ public class MessageQueryRepositoryTests
     private readonly Mock<IMongoCollectionWrapper<MessageDocument>> _messageCollectionMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
-    private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
-
+    
     public MessageQueryRepositoryTests()
     {
         _loggerMock = new Mock<ILogger<MessageQueryRepository>>();
@@ -40,14 +37,12 @@ public class MessageQueryRepositoryTests
             .Setup(factory => factory.CreateCollection<MessageDocument>())
             .Returns(_messageCollectionMock.Object);
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
-        _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
-
+        
         _messageQueryRepositorySUT = new(
             _loggerMock.Object,
             _mapperMock.Object,
             _mongoCollectionFactoryMock.Object,
-            _userQueryRepositoryMock.Object,
-            _recipeQueryRepositoryMock.Object);
+            _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -105,7 +100,7 @@ public class MessageQueryRepositoryTests
             .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
         _mapperMock
-            .Setup(mapper => mapper.MapMessageDocumentToTextMessage(testDocument, testSender, null))
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender, null))
             .Returns(testMessage);
 
         // When
@@ -162,7 +157,7 @@ public class MessageQueryRepositoryTests
             null);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageDocumentToTextMessage(testDocument, testSender.Account, null))
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
             .Returns(textMessage);
         _messageCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
@@ -226,7 +221,7 @@ public class MessageQueryRepositoryTests
             null);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageDocumentToImageMessage(testDocument, testSender.Account, null))
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
             .Returns(imageMessage);
         _messageCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
@@ -310,14 +305,11 @@ public class MessageQueryRepositoryTests
             null);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageDocumentToRecipeMessage(testDocument, testSender.Account, recipes,  null))
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account,  null))
             .Returns(recipeMessage);
         _messageCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
             .Returns(testDocument);
-        _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
-            .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(senderId))
             .Returns(testSender);
@@ -332,7 +324,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessage_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAndLogWarningForRecipesNotFound()
+    public void GetMessage_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessage()
     {
         // Given
         string messageId = "1";
@@ -397,14 +389,11 @@ public class MessageQueryRepositoryTests
             null);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageDocumentToRecipeMessage(testDocument, testSender.Account, recipes, null))
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
             .Returns(recipeMessage);
         _messageCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
             .Returns(testDocument);
-        _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
-            .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(senderId))
             .Returns(testSender);
@@ -414,14 +403,6 @@ public class MessageQueryRepositoryTests
 
         // Then
         result.Should().Be(recipeMessage);
-        _loggerMock.Verify(logger =>
-            logger.Log(
-                LogLevel.Warning,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-            Times.Exactly(2));
     }
 
     [Theory]
@@ -470,7 +451,7 @@ public class MessageQueryRepositoryTests
         TestMessage testMessage = GenerateReplyTree(testDocument.Id, testSender.Account, innerMessageSender, testDocument.SentDate, nestingLevel);
             
         _mapperMock
-            .Setup(mapper => mapper.MapMessageDocumentToTextMessage(testDocument, testSender.Account, null))
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
             .Returns(testMessage);
         _messageCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
@@ -518,7 +499,7 @@ public class MessageQueryRepositoryTests
     [InlineData(true, true, true)]
     [InlineData(false, false, false)]
     [InlineData(true, false, false)]
-    public void GetMessage_WhenMessageContentIsMalformed_ThrowMalformedMessageDocumentException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
+    public void GetMessage_WhenMapperThrowsException_ThrowException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
     {
         // Given
         string messageId = "1";
@@ -563,23 +544,16 @@ public class MessageQueryRepositoryTests
             .Setup(repo => repo.GetUserById(senderId))
             .Returns(testSender);
 
+        Exception testException = new("Mapping exception");
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageFromDocument(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<Message?>()))
+            .Throws(testException);
+
         // When
         var action = () => _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
-        action.Should().Throw<MalformedMessageDocumentException>();
-        _mapperMock
-            .Verify(mapper =>
-                mapper.MapMessageDocumentToTextMessage(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<Message>()), 
-                Times.Never);
-        _mapperMock
-            .Verify(mapper =>
-                mapper.MapMessageDocumentToImageMessage(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<Message>()),
-                Times.Never);
-        _mapperMock
-            .Verify(mapper =>
-                mapper.MapMessageDocumentToRecipeMessage(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<IEnumerable<RecipeAggregate>>(), It.IsAny<Message>()),
-                Times.Never);
+        action.Should().Throw<Exception>().WithMessage(testException.Message);
     }
 
     [Fact]
