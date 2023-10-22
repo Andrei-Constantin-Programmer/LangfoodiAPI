@@ -61,4 +61,8 @@ public class MessagePersistenceRepository
             return false;
         }
     }
+
+    public bool DeleteMessage(Message message) => DeleteMessage(message.Id);
+
+    public bool DeleteMessage(string messageId) => _messageCollection.Delete(messageDoc => messageDoc.Id == messageId);
 }

@@ -307,4 +307,90 @@ public class MessagePersistenceRepositoryTests
         // Then
         result.Should().BeFalse();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteMessage_WhenDeleteIsSuccessful_ReturnTrue()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "Sender",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestMessage message = new("TestId", testSender, _dateTimeProviderMock.Object.Now, null);
+
+        _messageCollectionMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _messagePersistenceRepositorySUT.DeleteMessage(message);
+
+        // Then
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteMessage_WhenDeleteIsUnsuccessful_ReturnFalse()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "Sender",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestMessage message = new("TestId", testSender, _dateTimeProviderMock.Object.Now, null);
+
+        _messageCollectionMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _messagePersistenceRepositorySUT.DeleteMessage(message);
+
+        // Then
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteMessageById_WhenDeleteIsSuccessful_ReturnTrue()
+    {
+        // Given
+        _messageCollectionMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _messagePersistenceRepositorySUT.DeleteMessage("TestId");
+
+        // Then
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteMessageById_WhenDeleteIsUnsuccessful_ReturnFalse()
+    {
+        // Given
+        _messageCollectionMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _messagePersistenceRepositorySUT.DeleteMessage("TestId");
+
+        // Then
+        result.Should().BeFalse();
+    }
 }
