@@ -200,4 +200,48 @@ public class MessagePersistenceRepositoryTests
                     It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
                 Times.Once);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateMessage_WhenMessageIsImageMessage_UpdatesAndReturnsTrue()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "TestSender",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        List<string> imageURLs = new() { "Image1", "Image2", "Image3" };
+
+        var message = (ImageMessage)_messageFactory
+            .CreateImageMessage("MessageId", testSender, imageURLs, "Test Text", _dateTimeProviderMock.Object.Now);
+
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
+
+        _messageCollectionMock
+            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+
+        // Then
+        result.Should().BeTrue();
+        _messageCollectionMock
+            .Verify(collection =>
+                collection.UpdateRecord(
+                    It.Is<MessageDocument>(doc =>
+                        doc.Id == message.Id
+                        && doc.MessageContent.Text == message.TextContent
+                        && doc.MessageContent.RecipeIds == null
+                        && doc.MessageContent.ImageURLs!.SequenceEqual(imageURLs)
+                        && doc.SentDate == message.SentDate
+                    ),
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+                Times.Once);
+    }
 }
