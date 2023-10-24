@@ -21,6 +21,8 @@ using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -47,6 +49,8 @@ internal static class ServicesConfiguration
         // Scoped
         builder.Services.AddScoped<IRecipeQueryRepository, RecipeQueryRepository>();
         builder.Services.AddScoped<IRecipePersistenceRepository, RecipePersistenceRepository>();
+
+        builder.Services.AddScoped<IMessageQueryRepository, MessageQueryRepository>();
 
         builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         builder.Services.AddScoped<IUserPersistenceRepository, UserPersistenceRepository>();

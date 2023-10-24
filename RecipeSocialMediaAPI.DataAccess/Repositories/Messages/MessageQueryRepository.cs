@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
@@ -11,7 +12,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 
-public class MessageQueryRepository
+public class MessageQueryRepository : IMessageQueryRepository
 {
     private readonly ILogger<MessageQueryRepository> _logger;
     private readonly IMessageDocumentToModelMapper _mapper;
@@ -53,10 +54,10 @@ public class MessageQueryRepository
             return null;
         }
 
-        Message? repliedToMessage = messageDocument.MessageRepliedToId is not null 
-                                    ? GetMessage(messageDocument.MessageRepliedToId) 
+        Message? repliedToMessage = messageDocument.MessageRepliedToId is not null
+                                    ? GetMessage(messageDocument.MessageRepliedToId)
                                     : null;
-        
+
         return MapMessageFromDocument(messageDocument, sender, repliedToMessage);
     }
 
@@ -75,7 +76,7 @@ public class MessageQueryRepository
         Message GetRecipeMessage(Message? repliedToMessage)
         {
             var recipes = recipeIds
-                .Select(id => 
+                .Select(id =>
                 {
                     var recipe = _recipeQueryRepository.GetRecipeById(id);
                     if (recipe is null)
@@ -86,7 +87,7 @@ public class MessageQueryRepository
                     return recipe;
                 })
                 .OfType<RecipeAggregate>();
-                
+
             return _mapper.MapMessageDocumentToRecipeMessage(messageDocument, sender, recipes, repliedToMessage);
         }
     }
