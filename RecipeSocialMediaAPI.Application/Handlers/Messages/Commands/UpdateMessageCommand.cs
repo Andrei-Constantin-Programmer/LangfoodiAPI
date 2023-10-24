@@ -29,17 +29,19 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
             _messageQueryRepository.GetMessage(request.UpdateMessageContract.Id)
             ?? throw new MessageNotFoundException(request.UpdateMessageContract.Id);
 
-        if (message is TextMessage textMessage)
+        switch (message)
         {
-            AttemptUpdatingTextMessage(request.UpdateMessageContract, textMessage);
-        }
-        else if (message is ImageMessage imageMessage)
-        {
-            AttemptUpdatingImageMessage(request.UpdateMessageContract, imageMessage);
-        }
-        else if (message is RecipeMessage recipeMessage)
-        {
-            AttemptUpdatingRecipeMessage(request.UpdateMessageContract, recipeMessage);
+            case TextMessage textMessage:
+                AttemptUpdatingTextMessage(request.UpdateMessageContract, textMessage);
+                break;
+            case ImageMessage imageMessage:
+                AttemptUpdatingImageMessage(request.UpdateMessageContract, imageMessage);
+                break;
+            case RecipeMessage recipeMessage:
+                AttemptUpdatingRecipeMessage(request.UpdateMessageContract, recipeMessage);
+                break;
+            default:
+                throw new CorruptedMessageException($"Message with id {message.Id} could not be updated, as it is corrupted");
         }
 
         bool isSuccessful = _messagePersistenceRepository.UpdateMessage(message);
