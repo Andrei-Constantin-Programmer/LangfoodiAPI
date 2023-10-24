@@ -30,7 +30,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
     public Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate? existingRecipe = 
+        RecipeAggregate existingRecipe = 
             _recipeQueryRepository.GetRecipeById(request.UpdateRecipeContract.Id) 
             ?? throw new RecipeNotFoundException(request.UpdateRecipeContract.Id);
 
@@ -58,7 +58,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
         return isSuccessful
             ? Task.CompletedTask
-            : throw new Exception($"Could not update recipe with id {existingRecipe.Id}.");
+            : throw new Exception($"Could not update recipe with id {existingRecipe.Id}");
     }
 }
 
