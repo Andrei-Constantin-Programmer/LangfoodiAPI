@@ -27,7 +27,7 @@ public class GetMessageByIdHandlerTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void Handle_WhenMessageIsNotFound_ThrowMessageNotFoundException()
     {
@@ -49,7 +49,7 @@ public class GetMessageByIdHandlerTests
     }
 
     [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenMessageIsFound_ReturnMappedMessageDTO()
     {
