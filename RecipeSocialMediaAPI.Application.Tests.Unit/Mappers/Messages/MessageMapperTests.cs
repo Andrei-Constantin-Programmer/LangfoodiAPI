@@ -51,7 +51,7 @@ public class MessageMapperTests
 
         TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
 
-        TextMessage testMessage = _messageFactory.CreateTextMessage(
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage(
             "TestId", 
             testSender, 
             "Test text content", 
@@ -94,7 +94,7 @@ public class MessageMapperTests
 
         TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
 
-        ImageMessage testMessage = _messageFactory.CreateImageMessage(
+        var testMessage = (ImageMessage)_messageFactory.CreateImageMessage(
             "TestId",
             testSender,
             new List<string>() { "Image1", "Image2" },
@@ -139,7 +139,7 @@ public class MessageMapperTests
 
         TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
 
-        RecipeMessage testMessage = _messageFactory.CreateRecipeMessage(
+        var testMessage = (RecipeMessage)_messageFactory.CreateRecipeMessage(
             "TestId",
             testSender,
             new List<RecipeAggregate>() 

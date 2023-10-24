@@ -1,13 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
-using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
@@ -18,15 +15,13 @@ public class MessageQueryRepository : IMessageQueryRepository
     private readonly IMessageDocumentToModelMapper _mapper;
     private readonly IMongoCollectionWrapper<MessageDocument> _messageCollection;
     private readonly IUserQueryRepository _userQueryRepository;
-    private readonly IRecipeQueryRepository _recipeQueryRepository;
 
-    public MessageQueryRepository(ILogger<MessageQueryRepository> logger, IMessageDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory, IUserQueryRepository userQueryRepository, IRecipeQueryRepository recipeQueryRepository)
+    public MessageQueryRepository(ILogger<MessageQueryRepository> logger, IMessageDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory, IUserQueryRepository userQueryRepository)
     {
         _logger = logger;
         _mapper = mapper;
         _messageCollection = mongoCollectionFactory.CreateCollection<MessageDocument>();
         _userQueryRepository = userQueryRepository;
-        _recipeQueryRepository = recipeQueryRepository;
     }
 
     public Message? GetMessage(string id)
@@ -57,38 +52,7 @@ public class MessageQueryRepository : IMessageQueryRepository
         Message? repliedToMessage = messageDocument.MessageRepliedToId is not null
                                     ? GetMessage(messageDocument.MessageRepliedToId)
                                     : null;
-
-        return MapMessageFromDocument(messageDocument, sender, repliedToMessage);
-    }
-
-    private Message MapMessageFromDocument(MessageDocument messageDocument, IUserAccount sender, Message? repliedToMessage)
-    {
-        var (text, recipeIds, imageURLs) = messageDocument.MessageContent;
-        return (text, recipeIds, imageURLs) switch
-        {
-            (object, null, null) => _mapper.MapMessageDocumentToTextMessage(messageDocument, sender, repliedToMessage),
-            (_, null, object) => _mapper.MapMessageDocumentToImageMessage(messageDocument, sender, repliedToMessage),
-            (_, object, null) => GetRecipeMessage(repliedToMessage),
-
-            _ => throw new MalformedMessageDocumentException(messageDocument)
-        };
-
-        Message GetRecipeMessage(Message? repliedToMessage)
-        {
-            var recipes = recipeIds
-                .Select(id =>
-                {
-                    var recipe = _recipeQueryRepository.GetRecipeById(id);
-                    if (recipe is null)
-                    {
-                        _logger.LogWarning("No recipe with id {RecipeId} found for message with id {MessageId}", id, messageDocument.Id);
-                    }
-
-                    return recipe;
-                })
-                .OfType<RecipeAggregate>();
-
-            return _mapper.MapMessageDocumentToRecipeMessage(messageDocument, sender, recipes, repliedToMessage);
-        }
+        
+        return _mapper.MapMessageFromDocument(messageDocument, sender, repliedToMessage);
     }
 }

@@ -44,7 +44,7 @@ public class MessageFactoryTests
         Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
 
         // When
-        TextMessage result = _messageFactorySUT.CreateTextMessage(testId, testSender, testText, testSentDate, testUpdateDate, testReplyMessage);
+        var result = (TextMessage)_messageFactorySUT.CreateTextMessage(testId, testSender, testText, testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         result.Id.Should().Be(testId);
@@ -107,7 +107,7 @@ public class MessageFactoryTests
         };
 
         // When
-        ImageMessage result = _messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
+        var result = (ImageMessage)_messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         result.Id.Should().Be(testId);
@@ -172,7 +172,7 @@ public class MessageFactoryTests
         };
 
         // When
-        RecipeMessage result = _messageFactorySUT.CreateRecipeMessage(testId, testSender, recipes, testText, testSentDate, testUpdateDate, testReplyMessage);
+        var result = (RecipeMessage)_messageFactorySUT.CreateRecipeMessage(testId, testSender, recipes, testText, testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         result.Id.Should().Be(testId);
