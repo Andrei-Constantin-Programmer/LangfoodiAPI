@@ -2,6 +2,7 @@
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
@@ -13,11 +14,13 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
 {
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
+    private readonly IRecipeQueryRepository _recipeQueryRepository;
 
-    public UpdateMessageHandler(IMessagePersistenceRepository messagePersistenceRepository, IMessageQueryRepository messageQueryRepository)
+    public UpdateMessageHandler(IMessagePersistenceRepository messagePersistenceRepository, IMessageQueryRepository messageQueryRepository, IRecipeQueryRepository recipeQueryRepository)
     {
         _messagePersistenceRepository = messagePersistenceRepository;
         _messageQueryRepository = messageQueryRepository;
+        _recipeQueryRepository = recipeQueryRepository;
     }
 
     public Task Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
@@ -34,6 +37,10 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
         {
             AttemptUpdatingImageMessage(request.UpdateMessageContract, imageMessage);
         }
+        else if (message is RecipeMessage recipeMessage)
+        {
+            AttemptUpdatingRecipeMessage(request.UpdateMessageContract, recipeMessage);
+        }
 
         bool isSuccessful = _messagePersistenceRepository.UpdateMessage(message);
 
@@ -49,6 +56,7 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
         {
             throw new TextMessageUpdateException(textMessage.Id, "attempted to add images");
         }
+
         if (contract.NewRecipeIds is not null
             && contract.NewRecipeIds.Any())
         {
@@ -82,6 +90,30 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
         foreach (var image in contract.NewImageURLs ?? new())
         {
             imageMessage.AddImage(image);
+        }
+    }
+
+    private void AttemptUpdatingRecipeMessage(UpdateMessageContract contract, RecipeMessage recipeMessage)
+    {
+        if (contract.NewImageURLs is not null
+            && contract.NewImageURLs.Any())
+        {
+            throw new RecipeMessageUpdateException(recipeMessage.Id, "attempted to add images");
+        }
+
+        if (recipeMessage.TextContent == contract.Text
+            && (contract.NewRecipeIds is null || !contract.NewRecipeIds.Any()))
+        {
+            throw new RecipeMessageUpdateException(recipeMessage.Id, "no changes made");
+        }
+
+        recipeMessage.TextContent = contract.Text;
+        foreach (var recipeId in contract.NewRecipeIds ?? new())
+        {
+            var recipe = _recipeQueryRepository.GetRecipeById(recipeId) 
+                ?? throw new RecipeMessageUpdateException(recipeMessage.Id, $"attempted to add inexistent recipe with id {recipeId}");
+
+            recipeMessage.AddRecipe(recipe);
         }
     }
 }
