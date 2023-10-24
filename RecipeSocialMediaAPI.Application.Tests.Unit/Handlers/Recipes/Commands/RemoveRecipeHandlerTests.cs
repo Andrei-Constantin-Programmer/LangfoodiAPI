@@ -118,10 +118,6 @@ public class RemoveRecipeHandlerTests
         var action = async () => await _removeRecipeHandler.Handle(new RemoveRecipeCommand(recipeId), CancellationToken.None);
 
         // Then
-        await action.Should()
-            .NotThrowAsync<RecipeNotFoundException>();
-
-        await action.Should()
-            .NotThrowAsync<Exception>();
+        await action.Should().NotThrowAsync();
     }
 }
