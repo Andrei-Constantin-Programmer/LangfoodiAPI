@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
@@ -8,7 +9,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 
-public class MessageQueryRepository
+public class MessageQueryRepository : IMessageQueryRepository
 {
     private readonly ILogger<MessageQueryRepository> _logger;
     private readonly IMessageDocumentToModelMapper _mapper;
@@ -48,8 +49,8 @@ public class MessageQueryRepository
             return null;
         }
 
-        Message? repliedToMessage = messageDocument.MessageRepliedToId is not null 
-                                    ? GetMessage(messageDocument.MessageRepliedToId) 
+        Message? repliedToMessage = messageDocument.MessageRepliedToId is not null
+                                    ? GetMessage(messageDocument.MessageRepliedToId)
                                     : null;
         
         return _mapper.MapMessageFromDocument(messageDocument, sender, repliedToMessage);
