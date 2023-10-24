@@ -6,16 +6,24 @@ using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Domain.Services;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands;
 
 public class UpdateMessageHandlerTests
 {
+    public static readonly DateTimeOffset TEST_DATE = new(2023, 10, 24, 0, 0, 0, TimeSpan.Zero);
+
     private readonly Mock<IMessagePersistenceRepository> _messagePersistenceRepositoryMock;
     private readonly Mock<IMessageQueryRepository> _messageQueryRepositoryMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
+    private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+
+    private readonly IMessageFactory _messageFactory;
 
     private readonly UpdateMessageHandler _updateMessageHandlerSUT;
 
@@ -24,6 +32,12 @@ public class UpdateMessageHandlerTests
         _messagePersistenceRepositoryMock = new Mock<IMessagePersistenceRepository>();
         _messageQueryRepositoryMock = new Mock<IMessageQueryRepository>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
+
+        _dateTimeProviderMock = new Mock<IDateTimeProvider>();
+        _dateTimeProviderMock
+            .Setup(provider => provider.Now)
+            .Returns(TEST_DATE);
+        _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
 
         _updateMessageHandlerSUT = new(_messagePersistenceRepositoryMock.Object, _messageQueryRepositoryMock.Object, _recipeQueryRepositoryMock.Object);
     }
@@ -80,5 +94,75 @@ public class UpdateMessageHandlerTests
         testAction.Should().ThrowAsync<CorruptedMessageException>();
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void Handle_WhenTheMessageIsATextMessageAndItChangesTheTextAndUpdateIsSuccessful_UpdateAndDontThrow()
+    {
+        // Given
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
+
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should().NotThrowAsync();
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.Is<TextMessage>(message =>
+                    message.Id == testMessage.Id
+                    && message.Sender == testMessage.Sender
+                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.SentDate == testMessage.SentDate
+                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                )), Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void Handle_WhenTheMessageIsATextMessageAndItChangesTheTextButUpdateIsUnsuccessful_ThrowMessageUpdateException()
+    {
+        // Given
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
+
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(false);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should().ThrowAsync<MessageUpdateException>();
     }
 }
