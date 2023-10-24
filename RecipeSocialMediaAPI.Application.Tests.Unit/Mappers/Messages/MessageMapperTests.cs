@@ -3,6 +3,7 @@ using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Mappers.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
@@ -61,6 +62,100 @@ public class MessageMapperTests
         {
             Id = testMessage.Id,
             SenderId = testSender.Id,
+            TextContent = testMessage.TextContent,
+            RepliedToMessageId = testMessage.RepliedToMessage!.Id,
+            SentDate = testMessage.SentDate,
+            UpdatedDate = testMessage.UpdatedDate,
+        };
+
+        // When
+        var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);
+
+        // Then
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void MapMessageToMessageDTO_WhenMessageIsImageMessage_ReturnCorrectlyMappedDTO(bool containsTextContent)
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
+
+        ImageMessage testMessage = _messageFactory.CreateImageMessage(
+            "TestId",
+            testSender,
+            new List<string>() { "Image1", "Image2" },
+            containsTextContent ? "Test text content" : null,
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            repliedToMessage);
+
+        MessageDTO expectedResult = new()
+        {
+            Id = testMessage.Id,
+            SenderId = testSender.Id,
+            ImageURLs = testMessage.ImageURLs.ToList(),
+            TextContent = testMessage.TextContent,
+            RepliedToMessageId = testMessage.RepliedToMessage!.Id,
+            SentDate = testMessage.SentDate,
+            UpdatedDate = testMessage.UpdatedDate,
+        };
+
+        // When
+        var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);
+
+        // Then
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void MapMessageToMessageDTO_WhenMessageIsRecipeMessage_ReturnCorrectlyMappedDTO(bool containsTextContent)
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
+
+        RecipeMessage testMessage = _messageFactory.CreateRecipeMessage(
+            "TestId",
+            testSender,
+            new List<RecipeAggregate>() 
+            { 
+                new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE),
+                new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE)
+            },
+            containsTextContent ? "Test text content" : null,
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            repliedToMessage);
+
+        MessageDTO expectedResult = new()
+        {
+            Id = testMessage.Id,
+            SenderId = testSender.Id,
+            RecipeIds = new() { "Recipe1", "Recipe2" },
             TextContent = testMessage.TextContent,
             RepliedToMessageId = testMessage.RepliedToMessage!.Id,
             SentDate = testMessage.SentDate,
