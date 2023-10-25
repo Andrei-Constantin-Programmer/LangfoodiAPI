@@ -6,7 +6,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 
-namespace RecipeSocialMediaAPI.Application.Handlers.Authentication.Querries;
+namespace RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 
 public record AuthenticateUserQuery(string UsernameOrEmail, string Password) : IRequest<UserDTO>;
 

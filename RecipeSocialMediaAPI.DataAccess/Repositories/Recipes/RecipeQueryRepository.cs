@@ -34,7 +34,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         }
         catch (Exception ex)
         {
-            _logger.LogInformation(ex, "There was an error trying to get recipe by id {RecipeId}: {ErrorMessage}", id, ex.Message);
+            _logger.LogError(ex, "There was an error trying to get recipe by id {RecipeId}: {ErrorMessage}", id, ex.Message);
             recipeDocument = null;
         }
 

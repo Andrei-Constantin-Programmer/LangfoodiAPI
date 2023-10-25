@@ -19,6 +19,12 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
+using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
+using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Messages;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -27,15 +33,18 @@ internal static class ServicesConfiguration
     internal static void ConfigureServices(this WebApplicationBuilder builder)
     {
         // Singletons
-        builder.Services.AddSingleton(GenerateDatabaseConfiguration(builder.Configuration));
+        builder.Services.AddSingleton(GenerateMongoConfiguration(builder.Configuration));
+        builder.Services.AddSingleton(GenerateCloudinaryConfiguration(builder.Configuration));
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IRecipeValidationService, RecipeValidationService>();
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
+        builder.Services.AddSingleton<IMessageDocumentToModelMapper, MessageDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
+        builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
         builder.Services.AddValidatorsFromAssemblyContaining<DateTimeProvider>(ServiceLifetime.Singleton);
@@ -44,8 +53,12 @@ internal static class ServicesConfiguration
         builder.Services.AddScoped<IRecipeQueryRepository, RecipeQueryRepository>();
         builder.Services.AddScoped<IRecipePersistenceRepository, RecipePersistenceRepository>();
 
+        builder.Services.AddScoped<IMessageQueryRepository, MessageQueryRepository>();
+
         builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         builder.Services.AddScoped<IUserPersistenceRepository, UserPersistenceRepository>();
+
+        builder.Services.AddScoped<IImageHostingQueryRepository, ImageHostingQueryRepository>();
 
         // Transients
         builder.Services.AddTransient<ICryptoService, CryptoService>();
@@ -61,7 +74,12 @@ internal static class ServicesConfiguration
         });
     }
 
-    private static DatabaseConfiguration GenerateDatabaseConfiguration(ConfigurationManager configurationManager) => new(
+    private static CloudinaryApiConfiguration GenerateCloudinaryConfiguration(ConfigurationManager configurationManager) => new(
+        configurationManager.GetSection("Cloudinary").GetValue<string>("CloudName") ?? string.Empty,
+        configurationManager.GetSection("Cloudinary").GetValue<string>("ApiKey") ?? string.Empty,
+        configurationManager.GetSection("Cloudinary").GetValue<string>("ApiSecret") ?? string.Empty);
+
+    private static MongoDatabaseConfiguration GenerateMongoConfiguration(ConfigurationManager configurationManager) => new(
         configurationManager.GetSection("MongoDB").GetValue<string>("Connection") ?? string.Empty,
         configurationManager.GetSection("MongoDB").GetValue<string>("ClusterName") ?? string.Empty);
 }
