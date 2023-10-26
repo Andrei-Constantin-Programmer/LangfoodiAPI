@@ -199,7 +199,7 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to add images");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<TextMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 
     [Fact]
@@ -234,7 +234,7 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to add recipes");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<TextMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<TextMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 
     [Theory]
@@ -306,7 +306,7 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to nullify text");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<TextMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 
     [Theory]
@@ -463,7 +463,7 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<ImageMessageUpdateException>()
             .WithMessage("*attempted to add recipes");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<ImageMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 
     [Fact]
@@ -500,7 +500,7 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<ImageMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<ImageMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 
     [Theory]
@@ -664,7 +664,7 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*attempted to add inexistent recipe*");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<RecipeMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 
     [Theory]
@@ -778,7 +778,7 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*attempted to add images");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<RecipeMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 
     [Fact]
@@ -824,6 +824,6 @@ public class UpdateMessageHandlerTests
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<RecipeMessage>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 }
