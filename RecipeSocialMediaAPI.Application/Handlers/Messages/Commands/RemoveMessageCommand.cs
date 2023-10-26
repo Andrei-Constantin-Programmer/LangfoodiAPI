@@ -6,7 +6,7 @@ namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
 public record RemoveMessageCommand(string Id) : IRequest;
 
-public class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
+internal class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
 {
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
