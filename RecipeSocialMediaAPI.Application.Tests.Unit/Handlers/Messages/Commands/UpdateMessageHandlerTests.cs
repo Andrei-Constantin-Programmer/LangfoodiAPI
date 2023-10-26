@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -169,7 +170,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsATextMessageButRequestAddsImages_ThrowMessageUpdateExceptionAndDontUpdate()
+    public void Handle_WhenTheMessageIsATextMessageButRequestAddsImages_ThrowTextMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, new() { "Image" }));
@@ -195,22 +196,16 @@ public class UpdateMessageHandlerTests
 
         // Then
         testAction.Should()
-            .ThrowAsync<MessageUpdateException>()
+            .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to add images");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<TextMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<TextMessage>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsATextMessageButRequestAddsRecipes_ThrowMessageUpdateExceptionAndDontUpdate()
+    public void Handle_WhenTheMessageIsATextMessageButRequestAddsRecipes_ThrowTextMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", new() { "Recipe" }, null));
@@ -236,22 +231,16 @@ public class UpdateMessageHandlerTests
 
         // Then
         testAction.Should()
-            .ThrowAsync<MessageUpdateException>()
+            .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to add recipes");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<TextMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<TextMessage>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsATextMessageButNoChangesWereMade_ThrowMessageUpdateExceptionAndDontUpdate()
+    public void Handle_WhenTheMessageIsATextMessageButNoChangesWereMade_ThrowTextMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "Original Text", null, null));
@@ -277,16 +266,10 @@ public class UpdateMessageHandlerTests
 
         // Then
         testAction.Should()
-            .ThrowAsync<MessageUpdateException>()
+            .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<TextMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<TextMessage>()), Times.Never);
     }
 
     [Theory]
@@ -294,7 +277,7 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData("")]
     [InlineData(null)]
-    public void Handle_WhenTheMessageIsATextMessageButRequestNullifiesTextContent_ThrowMessageUpdateExceptionAndDontUpdate(string? newText)
+    public void Handle_WhenTheMessageIsATextMessageButRequestNullifiesTextContent_ThrowTextMessageUpdateExceptionAndDontUpdate(string? newText)
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newText, new() { "Recipe" }, null));
@@ -319,15 +302,11 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().ThrowAsync<MessageUpdateException>().WithMessage("*attempted to nullify text");
+        testAction.Should()
+            .ThrowAsync<TextMessageUpdateException>()
+            .WithMessage("*attempted to nullify text");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<TextMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<TextMessage>()), Times.Never);
     }
 
     [Theory]
@@ -411,6 +390,7 @@ public class UpdateMessageHandlerTests
                     && message.TextContent == testCommand.UpdateMessageContract.Text
                     && message.SentDate == testMessage.SentDate
                     && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                    && message.ImageURLs.Contains(testCommand.UpdateMessageContract.NewImageURLs!.First())
                 )), Times.Once);
     }
 
@@ -452,7 +432,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsAnImageMessageButRequestAddsRecipes_ThrowMessageUpdateExceptionAndDontUpdate()
+    public void Handle_WhenTheMessageIsAnImageMessageButRequestAddsRecipes_ThrowImageMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         string originalText = "Original Text";
@@ -480,22 +460,16 @@ public class UpdateMessageHandlerTests
 
         // Then
         testAction.Should()
-            .ThrowAsync<MessageUpdateException>()
+            .ThrowAsync<ImageMessageUpdateException>()
             .WithMessage("*attempted to add recipes");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<ImageMessage>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsAnImageMessageButNoChangesWereMade_ThrowMessageUpdateExceptionAndDontUpdate()
+    public void Handle_WhenTheMessageIsAnImageMessageButNoChangesWereMade_ThrowImageMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         string originalText = "Original Text";
@@ -523,15 +497,333 @@ public class UpdateMessageHandlerTests
 
         // Then
         testAction.Should()
-            .ThrowAsync<MessageUpdateException>()
+            .ThrowAsync<ImageMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
+            .Verify(repo => repo.UpdateMessage(It.IsAny<ImageMessage>()), Times.Never);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData("New Text Content")]
+    [InlineData(null)]
+    public void Handle_WhenTheMessageIsARecipeMessageAndItChangesTextAndUpdateIsSuccessful_UpdateAndDontThrow(string? newTextContent)
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        RecipeAggregate existingRecipe = new(
+            "Existing1",
+            "Existing Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
+
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newTextContent, new(), null));
+
+        var testMessage = (RecipeMessage)_messageFactory
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should().NotThrowAsync();
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.Is<RecipeMessage>(message =>
                     message.Id == testMessage.Id
                     && message.Sender == testMessage.Sender
                     && message.TextContent == testCommand.UpdateMessageContract.Text
                     && message.SentDate == testMessage.SentDate
                     && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Never);
+                )), Times.Once);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesAndUpdateIsSuccessful_UpdateAndDontThrow(bool changeText)
+    {
+        // Given
+        string originalText = "Original Text";
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        RecipeAggregate existingRecipe = new(
+            "Existing1",
+            "Existing Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
+
+        RecipeAggregate newRecipe = new(
+            "New1",
+            "New Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 27, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 27, 0, 0, 0, TimeSpan.Zero));
+
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { newRecipe.Id }, null));
+
+        var testMessage = (RecipeMessage)_messageFactory
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+        _recipeQueryRepositoryMock
+            .Setup(repo => repo.GetRecipeById(newRecipe.Id))
+            .Returns(newRecipe);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should().NotThrowAsync();
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.Is<RecipeMessage>(message =>
+                    message.Id == testMessage.Id
+                    && message.Sender == testMessage.Sender
+                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.SentDate == testMessage.SentDate
+                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                    && message.Recipes.Contains(newRecipe)
+                )), Times.Once);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesThatDontExist_ThrowRecipeMessageUpdateException(bool changeText)
+    {
+        // Given
+        string originalText = "Original Text";
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        RecipeAggregate existingRecipe = new(
+            "Existing1",
+            "Existing Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
+
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { "Inexistent Recipe" }, null));
+
+        var testMessage = (RecipeMessage)_messageFactory
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should()
+            .ThrowAsync<RecipeMessageUpdateException>()
+            .WithMessage("*attempted to add inexistent recipe*");
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.IsAny<RecipeMessage>()), Times.Never);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesButUpdateIsUnsuccessful_ThrowRecipeMessageUpdateException(bool changeText)
+    {
+        // Given
+        string originalText = "Original Text";
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        RecipeAggregate existingRecipe = new(
+            "Existing1",
+            "Existing Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
+
+        RecipeAggregate newRecipe = new(
+            "New1",
+            "New Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 27, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 27, 0, 0, 0, TimeSpan.Zero));
+
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { newRecipe.Id }, null));
+
+        var testMessage = (RecipeMessage)_messageFactory
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(false);
+        _recipeQueryRepositoryMock
+            .Setup(repo => repo.GetRecipeById(newRecipe.Id))
+            .Returns(newRecipe);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should().ThrowAsync<MessageUpdateException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void Handle_WhenTheMessageIsARecipeMessageButRequestAddsImages_ThrowRecipeMessageUpdateExceptionAndDontUpdate()
+    {
+        // Given
+        string originalText = "Original Text";
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        RecipeAggregate existingRecipe = new(
+            "Existing1",
+            "Existing Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
+
+        RecipeAggregate newRecipe = new(
+            "New1",
+            "New Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 27, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 27, 0, 0, 0, TimeSpan.Zero));
+
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new() { newRecipe.Id }, new() { "New Image" }));
+
+        var testMessage = (RecipeMessage)_messageFactory
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+        _recipeQueryRepositoryMock
+            .Setup(repo => repo.GetRecipeById(newRecipe.Id))
+            .Returns(newRecipe);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should()
+            .ThrowAsync<RecipeMessageUpdateException>()
+            .WithMessage("*attempted to add images");
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.IsAny<RecipeMessage>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void Handle_WhenTheMessageIsARecipeMessageButNoChangesWereMade_ThrowRecipeMessageUpdateExceptionAndDontUpdate()
+    {
+        // Given
+        string originalText = "Original Text";
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        RecipeAggregate existingRecipe = new(
+            "Existing1",
+            "Existing Recipe Title",
+            new(new(), new()),
+            "Description",
+            testSender,
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
+
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new(), null));
+
+        var testMessage = (RecipeMessage)_messageFactory
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should()
+            .ThrowAsync<RecipeMessageUpdateException>()
+            .WithMessage("*no changes made");
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.IsAny<RecipeMessage>()), Times.Never);
     }
 }
