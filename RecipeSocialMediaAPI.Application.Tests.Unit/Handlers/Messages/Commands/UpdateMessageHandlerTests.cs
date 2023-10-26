@@ -329,4 +329,209 @@ public class UpdateMessageHandlerTests
                     && message.UpdatedDate == _dateTimeProviderMock.Object.Now
                 )), Times.Never);
     }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData("New Text Content")]
+    [InlineData(null)]
+    public void Handle_WhenTheMessageIsAnImageMessageAndItChangesTextAndUpdateIsSuccessful_UpdateAndDontThrow(string? newTextContent)
+    {
+        // Given
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newTextContent, null, new()));
+
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        var testMessage = (ImageMessage)_messageFactory.CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should().NotThrowAsync();
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
+                    message.Id == testMessage.Id
+                    && message.Sender == testMessage.Sender
+                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.SentDate == testMessage.SentDate
+                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                )), Times.Once);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Handle_WhenTheMessageIsAnImageMessageAndItAddsImagesAndUpdateIsSuccessful_UpdateAndDontThrow(bool changeText)
+    {
+        // Given
+        string originalText = "Original Text";
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text Content" : originalText, null, new() { "NewImage" } ));
+
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        var testMessage = (ImageMessage)_messageFactory
+            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should().NotThrowAsync();
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
+                    message.Id == testMessage.Id
+                    && message.Sender == testMessage.Sender
+                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.SentDate == testMessage.SentDate
+                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                )), Times.Once);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Handle_WhenTheMessageIsAnImageMessageAndItAddsImagesButUpdateIsUnsuccessful_ThrowMessageUpdateException(bool changeText)
+    {
+        // Given
+        string originalText = "Original Text";
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text Content" : originalText, null, new() { "NewImage" }));
+
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        var testMessage = (ImageMessage)_messageFactory
+            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(false);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should().ThrowAsync<MessageUpdateException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void Handle_WhenTheMessageIsAnImageMessageButRequestAddsRecipes_ThrowMessageUpdateExceptionAndDontUpdate()
+    {
+        // Given
+        string originalText = "Original Text";
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new() { "Recipe" }, new() { "NewImage" }));
+
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        var testMessage = (ImageMessage)_messageFactory
+            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should()
+            .ThrowAsync<MessageUpdateException>()
+            .WithMessage("*attempted to add recipes");
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
+                    message.Id == testMessage.Id
+                    && message.Sender == testMessage.Sender
+                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.SentDate == testMessage.SentDate
+                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                )), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void Handle_WhenTheMessageIsAnImageMessageButNoChangesWereMade_ThrowMessageUpdateExceptionAndDontUpdate()
+    {
+        // Given
+        string originalText = "Original Text";
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, null, new()));
+
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        var testMessage = (ImageMessage)_messageFactory
+            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        testAction.Should()
+            .ThrowAsync<MessageUpdateException>()
+            .WithMessage("*no changes made");
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
+                    message.Id == testMessage.Id
+                    && message.Sender == testMessage.Sender
+                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.SentDate == testMessage.SentDate
+                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                )), Times.Never);
+    }
 }
