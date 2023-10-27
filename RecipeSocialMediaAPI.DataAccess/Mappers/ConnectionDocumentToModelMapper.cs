@@ -2,6 +2,7 @@
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers;
 
@@ -16,16 +17,16 @@ internal class ConnectionDocumentToModelMapper
 
     public Connection MapConnectionFromDocument(ConnectionDocument connectionDocument)
     {
-        var user1 = _userQueryRepository
-            .GetUserById(connectionDocument.AccountId1)?
-            .Account
+        IUserAccount user1 = _userQueryRepository
+            .GetUserById(connectionDocument.AccountId1)?.Account
             ?? throw new UserDocumentNotFoundException(connectionDocument.AccountId1);
 
-        var user2 = _userQueryRepository
-            .GetUserById(connectionDocument.AccountId2)?
-            .Account
+        IUserAccount user2 = _userQueryRepository
+            .GetUserById(connectionDocument.AccountId2)?.Account
             ?? throw new UserDocumentNotFoundException(connectionDocument.AccountId2);
 
-        return new Connection(user1, user2, Enum.Parse<ConnectionStatus>(connectionDocument.ConnectionStatus));
+        return Enum.TryParse(connectionDocument.ConnectionStatus, out ConnectionStatus status)
+            ? new Connection(user1, user2, status)
+            : throw new InvalidConnectionStatusException(connectionDocument);
     }
 }
