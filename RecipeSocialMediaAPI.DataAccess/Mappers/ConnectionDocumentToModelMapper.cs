@@ -1,12 +1,13 @@
 ﻿using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
+using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers;
 
-internal class ConnectionDocumentToModelMapper
+public class ConnectionDocumentToModelMapper : IConnectionDocumentToModelMapper
 {
     private readonly IUserQueryRepository _userQueryRepository;
 
