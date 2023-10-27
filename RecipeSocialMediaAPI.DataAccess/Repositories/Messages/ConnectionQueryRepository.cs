@@ -27,7 +27,12 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
             connectionDoc => connectionDoc.AccountId1 == userAccount1.Id 
                              && connectionDoc.AccountId2 == userAccount2.Id);
 
-        return _mapper.MapConnectionFromDocument(connectionDocument!);
+        if (connectionDocument is null)
+        {
+            return null;
+        }
+
+        return _mapper.MapConnectionFromDocument(connectionDocument);
     }
 
     public List<Connection> GetConnectionsForUser(IUserAccount userAccount)

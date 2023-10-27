@@ -79,4 +79,41 @@ public class ConnectionQueryRepositoryTests
         // Then
         result.Should().Be(testConnection);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnection_WhenConnectionIsNotFound_ReturnNullAndDontMap()
+    {
+        // Given
+        TestUserAccount testAccount1 = new()
+        {
+            Id = "User1",
+            Handler = "user1",
+            UserName = "User 1 Name",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount testAccount2 = new()
+        {
+            Id = "User2",
+            Handler = "user2",
+            UserName = "User 2 Name",
+            AccountCreationDate = new(2023, 2, 5, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount1.Id
+                                                                             && x.AccountId2 == testAccount2.Id;
+
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns((ConnectionDocument?)null);
+
+        // When
+        var result = _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+
+        // Then
+        result.Should().BeNull();
+        _connectionDocumentToModelMapperMock
+            .Verify(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()), Times.Never);
+    }
 }
