@@ -42,6 +42,7 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
         builder.Services.AddSingleton<IMessageDocumentToModelMapper, MessageDocumentToModelMapper>();
+        builder.Services.AddSingleton<IConnectionDocumentToModelMapper, ConnectionDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
