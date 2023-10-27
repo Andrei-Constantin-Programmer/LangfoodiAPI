@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
@@ -30,7 +31,7 @@ public class ConnectionDocumentToModelMapperTests
     [InlineData(ConnectionStatus.Pending)]
     [InlineData(ConnectionStatus.Connected)]
     [InlineData(ConnectionStatus.Favourite)]
-    public void MapConnectionDocumentFromDocument_WhenDocumentIsValid_ReturnCorrectlyMappedDocument(ConnectionStatus connectionStatus)
+    public void MapConnectionFromDocument_WhenDocumentIsValid_ReturnCorrectlyMappedDocument(ConnectionStatus connectionStatus)
     {
         // Given
         TestUserCredentials testUser1 = new()
@@ -74,11 +75,74 @@ public class ConnectionDocumentToModelMapperTests
             .Returns(testUser2);
 
         // When
-        var result = _connectionDocumentToModelMapperSUT.MapConnectionDocumentFromDocument(testDocument);
+        var result = _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
 
         // Then
         result.Account1.Should().Be(testUser1.Account);
         result.Account2.Should().Be(testUser2.Account);
         result.Status.Should().Be(connectionStatus);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(false, false)]
+    public void MapConnectionFromDocument_WhenUsersDontExist_ThrowUserDocumentNotFoundException(bool firstUserExists, bool secondUserExists)
+    {
+        // Given
+        TestUserCredentials? testUser1 = 
+            firstUserExists ? new()
+            {
+                Account = new TestUserAccount()
+                {
+                    Id = "User1",
+                    Handler = "user1",
+                    UserName = "User 1 Name",
+                    AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                },
+                Email = "user1@mail.com",
+                Password = "password"
+            } 
+            : null;
+
+        TestUserCredentials? testUser2 = 
+            secondUserExists ? new()
+            {
+                Account = new TestUserAccount()
+                {
+                    Id = "User2",
+                    Handler = "user2",
+                    UserName = "User 2 Name",
+                    AccountCreationDate = new(2023, 2, 5, 0, 0, 0, TimeSpan.Zero)
+                },
+                Email = "user2@mail.com",
+                Password = "password"
+            }
+            :null;
+
+        string userId1 = testUser1?.Account.Id ?? "User1Id";
+        string userId2 = testUser2?.Account.Id ?? "User2Id";
+
+        ConnectionDocument testDocument = new()
+        {
+            AccountId1 = userId1,
+            AccountId2 = userId2,
+            ConnectionStatus = "Pending"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(userId1))
+            .Returns(testUser1);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(userId2))
+            .Returns(testUser2);
+
+        // When
+        var testAction = () => _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+
+        // Then
+        testAction.Should().Throw<UserDocumentNotFoundException>();
     }
 }
