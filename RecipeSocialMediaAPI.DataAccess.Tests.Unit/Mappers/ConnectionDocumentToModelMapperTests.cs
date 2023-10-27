@@ -199,4 +199,41 @@ public class ConnectionDocumentToModelMapperTests
         // Then
         testAction.Should().Throw<InvalidConnectionStatusException>();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void MapConnectionFromDocument_WhenTheAccountsAreTheSame_ThrowException()
+    {
+        // Given
+        TestUserCredentials testUser = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "User1",
+                Handler = "user1",
+                UserName = "User 1 Name",
+                AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "user1@mail.com",
+            Password = "password"
+        };
+
+        ConnectionDocument testDocument = new()
+        {
+            AccountId1 = testUser.Account.Id,
+            AccountId2 = testUser.Account.Id,
+            ConnectionStatus = "Pending"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(testUser.Account.Id))
+            .Returns(testUser);
+
+        // When
+        var testAction = () => _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+
+        // Then
+        testAction.Should().Throw<Exception>();
+    }
 }
