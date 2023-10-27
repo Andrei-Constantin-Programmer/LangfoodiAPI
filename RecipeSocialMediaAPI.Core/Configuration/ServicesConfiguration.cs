@@ -39,10 +39,6 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IRecipeValidationService, RecipeValidationService>();
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
-        builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
-        builder.Services.AddSingleton<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
-        builder.Services.AddSingleton<IMessageDocumentToModelMapper, MessageDocumentToModelMapper>();
-        builder.Services.AddSingleton<IConnectionDocumentToModelMapper, ConnectionDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
@@ -51,6 +47,11 @@ internal static class ServicesConfiguration
         builder.Services.AddValidatorsFromAssemblyContaining<DateTimeProvider>(ServiceLifetime.Singleton);
 
         // Scoped
+        builder.Services.AddScoped<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
+        builder.Services.AddScoped<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
+        builder.Services.AddScoped<IMessageDocumentToModelMapper, MessageDocumentToModelMapper>();
+        builder.Services.AddScoped<IConnectionDocumentToModelMapper, ConnectionDocumentToModelMapper>();
+
         builder.Services.AddScoped<IRecipeQueryRepository, RecipeQueryRepository>();
         builder.Services.AddScoped<IRecipePersistenceRepository, RecipePersistenceRepository>();
 
