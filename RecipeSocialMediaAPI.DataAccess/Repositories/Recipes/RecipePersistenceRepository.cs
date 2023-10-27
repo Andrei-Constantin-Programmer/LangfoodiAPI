@@ -33,7 +33,8 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 Labels = labels.ToList(),
                 NumberOfServings = recipe.NumberOfServings,
                 CookingTimeInSeconds = recipe.CookingTimeInSeconds,
-                KiloCalories = recipe.KiloCalories
+                KiloCalories = recipe.KiloCalories,
+                ServingSize = recipe.ServingSize is not null ? (recipe.ServingSize!.Quantity, recipe.ServingSize!.UnitOfMeasurement) : null
             });
 
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
