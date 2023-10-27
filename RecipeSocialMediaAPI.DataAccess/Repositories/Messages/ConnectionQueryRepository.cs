@@ -23,7 +23,11 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
 
     public Connection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2)
     {
-        throw new NotImplementedException();
+        var connectionDocument = _connectionCollection.Find(
+            connectionDoc => connectionDoc.AccountId1 == userAccount1.Id 
+                             && connectionDoc.AccountId2 == userAccount2.Id);
+
+        return _mapper.MapConnectionFromDocument(connectionDocument!);
     }
 
     public List<Connection> GetConnectionsForUser(IUserAccount userAccount)
