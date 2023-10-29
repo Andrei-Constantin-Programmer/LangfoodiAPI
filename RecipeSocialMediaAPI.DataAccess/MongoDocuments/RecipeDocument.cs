@@ -16,4 +16,5 @@ public record RecipeDocument : MongoDocument
     required public DateTimeOffset CreationDate;
     required public DateTimeOffset LastUpdatedDate;
     required public IList<string> Labels;
+    public (double Quantity, string UnitOfMeasurement)? ServingSize;
 }

@@ -21,6 +21,10 @@ using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
+using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Messages;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -37,8 +41,10 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
+        builder.Services.AddSingleton<IMessageDocumentToModelMapper, MessageDocumentToModelMapper>();
         builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
+        builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
         builder.Services.AddValidatorsFromAssemblyContaining<DateTimeProvider>(ServiceLifetime.Singleton);
@@ -46,6 +52,9 @@ internal static class ServicesConfiguration
         // Scoped
         builder.Services.AddScoped<IRecipeQueryRepository, RecipeQueryRepository>();
         builder.Services.AddScoped<IRecipePersistenceRepository, RecipePersistenceRepository>();
+
+        builder.Services.AddScoped<IMessageQueryRepository, MessageQueryRepository>();
+        builder.Services.AddScoped<IMessagePersistenceRepository, MessagePersistenceRepository>();
 
         builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         builder.Services.AddScoped<IUserPersistenceRepository, UserPersistenceRepository>();
