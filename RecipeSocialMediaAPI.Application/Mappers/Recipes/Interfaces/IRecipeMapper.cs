@@ -11,6 +11,4 @@ public interface IRecipeMapper
     public RecipeStepDTO MapRecipeStepToRecipeStepDto(RecipeStep recipeStep);
     public RecipeDetailedDTO MapRecipeAggregateToRecipeDetailedDto(RecipeAggregate recipeAggregate);
     public RecipeDTO MapRecipeAggregateToRecipeDto(RecipeAggregate recipeAggregate);
-    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO ServingSizeDTO);
-    public ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize ServingSize);
 }
