@@ -55,6 +55,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate,
                 Labels = recipe.Labels.ToList(),
+                ServingSize = recipe.Recipe.ServingSize is not null ? (recipe.ServingSize!.Quantity, recipe.ServingSize!.UnitOfMeasurement) : null
             },
             doc => doc.Id == recipe.Id
         );
