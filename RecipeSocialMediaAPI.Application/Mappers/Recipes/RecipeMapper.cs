@@ -81,17 +81,4 @@ public class RecipeMapper : IRecipeMapper
             LastUpdatedDate = recipeAggregate.LastUpdatedDate
         };
     }
-    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO ServingSizeDTO)
-    {
-        return new(ServingSizeDTO.Quantity, ServingSizeDTO.UnitOfMeasurement);
-    }
-
-    public ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize ServingSize)
-    {
-        return new ServingSizeDTO
-        {
-            Quantity = ServingSize.Quantity,
-            UnitOfMeasurement = ServingSize.UnitOfMeasurement
-        };
-    }
 }
