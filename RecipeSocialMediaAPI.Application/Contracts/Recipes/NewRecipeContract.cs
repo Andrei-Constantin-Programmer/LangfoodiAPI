@@ -14,5 +14,5 @@ public record NewRecipeContract
     public int? KiloCalories { get; set; }
     required public List<IngredientDTO> Ingredients { get; set; }
     required public Stack<RecipeStepDTO> RecipeSteps { get; set; }
-    public (double Quantity, string UnitOfMeasurement)? ServingSize { get; set; }
+    public ServingSize? ServingSize { get; set; }
 }
