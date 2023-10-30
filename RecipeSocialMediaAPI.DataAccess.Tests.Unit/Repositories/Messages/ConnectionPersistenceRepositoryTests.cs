@@ -244,4 +244,82 @@ public class ConnectionPersistenceRepositoryTests
         // Then
         result.Should().BeFalse();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteConnection_WhenDeleteIsSuccessful_ReturnTrue()
+    {
+        // Given
+        TestUserAccount testUser1 = new()
+        {
+            Id = "User1",
+            Handler = "user1",
+            UserName = "Username1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestUserAccount testUser2 = new()
+        {
+            Id = "User2",
+            Handler = "user2",
+            UserName = "Username2",
+            AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Expression<Func<ConnectionDocument, bool>> expectedExpression =
+            doc => (doc.AccountId1 == testUser1.Id && doc.AccountId2 == testUser2.Id)
+                || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
+
+        _connectionCollectionMock
+            .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(true);
+
+        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Pending);
+
+        // When
+        var result = _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);
+
+        // Then
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteConnection_WhenDeleteIsUnuccessful_ReturnFalse()
+    {
+        // Given
+        TestUserAccount testUser1 = new()
+        {
+            Id = "User1",
+            Handler = "user1",
+            UserName = "Username1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestUserAccount testUser2 = new()
+        {
+            Id = "User2",
+            Handler = "user2",
+            UserName = "Username2",
+            AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Expression<Func<ConnectionDocument, bool>> expectedExpression =
+            doc => (doc.AccountId1 == testUser1.Id && doc.AccountId2 == testUser2.Id)
+                || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
+
+        _connectionCollectionMock
+            .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(false);
+
+        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Pending);
+
+        // When
+        var result = _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);
+
+        // Then
+        result.Should().BeFalse();
+    }
 }
