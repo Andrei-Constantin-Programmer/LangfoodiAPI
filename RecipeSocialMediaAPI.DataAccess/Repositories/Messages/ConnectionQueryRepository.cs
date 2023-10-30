@@ -43,6 +43,10 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
 
     public List<Connection> GetConnectionsForUser(IUserAccount userAccount)
     {
-        throw new NotImplementedException();
+        return _connectionCollection
+            .GetAll(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
+                                     || connectionDoc.AccountId2 == userAccount.Id)
+            .Select(_mapper.MapConnectionFromDocument)
+            .ToList();
     }
 }

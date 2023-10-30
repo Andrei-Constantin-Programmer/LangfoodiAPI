@@ -202,4 +202,77 @@ public class ConnectionQueryRepositoryTests
         // Then
         testAction.Should().Throw<Exception>().WithMessage(testException.Message);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnectionsForUser_WhenConnectionsExist_ReturnMappedConnections()
+    {
+        // Given
+        TestUserAccount testAccount = new()
+        {
+            Id = "User1",
+            Handler = "user1",
+            UserName = "User 1 Name",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount testAccount2 = new()
+        {
+            Id = "User2",
+            Handler = "user2",
+            UserName = "User 2 Name",
+            AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount testAccount3 = new()
+        {
+            Id = "User3",
+            Handler = "user3",
+            UserName = "User 3 Name",
+            AccountCreationDate = new(2023, 5, 19, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount.Id
+                                                                             || x.AccountId2 == testAccount.Id;
+
+        List<ConnectionDocument> testDocuments = new()
+        {
+            new()
+            {
+                AccountId1 = testAccount.Id,
+                AccountId2 = testAccount2.Id,
+                ConnectionStatus = "Pending"
+            },
+            new()
+            {
+                AccountId1 = testAccount3.Id,
+                AccountId2 = testAccount.Id,
+                ConnectionStatus = "Favourite"
+            }
+        };
+        List<Connection> testConnections = new()
+        {
+            new(testAccount, testAccount2, ConnectionStatus.Pending),
+            new(testAccount3, testAccount, ConnectionStatus.Favourite)
+        };
+
+        _connectionCollectionMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(testDocuments);
+
+        _connectionDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConnectionFromDocument(testDocuments[0]))
+            .Returns(testConnections[0]);
+        _connectionDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConnectionFromDocument(testDocuments[1]))
+            .Returns(testConnections[1]);
+
+        // When
+        var result = _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().Contain(testConnections[0]);
+        result.Should().Contain(testConnections[1]);
+    }
 }
