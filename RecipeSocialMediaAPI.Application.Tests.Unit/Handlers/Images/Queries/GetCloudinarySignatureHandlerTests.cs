@@ -64,7 +64,7 @@ public class GetCloudinarySignatureHandlerTests
         // Given
         _imageHostingQueryRepositoryMock
             .Setup(x => x.GenerateClientSignature(TEST_PUBLIC_ID))
-            .Returns((CloudinarySignatureDTO)null);
+            .Returns((CloudinarySignatureDTO?)null);
 
         // When
         var action = async () => await _getCloudinarySignatureHandlerSUT.Handle(new GetCloudinarySignatureQuery(TEST_PUBLIC_ID), CancellationToken.None);
@@ -83,7 +83,7 @@ public class GetCloudinarySignatureHandlerTests
         // Given
         _imageHostingQueryRepositoryMock
             .Setup(x => x.GenerateClientSignature(null))
-            .Returns((CloudinarySignatureDTO)null);
+            .Returns((CloudinarySignatureDTO?)null);
 
         // When
         var action = async () => await _getCloudinarySignatureHandlerSUT.Handle(new GetCloudinarySignatureQuery(), CancellationToken.None);
