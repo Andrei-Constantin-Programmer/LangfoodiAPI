@@ -43,9 +43,20 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
 
     public List<Connection> GetConnectionsForUser(IUserAccount userAccount)
     {
-        return _connectionCollection
-            .GetAll(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
-                                     || connectionDoc.AccountId2 == userAccount.Id)
+        List<ConnectionDocument> connections = new();
+
+        try
+        {
+            connections = _connectionCollection
+                .GetAll(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
+                                         || connectionDoc.AccountId2 == userAccount.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get the connections for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
+        }
+
+        return connections
             .Select(_mapper.MapConnectionFromDocument)
             .ToList();
     }

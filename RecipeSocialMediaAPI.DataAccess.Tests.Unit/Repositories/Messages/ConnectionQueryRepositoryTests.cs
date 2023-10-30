@@ -289,9 +289,6 @@ public class ConnectionQueryRepositoryTests
             UserName = "User 1 Name",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        
-        Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount.Id
-                                                                             || x.AccountId2 == testAccount.Id;
 
         _connectionCollectionMock
             .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
@@ -348,5 +345,47 @@ public class ConnectionQueryRepositoryTests
 
         // Then
         testAction.Should().Throw<Exception>().WithMessage(testException.Message);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnectionsForUser_WhenMongoThrowsAnException_LogExceptionAndReturnEmptyList()
+    {
+        // Given
+        TestUserAccount testAccount = new()
+        {
+            Id = "User1",
+            Handler = "user1",
+            UserName = "User 1 Name",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount testAccount2 = new()
+        {
+            Id = "User2",
+            Handler = "user2",
+            UserName = "User 2 Name",
+            AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Exception testException = new("Test Exception");
+        _connectionCollectionMock
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Throws(testException);
+    
+        // When
+        var result = _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Once);
     }
 }
