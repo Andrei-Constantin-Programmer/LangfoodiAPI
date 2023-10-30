@@ -21,7 +21,18 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public Connection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus) => throw new NotImplementedException();
+    public Connection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus)
+    {
+        ConnectionDocument connectionDocument = _connectionCollection.Insert(new ConnectionDocument()
+        {
+            AccountId1 = userAccount1.Id,
+            AccountId2 = userAccount2.Id,
+            ConnectionStatus = connectionStatus.ToString()
+        });
+
+        return _mapper.MapConnectionFromDocument(connectionDocument);
+    }
+
     public bool UpdateConnection(Connection connection) => throw new NotImplementedException();
     public bool DeleteConnection(Connection connection) => throw new NotImplementedException();
     public bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2) => throw new NotImplementedException();
