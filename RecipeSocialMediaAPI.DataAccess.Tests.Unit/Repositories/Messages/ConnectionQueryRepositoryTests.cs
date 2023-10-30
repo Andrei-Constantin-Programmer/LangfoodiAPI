@@ -275,4 +275,33 @@ public class ConnectionQueryRepositoryTests
         result.Should().Contain(testConnections[0]);
         result.Should().Contain(testConnections[1]);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnectionsForUser_WhenNoConnectionsForUserExist_ReturnEmptyList()
+    {
+        // Given
+        TestUserAccount testAccount = new()
+        {
+            Id = "User1",
+            Handler = "user1",
+            UserName = "User 1 Name",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount.Id
+                                                                             || x.AccountId2 == testAccount.Id;
+
+        _connectionCollectionMock
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Returns(new List<ConnectionDocument>());
+
+        // When
+        var result = _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+    }
 }
