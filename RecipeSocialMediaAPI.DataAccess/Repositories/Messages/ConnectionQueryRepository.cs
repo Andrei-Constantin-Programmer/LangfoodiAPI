@@ -23,9 +23,18 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
 
     public Connection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2)
     {
-        var connectionDocument = _connectionCollection.Find(
-            connectionDoc => connectionDoc.AccountId1 == userAccount1.Id 
-                             && connectionDoc.AccountId2 == userAccount2.Id);
+        ConnectionDocument? connectionDocument;
+        try
+        {
+            connectionDocument = _connectionCollection.Find(
+                connectionDoc => connectionDoc.AccountId1 == userAccount1.Id 
+                                 && connectionDoc.AccountId2 == userAccount2.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get connection between users with ids {UserId1} and {UserId2}: {ErrorMessage}", userAccount1.Id, userAccount2.Id, ex.Message);
+            return null;
+        }
 
         if (connectionDocument is null)
         {

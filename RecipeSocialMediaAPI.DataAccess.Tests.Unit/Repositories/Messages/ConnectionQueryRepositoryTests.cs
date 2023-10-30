@@ -116,4 +116,45 @@ public class ConnectionQueryRepositoryTests
         _connectionDocumentToModelMapperMock
             .Verify(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()), Times.Never);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnection_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
+    {
+        // Given
+        TestUserAccount testAccount1 = new()
+        {
+            Id = "User1",
+            Handler = "user1",
+            UserName = "User 1 Name",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount testAccount2 = new()
+        {
+            Id = "User2",
+            Handler = "user2",
+            UserName = "User 2 Name",
+            AccountCreationDate = new(2023, 2, 5, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Exception testException = new("Test Exception");
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Throws(testException);
+
+        // When
+        var result = _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Once);
+    }
 }
