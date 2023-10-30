@@ -1,4 +1,5 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Contracts.Recipes;
 
@@ -13,4 +14,5 @@ public record UpdateRecipeContract
     required public ISet<string> Labels { get; set; }
     required public List<IngredientDTO> Ingredients { get; set; }
     required public Stack<RecipeStepDTO> RecipeSteps { get; set; }
+    public (double Quantity, string UnitOfMeasurement)? ServingSize { get; set; }
 }
