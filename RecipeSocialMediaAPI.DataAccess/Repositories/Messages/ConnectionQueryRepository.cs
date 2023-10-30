@@ -36,12 +36,9 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
             return null;
         }
 
-        if (connectionDocument is null)
-        {
-            return null;
-        }
-
-        return _mapper.MapConnectionFromDocument(connectionDocument);
+        return connectionDocument is not null
+            ? _mapper.MapConnectionFromDocument(connectionDocument) 
+            : null;
     }
 
     public List<Connection> GetConnectionsForUser(IUserAccount userAccount)
