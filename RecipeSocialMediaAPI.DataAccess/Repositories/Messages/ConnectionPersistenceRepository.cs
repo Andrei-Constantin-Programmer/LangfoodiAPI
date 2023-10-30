@@ -47,5 +47,11 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
     }
 
     public bool DeleteConnection(Connection connection) => throw new NotImplementedException();
-    public bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2) => throw new NotImplementedException();
+
+    public bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2)
+    {
+        return _connectionCollection.Delete(
+            doc => (doc.AccountId1 == userAccount1.Id && doc.AccountId2 == userAccount2.Id)
+                || (doc.AccountId1 == userAccount2.Id && doc.AccountId2 == userAccount1.Id));
+    }
 }
