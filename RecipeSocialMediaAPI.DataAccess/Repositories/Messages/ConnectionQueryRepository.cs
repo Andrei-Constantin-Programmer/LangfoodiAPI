@@ -27,8 +27,8 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         try
         {
             connectionDocument = _connectionCollection.Find(
-                connectionDoc => connectionDoc.AccountId1 == userAccount1.Id 
-                                 && connectionDoc.AccountId2 == userAccount2.Id);
+                connectionDoc => (connectionDoc.AccountId1 == userAccount1.Id && connectionDoc.AccountId2 == userAccount2.Id)
+                              || (connectionDoc.AccountId1 == userAccount2.Id && connectionDoc.AccountId2 == userAccount1.Id));
         }
         catch (Exception ex)
         {

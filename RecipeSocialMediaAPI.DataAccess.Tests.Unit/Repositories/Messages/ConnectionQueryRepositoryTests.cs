@@ -55,8 +55,9 @@ public class ConnectionQueryRepositoryTests
             UserName = "User 2 Name",
             AccountCreationDate = new(2023, 2, 5, 0, 0, 0, TimeSpan.Zero)
         };
-        Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount1.Id
-                                                                             && x.AccountId2 == testAccount2.Id;
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = 
+            doc => (doc.AccountId1 == testAccount1.Id && doc.AccountId2 == testAccount2.Id)
+                || (doc.AccountId1 == testAccount2.Id && doc.AccountId2 == testAccount1.Id);
 
         ConnectionDocument testDocument = new()
         {
@@ -101,8 +102,9 @@ public class ConnectionQueryRepositoryTests
             AccountCreationDate = new(2023, 2, 5, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount1.Id
-                                                                             && x.AccountId2 == testAccount2.Id;
+        Expression<Func<ConnectionDocument, bool>> expectedExpression =
+            doc => (doc.AccountId1 == testAccount1.Id && doc.AccountId2 == testAccount2.Id)
+                || (doc.AccountId1 == testAccount2.Id && doc.AccountId2 == testAccount1.Id);
 
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
@@ -178,8 +180,9 @@ public class ConnectionQueryRepositoryTests
             UserName = "User 2 Name",
             AccountCreationDate = new(2023, 2, 5, 0, 0, 0, TimeSpan.Zero)
         };
-        Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount1.Id
-                                                                             && x.AccountId2 == testAccount2.Id;
+        Expression<Func<ConnectionDocument, bool>> expectedExpression =
+            doc => (doc.AccountId1 == testAccount1.Id && doc.AccountId2 == testAccount2.Id)
+                || (doc.AccountId1 == testAccount2.Id && doc.AccountId2 == testAccount1.Id);
 
         ConnectionDocument testDocument = new()
         {
