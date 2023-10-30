@@ -33,7 +33,19 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         return _mapper.MapConnectionFromDocument(connectionDocument);
     }
 
-    public bool UpdateConnection(Connection connection) => throw new NotImplementedException();
+    public bool UpdateConnection(Connection connection)
+    {
+        return _connectionCollection.UpdateRecord(
+            new ConnectionDocument() 
+            {
+                AccountId1 = connection.Account1.Id,
+                AccountId2 = connection.Account2.Id,
+                ConnectionStatus = connection.Status.ToString()
+            },
+            doc => (doc.AccountId1 == connection.Account1.Id && doc.AccountId2 == connection.Account2.Id)
+                || (doc.AccountId1 == connection.Account2.Id && doc.AccountId2 == connection.Account1.Id));
+    }
+
     public bool DeleteConnection(Connection connection) => throw new NotImplementedException();
     public bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2) => throw new NotImplementedException();
 }
