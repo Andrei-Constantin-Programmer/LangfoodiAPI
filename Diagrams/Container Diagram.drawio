@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2023-10-31T11:50:21.813Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.3 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="4j1m0wKqDKKEPMVPIcQr" version="22.0.3" type="device">
+<mxfile host="Electron" modified="2023-10-31T12:01:58.045Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.3 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="yxP-7rcMT5yNUStwl3NK" version="22.0.3" type="device">
   <diagram name="Page-1" id="9HRrxLPhDUyKfn-ots-8">
     <mxGraphModel dx="2058" dy="1188" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -50,7 +50,7 @@
         <mxCell id="g0PsKwAOe1t_g35rT8We-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="g0PsKwAOe1t_g35rT8We-8" target="g0PsKwAOe1t_g35rT8We-12" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="oHSIOXRSCMMzAOFIulHE-1" value="Reads from and writes to" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" vertex="1" connectable="0" parent="g0PsKwAOe1t_g35rT8We-14">
+        <mxCell id="oHSIOXRSCMMzAOFIulHE-1" value="Reads from and writes to" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" parent="g0PsKwAOe1t_g35rT8We-14" vertex="1" connectable="0">
           <mxGeometry x="-0.125" y="1" relative="1" as="geometry">
             <mxPoint x="-1" y="5" as="offset" />
           </mxGeometry>
@@ -68,7 +68,7 @@
         <mxCell id="g0PsKwAOe1t_g35rT8We-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;dashPattern=8 8;" parent="1" source="g0PsKwAOe1t_g35rT8We-4" target="g0PsKwAOe1t_g35rT8We-16" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="g0PsKwAOe1t_g35rT8We-18" value="Retrieve images from" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" parent="g0PsKwAOe1t_g35rT8We-17" vertex="1" connectable="0">
+        <mxCell id="g0PsKwAOe1t_g35rT8We-18" value="Save and retrieve &lt;br&gt;images to/from" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" parent="g0PsKwAOe1t_g35rT8We-17" vertex="1" connectable="0">
           <mxGeometry x="-0.0927" y="-1" relative="1" as="geometry">
             <mxPoint y="-1" as="offset" />
           </mxGeometry>
