@@ -46,7 +46,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Applic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Application.Tests.Integration", "RecipeSocialMediaAPI.Application.Tests.Integration\RecipeSocialMediaAPI.Application.Tests.Integration.csproj", "{9F3197DE-9DA6-4C34-892C-3A5108FD00BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeSocialMediaAPI.Domain.Tests.Shared", "RecipeSocialMediaAPI.Domain.Tests.Shared\RecipeSocialMediaAPI.Domain.Tests.Shared.csproj", "{520C487E-088E-4B71-A053-8CD14B4BC994}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Domain.Tests.Shared", "RecipeSocialMediaAPI.Domain.Tests.Shared\RecipeSocialMediaAPI.Domain.Tests.Shared.csproj", "{520C487E-088E-4B71-A053-8CD14B4BC994}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeSocialMediaAPI.Core.Tests.Configuration", "RecipeSocialMediaAPI.Core.Tests.Configuration\RecipeSocialMediaAPI.Core.Tests.Configuration.csproj", "{B268D24E-CC4B-40AF-A791-D4AE89BB205A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -362,6 +364,26 @@ Global
 		{520C487E-088E-4B71-A053-8CD14B4BC994}.Release|x64.Build.0 = Release|Any CPU
 		{520C487E-088E-4B71-A053-8CD14B4BC994}.Release|x86.ActiveCfg = Release|Any CPU
 		{520C487E-088E-4B71-A053-8CD14B4BC994}.Release|x86.Build.0 = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|ARM.Build.0 = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|x64.Build.0 = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Debug|x86.Build.0 = Debug|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|ARM.ActiveCfg = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|ARM.Build.0 = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|ARM64.Build.0 = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|x64.ActiveCfg = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|x64.Build.0 = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|x86.ActiveCfg = Release|Any CPU
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -382,6 +404,7 @@ Global
 		{C094D264-1757-49F8-AB19-E95980951FE4} = {F567D066-3E1D-4FE7-BBE2-72971138A0D7}
 		{9F3197DE-9DA6-4C34-892C-3A5108FD00BF} = {F567D066-3E1D-4FE7-BBE2-72971138A0D7}
 		{520C487E-088E-4B71-A053-8CD14B4BC994} = {ABD1D235-E80E-4E44-98CE-6A596EA1B397}
+		{B268D24E-CC4B-40AF-A791-D4AE89BB205A} = {6D1828D2-EB76-4815-BBF5-ACD54B7F8A57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A74ACEF-D531-41F0-A6D6-B9DCBC70C6B8}

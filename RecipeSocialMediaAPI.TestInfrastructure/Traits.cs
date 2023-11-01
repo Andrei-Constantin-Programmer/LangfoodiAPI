@@ -14,6 +14,7 @@ public static class Traits
         public const string MESSAGING = "Messaging";
         public const string CRYPTOGRAPHY = "Cryptography";
         public const string IMAGE = "Image";
+        public const string CONFIGURATION = "Configuration";
     }
 
     public static class Modules
