@@ -1,4 +1,5 @@
-﻿using RecipeSocialMediaAPI.DataAccess.Helpers;
+﻿using Microsoft.Extensions.Options;
+using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 
@@ -6,11 +7,11 @@ namespace RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 
 public class MongoCollectionFactory : IMongoCollectionFactory
 {
-    private readonly MongoDatabaseConfiguration _databaseConfiguration;
+    private readonly MongoDatabaseOptions _databaseConfiguration;
 
-    public MongoCollectionFactory(MongoDatabaseConfiguration databaseConfiguration)
+    public MongoCollectionFactory(IOptions<MongoDatabaseOptions> databaseConfiguration)
     {
-        _databaseConfiguration = databaseConfiguration;
+        _databaseConfiguration = databaseConfiguration.Value;
     }
 
     public IMongoCollectionWrapper<TDocument> CreateCollection<TDocument>() where TDocument : MongoDocument

@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
@@ -12,11 +13,12 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly Cloudinary _connection;    
 
-    public ImageHostingQueryRepository(ILogger<ImageHostingQueryRepository> logger, IDateTimeProvider dateTimeProvider, CloudinaryApiConfiguration cloudinaryConfiguration)
+    public ImageHostingQueryRepository(ILogger<ImageHostingQueryRepository> logger, IDateTimeProvider dateTimeProvider, IOptions<CloudinaryApiOptions> cloudinaryOptions)
     {
         _dateTimeProvider = dateTimeProvider;
         _logger = logger;
 
+        var cloudinaryConfiguration = cloudinaryOptions.Value;
         _connection = new Cloudinary(new Account(
             cloudinaryConfiguration.CloudName,
             cloudinaryConfiguration.ApiKey,
@@ -35,6 +37,7 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
             {
                 signingParameters.Add("public_id", publicId);
             }
+
             signingParameters.Add("timestamp", timestamp);
 
             string signature = _connection.Api.SignParameters(signingParameters);           

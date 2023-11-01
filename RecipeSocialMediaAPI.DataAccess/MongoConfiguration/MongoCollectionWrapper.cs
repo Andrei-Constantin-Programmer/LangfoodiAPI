@@ -2,9 +2,10 @@
 using MongoDB.Driver;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
-using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
+
+namespace RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 
 public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocument> where TDocument : MongoDocument
 {
@@ -12,10 +13,10 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
     private readonly IMongoDatabase _database;
     private readonly IMongoCollection<TDocument> _collection;
 
-    public MongoCollectionWrapper(MongoDatabaseConfiguration databaseConfiguration)
+    public MongoCollectionWrapper(MongoDatabaseOptions databaseConfiguration)
     {
-        _mongoClient = new MongoClient(databaseConfiguration.MongoConnectionString);
-        _database = _mongoClient.GetDatabase(databaseConfiguration.MongoDatabaseName);
+        _mongoClient = new MongoClient(databaseConfiguration.ConnectionString);
+        _database = _mongoClient.GetDatabase(databaseConfiguration.ClusterName);
         _collection = _database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
     }
 

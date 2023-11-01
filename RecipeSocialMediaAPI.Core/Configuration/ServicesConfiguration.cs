@@ -7,7 +7,6 @@ using RecipeSocialMediaAPI.Application.Mappers.Users;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Application.Utilities;
 using RecipeSocialMediaAPI.Application.Validation;
-using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
@@ -33,20 +32,19 @@ internal static class ServicesConfiguration
     internal static void ConfigureServices(this WebApplicationBuilder builder)
     {
         // Singletons
-        builder.Services.AddSingleton(GenerateMongoConfiguration(builder.Configuration));
-        builder.Services.AddSingleton(GenerateCloudinaryConfiguration(builder.Configuration));
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IRecipeValidationService, RecipeValidationService>();
-        builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
-        builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
         builder.Services.AddValidatorsFromAssemblyContaining<DateTimeProvider>(ServiceLifetime.Singleton);
 
         // Scoped
+        builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+        builder.Services.AddScoped<IMongoCollectionFactory, MongoCollectionFactory>();
+
         builder.Services.AddScoped<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
         builder.Services.AddScoped<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
         builder.Services.AddScoped<IMessageDocumentToModelMapper, MessageDocumentToModelMapper>();
@@ -58,7 +56,6 @@ internal static class ServicesConfiguration
         builder.Services.AddScoped<IMessageQueryRepository, MessageQueryRepository>();
         builder.Services.AddScoped<IMessagePersistenceRepository, MessagePersistenceRepository>();
         builder.Services.AddScoped<IConnectionQueryRepository, ConnectionQueryRepository>();
-
         builder.Services.AddScoped<IConnectionPersistenceRepository, ConnectionPersistenceRepository>();
 
         builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
@@ -79,13 +76,4 @@ internal static class ServicesConfiguration
             config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>));
         });
     }
-
-    private static CloudinaryApiConfiguration GenerateCloudinaryConfiguration(ConfigurationManager configurationManager) => new(
-        configurationManager.GetSection("Cloudinary").GetValue<string>("CloudName") ?? string.Empty,
-        configurationManager.GetSection("Cloudinary").GetValue<string>("ApiKey") ?? string.Empty,
-        configurationManager.GetSection("Cloudinary").GetValue<string>("ApiSecret") ?? string.Empty);
-
-    private static MongoDatabaseConfiguration GenerateMongoConfiguration(ConfigurationManager configurationManager) => new(
-        configurationManager.GetSection("MongoDB").GetValue<string>("Connection") ?? string.Empty,
-        configurationManager.GetSection("MongoDB").GetValue<string>("ClusterName") ?? string.Empty);
 }
