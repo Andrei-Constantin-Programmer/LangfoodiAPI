@@ -28,5 +28,20 @@ public class IoCContainerTests : IClassFixture<WebApplicationFactory<Program>>
         mongoConfiguration!.MongoDatabaseName.Should().NotBeNullOrWhiteSpace();
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void CloudinaryConfiguration_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        var cloudinaryConfiguration = _serviceProvider.GetService(typeof(CloudinaryApiConfiguration)) as CloudinaryApiConfiguration;
+
+        // Then
+        cloudinaryConfiguration.Should().NotBeNull();
+        cloudinaryConfiguration!.CloudName.Should().NotBeNullOrWhiteSpace();
+        cloudinaryConfiguration!.ApiKey.Should().NotBeNullOrWhiteSpace();
+        cloudinaryConfiguration!.ApiSecret.Should().NotBeNullOrWhiteSpace();
+    }
+
 
 }
