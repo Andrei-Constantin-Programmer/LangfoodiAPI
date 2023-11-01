@@ -7,7 +7,6 @@ using RecipeSocialMediaAPI.Application.Mappers.Users;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Application.Utilities;
 using RecipeSocialMediaAPI.Application.Validation;
-using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
@@ -33,7 +32,6 @@ internal static class ServicesConfiguration
     internal static void ConfigureServices(this WebApplicationBuilder builder)
     {
         // Singletons
-        builder.Services.AddSingleton(GenerateCloudinaryConfiguration(builder.Configuration));
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IRecipeValidationService, RecipeValidationService>();
@@ -78,9 +76,4 @@ internal static class ServicesConfiguration
             config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>));
         });
     }
-
-    private static CloudinaryApiConfiguration GenerateCloudinaryConfiguration(ConfigurationManager configurationManager) => new(
-        configurationManager.GetSection("Cloudinary").GetValue<string>("CloudName") ?? string.Empty,
-        configurationManager.GetSection("Cloudinary").GetValue<string>("ApiKey") ?? string.Empty,
-        configurationManager.GetSection("Cloudinary").GetValue<string>("ApiSecret") ?? string.Empty);
 }

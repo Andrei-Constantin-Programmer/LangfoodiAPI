@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace RecipeSocialMediaAPI.Core.OptionValidators;
+namespace RecipeSocialMediaAPI.Core.OptionValidation;
 
 public class ValidateOptions<TOptions> : IValidateOptions<TOptions> where TOptions : class
 {

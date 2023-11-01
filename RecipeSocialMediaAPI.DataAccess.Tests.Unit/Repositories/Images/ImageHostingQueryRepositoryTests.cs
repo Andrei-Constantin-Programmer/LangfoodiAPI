@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
@@ -25,10 +26,17 @@ public class ImageHostingQueryRepositoryTests
             .Setup(x => x.Now)
             .Returns(_testDate);
 
+        var options = Options.Create(new CloudinaryApiOptions()
+        {
+            CloudName = "cloudname",
+            ApiKey = "apikey",
+            ApiSecret = "apisecret"
+        });
+
         _imageHostingQueryRepositorySUT = new ImageHostingQueryRepository(
             _loggerMock.Object, 
             _dateTimeProviderMock.Object,
-            new CloudinaryApiConfiguration("cloudname", "apikey", "apisecret")
+            options
         );
 
     }
@@ -44,8 +52,9 @@ public class ImageHostingQueryRepositoryTests
         var result = _imageHostingQueryRepositorySUT.GenerateClientSignature(null);
 
         // Then
-        result.Signature.Should().NotBeEmpty();
-        result.TimeStamp.Should().Be(_testDate.ToUnixTimeSeconds());
+        result.Should().NotBeNull();
+        result!.Signature.Should().NotBeEmpty();
+        result!.TimeStamp.Should().Be(_testDate.ToUnixTimeSeconds());
     }
 
     [Fact]
@@ -59,8 +68,9 @@ public class ImageHostingQueryRepositoryTests
         var result = _imageHostingQueryRepositorySUT.GenerateClientSignature("sdfsdgs43534");
 
         // Then
-        result.Signature.Should().NotBeEmpty();
-        result.TimeStamp.Should().Be(_testDate.ToUnixTimeSeconds());
+        result.Should().NotBeNull();
+        result!.Signature.Should().NotBeEmpty();
+        result!.TimeStamp.Should().Be(_testDate.ToUnixTimeSeconds());
     }
 
     [Fact]

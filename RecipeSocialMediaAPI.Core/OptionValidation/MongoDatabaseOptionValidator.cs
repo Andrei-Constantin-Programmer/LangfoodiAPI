@@ -2,7 +2,7 @@
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using System.Text.RegularExpressions;
 
-namespace RecipeSocialMediaAPI.Core.OptionValidators;
+namespace RecipeSocialMediaAPI.Core.OptionValidation;
 
 public sealed partial class MongoDatabaseOptionValidator : AbstractValidator<MongoDatabaseOptions>
 {

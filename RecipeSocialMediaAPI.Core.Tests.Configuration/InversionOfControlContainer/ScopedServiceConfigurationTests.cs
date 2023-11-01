@@ -14,7 +14,6 @@ using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
-using System;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration.InversionOfControlContainer;
 

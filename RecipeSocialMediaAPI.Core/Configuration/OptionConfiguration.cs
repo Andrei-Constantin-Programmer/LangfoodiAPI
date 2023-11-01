@@ -1,4 +1,4 @@
-﻿using RecipeSocialMediaAPI.Core.OptionValidators;
+﻿using RecipeSocialMediaAPI.Core.OptionValidation;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
@@ -9,6 +9,11 @@ internal static class OptionConfiguration
     {
         builder.Services.AddOptions<MongoDatabaseOptions>()
             .BindConfiguration(MongoDatabaseOptions.CONFIGURATION_SECTION)
+            .ValidateOptions()
+            .ValidateOnStart();
+        
+        builder.Services.AddOptions<CloudinaryApiOptions>()
+            .BindConfiguration(CloudinaryApiOptions.CONFIGURATION_SECTION)
             .ValidateOptions()
             .ValidateOnStart();
     }
