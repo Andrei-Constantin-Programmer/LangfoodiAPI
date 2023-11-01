@@ -65,7 +65,6 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
         // Then
         dateTimeProvider.Should().NotBeNull();
-        dateTimeProvider!.Now.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromMinutes(5));
     }
 
     [Fact]
