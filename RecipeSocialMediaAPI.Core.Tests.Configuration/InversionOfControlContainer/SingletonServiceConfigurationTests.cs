@@ -65,18 +65,6 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void MongoCollectionFactory_ShouldBeConfiguredCorrectly()
-    {
-        // Given
-        var mongoCollectionFactory = _serviceProvider.GetService(typeof(IMongoCollectionFactory)) as MongoCollectionFactory;
-
-        // Then
-        mongoCollectionFactory.Should().NotBeNull();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void RecipeMapper_ShouldBeConfiguredCorrectly()
     {
         // Given

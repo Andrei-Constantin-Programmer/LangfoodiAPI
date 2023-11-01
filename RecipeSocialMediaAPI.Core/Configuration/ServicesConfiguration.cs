@@ -37,15 +37,16 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         builder.Services.AddSingleton<IUserValidationService, UserValidationService>();
         builder.Services.AddSingleton<IRecipeValidationService, RecipeValidationService>();
-        builder.Services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
         builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
-        builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
         builder.Services.AddValidatorsFromAssemblyContaining<DateTimeProvider>(ServiceLifetime.Singleton);
 
         // Scoped
+        builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+        builder.Services.AddScoped<IMongoCollectionFactory, MongoCollectionFactory>();
+
         builder.Services.AddScoped<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
         builder.Services.AddScoped<IRecipeDocumentToModelMapper, RecipeDocumentToModelMapper>();
         builder.Services.AddScoped<IMessageDocumentToModelMapper, MessageDocumentToModelMapper>();

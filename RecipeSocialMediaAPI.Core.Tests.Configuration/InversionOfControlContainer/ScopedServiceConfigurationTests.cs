@@ -12,6 +12,9 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
+using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
+using System;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration.InversionOfControlContainer;
 
@@ -192,4 +195,18 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
         // Then
         imageHostingQueryRepository.Should().NotBeNull();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void MongoCollectionFactory_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var mongoCollectionFactory = scope.ServiceProvider.GetService(typeof(IMongoCollectionFactory)) as MongoCollectionFactory;
+
+        // Then
+        mongoCollectionFactory.Should().NotBeNull();
+    }
+
 }
