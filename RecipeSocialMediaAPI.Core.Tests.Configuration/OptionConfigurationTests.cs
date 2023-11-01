@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 using FluentAssertions;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Configuration.InversionOfControlContainer;
+namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
 public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
 {

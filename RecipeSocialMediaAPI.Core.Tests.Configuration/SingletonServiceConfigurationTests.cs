@@ -12,7 +12,7 @@ using RecipeSocialMediaAPI.Application.Mappers.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Messages;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Configuration.InversionOfControlContainer;
+namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
 public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -22,7 +22,7 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
     {
         _serviceProvider = factory.Services;
     }
-    
+
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]

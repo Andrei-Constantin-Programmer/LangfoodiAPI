@@ -7,7 +7,7 @@ using FluentAssertions;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Services;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Configuration.InversionOfControlContainer;
+namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
 public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
 {

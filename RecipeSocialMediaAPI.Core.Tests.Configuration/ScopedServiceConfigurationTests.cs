@@ -15,7 +15,7 @@ using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Configuration.InversionOfControlContainer;
+namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
 public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
 {
