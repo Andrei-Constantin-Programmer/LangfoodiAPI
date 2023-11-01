@@ -14,6 +14,7 @@ builder.ConfigureLogging();
 builder.Services.AddEndpointsApiExplorer();
 builder.ConfigureSwagger();
 
+builder.ConfigureOptions();
 builder.ConfigureServices();
 
 var app = builder.Build();
