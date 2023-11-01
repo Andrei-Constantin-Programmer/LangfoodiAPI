@@ -17,11 +17,11 @@ using RecipeSocialMediaAPI.Application.Mappers.Messages;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration.InversionOfControlContainer;
 
-public class IoCContainerTests : IClassFixture<WebApplicationFactory<Program>>
+public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public IoCContainerTests(WebApplicationFactory<Program> factory)
+    public SingletonServiceConfigurationTests(WebApplicationFactory<Program> factory)
     {
         _serviceProvider = factory.Services;
     }
@@ -107,7 +107,7 @@ public class IoCContainerTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void RecipeMapperService_ShouldBeConfiguredCorrectly()
+    public void RecipeMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
         var recipeMapper = _serviceProvider.GetService(typeof(IRecipeMapper)) as RecipeMapper;
@@ -119,7 +119,7 @@ public class IoCContainerTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void UserMapperService_ShouldBeConfiguredCorrectly()
+    public void UserMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
         var userMapper = _serviceProvider.GetService(typeof(IUserMapper)) as UserMapper;
@@ -131,7 +131,7 @@ public class IoCContainerTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void MessageMapperService_ShouldBeConfiguredCorrectly()
+    public void MessageMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
         var messageMapper = _serviceProvider.GetService(typeof(IMessageMapper)) as MessageMapper;
