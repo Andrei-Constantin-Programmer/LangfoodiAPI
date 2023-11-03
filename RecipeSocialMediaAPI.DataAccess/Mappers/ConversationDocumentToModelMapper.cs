@@ -25,13 +25,13 @@ public class ConversationDocumentToModelMapper : IConversationDocumentToModelMap
 
             else if (connection is not null)
             {
-                new ConnectionConversation(connection, conversationDocument.Id, messages);
+                return new ConnectionConversation(connection, conversationDocument.Id, messages);
             }
 
 
             else if (group is not null)
             {
-                new GroupConversation(group, conversationDocument.Id, messages);
+                return new GroupConversation(group, conversationDocument.Id, messages);
             }
 
         }
