@@ -23,13 +23,13 @@ public class ConversationDocumentToModelMapper : IConversationDocumentToModelMap
                 throw new MalformedConversationDocumentException(conversationDocument);
             }
 
-            else if (connection is not null)
+            if (connection is not null)
             {
                 return new ConnectionConversation(connection, conversationDocument.Id, messages);
             }
 
 
-            else if (group is not null)
+            if (group is not null)
             {
                 return new GroupConversation(group, conversationDocument.Id, messages);
             }
