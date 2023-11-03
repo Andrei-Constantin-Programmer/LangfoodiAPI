@@ -1,8 +1,9 @@
 ﻿using FluentAssertions;
 using NetArchTest.Rules;
+using RecipeSocialMediaAPI.Core.Tests.Architecture.TestHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Architecture;
+namespace RecipeSocialMediaAPI.Core.Tests.Architecture.ArchitectureTests;
 
 public class ApplicationLayerTests
 {
