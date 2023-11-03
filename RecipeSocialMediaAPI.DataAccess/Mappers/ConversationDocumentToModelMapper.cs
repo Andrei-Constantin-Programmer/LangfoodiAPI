@@ -10,6 +10,7 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
+using System.Runtime.CompilerServices;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers;
 
@@ -17,7 +18,12 @@ public class ConversationDocumentToModelMapper : IConversationDocumentToModelMap
 {
     public Conversation MapConversationFromDocument(ConversationDocument conversationDocument, Connection? connection, Group? group, List<Message> messages)
     {
-        {
+        
+            if (conversationDocument.Id is null)
+            {
+                throw new ArgumentException("Cannot map Conversation Document with null ID to Conversation");
+            }
+
             if ((connection is null && group is null) || (connection is not null && group is not null))
             {
                 throw new MalformedConversationDocumentException(conversationDocument);
@@ -28,13 +34,13 @@ public class ConversationDocumentToModelMapper : IConversationDocumentToModelMap
                 return new ConnectionConversation(connection, conversationDocument.Id, messages);
             }
 
-
             if (group is not null)
             {
                 return new GroupConversation(group, conversationDocument.Id, messages);
             }
 
+            throw new MalformedConversationDocumentException(conversationDocument);
+
         }
 
     }
-}
