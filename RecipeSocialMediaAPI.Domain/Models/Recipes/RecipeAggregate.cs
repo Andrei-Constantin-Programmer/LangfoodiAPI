@@ -16,8 +16,6 @@ public class RecipeAggregate
     private readonly ISet<string> _labels;
     public ISet<string> Labels => _labels.ToImmutableHashSet();
 
-    public ServingSize? ServingSize { get; set; }
-
     public RecipeAggregate(
         string id,
         string title,
@@ -26,8 +24,7 @@ public class RecipeAggregate
         IUserAccount chef,
         DateTimeOffset creationDate,
         DateTimeOffset lastUpdatedDate,
-        ISet<string>? labels = null,
-        ServingSize? servingSize = null)
+        ISet<string>? labels = null)
 
     {
         Id = id;
@@ -38,7 +35,6 @@ public class RecipeAggregate
         CreationDate = creationDate;
         LastUpdatedDate = lastUpdatedDate;
         _labels = labels ?? new HashSet<string>();
-        ServingSize = servingSize;
     }
 
     public bool AddLabel(string label)
