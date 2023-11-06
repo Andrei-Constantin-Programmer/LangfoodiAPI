@@ -73,9 +73,9 @@ public class RecipeDocumentToModelMapperTests
             },
             Steps = new List<(string, string?)>()
             {
-                new("Chop onions", null),
+                new("Chop onions", "chopping.png"),
                 new("Put it all together", null),
-                new("Boil for 10 minutes", null)
+                new("Boil for 10 minutes", "boil.png")
             },
             NumberOfServings = 2,
             CookingTimeInSeconds = 1200,
@@ -100,9 +100,9 @@ public class RecipeDocumentToModelMapperTests
 
         List<RecipeStep> expectedSteps = new()
         {
-            new("Chop onions", null),
+            new("Chop onions", new("chopping.png")),
             new("Put it all together", null),
-            new("Boil for 10 minutes", null)
+            new("Boil for 10 minutes", new("boil.png"))
         };
 
         // When
@@ -131,6 +131,6 @@ public class RecipeDocumentToModelMapperTests
         result.Recipe.CookingTimeInSeconds.Should().Be(testDocument.CookingTimeInSeconds);
         result.Recipe.NumberOfServings.Should().Be(testDocument.NumberOfServings);
         result.Recipe.KiloCalories.Should().Be(testDocument.KiloCalories);
-        //result.Recipe.ServingSize.Should().BeEquivalentTo(new ServingSize(testDocument.ServingSize.Value.Quantity, testDocument.ServingSize.Value.UnitOfMeasurement));
+        result.Recipe.ServingSize.Should().BeEquivalentTo(new ServingSize(testDocument.ServingSize.Value.Quantity, testDocument.ServingSize.Value.UnitOfMeasurement));
     }
 }
