@@ -25,6 +25,7 @@ public class RecipeAggregate
         DateTimeOffset creationDate,
         DateTimeOffset lastUpdatedDate,
         ISet<string>? labels = null)
+
     {
         Id = id;
         Title = title;
