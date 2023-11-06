@@ -144,4 +144,25 @@ public class ConversationDocumentToModelMapperTests
         // Then
         testAction.Should().Throw<ArgumentException>();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void MapConversationFromDocument_WhenConnectionAndGroupAreNull_ThrowsMalformedConversationDocumentException()
+    {
+        // Given
+        ConversationDocument conversationDocument = new()
+        {
+            Id = "myCoversationID",
+            ConnectionId = null,
+            GroupId = null,
+            Messages = new()
+        };
+
+        // When
+        var testAction = () => _conversationDocumentToModelMapperSUT.MapConversationFromDocument(conversationDocument, null, null, new List<Message>());
+
+        // Then
+        testAction.Should().Throw<MalformedConversationDocumentException>();
+    }
 }
