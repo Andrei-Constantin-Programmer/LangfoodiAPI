@@ -1,8 +1,4 @@
 ﻿using RecipeSocialMediaAPI.Domain.Models.Users;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Domain.Tests.Unit")]
-[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Domain.Tests.Shared")]
 
 namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
