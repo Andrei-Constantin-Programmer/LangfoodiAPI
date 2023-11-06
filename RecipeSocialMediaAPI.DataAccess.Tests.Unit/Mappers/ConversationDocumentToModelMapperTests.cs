@@ -120,4 +120,28 @@ public class ConversationDocumentToModelMapperTests
         result.ConversationId.Should().Be(conversationDocument.Id);
         result.Messages.Should().BeEquivalentTo(messages);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void MapConversationFromDocument_WhenConversationDocumentIdIsNull_ThrowsArgumentException()
+    {
+        // Given
+        ConversationDocument conversationDocument = new()
+        {
+            Id = null,
+            ConnectionId = null,
+            GroupId = null,
+            Messages = new()
+        };
+
+        List<Message> messages = new();
+
+
+        // When
+        var testAction = () => _conversationDocumentToModelMapperSUT.MapConversationFromDocument(conversationDocument, null, null, messages);
+
+        // Then
+        testAction.Should().Throw<ArgumentException>();
+    }
 }
