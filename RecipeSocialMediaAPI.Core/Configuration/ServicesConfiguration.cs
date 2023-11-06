@@ -39,10 +39,10 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
 
-        builder.Services.AddValidatorsFromAssemblyContaining<DateTimeProvider>(ServiceLifetime.Singleton);
+        builder.Services.AddValidatorsFromAssemblyContaining<Application.AssemblyReference>(ServiceLifetime.Singleton);
 
         // Scoped
-        builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+        builder.Services.AddValidatorsFromAssemblyContaining<AssemblyReference>();
         builder.Services.AddScoped<IMongoCollectionFactory, MongoCollectionFactory>();
 
         builder.Services.AddScoped<IUserDocumentToModelMapper, UserDocumentToModelMapper>();
@@ -71,8 +71,8 @@ internal static class ServicesConfiguration
         // MediatR
         builder.Services.AddMediatR(config =>
         {
-            config.RegisterServicesFromAssemblyContaining<Program>();
-            config.RegisterServicesFromAssemblyContaining<DateTimeProvider>();
+            config.RegisterServicesFromAssemblyContaining<AssemblyReference>();
+            config.RegisterServicesFromAssemblyContaining<Application.AssemblyReference>();
             config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>));
         });
     }

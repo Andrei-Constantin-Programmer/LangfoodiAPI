@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
-internal static class EndpointsConfiguration
+public static class EndpointsConfiguration
 {
     public static void MapEndpoints(this WebApplication app)
     {
