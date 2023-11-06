@@ -69,4 +69,55 @@ public class ConversationDocumentToModelMapperTests
         result.Messages.Should().BeEquivalentTo(messages);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void MapConversationFromDocument_WhenDocumentIsValidAndIsGroupConversation_ReturnMappedConversation()
+    {
+        // Given
+        ConversationDocument conversationDocument = new()
+        {
+            Id = "myCoversationID",
+            ConnectionId = null,
+            GroupId = "myGroupID",
+            Messages = new()
+            {
+                "message1",
+                "message2",
+            }
+        };
+
+        TestUserAccount testUserAccount1 = new()
+        {
+            Id = "user1",
+            Handler = "handler1",
+            UserName = "username1"
+        };
+
+        TestUserAccount testUserAccount2 = new()
+        {
+            Id = "user2",
+            Handler = "handler2",
+            UserName = "username2"
+        };
+
+        Group group = new(
+            "groupID",
+            "groupName",
+            "Group Description",
+            new List<IUserAccount>() { testUserAccount1, testUserAccount2 });
+
+        List<Message> messages = new()
+        {
+            new TestMessage(conversationDocument.Messages[0],testUserAccount1,new(2023,11,6,0,0,0,TimeSpan.Zero),null),
+            new TestMessage(conversationDocument.Messages[1],testUserAccount2,new(2023,11,6,0,0,0,TimeSpan.Zero),null),
+        };
+
+        // When
+        var result = (GroupConversation)_conversationDocumentToModelMapperSUT.MapConversationFromDocument(conversationDocument, null, group, messages);
+
+        // Then
+        result.ConversationId.Should().Be(conversationDocument.Id);
+        result.Messages.Should().BeEquivalentTo(messages);
+    }
 }
