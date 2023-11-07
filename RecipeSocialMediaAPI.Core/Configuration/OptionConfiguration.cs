@@ -1,4 +1,5 @@
-﻿using RecipeSocialMediaAPI.Core.OptionValidation;
+﻿using RecipeSocialMediaAPI.Core.Options;
+using RecipeSocialMediaAPI.Core.OptionValidation;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
@@ -16,5 +17,8 @@ internal static class OptionConfiguration
             .BindConfiguration(CloudinaryApiOptions.CONFIGURATION_SECTION)
             .ValidateOptions()
             .ValidateOnStart();
+
+        builder.Services.AddOptions<DataDogOptions>()
+            .BindConfiguration(DataDogOptions.CONFIGURATION_SECTION);
     }
 }
