@@ -24,6 +24,8 @@ using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Messages;
+using MediatR;
+using RecipeSocialMediaAPI.Core.Middleware;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -62,6 +64,10 @@ internal static class ServicesConfiguration
         builder.Services.AddScoped<IUserPersistenceRepository, UserPersistenceRepository>();
 
         builder.Services.AddScoped<IImageHostingQueryRepository, ImageHostingQueryRepository>();
+
+        builder.Services.AddScoped(
+            typeof(IPipelineBehavior<,>),
+            typeof(LoggingPipelineBehaviour<,>));
 
         // Transients
         builder.Services.AddTransient<ICryptoService, CryptoService>();
