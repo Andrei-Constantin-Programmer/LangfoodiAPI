@@ -19,6 +19,8 @@ internal static class OptionConfiguration
             .ValidateOnStart();
 
         builder.Services.AddOptions<DataDogOptions>()
-            .BindConfiguration(DataDogOptions.CONFIGURATION_SECTION);
+            .BindConfiguration(DataDogOptions.CONFIGURATION_SECTION)
+            .ValidateOptions()
+            .ValidateOnStart();
     }
 }
