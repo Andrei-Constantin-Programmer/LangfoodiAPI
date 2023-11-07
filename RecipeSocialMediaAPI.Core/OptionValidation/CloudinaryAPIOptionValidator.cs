@@ -17,3 +17,4 @@ public sealed class CloudinaryApiOptionValidator : AbstractValidator<CloudinaryA
             .NotEmpty();
     }
 }
+ 
