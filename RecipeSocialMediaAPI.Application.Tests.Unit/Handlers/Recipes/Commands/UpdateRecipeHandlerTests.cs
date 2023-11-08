@@ -114,7 +114,7 @@ public class UpdateRecipeHandlerTests
         // Then
         await action.Should()
             .ThrowAsync<Exception>()
-            .WithMessage("Could not update recipe with id 1.");
+            .WithMessage("Could not update recipe with id 1");
     }
 
     [Fact]

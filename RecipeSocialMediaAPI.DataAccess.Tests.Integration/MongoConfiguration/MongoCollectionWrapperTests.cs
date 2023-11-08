@@ -19,7 +19,12 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture = dbFixture;
         _dbFixture.CleanupCollection();
 
-        MongoDatabaseConfiguration testConfiguration = new(dbFixture.ConnectionString, dbFixture.DatabaseName);
+        MongoDatabaseOptions testConfiguration = new()
+        {
+            ConnectionString = dbFixture.ConnectionString,
+            ClusterName = dbFixture.DatabaseName
+        };
+        
         _mongoCollectionWrapperSUT = new MongoCollectionWrapper<TestDocument>(testConfiguration);
     }
 

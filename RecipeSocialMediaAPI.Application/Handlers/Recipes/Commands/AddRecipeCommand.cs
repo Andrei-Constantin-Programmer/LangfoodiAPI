@@ -38,6 +38,9 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             ?? throw new UserNotFoundException();
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
+
+        var (servingSizeQuantity, unitOfMeasurement) = request.NewRecipeContract.ServingSize ?? default;
+
         RecipeAggregate insertedRecipe = _recipePersistenceRepository.CreateRecipe(
             request.NewRecipeContract.Title,
             new Recipe(
@@ -48,7 +51,10 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                     .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
                 request.NewRecipeContract.NumberOfServings,
                 request.NewRecipeContract.CookingTime,
-                request.NewRecipeContract.KiloCalories
+                request.NewRecipeContract.KiloCalories,
+                request.NewRecipeContract.ServingSize is not null 
+                    ? new ServingSize(servingSizeQuantity, unitOfMeasurement) 
+                    : null
             ),
             request.NewRecipeContract.Description,
             chef,

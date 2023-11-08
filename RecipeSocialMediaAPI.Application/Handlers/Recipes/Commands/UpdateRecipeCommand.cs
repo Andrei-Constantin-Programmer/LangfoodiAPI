@@ -30,9 +30,11 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
     public Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate? existingRecipe = 
+        RecipeAggregate existingRecipe = 
             _recipeQueryRepository.GetRecipeById(request.UpdateRecipeContract.Id) 
             ?? throw new RecipeNotFoundException(request.UpdateRecipeContract.Id);
+
+        var (servingSizeQuantity, unitOfMeasurement) = request.UpdateRecipeContract.ServingSize ?? default;
 
         RecipeAggregate updatedRecipe = new(
             existingRecipe.Id,
@@ -45,7 +47,10 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
                     .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
                 request.UpdateRecipeContract.NumberOfServings ?? existingRecipe.Recipe.NumberOfServings,
                 request.UpdateRecipeContract.CookingTime ?? existingRecipe.Recipe.CookingTimeInSeconds,
-                request.UpdateRecipeContract.KiloCalories ?? existingRecipe.Recipe.KiloCalories
+                request.UpdateRecipeContract.KiloCalories ?? existingRecipe.Recipe.KiloCalories,
+                request.UpdateRecipeContract.ServingSize is not null 
+                    ? new ServingSize(servingSizeQuantity, unitOfMeasurement) 
+                    : null
             ),
             request.UpdateRecipeContract.Description,
             existingRecipe.Chef,
@@ -58,7 +63,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
         return isSuccessful
             ? Task.CompletedTask
-            : throw new Exception($"Could not update recipe with id {existingRecipe.Id}.");
+            : throw new Exception($"Could not update recipe with id {existingRecipe.Id}");
     }
 }
 

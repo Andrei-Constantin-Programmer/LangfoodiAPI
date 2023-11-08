@@ -1,5 +1,8 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.Options;
+using RecipeSocialMediaAPI.Core.Options;
+using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.Datadog.Logs;
 
 namespace RecipeSocialMediaAPI.Core.Utilities;
 
@@ -7,12 +10,23 @@ internal static class SerilogConfiguration
 {
     public static void ConfigureLogging(this WebApplicationBuilder builder)
     {
-        builder.Host.UseSerilog((_, _, configuration) => configuration
-            .WriteTo.Console()
-            .WriteTo.File("C:\\Logs\\RecipeSocialMedia\\RecipeSocialMediaLog.txt", rollingInterval: RollingInterval.Day)
-            .Enrich.FromLogContext()
-            .Enrich.WithMachineName()
-            .Enrich.WithThreadId()
-            .MinimumLevel.Is(LogEventLevel.Debug));
+        builder.Host.UseSerilog((_, serviceProvider, configuration) =>
+        {
+            var dataDogOptions = serviceProvider.GetService<IOptions<DataDogOptions>>()?.Value ?? new();
+
+            configuration
+                .WriteTo.Console()
+                .WriteTo.File("C:\\Logs\\RecipeSocialMedia\\RecipeSocialMediaLog.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.DatadogLogs(
+                    apiKey: dataDogOptions.ApiKey,
+                    service: dataDogOptions.Service,
+                    logLevel: LogEventLevel.Information,
+                    configuration: new DatadogConfiguration() { Url =  dataDogOptions.Url }
+                )
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .Enrich.WithThreadId()
+                .MinimumLevel.Is(LogEventLevel.Debug);
+        });
     }
 }

@@ -9,7 +9,6 @@ public class Connection : IConnection
 
     public ConnectionStatus Status { get; set; }
 
-
     public Connection(IUserAccount account1, IUserAccount account2, ConnectionStatus status)
     {
         if (account1.Id == account2.Id)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using RecipeSocialMediaAPI.DataAccess.Mappers;
+using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -7,13 +8,13 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 
-public class MessagePersistenceRepository
+public class MessagePersistenceRepository : IMessagePersistenceRepository
 {
     private readonly ILogger<MessagePersistenceRepository> _logger;
     private readonly IMessageDocumentToModelMapper _mapper;
     private readonly IMongoCollectionWrapper<MessageDocument> _messageCollection;
-    
-    public MessagePersistenceRepository(ILogger<MessagePersistenceRepository> logger, IMessageDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory) 
+
+    public MessagePersistenceRepository(ILogger<MessagePersistenceRepository> logger, IMessageDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory)
     {
         _logger = logger;
         _mapper = mapper;

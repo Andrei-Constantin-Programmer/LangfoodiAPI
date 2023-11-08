@@ -54,7 +54,7 @@ public class RecipePersistenceRepositoryTests
         RecipeAggregate expectedResult = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 10, 500, 2300),
+            new(new(), new(), 10, 500, 2300, new ServingSize(200, "g")),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -76,6 +76,7 @@ public class RecipePersistenceRepositoryTests
             CookingTimeInSeconds = expectedResult.Recipe.CookingTimeInSeconds,
             KiloCalories = expectedResult.Recipe.KiloCalories,
             NumberOfServings = expectedResult.Recipe.NumberOfServings,
+            ServingSize = (expectedResult.Recipe.ServingSize!.Quantity, expectedResult.Recipe.ServingSize!.UnitOfMeasurement)
         };
 
         _mongoCollectionWrapperMock
@@ -105,6 +106,8 @@ public class RecipePersistenceRepositoryTests
                     && doc.Ingredients.Count == 0
                     && doc.Steps.Count == 0
                     && doc.Labels.Contains(testLabel) && doc.Labels.Count == 1
+                    && doc.ServingSize!.Value.Quantity == expectedResult.Recipe.ServingSize.Quantity
+                    && doc.ServingSize!.Value.UnitOfMeasurement == expectedResult.Recipe.ServingSize.UnitOfMeasurement
                 )), Times.Once);
     }
 
