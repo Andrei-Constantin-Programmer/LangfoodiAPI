@@ -22,6 +22,13 @@ public static class ImageEndpoints
             return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery(publicId)));
         });
 
+        group.MapPost("/get/cloudinary-signature/bulk-delete", async (
+            [FromBody] List<string> publicIds,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetCloudinarySignatureFromPublicIdListQuery(publicIds)));
+        });
+
         return group;
     }
 }
