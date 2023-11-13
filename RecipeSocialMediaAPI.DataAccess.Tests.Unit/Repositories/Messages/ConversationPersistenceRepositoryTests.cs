@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Neleus.LambdaCompare;
+using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
@@ -45,7 +46,7 @@ public class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateConnectionConversation_CreatesConversationAndReturnsIt()
+    public void CreateConnectionConversation_WhenConnectionExists_CreatesConversationAndReturnsIt()
     {
         // Given
         TestUserAccount user1 = new()
@@ -104,5 +105,39 @@ public class ConversationPersistenceRepositoryTests
         // Then
         result.Should().NotBeNull();
         result.Should().Be(mappedConversation);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void CreateConnectionConversation_WhenConnectionDoesNotExist_ThrowsConnectionDocumentNotFoundException()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "UserId1",
+            Handler = "user1",
+            UserName = "UserName1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "UserId2",
+            Handler = "user2",
+            UserName = "UserName2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Returns((ConnectionDocument?)null);
+
+        // When
+        var testAction = () => _conversationPersistenceRepositorySUT.CreateConnectionConversation(testConnection);
+
+        // Then
+        testAction.Should().Throw<ConnectionDocumentNotFoundException>();
     }
 }
