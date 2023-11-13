@@ -6,7 +6,7 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 public interface IConversationPersistenceRepository
 {
-    public Conversation CreateConnectionConversation(Connection connection);
+    public Conversation CreateConnectionConversation(IConnection connection);
     public Conversation CreateGroupConversation(Group group);
     public Conversation UpdateConversation(Conversation conversation);
     public bool DeleteConversation(Conversation conversation);
