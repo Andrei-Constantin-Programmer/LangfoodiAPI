@@ -50,27 +50,31 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         return _mapper.MapConversationFromDocument(conversationDocument, null, group, new());
     }
 
-    public bool UpdateConversation(Conversation conversation, IConnection? connection = null)
+    public bool UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null)
     {
         (string? connectionId, string? groupId) = conversation switch
         {
-            ConnectionConversation connectionConversation => 
+            ConnectionConversation connectionConversation =>
                 (connection is not null 
-                ? GetConnectionId(connection) ?? throw new InvalidConversationException($"No connection found for ConnectionConversation with id {conversation.ConversationId}")
+                ? GetConnectionId(connection) 
+                    ?? throw new InvalidConversationException($"No connection found for ConnectionConversation with id {conversation.ConversationId}")
                 : throw new ArgumentException($"No connection provided when updating ConnectionConversation with id {conversation.ConversationId}"),
                 (string?)null),
+            GroupConversation groupConversation => 
+            (null, 
+            group?.GroupId ?? throw new ArgumentException($"No group provided when updating GroupConversation with id {conversation.ConversationId}")),
 
             _ => throw new NotImplementedException(),
         };
 
         return _conversationCollection.UpdateRecord(new ConversationDocument()
-        {
-            Id = conversation.ConversationId,
-            ConnectionId = connectionId,
-            GroupId = groupId,
-            Messages = conversation.Messages.Select(message => message.Id).ToList()
-        },
-        conversationDoc => conversationDoc.Id == conversation.ConversationId);
+            {
+                Id = conversation.ConversationId,
+                ConnectionId = connectionId,
+                GroupId = groupId,
+                Messages = conversation.Messages.Select(message => message.Id).ToList()
+            },
+            conversationDoc => conversationDoc.Id == conversation.ConversationId);
     }
 
     public bool DeleteConversation(Conversation conversation)
