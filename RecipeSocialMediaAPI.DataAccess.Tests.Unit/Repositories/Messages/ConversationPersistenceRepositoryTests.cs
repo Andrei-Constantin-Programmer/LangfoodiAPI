@@ -562,4 +562,30 @@ public class ConversationPersistenceRepositoryTests
         _conversationCollectionMock
             .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateConversation_WhenConversationIsOfUnknownType_DoesNotUpdateConversationAndThrowsInvalidConversationException()
+    {
+        // Given
+        TestConversation testConversation = new("ConvoId", new List<Message>());
+        
+        // When
+        var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
+
+        // Then
+        testAction.Should()
+            .Throw<InvalidConversationException>()
+            .WithMessage("*TestConversation*");
+        _conversationCollectionMock
+            .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
+    }
+
+    private class TestConversation : Conversation
+    {
+        public TestConversation(string conversationId, IEnumerable<Message>? messages = null) : base(conversationId, messages)
+        {
+        }
+    }
 }

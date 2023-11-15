@@ -64,7 +64,7 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
             (null, 
             group?.GroupId ?? throw new ArgumentException($"No group provided when updating GroupConversation with id {conversation.ConversationId}")),
 
-            _ => throw new NotImplementedException(),
+            _ => throw new InvalidConversationException($"Could not update conversation with id {conversation.ConversationId} of unknown type {conversation.GetType()}"),
         };
 
         return _conversationCollection.UpdateRecord(new ConversationDocument()
