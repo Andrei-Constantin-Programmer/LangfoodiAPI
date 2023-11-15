@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using RecipeSocialMediaAPI.Application.Repositories.Messages;
+﻿using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
@@ -12,14 +11,12 @@ namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 
 public class ConversationPersistenceRepository : IConversationPersistenceRepository
 {
-    private readonly ILogger<ConversationPersistenceRepository> _logger;
     private readonly IConversationDocumentToModelMapper _mapper;
     private readonly IMongoCollectionWrapper<ConversationDocument> _conversationCollection;
     private readonly IMongoCollectionWrapper<ConnectionDocument> _connectionCollection;
 
-    public ConversationPersistenceRepository(ILogger<ConversationPersistenceRepository> logger, IConversationDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory)
+    public ConversationPersistenceRepository(IConversationDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory)
     {
-        _logger = logger;
         _mapper = mapper;
         _conversationCollection = mongoCollectionFactory.CreateCollection<ConversationDocument>();
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();

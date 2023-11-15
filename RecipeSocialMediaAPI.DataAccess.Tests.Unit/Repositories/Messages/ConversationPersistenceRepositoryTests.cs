@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
@@ -20,7 +19,6 @@ namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories.Messages;
 
 public partial class ConversationPersistenceRepositoryTests
 {
-    private readonly Mock<ILogger<ConversationPersistenceRepository>> _loggerMock;
     private readonly Mock<IConversationDocumentToModelMapper> _conversationDocumentToModelMapperMock;
     private readonly Mock<IMongoCollectionWrapper<ConversationDocument>> _conversationCollectionMock;
     private readonly Mock<IMongoCollectionWrapper<ConnectionDocument>> _connectionCollectionMock;
@@ -30,7 +28,6 @@ public partial class ConversationPersistenceRepositoryTests
 
     public ConversationPersistenceRepositoryTests()
     {
-        _loggerMock = new Mock<ILogger<ConversationPersistenceRepository>>();
         _conversationDocumentToModelMapperMock = new Mock<IConversationDocumentToModelMapper>();
         _conversationCollectionMock = new Mock<IMongoCollectionWrapper<ConversationDocument>>();
         _connectionCollectionMock = new Mock<IMongoCollectionWrapper<ConnectionDocument>>();
@@ -42,7 +39,7 @@ public partial class ConversationPersistenceRepositoryTests
             .Setup(factory => factory.CreateCollection<ConnectionDocument>())
             .Returns(_connectionCollectionMock.Object);
 
-        _conversationPersistenceRepositorySUT = new(_loggerMock.Object, _conversationDocumentToModelMapperMock.Object, _mongoCollectionFactoryMock.Object);
+        _conversationPersistenceRepositorySUT = new(_conversationDocumentToModelMapperMock.Object, _mongoCollectionFactoryMock.Object);
     }
 
     [Fact]
