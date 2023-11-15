@@ -43,7 +43,13 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
 
     public Conversation CreateGroupConversation(Group group)
     {
-        throw new NotImplementedException();
+        ConversationDocument conversationDocument = _conversationCollection.Insert(new()
+        {
+            GroupId = group.GroupId,
+            Messages = new()
+        });
+
+        return _mapper.MapConversationFromDocument(conversationDocument, null, group, new());
     }
 
     public Conversation UpdateConversation(Conversation conversation)

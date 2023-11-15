@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -139,5 +140,54 @@ public class ConversationPersistenceRepositoryTests
 
         // Then
         testAction.Should().Throw<ConnectionDocumentNotFoundException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void CreateGroupConversation_CreatesConversationAndReturnsIt()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "UserId1",
+            Handler = "user1",
+            UserName = "UserName1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "UserId2",
+            Handler = "user2",
+            UserName = "UserName2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Group testGroup = new("GroupId", "Group Name", "Group Description", new[] { user1, user2 });
+        
+        ConversationDocument conversationDocument = new()
+        {
+            Id = "convoId",
+            ConnectionId = null,
+            GroupId = testGroup.GroupId,
+            Messages = new()
+        };
+
+        _conversationCollectionMock
+            .Setup(collection => collection.Insert(It.Is<ConversationDocument>(doc => doc.GroupId == testGroup.GroupId && doc.ConnectionId == null)))
+            .Returns(conversationDocument);
+
+        GroupConversation mappedConversation = new(testGroup, conversationDocument.Id, new List<Message>());
+
+        _conversationDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConversationFromDocument(conversationDocument, null, testGroup, It.IsAny<List<Message>>()))
+            .Returns(mappedConversation);
+
+        // When
+        var result = _conversationPersistenceRepositorySUT.CreateGroupConversation(testGroup) as GroupConversation;
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().Be(mappedConversation);
     }
 }
