@@ -208,4 +208,29 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
         mongoCollectionFactory.Should().NotBeNull();
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ConversationDocumentToModelMapper_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var conversationDocumentToModelMapper = scope.ServiceProvider.GetService(typeof(IConversationDocumentToModelMapper)) as ConversationDocumentToModelMapper;
+
+        // Then
+        conversationDocumentToModelMapper.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ConversationPersistenceRepository_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var conversationPersistenceRepository = scope.ServiceProvider.GetService(typeof(IConversationPersistenceRepository)) as ConversationPersistenceRepository;
+
+        // Then
+        conversationPersistenceRepository.Should().NotBeNull();
+    }
 }
