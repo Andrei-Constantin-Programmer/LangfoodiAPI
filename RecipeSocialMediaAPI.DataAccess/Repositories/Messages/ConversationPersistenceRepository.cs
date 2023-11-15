@@ -77,16 +77,6 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
             conversationDoc => conversationDoc.Id == conversation.ConversationId);
     }
 
-    public bool DeleteConversation(Conversation conversation)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool DeleteConversation(string conversationId)
-    {
-        throw new NotImplementedException();
-    }
-
     private string? GetConnectionId(IConnection connection) => 
         connection is not null 
         ? (GetConnectionDocument(connection)?.Id) 
