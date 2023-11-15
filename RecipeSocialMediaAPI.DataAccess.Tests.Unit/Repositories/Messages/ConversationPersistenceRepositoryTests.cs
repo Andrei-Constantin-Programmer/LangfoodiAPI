@@ -460,4 +460,106 @@ public class ConversationPersistenceRepositoryTests
         _conversationCollectionMock
             .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Once);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateConversation_WhenConversationIsGroupConversationButUpdateIsUnsuccessful_ReturnsFalse()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "UserId1",
+            Handler = "user1",
+            UserName = "UserName1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "UserId2",
+            Handler = "user2",
+            UserName = "UserName2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Group testGroup = new("GroupId", "Group Name", "Group Description", new[] { user1, user2 });
+
+        ConversationDocument conversationDocument = new()
+        {
+            Id = "convoId",
+            ConnectionId = null,
+            GroupId = testGroup.GroupId,
+            Messages = new()
+        };
+
+        GroupConversation testConversation = new(testGroup, "ConvoId", new List<Message>()
+        {
+            new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
+        });
+
+        _conversationCollectionMock
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<ConversationDocument>(),
+                It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null, testGroup);
+
+        // Then
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateConversation_WhenConversationIsGroupConversationButNoGroupIsProvided_DoesNotUpdateConversationAndThrowsArgumentException()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "UserId1",
+            Handler = "user1",
+            UserName = "UserName1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "UserId2",
+            Handler = "user2",
+            UserName = "UserName2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Group testGroup = new("GroupId", "Group Name", "Group Description", new[] { user1, user2 });
+
+        ConversationDocument conversationDocument = new()
+        {
+            Id = "convoId",
+            ConnectionId = null,
+            GroupId = testGroup.GroupId,
+            Messages = new()
+        };
+
+        GroupConversation testConversation = new(testGroup, "ConvoId", new List<Message>()
+        {
+            new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
+        });
+
+        _conversationCollectionMock
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<ConversationDocument>(),
+                It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null);
+
+        // Then
+        testAction.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("No group provided*");
+        _conversationCollectionMock
+            .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
+    }
 }
