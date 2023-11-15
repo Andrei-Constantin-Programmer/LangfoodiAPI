@@ -213,6 +213,16 @@ public class ConversationPersistenceRepositoryTests
         };
 
         Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        ConnectionDocument connectionDoc = new()
+        {
+            Id = "ConnId",
+            AccountId1 = user1.Id,
+            AccountId2 = user2.Id,
+            ConnectionStatus = "Pending"
+        };
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Returns(connectionDoc);
 
         ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
         {
@@ -222,11 +232,16 @@ public class ConversationPersistenceRepositoryTests
         Expression<Func<ConversationDocument, bool>> expectedExpression = convoDoc => convoDoc.Id == testConversation.ConversationId;
 
         _conversationCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Setup(collection => collection.UpdateRecord(
+                It.Is<ConversationDocument>(convoDoc => 
+                    convoDoc.Id == testConversation.ConversationId
+                    && convoDoc.ConnectionId == connectionDoc.Id
+                    && convoDoc.GroupId == null), 
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(true);
 
         // When
-        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
+        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
 
         // Then
         result.Should().BeTrue();
