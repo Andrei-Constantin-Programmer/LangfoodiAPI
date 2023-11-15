@@ -236,7 +236,8 @@ public class ConversationPersistenceRepositoryTests
                 It.Is<ConversationDocument>(convoDoc => 
                     convoDoc.Id == testConversation.ConversationId
                     && convoDoc.ConnectionId == connectionDoc.Id
-                    && convoDoc.GroupId == null), 
+                    && convoDoc.GroupId == null
+                    && convoDoc.Messages.SequenceEqual(testConversation.Messages.Select(m => m.Id))), 
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(true);
 
@@ -247,5 +248,159 @@ public class ConversationPersistenceRepositoryTests
         result.Should().BeTrue();
         _conversationCollectionMock
             .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateConversation_WhenConversationIsConnectionConversationButUpdateIsUnsuccessful_ReturnsFalse()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "UserId1",
+            Handler = "user1",
+            UserName = "UserName1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "UserId2",
+            Handler = "user2",
+            UserName = "UserName2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        ConnectionDocument connectionDoc = new()
+        {
+            Id = "ConnId",
+            AccountId1 = user1.Id,
+            AccountId2 = user2.Id,
+            ConnectionStatus = "Pending"
+        };
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Returns(connectionDoc);
+
+        ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
+        {
+            new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
+        });
+
+        _conversationCollectionMock
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<ConversationDocument>(),
+                It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
+
+        // Then
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateConversation_WhenConversationIsConnectionConversationButConnectionIsNotFoundInTheDatabase_DoesNotUpdateAndThrowsInvalidConversationException()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "UserId1",
+            Handler = "user1",
+            UserName = "UserName1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "UserId2",
+            Handler = "user2",
+            UserName = "UserName2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Returns((ConnectionDocument?)null);
+
+        ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
+        {
+            new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
+        });
+
+        _conversationCollectionMock
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<ConversationDocument>(),
+                It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
+
+        // Then
+        testAction.Should()
+            .Throw<InvalidConversationException>()
+            .WithMessage("No connection found*");
+        _conversationCollectionMock
+            .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateConversation_WhenConversationIsConnectionConversationButNoConnectionSupplied_DoesNotUpdateConversationAndThrowsArgumentException()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "UserId1",
+            Handler = "user1",
+            UserName = "UserName1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "UserId2",
+            Handler = "user2",
+            UserName = "UserName2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        ConnectionDocument connectionDoc = new()
+        {
+            Id = "ConnId",
+            AccountId1 = user1.Id,
+            AccountId2 = user2.Id,
+            ConnectionStatus = "Pending"
+        };
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Returns(connectionDoc);
+
+        ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
+        {
+            new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
+        });
+
+        _conversationCollectionMock
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<ConversationDocument>(),
+                It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
+
+        // Then
+        testAction.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("No connection provided*");
+        _conversationCollectionMock
+            .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
     }
 }

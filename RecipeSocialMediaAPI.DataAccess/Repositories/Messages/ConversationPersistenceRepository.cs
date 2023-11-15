@@ -54,7 +54,11 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
     {
         (string? connectionId, string? groupId) = conversation switch
         {
-            ConnectionConversation connectionConversation => (GetConnectionId(connection), (string?)null),
+            ConnectionConversation connectionConversation => 
+                (connection is not null 
+                ? GetConnectionId(connection) ?? throw new InvalidConversationException($"No connection found for ConnectionConversation with id {conversation.ConversationId}")
+                : throw new ArgumentException($"No connection provided when updating ConnectionConversation with id {conversation.ConversationId}"),
+                (string?)null),
 
             _ => throw new NotImplementedException(),
         };
@@ -79,7 +83,7 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         throw new NotImplementedException();
     }
 
-    private string? GetConnectionId(IConnection? connection) => 
+    private string? GetConnectionId(IConnection connection) => 
         connection is not null 
         ? (GetConnectionDocument(connection)?.Id) 
         : null;
