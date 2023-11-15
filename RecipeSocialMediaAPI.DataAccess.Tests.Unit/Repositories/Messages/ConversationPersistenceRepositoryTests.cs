@@ -190,4 +190,47 @@ public class ConversationPersistenceRepositoryTests
         result.Should().NotBeNull();
         result.Should().Be(mappedConversation);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void UpdateConversation_WhenConversationIsConnectionConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrue()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "UserId1",
+            Handler = "user1",
+            UserName = "UserName1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "UserId2",
+            Handler = "user2",
+            UserName = "UserName2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+
+        ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
+        {
+            new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null) 
+        });
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = convoDoc => convoDoc.Id == testConversation.ConversationId;
+
+        _conversationCollectionMock
+            .Setup(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(true);
+
+        // When
+        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
+
+        // Then
+        result.Should().BeTrue();
+        _conversationCollectionMock
+            .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Once);
+    }
 }

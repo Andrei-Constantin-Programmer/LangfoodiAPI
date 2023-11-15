@@ -8,7 +8,7 @@ public interface IConversationPersistenceRepository
 {
     public Conversation CreateConnectionConversation(IConnection connection);
     public Conversation CreateGroupConversation(Group group);
-    public Conversation UpdateConversation(Conversation conversation);
+    public bool UpdateConversation(Conversation conversation, IConnection? connection = null);
     public bool DeleteConversation(Conversation conversation);
     public bool DeleteConversation(string conversationId);
 }

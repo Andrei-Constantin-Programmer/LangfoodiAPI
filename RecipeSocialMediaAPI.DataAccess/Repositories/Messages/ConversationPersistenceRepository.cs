@@ -27,9 +27,7 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
 
     public Conversation CreateConnectionConversation(IConnection connection)
     {
-        ConnectionDocument connectionDocument = _connectionCollection.Find(conn 
-                => (conn.AccountId1 == connection.Account1.Id && conn.AccountId2 == connection.Account2.Id)
-                || (conn.AccountId1 == connection.Account2.Id && conn.AccountId2 == connection.Account1.Id))
+        ConnectionDocument connectionDocument = GetConnectionDocument(connection)
             ?? throw new ConnectionDocumentNotFoundException(connection.Account1, connection.Account2);
 
         ConversationDocument conversationDocument = _conversationCollection.Insert(new()
@@ -52,9 +50,23 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         return _mapper.MapConversationFromDocument(conversationDocument, null, group, new());
     }
 
-    public Conversation UpdateConversation(Conversation conversation)
+    public bool UpdateConversation(Conversation conversation, IConnection? connection = null)
     {
-        throw new NotImplementedException();
+        (string? connectionId, string? groupId) = conversation switch
+        {
+            ConnectionConversation connectionConversation => (GetConnectionId(connection), (string?)null),
+
+            _ => throw new NotImplementedException(),
+        };
+
+        return _conversationCollection.UpdateRecord(new ConversationDocument()
+        {
+            Id = conversation.ConversationId,
+            ConnectionId = connectionId,
+            GroupId = groupId,
+            Messages = conversation.Messages.Select(message => message.Id).ToList()
+        },
+        conversationDoc => conversationDoc.Id == conversation.ConversationId);
     }
 
     public bool DeleteConversation(Conversation conversation)
@@ -66,4 +78,14 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
     {
         throw new NotImplementedException();
     }
+
+    private string? GetConnectionId(IConnection? connection) => 
+        connection is not null 
+        ? (GetConnectionDocument(connection)?.Id) 
+        : null;
+
+    private ConnectionDocument? GetConnectionDocument(IConnection connection) =>
+        _connectionCollection.Find(conn => (conn.AccountId1 == connection.Account1.Id && conn.AccountId2 == connection.Account2.Id) 
+                                        || (conn.AccountId1 == connection.Account2.Id && conn.AccountId2 == connection.Account1.Id));
+
 }
