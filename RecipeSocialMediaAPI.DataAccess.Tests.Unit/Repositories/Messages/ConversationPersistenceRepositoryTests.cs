@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
+using RecipeSocialMediaAPI.DataAccess.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
@@ -17,7 +18,7 @@ using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories.Messages;
 
-public class ConversationPersistenceRepositoryTests
+public partial class ConversationPersistenceRepositoryTests
 {
     private readonly Mock<ILogger<ConversationPersistenceRepository>> _loggerMock;
     private readonly Mock<IConversationDocumentToModelMapper> _conversationDocumentToModelMapperMock;
@@ -332,12 +333,6 @@ public class ConversationPersistenceRepositoryTests
             new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
         });
 
-        _conversationCollectionMock
-            .Setup(collection => collection.UpdateRecord(
-                It.IsAny<ConversationDocument>(),
-                It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
-            .Returns(true);
-
         // When
         var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
 
@@ -387,12 +382,6 @@ public class ConversationPersistenceRepositoryTests
             new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
         });
 
-        _conversationCollectionMock
-            .Setup(collection => collection.UpdateRecord(
-                It.IsAny<ConversationDocument>(),
-                It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
-            .Returns(true);
-
         // When
         var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
 
@@ -426,15 +415,6 @@ public class ConversationPersistenceRepositoryTests
         };
 
         Group testGroup = new("GroupId", "Group Name", "Group Description", new[] { user1, user2 });
-
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "convoId",
-            ConnectionId = null,
-            GroupId = testGroup.GroupId,
-            Messages = new()
-        };
-
         GroupConversation testConversation = new(testGroup, "ConvoId", new List<Message>()
         {
             new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
@@ -483,15 +463,6 @@ public class ConversationPersistenceRepositoryTests
         };
 
         Group testGroup = new("GroupId", "Group Name", "Group Description", new[] { user1, user2 });
-
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "convoId",
-            ConnectionId = null,
-            GroupId = testGroup.GroupId,
-            Messages = new()
-        };
-
         GroupConversation testConversation = new(testGroup, "ConvoId", new List<Message>()
         {
             new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
@@ -532,25 +503,10 @@ public class ConversationPersistenceRepositoryTests
         };
 
         Group testGroup = new("GroupId", "Group Name", "Group Description", new[] { user1, user2 });
-
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "convoId",
-            ConnectionId = null,
-            GroupId = testGroup.GroupId,
-            Messages = new()
-        };
-
         GroupConversation testConversation = new(testGroup, "ConvoId", new List<Message>()
         {
             new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
         });
-
-        _conversationCollectionMock
-            .Setup(collection => collection.UpdateRecord(
-                It.IsAny<ConversationDocument>(),
-                It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
-            .Returns(true);
 
         // When
         var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null);
@@ -580,12 +536,5 @@ public class ConversationPersistenceRepositoryTests
             .WithMessage("*TestConversation*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
-    }
-
-    private class TestConversation : Conversation
-    {
-        public TestConversation(string conversationId, IEnumerable<Message>? messages = null) : base(conversationId, messages)
-        {
-        }
     }
 }
