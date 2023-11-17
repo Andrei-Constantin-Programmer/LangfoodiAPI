@@ -6,7 +6,6 @@ using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
-using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
@@ -121,6 +120,8 @@ public class CreateConnectionHandlerTests
         var testAction = async () => await _connectionHandlerSUT.Handle(new CreateConnectionCommand(testContract), CancellationToken.None);
 
         // Then
-        await testAction.Should().ThrowAsync<UserNotFoundException>();
+        await testAction.Should()
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage($"No user found with id {(user1Exists ? userAccount2.Id : userAccount1.Id)}");
     }
 }

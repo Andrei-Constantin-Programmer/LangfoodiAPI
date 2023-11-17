@@ -27,7 +27,7 @@ public class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, Us
     {
         IUserCredentials user = (_userQueryRepository.GetUserByUsername(request.UsernameOrEmail)
                     ?? _userQueryRepository.GetUserByEmail(request.UsernameOrEmail))
-                    ?? throw new UserNotFoundException();
+                    ?? throw new UserNotFoundException($"No user found with username/email {request.UsernameOrEmail}");
 
         var successfulLogin = _cryptoService.ArePasswordsTheSame(request.Password, user.Password ?? string.Empty);
 
