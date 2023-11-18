@@ -40,10 +40,12 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
 
     public CloudinarySignatureDTO? GenerateClientSignature(List<string> publicIds)
     {
-        Dictionary<string, object> signingParameters = new()
+        Dictionary<string, object> signingParameters = new();
+
+        for (int i=0; i<publicIds.Count; i++)
         {
-            { "public_ids", publicIds }
-        };
+            signingParameters.Add($"public_ids[{i}]", publicIds[i]);
+        }
 
         return GenerateClientSignature(signingParameters);
     }
