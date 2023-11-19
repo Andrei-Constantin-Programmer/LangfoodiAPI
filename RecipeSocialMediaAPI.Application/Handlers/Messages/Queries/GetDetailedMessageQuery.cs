@@ -7,7 +7,7 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetDetailedMessageQuery(string Id) : IRequest<MessageDTO?>;
+public record GetMessageDetailedByIdQuery(string Id) : IRequest<MessageDetailedDTO?>;
 
 internal class GetDetailedMessageHandler
 {
