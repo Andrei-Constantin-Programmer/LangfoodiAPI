@@ -28,7 +28,12 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
         IUserAccount user1 = _userQueryRepository.GetUserById(request.UpdateConnectionContract.UserId1)!.Account;
         IUserAccount user2 = _userQueryRepository.GetUserById(request.UpdateConnectionContract.UserId2)!.Account;
 
-        IConnection connection = _connectionQueryRepository.GetConnection(user1, user2)!;
+        IConnection? connection = _connectionQueryRepository.GetConnection(user1, user2);
+
+        if (connection is null)
+        {
+            return Task.FromResult(false);
+        }
 
         var isValidConnectionStatus = Enum.TryParse(request.UpdateConnectionContract.NewConnectionStatus, out ConnectionStatus newStatus);
         if (!isValidConnectionStatus)
