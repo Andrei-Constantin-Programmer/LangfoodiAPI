@@ -44,7 +44,7 @@ public class MessageMapper : IMessageMapper
             RepliedToMessage =  message.RepliedToMessage is not null ? MapMessageToDetailedMessageDTO(message.RepliedToMessage) : null
         };
 
-        HydrateDetailedMessageDTOWithContent(messageDetailedDTO, message);
+        HydrateMessageDetailedDTOWithContent(messageDetailedDTO, message);
 
         return messageDetailedDTO;
     }
@@ -72,7 +72,7 @@ public class MessageMapper : IMessageMapper
             };
     }
 
-    private void HydrateDetailedMessageDTOWithContent(MessageDetailedDTO messageDetailedDTO, Message message)
+    private void HydrateMessageDetailedDTOWithContent(MessageDetailedDTO messageDetailedDTO, Message message)
     {
         (messageDetailedDTO.TextContent,
             messageDetailedDTO.Recipes,
