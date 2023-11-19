@@ -11,9 +11,13 @@ public record GetMessageDetailedByIdQuery(string Id) : IRequest<MessageDetailedD
 
 internal class GetDetailedMessageHandler
 {
-    public GetDetailedMessageHandler()
-    {
+    private readonly IMessageMapper _mapper;
+    private readonly IMessageQueryRepository _messageQueryRepository;
 
+    public GetMessageDetailedByIdHandler(IMessageMapper mapper, IMessageQueryRepository messageQueryRepository)
+    {
+        _mapper = mapper;
+        _messageQueryRepository = messageQueryRepository;
     }
 
     public async Task<> Handle()
