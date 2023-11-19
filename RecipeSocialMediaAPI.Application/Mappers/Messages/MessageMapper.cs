@@ -44,6 +44,9 @@ public class MessageMapper : IMessageMapper
             RepliedToMessage =  message.RepliedToMessage is not null ? MapMessageToDetailedMessageDTO(message.RepliedToMessage) : null
         };
 
+        HydrateDetailedMessageDTOWithContent(messageDetailedDTO, message);
+
+        return messageDetailedDTO;
     }
 
     private static void HydrateMessageDTOWithContent(MessageDTO messageDTO, Message message)
