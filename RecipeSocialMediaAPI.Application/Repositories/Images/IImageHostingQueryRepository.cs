@@ -4,5 +4,6 @@ namespace RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 public interface IImageHostingQueryRepository
 {
     public CloudinarySignatureDTO? GenerateClientSignature(string? publicId);
-    public CloudinarySignatureDTO? GenerateClientSignature(List<string> publicIds);
+    public bool BulkRemoveHostedImages(List<string> publicIds);
+    public bool RemoveHostedImage(string publicId);
 }
