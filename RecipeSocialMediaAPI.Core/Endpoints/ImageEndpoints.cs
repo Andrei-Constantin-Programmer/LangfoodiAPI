@@ -22,19 +22,19 @@ public static class ImageEndpoints
             return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery()));
         });
 
-        group.MapPost("/single-delete", async (
-            [FromBody] string publicId,
+        group.MapDelete("/single-delete", async (
+            [FromQuery] string publicId,
             [FromServices] ISender sender) =>
         {
             await sender.Send(new RemoveImageCommand(publicId));
             return Results.Ok();
         });
 
-        group.MapPost("/bulk-delete", async (
-            [FromBody] List<string> publicIds,
+        group.MapDelete("/bulk-delete", async (
+            [FromQuery] string[] publicIds,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new RemoveImagesCommand(publicIds));
+            await sender.Send(new RemoveImagesCommand(publicIds.ToList()));
             return Results.Ok();
         });
 
