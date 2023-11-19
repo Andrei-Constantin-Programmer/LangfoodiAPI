@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
@@ -22,8 +23,10 @@ internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, Connec
 
     public Task<ConnectionDTO> Handle(GetConnectionQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount user1 = _userQueryRepository.GetUserById(request.UserId1)?.Account;
-        IUserAccount user2 = _userQueryRepository.GetUserById(request.UserId2)?.Account;
+        IUserAccount user1 = _userQueryRepository.GetUserById(request.UserId1)?.Account
+            ?? throw new UserNotFoundException();
+        IUserAccount user2 = _userQueryRepository.GetUserById(request.UserId2)?.Account
+            ?? throw new UserNotFoundException();
 
         IConnection connection = _connectionQueryRepository.GetConnection(user1, user2);
 

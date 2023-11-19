@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
@@ -81,5 +82,63 @@ public class GetConnectionHandlerTests
         result.UserId2.Should().BeOneOf(user1.Account.Id, user2.Account.Id);
         result.UserId1.Should().NotBe(result.UserId2);
         result.ConnectionStatus.Should().Be("Connected");
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(false, false)]
+    public async Task Handle_WhenUsersDoNotExist_ThrowUserNotFoundException(bool user1Exists, bool user2Exists)
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "UserId1",
+                Handler = "user1",
+                UserName = "Username 1",
+                AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "user1@mail.com",
+            Password = "TestPass"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "UserId2",
+                Handler = "user2",
+                UserName = "Username 2",
+                AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "user2@mail.com",
+            Password = "TestPass"
+        };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1Exists ? user1 : null);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user2.Account.Id))
+            .Returns(user2Exists ? user2 : null);
+
+        Connection existingConnection = new(user1.Account, user2.Account, ConnectionStatus.Connected);
+
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnection(
+                It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account),
+                It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account)))
+            .Returns(existingConnection);
+
+        GetConnectionQuery query = new(user1.Account.Id, user2.Account.Id);
+
+        // When
+        var testAction = async () => await _getConnectionHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        await testAction.Should()
+            .ThrowAsync<UserNotFoundException>();
     }
 }
