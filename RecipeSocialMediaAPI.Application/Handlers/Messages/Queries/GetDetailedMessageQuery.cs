@@ -20,9 +20,13 @@ internal class GetDetailedMessageHandler
         _messageQueryRepository = messageQueryRepository;
     }
 
-    public async Task<> Handle()
+    public async Task<MessageDetailedDTO?> Handle(GetMessageByIdQuery request, CancellationToken cancellationToken)
     {
-        return null;
+        Message? message = _messageQueryRepository.GetMessage(request.Id);
+
+        return message is null
+            ? throw new MessageNotFoundException(request.Id)
+            : await Task.FromResult(_mapper.MapMessageToDetailedMessageDTO(message));
     }
 
 }
