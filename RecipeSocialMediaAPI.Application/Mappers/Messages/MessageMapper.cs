@@ -10,6 +10,13 @@ namespace RecipeSocialMediaAPI.Application.Mappers.Messages;
 
 public class MessageMapper : IMessageMapper
 {
+    private readonly IRecipeMapper _recipeMapper;
+
+    public MessageMapper(IRecipeMapper recipeMapper)
+    {
+        _recipeMapper = recipeMapper;
+    }
+
     public MessageDTO MapMessageToMessageDTO(Message message)
     {
         MessageDTO messageDTO = new()
