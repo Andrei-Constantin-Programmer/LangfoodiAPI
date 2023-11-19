@@ -1,6 +1,9 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Mappers.Messages;
