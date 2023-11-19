@@ -9,19 +9,19 @@ using System.Reflection.Metadata;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers;
 
-public class GroupDocumentToModelMapper
+public class GroupDocumentToModelMapper : IGroupDocumentToModelMapper
 {
     private readonly IUserQueryRepository _userQueryRepository;
 
     public GroupDocumentToModelMapper(IUserQueryRepository userQueryRepository)
     {
         _userQueryRepository = userQueryRepository;
-        
+
     }
 
     public Group MapGroupFromDocument(GroupDocument groupDocument)
     {
-        List<IUserAccount>  users = new List<IUserAccount>();
+        List<IUserAccount> users = new List<IUserAccount>();
         foreach (string user in groupDocument.UserIds)
         {
             users.Add(_userQueryRepository
