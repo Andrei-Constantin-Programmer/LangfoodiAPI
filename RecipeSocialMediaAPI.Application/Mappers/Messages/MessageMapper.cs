@@ -55,4 +55,27 @@ public class MessageMapper : IMessageMapper
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
             };
     }
+
+    private void HydrateDetailedMessageDTOWithContent(MessageDetailedDTO messageDetailedDTO, Message message)
+    {
+        (messageDetailedDTO.TextContent,
+            messageDetailedDTO.Recipes,
+            messageDetailedDTO.ImageURLs) = message switch
+            {
+                TextMessage textMessage => (
+                    textMessage.TextContent,
+                    default(List<RecipeDTO>?),
+                    default(List<string>?)),
+                ImageMessage imageMessage => (
+                    imageMessage.TextContent,
+                    default(List<RecipeDTO>?),
+                    imageMessage.ImageURLs.ToList()),
+                RecipeMessage recipeMessage => (
+                    recipeMessage.TextContent,
+                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipeDto).ToList(),
+                    default(List<string>?)),
+
+                _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
+            };
+    }
 }
