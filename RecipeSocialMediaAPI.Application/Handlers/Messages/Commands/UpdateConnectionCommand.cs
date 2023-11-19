@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Logging;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
@@ -30,7 +30,12 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
 
         IConnection connection = _connectionQueryRepository.GetConnection(user1, user2)!;
 
-        Enum.TryParse(request.UpdateConnectionContract.NewConnectionStatus, out ConnectionStatus newStatus);
+        var isValidConnectionStatus = Enum.TryParse(request.UpdateConnectionContract.NewConnectionStatus, out ConnectionStatus newStatus);
+        if (!isValidConnectionStatus)
+        {
+            throw new ConnectionUpdateException($"Could not map {request.UpdateConnectionContract.NewConnectionStatus} to {typeof(ConnectionStatus)}");
+        }
+
         if (connection.Status == newStatus)
         {
             return Task.FromResult(true);

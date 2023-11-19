@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
@@ -211,6 +211,66 @@ public class UpdateConnectionHandlerTests
 
         // Then
         result.Should().BeTrue();
+        _connectionPersistenceRepositoryMock
+            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenConnectionStatusIsInvalid_DoesNotUpdateAndThrowsConnectionUpdateException()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "UserId1",
+                Handler = "user1",
+                UserName = "Username 1",
+                AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "user1@mail.com",
+            Password = "TestPass"
+        };
+
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "UserId2",
+                Handler = "user2",
+                UserName = "Username 2",
+                AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "user2@mail.com",
+            Password = "TestPass"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user2.Account.Id))
+            .Returns(user2);
+
+        Connection existingConnection = new(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnection(
+                It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account),
+                It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account)))
+            .Returns(existingConnection);
+
+        UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Unsupported Status");
+
+        // When
+        var testAction = async () => await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
+
+        // Then
+        await testAction.Should()
+            .ThrowAsync<ConnectionUpdateException>()
+            .WithMessage("Could not map Unsupported Status to *ConnectionStatus");
         _connectionPersistenceRepositoryMock
             .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
     }
