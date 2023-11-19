@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
@@ -35,7 +36,7 @@ public class UpdateConnectionHandlerTests
     [InlineData("Muted", ConnectionStatus.Muted)]
     [InlineData("Connected", ConnectionStatus.Connected)]
     [InlineData("Favourite", ConnectionStatus.Favourite)]
-    public async Task Handle_WhenUpdateContractIsValidAndUpdateIsSuccessful_UpdatesTheConnectionAndReturnsTrueAsync(string newConnectionStatus, ConnectionStatus connectionStatusEnumValue)
+    public async Task Handle_WhenUpdateContractIsValidAndUpdateIsSuccessful_UpdatesTheConnectionAndReturnsTrue(string newConnectionStatus, ConnectionStatus connectionStatusEnumValue)
     {
         // Given
         TestUserCredentials user1 = new()
@@ -99,7 +100,7 @@ public class UpdateConnectionHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenContractIsValidButUpdateIsUnsuccessful_ReturnsFalseAsync()
+    public async Task Handle_WhenContractIsValidButUpdateIsUnsuccessful_ReturnsFalse()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -154,5 +155,63 @@ public class UpdateConnectionHandlerTests
 
         // Then
         result.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenUpdateContractIsValidButConnectionStatusHasNotChanged_DoesNotUpdateTheConnectionButReturnsTrue()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "UserId1",
+                Handler = "user1",
+                UserName = "Username 1",
+                AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "user1@mail.com",
+            Password = "TestPass"
+        };
+
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "UserId2",
+                Handler = "user2",
+                UserName = "Username 2",
+                AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "user2@mail.com",
+            Password = "TestPass"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user2.Account.Id))
+            .Returns(user2);
+
+        Connection existingConnection = new(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnection(
+                It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account),
+                It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account)))
+            .Returns(existingConnection);
+
+        UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Pending");
+
+        // When
+        var result = await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
+
+        // Then
+        result.Should().BeTrue();
+        _connectionPersistenceRepositoryMock
+            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
     }
 }

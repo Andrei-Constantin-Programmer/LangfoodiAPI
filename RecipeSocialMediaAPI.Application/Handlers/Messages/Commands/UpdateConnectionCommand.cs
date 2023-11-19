@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
@@ -29,8 +30,13 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
 
         IConnection connection = _connectionQueryRepository.GetConnection(user1, user2)!;
 
-        Enum.TryParse(request.UpdateConnectionContract.NewConnectionStatus, out ConnectionStatus status);
-        connection.Status = status;
+        Enum.TryParse(request.UpdateConnectionContract.NewConnectionStatus, out ConnectionStatus newStatus);
+        if (connection.Status == newStatus)
+        {
+            return Task.FromResult(true);
+        }
+
+        connection.Status = newStatus;
             
         return Task.FromResult(_connectionPersistenceRepository.UpdateConnection(connection));
     }
