@@ -29,16 +29,25 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
         ));
     }
 
-
     public bool RemoveHostedImage(string publicId)
     {
-        return false;
+        // TODO: change to use service instead
+
+        var signature = GenerateSignature(publicId);
+        using var httpClient = new HttpClient();
+        using var request = new HttpRequestMessage(
+            new System.Net.Http.HttpMethod("POST"),
+            $"https://api.cloudinary.com/v1_1/{_cloudinaryConfig.CloudName}/image/destroy" +
+            $"?public_id={publicId}&api_key={_cloudinaryConfig.ApiKey}&signature={signature.Signature}&timestamp={signature.TimeStamp}"
+        );
+
+        var response = httpClient.Send(request);
+        return response.IsSuccessStatusCode;
     }
 
     public bool BulkRemoveHostedImages(List<string> publicIds)
     {
         // TODO: change to use service instead
-
         using var httpClient = new HttpClient();
         using var request = new HttpRequestMessage(
             new System.Net.Http.HttpMethod("DELETE"), 
@@ -51,12 +60,10 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
         request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
 
         var response = httpClient.Send(request);
-        
-
         return response.IsSuccessStatusCode;
     }
 
-    public CloudinarySignatureDTO? GenerateClientSignature(string? publicId)
+    public CloudinarySignatureDTO? GenerateSignature(string? publicId = null)
     {
         try
         {
@@ -75,7 +82,7 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "There was error trying to generate a cloudinary client signature");
+            _logger.LogError(ex, "There was error trying to generate a cloudinary signature");
             return null;
         }
     }

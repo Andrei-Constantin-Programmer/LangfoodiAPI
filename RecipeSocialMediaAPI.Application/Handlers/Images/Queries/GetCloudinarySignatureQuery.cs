@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Images.Queries;
-public record class GetCloudinarySignatureQuery(string? PublicId = null) : IRequest<CloudinarySignatureDTO>;
+public record class GetCloudinarySignatureQuery() : IRequest<CloudinarySignatureDTO>;
 
 internal class GetCloudinarySignatureHandler : IRequestHandler<GetCloudinarySignatureQuery, CloudinarySignatureDTO>
 {
@@ -16,7 +16,7 @@ internal class GetCloudinarySignatureHandler : IRequestHandler<GetCloudinarySign
 
     public async Task<CloudinarySignatureDTO> Handle(GetCloudinarySignatureQuery request, CancellationToken cancellationToken)
     {
-        CloudinarySignatureDTO? signature = _imageHostingQueryRepository.GenerateClientSignature(request.PublicId);
+        CloudinarySignatureDTO? signature = _imageHostingQueryRepository.GenerateSignature();
 
         return signature is null
             ? throw new InvalidOperationException("Failed to generate signature")

@@ -17,10 +17,17 @@ public static class ImageEndpoints
     private static RouteGroupBuilder AddImageEndpoints(this RouteGroupBuilder group)
     {
         group.MapPost("/get/cloudinary-signature", async (
-            [FromQuery] string? publicId,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery(publicId)));
+            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery()));
+        });
+
+        group.MapPost("/single-delete", async (
+            [FromBody] string publicId,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new RemoveImageCommand(publicId));
+            return Results.Ok();
         });
 
         group.MapPost("/bulk-delete", async (
