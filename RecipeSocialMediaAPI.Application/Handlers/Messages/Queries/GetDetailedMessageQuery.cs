@@ -28,5 +28,4 @@ internal class GetDetailedMessageHandler
             ? throw new MessageNotFoundException(request.Id)
             : await Task.FromResult(_mapper.MapMessageToDetailedMessageDTO(message));
     }
-
 }
