@@ -139,7 +139,8 @@ public class GetConnectionHandlerTests
 
         // Then
         await testAction.Should()
-            .ThrowAsync<UserNotFoundException>();
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage($"No user found with id {(!user1Exists ? user1.Account.Id : user2.Account.Id)}");
     }
 
     [Fact]

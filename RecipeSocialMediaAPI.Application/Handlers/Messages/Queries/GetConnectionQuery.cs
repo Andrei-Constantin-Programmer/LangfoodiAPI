@@ -24,9 +24,9 @@ internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, Connec
     public Task<ConnectionDTO?> Handle(GetConnectionQuery request, CancellationToken cancellationToken)
     {
         IUserAccount user1 = _userQueryRepository.GetUserById(request.UserId1)?.Account
-            ?? throw new UserNotFoundException();
+            ?? throw new UserNotFoundException($"No user found with id {request.UserId1}");
         IUserAccount user2 = _userQueryRepository.GetUserById(request.UserId2)?.Account
-            ?? throw new UserNotFoundException();
+            ?? throw new UserNotFoundException($"No user found with id {request.UserId2}");
 
         IConnection? connection = _connectionQueryRepository.GetConnection(user1, user2);
 

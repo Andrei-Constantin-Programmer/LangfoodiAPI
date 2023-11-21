@@ -58,7 +58,9 @@ public class UpdateUserHandlerTests
         var action = async () => await _updateUserHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<UserNotFoundException>();
+        await action.Should()
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage("No user found*");
         _userPersistenceRepositoryMock
             .Verify(repo => repo.UpdateUser(It.IsAny<IUserCredentials>()), Times.Never);
     }
