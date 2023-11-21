@@ -50,7 +50,9 @@ public class AuthenticateUserHandlerTests
         var action = async () => await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<UserNotFoundException>();
+        await action.Should()
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage("No user found*");
     }
 
     [Fact]

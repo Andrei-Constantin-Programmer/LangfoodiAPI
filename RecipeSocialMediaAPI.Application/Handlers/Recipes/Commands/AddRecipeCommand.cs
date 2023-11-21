@@ -35,7 +35,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
     {
         IUserAccount? chef = 
             _userQueryRepository.GetUserById(request.NewRecipeContract.ChefId)?.Account
-            ?? throw new UserNotFoundException();
+            ?? throw new UserNotFoundException($"No user found with id {request.NewRecipeContract.ChefId}");
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
 

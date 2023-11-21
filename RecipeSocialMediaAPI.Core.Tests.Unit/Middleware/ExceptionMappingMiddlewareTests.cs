@@ -136,7 +136,7 @@ public class ExceptionMappingMiddlewareTests
         // Given
         _nextMock
             .Setup(next => next(It.IsAny<HttpContext>()))
-            .Throws(new UserNotFoundException())
+            .Throws(new UserNotFoundException("Test message"))
             .Verifiable();
 
         HttpContext context = new DefaultHttpContext();

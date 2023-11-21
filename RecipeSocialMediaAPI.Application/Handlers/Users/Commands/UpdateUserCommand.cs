@@ -32,7 +32,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
     {
         IUserCredentials existingUser = 
             _userQueryRepository.GetUserById(request.UpdateUserContract.Id)
-            ?? throw new UserNotFoundException();
+            ?? throw new UserNotFoundException($"No user found with id {request.UpdateUserContract.Id}");
 
         var encryptedPassword = _cryptoService.Encrypt(request.UpdateUserContract.Password);
         IUserCredentials updatedUser = _userFactory.CreateUserCredentials(
