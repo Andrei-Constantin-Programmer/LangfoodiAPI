@@ -380,7 +380,8 @@ public class UpdateConnectionHandlerTests
 
         // Then
         await testAction.Should()
-            .ThrowAsync<UserNotFoundException>();
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage($"No user found with id {(!user1Exists ? user1.Account.Id : user2.Account.Id)}");
         _connectionPersistenceRepositoryMock
             .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
     }

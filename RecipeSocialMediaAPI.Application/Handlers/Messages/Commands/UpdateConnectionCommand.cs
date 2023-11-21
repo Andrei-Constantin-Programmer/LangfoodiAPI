@@ -26,9 +26,9 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
     public Task<bool> Handle(UpdateConnectionCommand request, CancellationToken cancellationToken)
     {
         IUserAccount user1 = _userQueryRepository.GetUserById(request.UpdateConnectionContract.UserId1)?.Account
-            ?? throw new UserNotFoundException();
+            ?? throw new UserNotFoundException($"No user found with id {request.UpdateConnectionContract.UserId1}");
         IUserAccount user2 = _userQueryRepository.GetUserById(request.UpdateConnectionContract.UserId2)?.Account
-            ?? throw new UserNotFoundException();
+            ?? throw new UserNotFoundException($"No user found with id {request.UpdateConnectionContract.UserId2}");
 
         IConnection? connection = _connectionQueryRepository.GetConnection(user1, user2);
 
