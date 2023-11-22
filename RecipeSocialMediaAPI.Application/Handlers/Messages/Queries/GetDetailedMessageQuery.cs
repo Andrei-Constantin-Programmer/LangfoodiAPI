@@ -9,7 +9,7 @@ namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
 public record GetMessageDetailedByIdQuery(string Id) : IRequest<MessageDetailedDTO?>;
 
-internal class GetDetailedMessageHandler
+internal class GetMessageDetailedByIdHandler : IRequestHandler<GetMessageDetailedByIdQuery, MessageDetailedDTO?>
 {
     private readonly IMessageMapper _mapper;
     private readonly IMessageQueryRepository _messageQueryRepository;
