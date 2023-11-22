@@ -21,14 +21,13 @@ public class GroupDocumentToModelMapper : IGroupDocumentToModelMapper
 
     public Group MapGroupFromDocument(GroupDocument groupDocument)
     {
-        List<IUserAccount> users = new List<IUserAccount>();
+        List<IUserAccount> users = new();
         foreach (string user in groupDocument.UserIds)
         {
             users.Add(_userQueryRepository
                 .GetUserById(user)?.Account
                 ?? throw new UserDocumentNotFoundException(user));
         }
-        ImmutableList<IUserAccount> IUser = users.ToImmutableList();
-        return new Group(groupDocument.GroupId, groupDocument.GroupName, groupDocument.GroupDescription, IUser);
+        return new Group(groupDocument.GroupId, groupDocument.GroupName, groupDocument.GroupDescription, users.ToImmutableList());
     }
 }
