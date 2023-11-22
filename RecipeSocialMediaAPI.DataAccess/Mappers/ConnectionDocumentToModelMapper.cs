@@ -16,7 +16,7 @@ public class ConnectionDocumentToModelMapper : IConnectionDocumentToModelMapper
         _userQueryRepository = userQueryRepository;
     }
 
-    public Connection MapConnectionFromDocument(ConnectionDocument connectionDocument)
+    public IConnection MapConnectionFromDocument(ConnectionDocument connectionDocument)
     {
         IUserAccount user1 = _userQueryRepository
             .GetUserById(connectionDocument.AccountId1)?.Account
