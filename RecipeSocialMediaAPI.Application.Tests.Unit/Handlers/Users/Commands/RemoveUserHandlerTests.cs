@@ -45,7 +45,9 @@ public class RemoveUserHandlerTests
         var action = async () => await _removeUserHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<UserNotFoundException>();
+        await action.Should()
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage("No user found*");
         _userPersistenceRepositoryMock
             .Verify(repo => repo.DeleteUser(It.IsAny<IUserCredentials>()), Times.Never);
     }
