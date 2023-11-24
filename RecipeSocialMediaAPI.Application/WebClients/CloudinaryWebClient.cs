@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Text;
 
 namespace RecipeSocialMediaAPI.Application.WebClients;
-public class CloudinaryWebClient
+public class CloudinaryWebClient : ICloudinaryWebClient
 {
     private readonly CloudinaryEndpointOptions _cloudinaryEndpoints;
  
