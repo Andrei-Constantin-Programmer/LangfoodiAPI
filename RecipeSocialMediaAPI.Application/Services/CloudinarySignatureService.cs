@@ -1,9 +1,10 @@
 ﻿using CloudinaryDotNet;
 using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Services;
-public class CloudinarySignatureService
+public class CloudinarySignatureService : ICloudinarySignatureService
 {
     private readonly IDateTimeProvider _dateTimeProvider;
 

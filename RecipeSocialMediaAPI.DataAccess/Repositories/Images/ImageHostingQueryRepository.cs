@@ -3,20 +3,20 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
-using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
 public class ImageHostingQueryRepository : IImageHostingQueryRepository
 {
     private readonly ILogger _logger;
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly ICloudinarySignatureService _cloudinarySignatureService;
     private readonly Cloudinary _connection;
     private readonly CloudinaryApiOptions _cloudinaryConfig;
 
-    public ImageHostingQueryRepository(ILogger<ImageHostingQueryRepository> logger, IDateTimeProvider dateTimeProvider, IOptions<CloudinaryApiOptions> cloudinaryOptions)
+    public ImageHostingQueryRepository(ICloudinarySignatureService signatureService, ILogger<ImageHostingQueryRepository> logger, IOptions<CloudinaryApiOptions> cloudinaryOptions)
     {
-        _dateTimeProvider = dateTimeProvider;
+        _cloudinarySignatureService = signatureService;
         _logger = logger;
 
         _cloudinaryConfig = cloudinaryOptions.Value;
@@ -31,18 +31,7 @@ public class ImageHostingQueryRepository : IImageHostingQueryRepository
     {
         try
         {
-            Dictionary<string, object> signingParameters = new();
-
-            if (publicId is not null)
-            {
-                signingParameters.Add("public_id", publicId);
-            }
-
-            long timestamp = _dateTimeProvider.Now.ToUnixTimeSeconds();
-            signingParameters.Add("timestamp", timestamp);
-
-            string signature = _connection.Api.SignParameters(signingParameters);
-            return new() { Signature = signature, TimeStamp = timestamp };
+            return _cloudinarySignatureService.GenerateSignature(_connection, publicId);
         }
         catch (Exception ex)
         {

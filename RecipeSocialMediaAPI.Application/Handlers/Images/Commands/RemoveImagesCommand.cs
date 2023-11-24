@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.Application.Repositories.Images;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
 
@@ -7,16 +7,16 @@ public record class RemoveImagesCommand(List<string> PublicIds) : IRequest;
 
 internal class RemoveImagesHandler : IRequestHandler<RemoveImagesCommand>
 {
-    private readonly IImageHostingQueryRepository _imageHostingQueryRepository;
+    private readonly IImageHostingPersistenceRepository _imageHostingPersistenceRepository;
 
-    public RemoveImagesHandler(IImageHostingQueryRepository imageHostingQueryRepository)
+    public RemoveImagesHandler(IImageHostingPersistenceRepository imageHostingPersistenceRepository)
     {
-        _imageHostingQueryRepository = imageHostingQueryRepository;
+        _imageHostingPersistenceRepository = imageHostingPersistenceRepository;
     }
 
     public Task Handle(RemoveImagesCommand request, CancellationToken cancellationToken)
     {
-        bool isSuccessful = _imageHostingQueryRepository.BulkRemoveHostedImages(request.PublicIds);
+        bool isSuccessful = _imageHostingPersistenceRepository.BulkRemoveHostedImages(request.PublicIds);
 
         return isSuccessful
             ? Task.CompletedTask

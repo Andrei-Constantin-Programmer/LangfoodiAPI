@@ -1,6 +1,6 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 
-namespace RecipeSocialMediaAPI.Application.WebClients;
+namespace RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 public interface ICloudinaryWebClient
 {
     public bool RemoveHostedImage(CloudinarySignatureDTO signature, string apiKey, string publicId);

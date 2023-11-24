@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 using RecipeSocialMediaAPI.Application.Options;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using System.Net.Http.Headers;
 using System.Text;
 

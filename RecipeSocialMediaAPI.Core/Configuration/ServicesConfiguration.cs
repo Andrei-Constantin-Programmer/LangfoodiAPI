@@ -27,6 +27,10 @@ using RecipeSocialMediaAPI.Application.Mappers.Messages;
 using MediatR;
 using RecipeSocialMediaAPI.Core.Middleware;
 using RecipeSocialMediaAPI.Application.WebClients;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Services;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 
@@ -72,6 +76,7 @@ internal static class ServicesConfiguration
 
         // Transients
         builder.Services.AddTransient<ICloudinaryWebClient, CloudinaryWebClient>();
+        builder.Services.AddTransient<ICloudinarySignatureService, CloudinarySignatureService>();
         builder.Services.AddTransient<ICryptoService, CryptoService>();
         builder.Services.AddTransient<IMessageFactory, MessageFactory>();
         builder.Services.AddTransient<IUserFactory, UserFactory>();
