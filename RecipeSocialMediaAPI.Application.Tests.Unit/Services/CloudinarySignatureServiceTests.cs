@@ -9,18 +9,22 @@ namespace RecipeSocialMediaAPI.Application.Tests.Unit.Services;
 public class CloudinarySignatureServiceTests
 {
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
-    private readonly Mock<Cloudinary> _cloudinaryConfigMock;
-    private readonly CloudinarySignatureService _cloudinarySignatureService;
+    private readonly Cloudinary _cloudinaryConfig;
+    private readonly CloudinarySignatureService _cloudinarySignatureServiceSUT;
     private static readonly DateTimeOffset _testDate = new(2023, 08, 19, 12, 30, 0, TimeSpan.Zero);
 
     public CloudinarySignatureServiceTests()
     {
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
-        _cloudinaryConfigMock = new Mock<Cloudinary>();
+        _cloudinaryConfig = new Cloudinary(new Account(
+            "cloudname", "apikey", "apisecret"
+        ));
 
         _dateTimeProviderMock
             .Setup(x => x.Now)
             .Returns(_testDate);
+
+        _cloudinarySignatureServiceSUT = new CloudinarySignatureService(_dateTimeProviderMock.Object);
     }
 
     [Fact]
@@ -31,7 +35,7 @@ public class CloudinarySignatureServiceTests
         // Given
 
         // When
-        var result = _cloudinarySignatureService.GenerateSignature(_cloudinaryConfigMock.Object, null);
+        var result = _cloudinarySignatureServiceSUT.GenerateSignature(_cloudinaryConfig, null);
 
         // Then
         result.Should().NotBeNull();
@@ -47,7 +51,7 @@ public class CloudinarySignatureServiceTests
         // Given
 
         // When
-        var result = _cloudinarySignatureService.GenerateSignature(_cloudinaryConfigMock.Object, "sdfsdgs43534");
+        var result = _cloudinarySignatureServiceSUT.GenerateSignature(_cloudinaryConfig, "sdfsdgs43534");
 
         // Then
         result.Should().NotBeNull();
@@ -58,7 +62,7 @@ public class CloudinarySignatureServiceTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void GenerateClientSignature_WhenPublicIdIsNotNullAndExceptionThrownForAnyReason_ReturnNull()
+    public void GenerateClientSignature_WhenPublicIdIsNotNullAndException_ThrowException()
     {
         // Given
         Exception testException = new("exception here");
@@ -67,16 +71,17 @@ public class CloudinarySignatureServiceTests
             .Throws(testException);
 
         // When
-        var result = _cloudinarySignatureService.GenerateSignature(_cloudinaryConfigMock.Object, "sdfsdfsdg43453");
+        var action = () => _cloudinarySignatureServiceSUT.GenerateSignature(_cloudinaryConfig, "sdfsdfsdg43453");
 
         // Then
-        result.Should().BeNull();
+        action.Should()
+            .Throw<Exception>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void GenerateClientSignature_WhenPublicIdIsNullAndExceptionThrownForAnyReason_ReturnNull()
+    public void GenerateClientSignature_WhenPublicIdIsNullAndException_ThrowException()
     {
         // Given
         Exception testException = new("exception here");
@@ -85,9 +90,10 @@ public class CloudinarySignatureServiceTests
             .Throws(testException);
 
         // When
-        var result = _cloudinarySignatureService.GenerateSignature(_cloudinaryConfigMock.Object, null);
+        var action = () => _cloudinarySignatureServiceSUT.GenerateSignature(_cloudinaryConfig, null);
 
         // Then
-        result.Should().BeNull();
+        action.Should()
+            .Throw<Exception>();
     }
 }
