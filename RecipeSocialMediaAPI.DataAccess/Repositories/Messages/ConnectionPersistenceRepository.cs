@@ -21,7 +21,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public Connection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus)
+    public IConnection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus)
     {
         ConnectionDocument connectionDocument = _connectionCollection.Insert(new ConnectionDocument()
         {
@@ -33,7 +33,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         return _mapper.MapConnectionFromDocument(connectionDocument);
     }
 
-    public bool UpdateConnection(Connection connection)
+    public bool UpdateConnection(IConnection connection)
     {
         return _connectionCollection.UpdateRecord(
             new ConnectionDocument() 
@@ -46,7 +46,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
                 || (doc.AccountId1 == connection.Account2.Id && doc.AccountId2 == connection.Account1.Id));
     }
 
-    public bool DeleteConnection(Connection connection) => DeleteConnection(connection.Account1, connection.Account2);
+    public bool DeleteConnection(IConnection connection) => DeleteConnection(connection.Account1, connection.Account2);
 
     public bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2) 
         => _connectionCollection.Delete(
