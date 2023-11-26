@@ -24,5 +24,27 @@ public class GetMessageDetailedHandlerTests
         _getMessageDetailedByIdHandlerSUT = new(_messageMapperMock.Object, _messageQueryRepository.Object);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void Handle_WhenMessageIsNotFound_ThrowMessageNotFoundException()
+    {
+        // Given
+        _messageQueryRepository
+            .Setup(repo => repo.GetMessage(It.IsAny<string>()))
+            .Returns((Message?)null);
+
+        GetMessageDetailedByIdQuery testQuery = new("MessageId");
+
+        // When
+        var testAction = async () => await _getMessageDetailedByIdHandlerSUT.Handle(testQuery, CancellationToken.None);
+
+        // Then
+        testAction.Should().ThrowAsync<MessageNotFoundException>();
+
+        _messageMapperMock
+            .Verify(mapper => mapper.MapMessageToMessageDTO(It.IsAny<Message>()), Times.Never);
+    }
+
 
 }
