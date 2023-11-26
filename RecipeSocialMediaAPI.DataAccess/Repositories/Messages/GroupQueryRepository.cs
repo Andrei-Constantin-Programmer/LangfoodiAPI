@@ -40,4 +40,23 @@ internal class GroupQueryRepository
             ? _mapper.MapGroupFromDocument(groupDocument)
             : null;
     }
+
+    public List<Group> GetGroupsByUser(IUserAccount userAccount)
+    {
+        List<GroupDocument> groups = new();
+        try
+        {
+
+            groups = _groupCollection
+                .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get the groups for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
+        }
+
+        return groups
+            .Select(_mapper.MapGroupFromDocument)
+            .ToList();
+    }
 }
