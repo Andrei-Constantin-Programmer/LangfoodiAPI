@@ -49,7 +49,7 @@ public class GetMessageDetailedByIdHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenMessageIsFound_ReturnMappedMessageDTO()
+    public async Task Handle_WhenMessageIsFound_ReturnMappedMessageDetailedDTO()
     {
         // Given
         TestUserAccount testSender = new()
