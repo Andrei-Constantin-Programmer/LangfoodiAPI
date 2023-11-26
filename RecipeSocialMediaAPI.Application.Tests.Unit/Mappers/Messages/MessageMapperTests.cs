@@ -191,4 +191,47 @@ public class MessageMapperTests
         // Then
         testAction.Should().Throw<CorruptedMessageException>();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapMessageToMessageDetailedDTO_WhenMessageIsTextMessage_ReturnCorrectlyMappedDTO()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
+
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage(
+            "TestId",
+            testSender,
+            "Test text content",
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            repliedToMessage);
+
+        MessageDTO expectedResult = new()
+        {
+            Id = testMessage.Id,
+            SenderId = testSender.Id,
+            TextContent = testMessage.TextContent,
+            RepliedToMessageId = testMessage.RepliedToMessage!.Id,
+            SentDate = testMessage.SentDate,
+            UpdatedDate = testMessage.UpdatedDate,
+        };
+
+        // When
+        var result = _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
+
+        // Then
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+
+
 }
