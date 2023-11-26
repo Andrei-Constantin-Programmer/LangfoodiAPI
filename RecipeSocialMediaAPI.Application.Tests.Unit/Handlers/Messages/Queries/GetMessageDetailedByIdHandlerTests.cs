@@ -75,7 +75,7 @@ public class GetMessageDetailedByIdHandlerTests
             .Setup(repo => repo.GetMessage(testMessage.Id))
             .Returns(testMessage);
         _messageMapperMock
-            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Setup(mapper => mapper.MapMessageToDetailedMessageDTO(testMessage))
             .Returns(mappedMessage);
 
         GetMessageDetailedByIdQuery testQuery = new(testMessage.Id);
