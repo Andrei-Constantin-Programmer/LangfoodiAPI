@@ -5,7 +5,6 @@ using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
-using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Images;
 public class ImageHostingPersistenceRepository : IImageHostingPersistenceRepository
@@ -16,7 +15,7 @@ public class ImageHostingPersistenceRepository : IImageHostingPersistenceReposit
     private readonly Cloudinary _connection;
     private readonly CloudinaryApiOptions _cloudinaryConfig;
 
-    public ImageHostingPersistenceRepository(ICloudinaryWebClient cloudinaryWebClient,  ICloudinarySignatureService signatureService, ILogger<ImageHostingQueryRepository> logger, IOptions<CloudinaryApiOptions> cloudinaryOptions)
+    public ImageHostingPersistenceRepository(ICloudinaryWebClient cloudinaryWebClient,  ICloudinarySignatureService signatureService, ILogger<ImageHostingPersistenceRepository> logger, IOptions<CloudinaryApiOptions> cloudinaryOptions)
     {
         _cloudinaryWebClient = cloudinaryWebClient;
         _cloudinarySignatureService = signatureService;
