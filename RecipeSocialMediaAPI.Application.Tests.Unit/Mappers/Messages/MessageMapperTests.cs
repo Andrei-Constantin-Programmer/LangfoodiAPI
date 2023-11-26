@@ -3,6 +3,7 @@ using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Messages;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Services;
@@ -19,6 +20,8 @@ public class MessageMapperTests
 
     private readonly IMessageFactory _messageFactory;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+    private readonly Mock<IRecipeMapper> _recipeMapperMock;
+
 
     private readonly MessageMapper _messageMapperSUT;
 
@@ -28,9 +31,10 @@ public class MessageMapperTests
         _dateTimeProviderMock
             .Setup(provider => provider.Now)
             .Returns(TEST_DATE);
+        _recipeMapperMock = new Mock<IRecipeMapper>();
         _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
 
-        _messageMapperSUT = new MessageMapper();
+        _messageMapperSUT = new MessageMapper(_recipeMapperMock.Object);
     }
 
     [Fact]
