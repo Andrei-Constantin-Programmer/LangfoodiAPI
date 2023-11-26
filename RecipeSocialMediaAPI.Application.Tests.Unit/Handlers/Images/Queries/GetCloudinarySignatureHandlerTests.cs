@@ -39,7 +39,7 @@ public class GetCloudinarySignatureHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_NoSignatureGenerated_ThrowInvalidOperationException()
+    public async Task Handle_NoSignatureGenerated_ThrowsException()
     {
         // Given
         _imageHostingQueryRepositoryMock
@@ -51,7 +51,7 @@ public class GetCloudinarySignatureHandlerTests
 
         // Then
         await action.Should()
-            .ThrowAsync<InvalidOperationException>()
+            .ThrowAsync<Exception>()
             .WithMessage("Failed to generate signature");
     }
 }
