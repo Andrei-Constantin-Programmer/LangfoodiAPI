@@ -16,7 +16,8 @@ internal class RemoveImagesHandler : IRequestHandler<RemoveImagesCommand>
 
     public Task Handle(RemoveImagesCommand request, CancellationToken cancellationToken)
     {
-        bool isSuccessful = _imageHostingPersistenceRepository.BulkRemoveHostedImages(request.PublicIds);
+        bool isSuccessful = request.PublicIds.Count() > 0
+            && _imageHostingPersistenceRepository.BulkRemoveHostedImages(request.PublicIds);
 
         return isSuccessful
             ? Task.CompletedTask
