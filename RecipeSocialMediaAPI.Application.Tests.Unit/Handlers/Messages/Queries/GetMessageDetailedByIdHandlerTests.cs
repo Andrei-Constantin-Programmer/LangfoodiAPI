@@ -11,13 +11,13 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Queries;
 
-public class GetMessageDetailedHandlerTests
+public class GetMessageDetailedByIdHandlerTests
 {
     private readonly Mock<IMessageMapper> _messageMapperMock;
     private readonly Mock<IMessageQueryRepository> _messageQueryRepository;
     private readonly GetMessageDetailedByIdHandler _getMessageDetailedByIdHandlerSUT;
 
-    public GetMessageDetailedHandlerTests()
+    public GetMessageDetailedByIdHandlerTests()
     {
         _messageMapperMock = new Mock<IMessageMapper>();
         _messageQueryRepository = new Mock<IMessageQueryRepository>();
