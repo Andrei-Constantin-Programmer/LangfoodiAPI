@@ -46,5 +46,46 @@ public class GetMessageDetailedHandlerTests
             .Verify(mapper => mapper.MapMessageToMessageDTO(It.IsAny<Message>()), Times.Never);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenMessageIsFound_ReturnMappedMessageDTO()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        TestMessage repliedToMessage = new("RepliedToId", testSender, new(2023, 10, 18, 0, 0, 0, TimeSpan.Zero), null, null);
+        TestMessage testMessage = new("TestId", testSender, new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero), new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero), repliedToMessage);
+
+        MessageDTO mappedMessage = new()
+        {
+            Id = testMessage.Id,
+            SenderId = testSender.Id,
+            SentDate = testMessage.SentDate,
+            UpdatedDate = testMessage.UpdatedDate,
+        };
+
+        _messageQueryRepository
+            .Setup(repo => repo.GetMessage(testMessage.Id))
+            .Returns(testMessage);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Returns(mappedMessage);
+
+        GetMessageDetailedByIdQuery testQuery = new(testMessage.Id);
+
+        // When
+        var result = await _getMessageDetailedByIdHandlerSUT.Handle(testQuery, CancellationToken.None);
+
+        // Then
+        result.Should().Be(mappedMessage);
+    }
+
 
 }
