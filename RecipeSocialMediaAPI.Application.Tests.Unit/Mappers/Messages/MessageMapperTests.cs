@@ -220,12 +220,12 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
-        MessageDTO expectedResult = new()
+        MessageDetailedDTO expectedResult = new()
         {
             Id = testMessage.Id,
             SenderId = testSender.Id,
             TextContent = testMessage.TextContent,
-            RepliedToMessageId = testMessage.RepliedToMessage!.Id,
+            RepliedToMessage = , // TODO: Define RepliedToMessage for expectedResult. Can I just make `repliedToMessage` be null?
             SentDate = testMessage.SentDate,
             UpdatedDate = testMessage.UpdatedDate,
         };
