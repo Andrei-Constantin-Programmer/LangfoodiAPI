@@ -8,16 +8,18 @@ using System.Text;
 namespace RecipeSocialMediaAPI.Application.WebClients;
 public class CloudinaryWebClient : ICloudinaryWebClient
 {
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly CloudinaryEndpointOptions _cloudinaryEndpoints;
  
-    public CloudinaryWebClient(IOptions<CloudinaryEndpointOptions> cloudinaryOptions)
+    public CloudinaryWebClient(IHttpClientFactory clientFactory, IOptions<CloudinaryEndpointOptions> cloudinaryOptions)
     {
+        _httpClientFactory = clientFactory;
         _cloudinaryEndpoints = cloudinaryOptions.Value;
     }
 
     public bool RemoveHostedImage(CloudinarySignatureDTO signature, string apiKey, string publicId)
     {
-        using var httpClient = new HttpClient();
+        using var httpClient = _httpClientFactory.CreateClient();
         using var request = new HttpRequestMessage(
             new HttpMethod("POST"),
             _cloudinaryEndpoints.SingleRemoveUrl +
@@ -30,7 +32,7 @@ public class CloudinaryWebClient : ICloudinaryWebClient
 
     public bool BulkRemoveHostedImages(List<string> publicIds, string apiKey, string apiSecret)
     {
-        using var httpClient = new HttpClient();
+        using var httpClient = _httpClientFactory.CreateClient();
         using var request = new HttpRequestMessage(
             new HttpMethod("DELETE"),
             _cloudinaryEndpoints.BulkRemoveUrl
