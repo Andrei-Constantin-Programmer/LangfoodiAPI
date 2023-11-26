@@ -20,4 +20,24 @@ internal class GroupQueryRepository
         _mapper = groupDocumentToModelMapper;
         _groupCollection = mongoCollectionFactory.CreateCollection<GroupDocument>();
     }
+
+    public Group GetGroupById(string groupId)
+    {
+
+        GroupDocument? groupDocument;
+        try
+        {
+            groupDocument = _groupCollection.Find(
+                groupDoc => groupDoc.GroupId == groupId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get the group with the id {GroupID}: {ErrorMessage}", groupId, ex.Message);
+            return null;
+        }
+
+        return groupDocument is not null
+            ? _mapper.MapGroupFromDocument(groupDocument)
+            : null;
+    }
 }
