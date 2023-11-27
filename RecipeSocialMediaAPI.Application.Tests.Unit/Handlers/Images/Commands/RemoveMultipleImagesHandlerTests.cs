@@ -5,18 +5,18 @@ using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Images.Commands;
-public class RemoveImagesHandlerTests
+public class RemoveMultipleImagesHandlerTests
 {
     private readonly Mock<IImageHostingPersistenceRepository> _imageHostingPersistenceRepositoryMock;
     
-    private readonly RemoveImagesHandler _removeImagesHandlerSUT;
+    private readonly RemoveMultipleImagesHandler _removeImagesHandlerSUT;
 
-    private readonly List<string> _test_public_ids = new() { "id1", "id2", "id3" };
+    private readonly List<string> _testPublicIds = new() { "id1", "id2", "id3" };
 
-    public RemoveImagesHandlerTests()
+    public RemoveMultipleImagesHandlerTests()
     {
         _imageHostingPersistenceRepositoryMock = new Mock<IImageHostingPersistenceRepository>();
-        _removeImagesHandlerSUT = new RemoveImagesHandler(_imageHostingPersistenceRepositoryMock.Object);
+        _removeImagesHandlerSUT = new RemoveMultipleImagesHandler(_imageHostingPersistenceRepositoryMock.Object);
     }
 
     [Fact]
@@ -26,17 +26,17 @@ public class RemoveImagesHandlerTests
     {
         // Given
         _imageHostingPersistenceRepositoryMock
-            .Setup(x => x.BulkRemoveHostedImages(_test_public_ids))
+            .Setup(x => x.BulkRemoveHostedImages(_testPublicIds))
             .Returns(true);
 
         // When
         var action = async () => await _removeImagesHandlerSUT
-            .Handle(new RemoveImagesCommand(_test_public_ids), CancellationToken.None);
+            .Handle(new RemoveMultipleImagesCommand(_testPublicIds), CancellationToken.None);
 
         // Then
         await action.Should().NotThrowAsync();
         _imageHostingPersistenceRepositoryMock
-            .Verify(repo => repo.BulkRemoveHostedImages(_test_public_ids));
+            .Verify(repo => repo.BulkRemoveHostedImages(_testPublicIds));
     }
 
     [Fact]
@@ -46,17 +46,17 @@ public class RemoveImagesHandlerTests
     {
         // Given
         _imageHostingPersistenceRepositoryMock
-            .Setup(x => x.BulkRemoveHostedImages(_test_public_ids))
+            .Setup(x => x.BulkRemoveHostedImages(_testPublicIds))
             .Returns(false);
 
         // When
         var action = async () => await _removeImagesHandlerSUT
-            .Handle(new RemoveImagesCommand(_test_public_ids), CancellationToken.None);
+            .Handle(new RemoveMultipleImagesCommand(_testPublicIds), CancellationToken.None);
 
         // Then
         await action.Should()
             .ThrowAsync<Exception>()
-            .WithMessage("Could not remove images or only partially removed some images");
+            .WithMessage($"Could not remove images or only partially removed some images from: [{string.Join(",", _testPublicIds)}]");
     }
 
     [Fact]
@@ -71,11 +71,11 @@ public class RemoveImagesHandlerTests
 
         // When
         var action = async () => await _removeImagesHandlerSUT
-            .Handle(new RemoveImagesCommand(new()), CancellationToken.None);
+            .Handle(new RemoveMultipleImagesCommand(new()), CancellationToken.None);
 
         // Then
         await action.Should()
             .ThrowAsync<Exception>()
-            .WithMessage("Could not remove images or only partially removed some images");
+            .WithMessage($"Could not remove images or only partially removed some images from: []");
     }
 }

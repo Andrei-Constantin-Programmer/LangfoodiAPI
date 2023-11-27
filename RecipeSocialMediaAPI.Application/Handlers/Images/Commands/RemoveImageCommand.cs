@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Images;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
@@ -20,6 +21,6 @@ internal class RemoveImageHandler : IRequestHandler<RemoveImageCommand>
 
         return isSuccessful
             ? Task.CompletedTask
-            : throw new Exception("Could not remove image");
+            : throw new ImageRemovalException(request.PublicId);
     }
 }

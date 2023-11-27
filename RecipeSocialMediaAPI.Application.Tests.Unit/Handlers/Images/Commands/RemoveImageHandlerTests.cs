@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -54,7 +55,7 @@ public class RemoveImageHandlerTests
 
         // Then
         await action.Should()
-            .ThrowAsync<Exception>()
-            .WithMessage("Could not remove image");
+            .ThrowAsync<ImageRemovalException>()
+            .WithMessage($"Could not remove image with publicId: {TEST_PUBLIC_ID}");
     }
 }

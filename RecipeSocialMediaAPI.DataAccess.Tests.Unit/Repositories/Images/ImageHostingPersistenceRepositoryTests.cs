@@ -26,7 +26,7 @@ public class ImageHostingPersistenceRepositoryTests
         TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
             .ToUnixTimeSeconds()
     };
-    private readonly List<string> _test_public_ids = new() { "id1", "id2", "id3" };
+    private readonly List<string> _testPublicIds = new() { "id1", "id2", "id3" };
 
     public ImageHostingPersistenceRepositoryTests()
     {
@@ -137,7 +137,7 @@ public class ImageHostingPersistenceRepositoryTests
             .Returns(true);
 
         // When
-        var result = _imageHostingPersistenceRepositorySUT.BulkRemoveHostedImages(_test_public_ids);
+        var result = _imageHostingPersistenceRepositorySUT.BulkRemoveHostedImages(_testPublicIds);
 
         // Then
         result.Should().BeTrue();
@@ -158,7 +158,7 @@ public class ImageHostingPersistenceRepositoryTests
             .Returns(false);
 
         // When
-        var result = _imageHostingPersistenceRepositorySUT.BulkRemoveHostedImages(_test_public_ids);
+        var result = _imageHostingPersistenceRepositorySUT.BulkRemoveHostedImages(_testPublicIds);
 
         // Then
         result.Should().BeFalse();
@@ -180,7 +180,7 @@ public class ImageHostingPersistenceRepositoryTests
             .Throws(testException);
 
         // When
-        var result = _imageHostingPersistenceRepositorySUT.BulkRemoveHostedImages(_test_public_ids);
+        var result = _imageHostingPersistenceRepositorySUT.BulkRemoveHostedImages(_testPublicIds);
 
         // Then
         result.Should().BeFalse();

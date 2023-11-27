@@ -34,7 +34,7 @@ public static class ImageEndpoints
             [FromQuery] string[] publicIds,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new RemoveImagesCommand(publicIds.ToList()));
+            await sender.Send(new RemoveMultipleImagesCommand(publicIds.ToList()));
             return Results.Ok();
         });
 
