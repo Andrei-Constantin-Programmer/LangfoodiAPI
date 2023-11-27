@@ -66,7 +66,8 @@ public class AddRecipeHandlerTests
 
         // Then
         await action.Should()
-            .ThrowAsync<UserNotFoundException>();
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage($"No user found with id {testContract.ChefId}");
 
         _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Never);
