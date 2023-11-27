@@ -16,6 +16,7 @@ public class ImageHostingPersistenceRepositoryTests
     private readonly Mock<ILogger<ImageHostingPersistenceRepository>> _loggerMock;
     private readonly Mock<ICloudinarySignatureService> _cloudinarySignatureServiceMock;
     private readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
+    private readonly Mock<IOptions<CloudinaryApiOptions>> _cloudinaryApiOptionsMock;
 
     private readonly ImageHostingPersistenceRepository _imageHostingPersistenceRepositorySUT;
 
@@ -33,13 +34,16 @@ public class ImageHostingPersistenceRepositoryTests
         _loggerMock = new Mock<ILogger<ImageHostingPersistenceRepository>>();
         _cloudinarySignatureServiceMock = new Mock<ICloudinarySignatureService>();
         _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
+        _cloudinaryApiOptionsMock = new Mock<IOptions<CloudinaryApiOptions>>();
 
-        var options = Options.Create(new CloudinaryApiOptions()
-        {
-            CloudName = "cloudname",
-            ApiKey = "apikey",
-            ApiSecret = "apisecret"
-        });
+        _cloudinaryApiOptionsMock
+            .Setup(x => x.Value)
+            .Returns(new CloudinaryApiOptions()
+            {
+                CloudName = "cloudname",
+                ApiKey = "apikey",
+                ApiSecret = "apisecret"
+            });
 
         _cloudinarySignatureServiceMock
             .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), TEST_PUBLIC_ID))
@@ -49,7 +53,7 @@ public class ImageHostingPersistenceRepositoryTests
             _cloudinaryWebClientMock.Object,
             _cloudinarySignatureServiceMock.Object,
             _loggerMock.Object,
-            options
+            _cloudinaryApiOptionsMock.Object
         );
     }
 

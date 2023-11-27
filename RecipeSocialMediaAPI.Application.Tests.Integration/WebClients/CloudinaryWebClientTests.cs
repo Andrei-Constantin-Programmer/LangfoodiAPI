@@ -52,15 +52,14 @@ public class CloudinaryWebClientTests
     public void RemoveHostedImage_RequestReturnsOk_ReturnsTrue()
     {
         // Given
+        HttpMethod? requestMethod = null;
+        Uri? requestUri = null;
         var handlerStub = new HttpClientSendHandlerStub(
-            (request, cancellationToken) => 
+            (request, cancellationToken) =>
             {
-                request.Method.Should().Be(new HttpMethod("POST"));
-                request.RequestUri.Should().Be(
-                    "https://www.example.com/singleremove" +
-                    $"?public_id={TEST_PUBLIC_ID}&api_key={TEST_API_KEY}&signature={_signatureTestData.Signature}&timestamp={_signatureTestData.TimeStamp}"
-                );
-                return new HttpResponseMessage(HttpStatusCode.OK); 
+                requestMethod = request.Method;
+                requestUri = request.RequestUri;
+                return new HttpResponseMessage(HttpStatusCode.OK);
             }
         );
         var client = new HttpClient(handlerStub);
@@ -71,12 +70,17 @@ public class CloudinaryWebClientTests
 
         // When
         var result = _cloudinaryWebClientSUT.RemoveHostedImage(
-            _signatureTestData, 
+            _signatureTestData,
             TEST_API_KEY,
             TEST_PUBLIC_ID);
 
         // Then
         result.Should().BeTrue();
+        requestMethod?.Method.Should().Be("POST");
+        requestUri.Should().Be(
+            "https://www.example.com/singleremove" +
+            $"?public_id={TEST_PUBLIC_ID}&api_key={TEST_API_KEY}&signature={_signatureTestData.Signature}&timestamp={_signatureTestData.TimeStamp}"
+        );
     }
 
     [Fact]
@@ -85,14 +89,13 @@ public class CloudinaryWebClientTests
     public void RemoveHostedImage_RequestReturnsNotOk_ReturnsFalse()
     {
         // Given
+        HttpMethod? requestMethod = null;
+        Uri? requestUri = null;
         var handlerStub = new HttpClientSendHandlerStub(
             (request, cancellationToken) =>
             {
-                request.Method.Should().Be(new HttpMethod("POST"));
-                request.RequestUri.Should().Be(
-                    "https://www.example.com/singleremove" +
-                    $"?public_id={TEST_PUBLIC_ID}&api_key={TEST_API_KEY}&signature={_signatureTestData.Signature}&timestamp={_signatureTestData.TimeStamp}"
-                );
+                requestMethod = request.Method;
+                requestUri = request.RequestUri;
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
         );
@@ -110,6 +113,11 @@ public class CloudinaryWebClientTests
 
         // Then
         result.Should().BeFalse();
+        requestMethod?.Method.Should().Be("POST");
+        requestUri.Should().Be(
+            "https://www.example.com/singleremove" +
+            $"?public_id={TEST_PUBLIC_ID}&api_key={TEST_API_KEY}&signature={_signatureTestData.Signature}&timestamp={_signatureTestData.TimeStamp}"
+        );
     }
 
     [Fact]
@@ -118,13 +126,13 @@ public class CloudinaryWebClientTests
     public void BulkRemoveHostedImages_RequestReturnsOk_ReturnsTrue()
     {
         // Given
+        HttpMethod? requestMethod = null;
+        Uri? requestUri = null;
         var handlerStub = new HttpClientSendHandlerStub(
             (request, cancellationToken) =>
             {
-                request.Method.Should().Be(new HttpMethod("DELETE"));
-                request.RequestUri.Should().Be(
-                    "https://www.example.com/bulkremove"
-                );
+                requestMethod = request.Method;
+                requestUri = request.RequestUri;
                 return new HttpResponseMessage(HttpStatusCode.OK);
             }
         );
@@ -142,6 +150,8 @@ public class CloudinaryWebClientTests
 
         // Then
         result.Should().BeTrue();
+        requestMethod?.Method.Should().Be("DELETE");
+        requestUri.Should().Be("https://www.example.com/bulkremove");
     }
 
     [Fact]
@@ -150,13 +160,13 @@ public class CloudinaryWebClientTests
     public void BulkRemoveHostedImages_RequestReturnsNotOk_ReturnsFalse()
     {
         // Given
+        HttpMethod? requestMethod = null;
+        Uri? requestUri = null;
         var handlerStub = new HttpClientSendHandlerStub(
             (request, cancellationToken) =>
             {
-                request.Method.Should().Be(new HttpMethod("DELETE"));
-                request.RequestUri.Should().Be(
-                    "https://www.example.com/bulkremove"
-                );
+                requestMethod = request.Method;
+                requestUri = request.RequestUri;
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
         );
@@ -174,5 +184,7 @@ public class CloudinaryWebClientTests
 
         // Then
         result.Should().BeFalse();
+        requestMethod?.Method.Should().Be("DELETE");
+        requestUri.Should().Be("https://www.example.com/bulkremove");
     }
 }
