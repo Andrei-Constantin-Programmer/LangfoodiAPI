@@ -14,7 +14,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_WhenPublicIdIsNullAndValidCall_ReturnGeneratedCloudinarySignature()
+    public async void GetCloudinarySignature_GivenPublicIdAndValidCall_ReturnGeneratedCloudinarySignature()
     {
         // Given
 
@@ -32,18 +32,15 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_WhenPublicIdIsNotNullAndValidCall_ReturnGeneratedCloudinarySignature()
+    public async void SingleDelete_GivenPublicIdAndValidCall_ReturnOk()
     {
         // Given
 
+
         // When
-        var result = await _client.PostAsync("image/get/cloudinary-signature?publicId=fsd34534jsdf3", null);
+        var result = await _client.DeleteAsync("/image/single-delete?publicId=publicId123");
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        CloudinarySignatureDTO generatedSignature = (await result.Content.ReadFromJsonAsync<CloudinarySignatureDTO>())!;
-
-        generatedSignature.Signature.Should().NotBeEmpty();
-        generatedSignature.TimeStamp.Should().BeGreaterThan(0);
     }
 }
