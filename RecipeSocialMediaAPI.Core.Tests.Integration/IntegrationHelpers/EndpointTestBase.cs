@@ -5,17 +5,21 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using Moq;
 using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 
 public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Program>>
 {
+    protected readonly Mock<ICloudinarySignatureService> _cloudinarySignatureServiceMock;
     protected readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
     protected readonly HttpClient _client;
 
     public EndpointTestBase(WebApplicationFactory<Program> factory)
     {
         _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
+        _cloudinarySignatureServiceMock = new Mock<ICloudinarySignatureService>();
+
         _client = factory
             .WithWebHostBuilder(builder => builder.ConfigureServices(services =>
             {
@@ -27,8 +31,8 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
                 services.AddSingleton<IUserQueryRepository>(fakeUserRepository);
                 services.AddSingleton<IUserPersistenceRepository>(fakeUserRepository);
 
-                var cloudinaryWebClientMock = _cloudinaryWebClientMock;
-                services.AddSingleton(cloudinaryWebClientMock.Object);
+                services.AddSingleton(_cloudinaryWebClientMock.Object);
+                services.AddSingleton(_cloudinarySignatureServiceMock.Object);
             }))
             .CreateClient();
     }
