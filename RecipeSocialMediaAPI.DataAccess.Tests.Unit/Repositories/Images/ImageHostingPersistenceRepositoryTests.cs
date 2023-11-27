@@ -20,7 +20,7 @@ public class ImageHostingPersistenceRepositoryTests
     private readonly ImageHostingPersistenceRepository _imageHostingPersistenceRepositorySUT;
 
     private const string TEST_PUBLIC_ID = "354234535sgf45";
-    private readonly CloudinarySignatureDTO _signature_test_data = new()
+    private readonly CloudinarySignatureDTO _signatureTestData = new()
     {
         Signature = "signature1",
         TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
@@ -41,16 +41,16 @@ public class ImageHostingPersistenceRepositoryTests
             ApiSecret = "apisecret"
         });
 
+        _cloudinarySignatureServiceMock
+            .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), TEST_PUBLIC_ID))
+            .Returns(_signatureTestData);
+
         _imageHostingPersistenceRepositorySUT = new ImageHostingPersistenceRepository(
             _cloudinaryWebClientMock.Object,
             _cloudinarySignatureServiceMock.Object,
             _loggerMock.Object,
             options
         );
-
-        _cloudinarySignatureServiceMock
-            .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), TEST_PUBLIC_ID))
-            .Returns(_signature_test_data);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class ImageHostingPersistenceRepositoryTests
         // Given
         _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(
-                _signature_test_data,
+                _signatureTestData,
                 It.IsAny<string>(),
                 TEST_PUBLIC_ID
             ))
@@ -77,12 +77,12 @@ public class ImageHostingPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void RemoveHostedImage_RemovalFails_ReturnsFalse()
+    public void RemoveHostedImage_RemovalFailsNoExceptionThrown_ReturnsFalse()
     {
         // Given
         _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(
-                _signature_test_data,
+                _signatureTestData,
                 It.IsAny<string>(),
                 TEST_PUBLIC_ID
             ))
@@ -98,7 +98,7 @@ public class ImageHostingPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void RemoveHostedImage_RemovalFails_ExceptionThrown()
+    public void RemoveHostedImage_RemovalFailsBecauseExceptionIsThrown_ExceptionPropagated()
     {
         // Given
         Exception testException = new("exception here");
@@ -121,8 +121,6 @@ public class ImageHostingPersistenceRepositoryTests
                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
                Times.Once());
     }
-
-    // ----
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
@@ -148,7 +146,7 @@ public class ImageHostingPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void BulkRemoveHostedImages_RemovalWorks_ReturnsFalse()
+    public void BulkRemoveHostedImages_RemovalFailsNoExceptionThrown_ReturnsFalse()
     {
         // Given
         _cloudinaryWebClientMock
@@ -169,7 +167,7 @@ public class ImageHostingPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void BulkRemoveHostedImages_RemovalFails_ExceptionThrown()
+    public void BulkRemoveHostedImages_RemovalFailsBecauseExceptionIsThrown_ExceptionPropagated()
     {
         // Given
         Exception testException = new("exception here");

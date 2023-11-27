@@ -14,7 +14,7 @@ public class ImageHostingQueryRepositoryTests
 {
     private readonly Mock<ILogger<ImageHostingQueryRepository>> _loggerMock;
     private readonly Mock<ICloudinarySignatureService> _signatureServiceMock;
-    private readonly CloudinarySignatureDTO _signature_test_data = new()
+    private readonly CloudinarySignatureDTO _signatureTestData = new()
     {
         Signature = "signature1",
         TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
@@ -52,7 +52,7 @@ public class ImageHostingQueryRepositoryTests
         // Given
         _signatureServiceMock
             .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), null))
-            .Returns(_signature_test_data);
+            .Returns(_signatureTestData);
 
         // When
         var result = _imageHostingQueryRepositorySUT.GenerateSignature(null);
@@ -60,7 +60,7 @@ public class ImageHostingQueryRepositoryTests
         // Then
         result.Should().NotBeNull();
         result!.Signature.Should().NotBeEmpty();
-        result!.TimeStamp.Should().Be(_signature_test_data.TimeStamp);
+        result!.TimeStamp.Should().Be(_signatureTestData.TimeStamp);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class ImageHostingQueryRepositoryTests
         // Given
         _signatureServiceMock
             .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), It.IsAny<string>()))
-            .Returns(_signature_test_data);
+            .Returns(_signatureTestData);
 
         // When
         var result = _imageHostingQueryRepositorySUT.GenerateSignature("sdfsdgs43534");
@@ -79,7 +79,7 @@ public class ImageHostingQueryRepositoryTests
         // Then
         result.Should().NotBeNull();
         result!.Signature.Should().NotBeEmpty();
-        result!.TimeStamp.Should().Be(_signature_test_data.TimeStamp);
+        result!.TimeStamp.Should().Be(_signatureTestData.TimeStamp);
     }
 
     [Fact]

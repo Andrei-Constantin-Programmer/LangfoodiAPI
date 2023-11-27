@@ -12,14 +12,15 @@ namespace RecipeSocialMediaAPI.Application.Tests.Unit.WebClients;
 public class CloudinaryWebClientTests
 {
     private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
+    private readonly Mock<IOptions<CloudinaryEndpointOptions>> _endpointOptionsMock;  
 
     private readonly CloudinaryWebClient _cloudinaryWebClientSUT;
 
     private const string TEST_PUBLIC_ID = "publicid123";
     private const string TEST_API_KEY = "apiKey";
     private const string TEST_API_SECRET = "apiSecret";
-    private readonly List<string> _test_public_ids = new() { "id1", "id2", "id3" };
-    private readonly CloudinarySignatureDTO _signature_test_data = new()
+    private readonly List<string> _testPublicIds = new() { "id1", "id2", "id3" };
+    private readonly CloudinarySignatureDTO _signatureTestData = new()
     {
         Signature = "signature1",
         TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
@@ -30,8 +31,8 @@ public class CloudinaryWebClientTests
     {
         _httpClientFactoryMock = new Mock<IHttpClientFactory>();
 
-        var options = new Mock<IOptions<CloudinaryEndpointOptions>>();
-        options
+        _endpointOptionsMock = new Mock<IOptions<CloudinaryEndpointOptions>>();
+        _endpointOptionsMock
             .Setup(x => x.Value)
             .Returns(new CloudinaryEndpointOptions()
             {
@@ -41,7 +42,7 @@ public class CloudinaryWebClientTests
 
         _cloudinaryWebClientSUT = new CloudinaryWebClient(
             _httpClientFactoryMock.Object,
-            options.Object
+            _endpointOptionsMock.Object
         );
     }
 
@@ -57,7 +58,7 @@ public class CloudinaryWebClientTests
                 request.Method.Should().Be(new HttpMethod("POST"));
                 request.RequestUri.Should().Be(
                     "https://www.example.com/singleremove" +
-                    $"?public_id={TEST_PUBLIC_ID}&api_key={TEST_API_KEY}&signature={_signature_test_data.Signature}&timestamp={_signature_test_data.TimeStamp}"
+                    $"?public_id={TEST_PUBLIC_ID}&api_key={TEST_API_KEY}&signature={_signatureTestData.Signature}&timestamp={_signatureTestData.TimeStamp}"
                 );
                 return new HttpResponseMessage(HttpStatusCode.OK); 
             }
@@ -70,7 +71,7 @@ public class CloudinaryWebClientTests
 
         // When
         var result = _cloudinaryWebClientSUT.RemoveHostedImage(
-            _signature_test_data, 
+            _signatureTestData, 
             TEST_API_KEY,
             TEST_PUBLIC_ID);
 
@@ -90,7 +91,7 @@ public class CloudinaryWebClientTests
                 request.Method.Should().Be(new HttpMethod("POST"));
                 request.RequestUri.Should().Be(
                     "https://www.example.com/singleremove" +
-                    $"?public_id={TEST_PUBLIC_ID}&api_key={TEST_API_KEY}&signature={_signature_test_data.Signature}&timestamp={_signature_test_data.TimeStamp}"
+                    $"?public_id={TEST_PUBLIC_ID}&api_key={TEST_API_KEY}&signature={_signatureTestData.Signature}&timestamp={_signatureTestData.TimeStamp}"
                 );
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
@@ -103,7 +104,7 @@ public class CloudinaryWebClientTests
 
         // When
         var result = _cloudinaryWebClientSUT.RemoveHostedImage(
-            _signature_test_data,
+            _signatureTestData,
             TEST_API_KEY,
             TEST_PUBLIC_ID);
 
@@ -135,7 +136,7 @@ public class CloudinaryWebClientTests
 
         // When
         var result = _cloudinaryWebClientSUT.BulkRemoveHostedImages(
-            _test_public_ids,
+            _testPublicIds,
             TEST_API_KEY,
             TEST_API_SECRET);
 
@@ -167,7 +168,7 @@ public class CloudinaryWebClientTests
 
         // When
         var result = _cloudinaryWebClientSUT.BulkRemoveHostedImages(
-            _test_public_ids,
+            _testPublicIds,
             TEST_API_KEY,
             TEST_API_SECRET);
 

@@ -11,7 +11,7 @@ using System.Net.Http.Json;
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 public class ImageEndpointsTests : EndpointTestBase
 {
-    private readonly CloudinarySignatureDTO _signature_test_data = new()
+    private readonly CloudinarySignatureDTO _signatureTestData = new()
     {
         Signature = "signature1",
         TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
@@ -27,8 +27,8 @@ public class ImageEndpointsTests : EndpointTestBase
     {
         // Given
         _cloudinarySignatureServiceMock
-            .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), It.IsAny<string>()))
-            .Returns(_signature_test_data);
+            .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), null))
+            .Returns(_signatureTestData);
 
         // When
         var result = await _client.PostAsync("image/get/cloudinary-signature", null);
@@ -37,8 +37,8 @@ public class ImageEndpointsTests : EndpointTestBase
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         CloudinarySignatureDTO generatedSignature = (await result.Content.ReadFromJsonAsync<CloudinarySignatureDTO>())!;
 
-        generatedSignature.Signature.Should().Be(_signature_test_data.Signature);
-        generatedSignature.TimeStamp.Should().Be(_signature_test_data.TimeStamp);
+        generatedSignature.Signature.Should().Be(_signatureTestData.Signature);
+        generatedSignature.TimeStamp.Should().Be(_signatureTestData.TimeStamp);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SingleDelete_GivenPublicIdAndNoError_ReturnOk()
+    public async void ImageSingleDelete_GivenPublicIdAndNoError_ReturnOk()
     {
         // Given
         _cloudinaryWebClientMock
@@ -81,7 +81,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SingleDelete_GivenPublicIdAndError_ReturnNotOk()
+    public async void ImageSingleDelete_GivenPublicIdAndError_ReturnNotOk()
     {
         // Given
         _cloudinaryWebClientMock
@@ -101,7 +101,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void BulkDelete_GivenPublicIdsAndNoError_ReturnOk()
+    public async void ImageBulkDelete_GivenPublicIdsAndNoError_ReturnOk()
     {
         // Given
         _cloudinaryWebClientMock
@@ -121,7 +121,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void BulkDelete_GivenPublicIdsAndError_ReturnNotOk()
+    public async void ImageBulkDelete_GivenPublicIdsAndError_ReturnNotOk()
     {
         // Given
         _cloudinaryWebClientMock

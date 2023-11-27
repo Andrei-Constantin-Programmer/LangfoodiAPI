@@ -25,6 +25,19 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void HttpClientFactory_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var signatureService = scope.ServiceProvider.GetService(typeof(IHttpClientFactory));
+
+        // Then
+        signatureService.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void CryptoService_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -82,19 +95,6 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
         // Given
         using var scope = _factory.Services.CreateScope();
         var signatureService = scope.ServiceProvider.GetService(typeof(ICloudinaryWebClient)) as CloudinaryWebClient;
-
-        // Then
-        signatureService.Should().NotBeNull();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void HttpClientFactory_ShouldBeConfiguredCorrectly()
-    {
-        // Given
-        using var scope = _factory.Services.CreateScope();
-        var signatureService = scope.ServiceProvider.GetService(typeof(IHttpClientFactory));
 
         // Then
         signatureService.Should().NotBeNull();
