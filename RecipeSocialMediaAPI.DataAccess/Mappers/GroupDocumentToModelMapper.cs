@@ -15,8 +15,7 @@ public class GroupDocumentToModelMapper : IGroupDocumentToModelMapper
 
     public GroupDocumentToModelMapper(IUserQueryRepository userQueryRepository)
     {
-        _userQueryRepository = userQueryRepository;
-
+        _userQueryRepository = userQueryRepository;  
     }
 
     public Group MapGroupFromDocument(GroupDocument groupDocument)
