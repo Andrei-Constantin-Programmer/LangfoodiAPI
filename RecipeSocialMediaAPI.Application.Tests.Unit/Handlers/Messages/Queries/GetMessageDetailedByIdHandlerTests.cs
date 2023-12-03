@@ -27,7 +27,7 @@ public class GetMessageDetailedByIdHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenMessageIsNotFound_ThrowMessageNotFoundException()
+    public void Handle_WhenMessageDetailedIsNotFound_ThrowMessageNotFoundException()
     {
         // Given
         _messageQueryRepository
