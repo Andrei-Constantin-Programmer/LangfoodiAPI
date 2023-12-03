@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
+using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -87,7 +88,7 @@ public class GroupDocumentToModelMapperTests
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(false, false)]
-    public void MapGroupFromDocument_WhenUsersDontExist_UserDocumentNotFoundException(bool firstUserExists, bool secondUserExists)
+    public void MapGroupFromDocument_WhenUsersDontExist_ThrowsUserDocumentNotFoundException(bool firstUserExists, bool secondUserExists)
     {
         // Given
         TestUserCredentials? testUser1 =
@@ -144,5 +145,30 @@ public class GroupDocumentToModelMapperTests
         // Then
         result.Should().Throw<UserDocumentNotFoundException>();
 
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void MapGroupFromDocument_WhenListOfUsersIsEmpty_ShouldNotThrowUserDocumentNotFoundException()
+    {
+        //given
+        GroupDocument testDocument = new()
+        {
+            Id = "1",
+            GroupId = "1",
+            GroupName = "Test Name",
+            GroupDescription = "Test Desc",
+            UserIds = new() { }
+        };
+        // When
+        var result = _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
+
+        // Then
+        result.Should().NotBeNull();
+        result.GroupId.Should().Be(testDocument.Id);
+        result.GroupName.Should().Be(testDocument.GroupName);
+        result.GroupDescription.Should().Be(testDocument.GroupDescription);
+        result.Users.Should().BeEquivalentTo(new List<IUserAccount>() {  });
     }
 }
