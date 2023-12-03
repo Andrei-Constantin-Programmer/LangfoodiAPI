@@ -43,7 +43,7 @@ public class GetMessageDetailedByIdHandlerTests
         testAction.Should().ThrowAsync<MessageNotFoundException>();
 
         _messageMapperMock
-            .Verify(mapper => mapper.MapMessageToMessageDTO(It.IsAny<Message>()), Times.Never);
+            .Verify(mapper => mapper.MapMessageToDetailedMessageDTO(It.IsAny<Message>()), Times.Never);
     }
 
     [Fact]
