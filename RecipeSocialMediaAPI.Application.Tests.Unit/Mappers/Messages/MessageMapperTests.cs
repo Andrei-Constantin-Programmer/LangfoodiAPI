@@ -246,6 +246,13 @@ public class MessageMapperTests
             UpdatedDate = testMessage.UpdatedDate,
         };
 
+        // When
+        var result = _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
+
+        // Then
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
