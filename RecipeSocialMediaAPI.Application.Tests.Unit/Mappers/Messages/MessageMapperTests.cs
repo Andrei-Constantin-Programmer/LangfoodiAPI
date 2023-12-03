@@ -210,7 +210,23 @@ public class MessageMapperTests
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
         };
 
-        TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
+        var repliedToMessage = (TextMessage)_messageFactory.CreateTextMessage(
+            "TestId",
+            testSender,
+            "Test text content",
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            null);
+
+        MessageDetailedDTO repliedToMessageDTO = new()
+        {
+            Id = repliedToMessage.Id,
+            SenderId = repliedToMessage.Sender.Id,
+            TextContent = repliedToMessage.TextContent,
+            RepliedToMessage = null,
+            SentDate = repliedToMessage.SentDate,
+            UpdatedDate = repliedToMessage.UpdatedDate,
+        };
 
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage(
             "TestId",
@@ -225,7 +241,10 @@ public class MessageMapperTests
             Id = testMessage.Id,
             SenderId = testSender.Id,
             TextContent = testMessage.TextContent,
-            RepliedToMessage = , // TODO: Define RepliedToMessage for expectedResult. Can I just make `repliedToMessage` be null?
+            RepliedToMessage = repliedToMessageDTO,
+            SentDate = testMessage.SentDate,
+            UpdatedDate = testMessage.UpdatedDate,
+        };
             SentDate = testMessage.SentDate,
             UpdatedDate = testMessage.UpdatedDate,
         };
