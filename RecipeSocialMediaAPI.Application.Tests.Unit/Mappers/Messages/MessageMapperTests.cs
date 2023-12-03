@@ -319,5 +319,28 @@ public class MessageMapperTests
         result.Should().BeEquivalentTo(expectedResult);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapMessageToMessageDetailedDTO_WhenMessageIsNotOfExpectedType_ThrowCorruptedMessageException()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
+        TestMessage testMessage = new("TestId", testSender, new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero), new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero), repliedToMessage);
+
+        // When
+        var testAction = () => _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
+
+        // Then
+        testAction.Should().Throw<CorruptedMessageException>();
+    }
 
 }
