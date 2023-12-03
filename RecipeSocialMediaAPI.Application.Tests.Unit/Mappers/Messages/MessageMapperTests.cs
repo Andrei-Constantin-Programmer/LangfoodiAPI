@@ -245,6 +245,69 @@ public class MessageMapperTests
             SentDate = testMessage.SentDate,
             UpdatedDate = testMessage.UpdatedDate,
         };
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void MapMessageToMessageDetailedDTO_WhenMessageIsImageMessage_ReturnCorrectlyMappedDTO(bool containsTextContent)
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        // TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
+
+        var repliedToMessage = (TextMessage)_messageFactory.CreateTextMessage(
+            "TestId",
+            testSender,
+            "Test text content",
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            null);
+
+        MessageDetailedDTO repliedToMessageDTO = new()
+        {
+            Id = repliedToMessage.Id,
+            SenderId = repliedToMessage.Sender.Id,
+            TextContent = repliedToMessage.TextContent,
+            RepliedToMessage = null,
+            SentDate = repliedToMessage.SentDate,
+            UpdatedDate = repliedToMessage.UpdatedDate,
+        };
+
+        var testMessage = (ImageMessage)_messageFactory.CreateImageMessage(
+            "TestId",
+            testSender,
+            new List<string>() { "Image1", "Image2" },
+            containsTextContent ? "Test text content" : null,
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            repliedToMessage);
+
+        MessageDetailedDTO expectedResult = new()
+        {
+            Id = testMessage.Id,
+            SenderId = testSender.Id,
+            ImageURLs = testMessage.ImageURLs.ToList(),
+            TextContent = testMessage.TextContent,
+            RepliedToMessage = repliedToMessageDTO,
+            SentDate = testMessage.SentDate,
+            UpdatedDate = testMessage.UpdatedDate,
+        };
+
+        // When
+        var result = _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
+
+        // Then
+        result.Should().BeEquivalentTo(expectedResult);
+    }
             SentDate = testMessage.SentDate,
             UpdatedDate = testMessage.UpdatedDate,
         };
