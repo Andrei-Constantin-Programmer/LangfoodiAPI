@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Messages;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
@@ -315,6 +316,82 @@ public class MessageMapperTests
         // Then
         result.Should().BeEquivalentTo(expectedResult);
     }
+
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void MapMessageToMessageDetailedDTO_WhenMessageIsRecipeMessage_ReturnCorrectlyMappedDTO(bool containsTextContent)
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        var repliedToMessage = (TextMessage)_messageFactory.CreateTextMessage(
+            "TestId",
+            testSender,
+            "Test text content",
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            null);
+
+        MessageDetailedDTO repliedToMessageDTO = new()
+        {
+            Id = repliedToMessage.Id,
+            SenderId = repliedToMessage.Sender.Id,
+            TextContent = repliedToMessage.TextContent,
+            RepliedToMessage = null,
+            SentDate = repliedToMessage.SentDate,
+            UpdatedDate = repliedToMessage.UpdatedDate,
+        };
+
+        var testMessage = (RecipeMessage)_messageFactory.CreateRecipeMessage(
+            "TestId",
+            testSender,
+            new List<RecipeAggregate>()
+            {
+                new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE),
+                new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE)
+            },
+            containsTextContent ? "Test text content" : null,
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            repliedToMessage);
+
+        List<RecipeDTO> recipes = new()
+        {
+            new()
+            {
+                Id="Recipe1Id",
+                Title = "Recipe1Title",
+                Description = "Description",
+                ChefUsername = "chefA",
+                Labels = new HashSet<string>{"labelA" , "labelB"}
+            },
+            new()
+            {
+                Id="Recipe2Id",
+                Title = "Recipe2Title",
+                Description = "Description",
+                ChefUsername = "chefB",
+                Labels = new HashSet<string>{"labelC" , "labelD"}
+            },
+        };
+
+        MessageDetailedDTO expectedResult = new()
+        {
+            Id = testMessage.Id,
+            SenderId = testSender.Id,
+            Recipes = recipes, // TODO: put recipes here
+            TextContent = testMessage.TextContent,
+            RepliedToMessage = repliedToMessageDTO,
             SentDate = testMessage.SentDate,
             UpdatedDate = testMessage.UpdatedDate,
         };
