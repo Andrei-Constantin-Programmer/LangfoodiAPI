@@ -123,9 +123,9 @@ public class AddRecipeHandlerTests
         _recipePersistenceRepositoryMock
             .Setup(x => x.CreateRecipe(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
                 It.IsAny<IUserAccount>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
-                It.IsAny<DateTimeOffset>()))
-            .Returns((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate) 
-                => new RecipeAggregate("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, labels)
+                It.IsAny<DateTimeOffset>(), It.IsAny<string?>()))
+            .Returns((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId) 
+                => new RecipeAggregate("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, labels, thumbnailId)
             );
 
         _recipeMapperMock
