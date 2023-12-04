@@ -56,6 +56,7 @@ public class UpdateRecipeHandlerTests
             Labels = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
+            ThumbnailId = "img_id_1"
         };
 
         // When
@@ -84,6 +85,7 @@ public class UpdateRecipeHandlerTests
             Labels = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
+            ThumbnailId = "img_id_1"
         };
 
         _recipeQueryRepositoryMock
@@ -101,7 +103,9 @@ public class UpdateRecipeHandlerTests
                     AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) 
                 },
                 _testDate, 
-                _testDate
+                _testDate,
+                new HashSet<string>(),
+                "img_id_1"
             ));
 
         _recipePersistenceRepositoryMock
@@ -131,6 +135,7 @@ public class UpdateRecipeHandlerTests
             Labels = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
+            ThumbnailId = "img_id_1"
         };
 
         _recipeQueryRepositoryMock
@@ -148,7 +153,9 @@ public class UpdateRecipeHandlerTests
                     AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
                 },
                 _testDate, 
-                _testDate
+                _testDate,
+                new HashSet<string>(),
+                "img_id_1"
             ));
 
         _recipePersistenceRepositoryMock

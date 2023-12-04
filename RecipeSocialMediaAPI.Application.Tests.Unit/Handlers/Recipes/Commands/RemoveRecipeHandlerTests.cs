@@ -107,7 +107,9 @@ public class RemoveRecipeHandlerTests
                     AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
                 },
                 _testDate, 
-                _testDate
+                _testDate,
+                new HashSet<string>(),
+                "thumbnail_id_1"
             ));
 
         _recipePersistenceRepositoryMock

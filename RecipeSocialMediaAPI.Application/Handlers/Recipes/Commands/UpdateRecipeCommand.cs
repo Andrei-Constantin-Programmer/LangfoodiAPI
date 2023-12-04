@@ -56,7 +56,8 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             existingRecipe.Chef,
             existingRecipe.CreationDate,
             _dateTimeProvider.Now,
-            request.UpdateRecipeContract.Labels
+            request.UpdateRecipeContract.Labels,
+            request.UpdateRecipeContract.ThumbnailId
         );
 
         bool isSuccessful = _recipePersistenceRepository.UpdateRecipe(updatedRecipe);
