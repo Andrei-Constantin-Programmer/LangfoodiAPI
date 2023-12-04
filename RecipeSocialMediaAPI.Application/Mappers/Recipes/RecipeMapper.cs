@@ -62,6 +62,7 @@ public class RecipeMapper : IRecipeMapper
             CookingTime = recipeAggregate.Recipe.CookingTimeInSeconds,
             CreationDate = recipeAggregate.CreationDate,
             LastUpdatedDate = recipeAggregate.LastUpdatedDate,
+            ThumbnailId = recipeAggregate.ThumbnailId,
         };
     }
 
@@ -78,7 +79,8 @@ public class RecipeMapper : IRecipeMapper
             NumberOfServings = recipeAggregate.Recipe.NumberOfServings,
             CookingTime = recipeAggregate.Recipe.CookingTimeInSeconds,
             CreationDate = recipeAggregate.CreationDate,
-            LastUpdatedDate = recipeAggregate.LastUpdatedDate
+            LastUpdatedDate = recipeAggregate.LastUpdatedDate,
+            ThumbnailId = recipeAggregate.ThumbnailId
         };
     }
 }

@@ -144,7 +144,8 @@ public class RecipeMapperTests
             testChef,
             _testDate,
             _testDate,
-            new HashSet<string>());
+            new HashSet<string>(),
+            "thumbnail_public_id_1");
 
         _userMapperMock
             .Setup(x => x.MapUserAccountToUserAccountDto(It.IsAny<IUserAccount>()))
@@ -171,6 +172,7 @@ public class RecipeMapperTests
         result.NumberOfServings.Should().Be(1);
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
+        result.ThumbnailId.Should().Be("thumbnail_public_id_1");
 
         result.Ingredients.First().Name.Should().Be("eggs");
         result.Ingredients.First().Quantity.Should().Be(1);
@@ -202,7 +204,8 @@ public class RecipeMapperTests
             testChef,
             _testDate,
             _testDate,
-            new HashSet<string>());
+            new HashSet<string>(),
+            "thumbnail_public_id_1");
 
         // When
         var result = _mapperSUT.MapRecipeAggregateToRecipeDto(testRecipe);
@@ -218,5 +221,6 @@ public class RecipeMapperTests
         result.Labels.Should().BeEmpty();
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
+        result.ThumbnailId.Should().Be("thumbnail_public_id_1");
     }
 }
