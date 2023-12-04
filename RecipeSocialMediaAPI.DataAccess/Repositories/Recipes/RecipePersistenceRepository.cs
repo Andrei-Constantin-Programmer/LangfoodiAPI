@@ -18,7 +18,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
     {
         var recipeDocument = _recipeCollection
             .Insert(new RecipeDocument()
@@ -28,6 +28,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 Steps = recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
                 Description = description,
                 ChefId = chef.Id,
+                ThumbnailId = thumbnailId,
                 CreationDate = creationDate,
                 LastUpdatedDate = lastUpdatedDate,
                 Labels = labels.ToList(),
@@ -49,6 +50,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 Steps = recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
                 Description = recipe.Description,
                 ChefId = recipe.Chef.Id,
+                ThumbnailId = recipe.ThumbnailId,
                 NumberOfServings = recipe.Recipe.NumberOfServings,
                 CookingTimeInSeconds = recipe.Recipe.CookingTimeInSeconds,
                 KiloCalories = recipe.Recipe.KiloCalories,
