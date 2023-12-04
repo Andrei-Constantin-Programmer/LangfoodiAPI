@@ -59,7 +59,8 @@ public class RecipePersistenceRepositoryTests
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
+            new HashSet<string>() { testLabel },
+            "thumbnail_id_1"
         );
 
         RecipeDocument newRecipeDocument = new()
@@ -73,6 +74,7 @@ public class RecipePersistenceRepositoryTests
             CreationDate = expectedResult.CreationDate,
             LastUpdatedDate = expectedResult.LastUpdatedDate,
             Labels = new List<string>() { testLabel },
+            ThumbnailId = expectedResult.ThumbnailId,
             CookingTimeInSeconds = expectedResult.Recipe.CookingTimeInSeconds,
             KiloCalories = expectedResult.Recipe.KiloCalories,
             NumberOfServings = expectedResult.Recipe.NumberOfServings,
@@ -91,7 +93,7 @@ public class RecipePersistenceRepositoryTests
         var result = _recipePersistenceRepositorySUT.CreateRecipe(
             expectedResult.Title, expectedResult.Recipe,
             expectedResult.Description, testChef, expectedResult.Labels,
-            expectedResult.CreationDate, expectedResult.LastUpdatedDate);
+            expectedResult.CreationDate, expectedResult.LastUpdatedDate, expectedResult.ThumbnailId);
 
         // Then
         result.Should().Be(expectedResult);
@@ -134,7 +136,8 @@ public class RecipePersistenceRepositoryTests
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
+            new HashSet<string>() { testLabel },
+            "thumbnail_id_1"
         );
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
@@ -161,7 +164,8 @@ public class RecipePersistenceRepositoryTests
                         && recipeDoc.Steps.Count == 0
                         && recipeDoc.NumberOfServings == recipe.Recipe.NumberOfServings
                         && recipeDoc.CookingTimeInSeconds == recipe.Recipe.CookingTimeInSeconds
-                        && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories),
+                        && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories
+                        && recipeDoc.ThumbnailId == recipe.ThumbnailId),
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
                 Times.Once);
     }
