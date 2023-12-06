@@ -3,49 +3,39 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.Helpers;
-using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
 public class ImageHostingQueryRepository : IImageHostingQueryRepository
 {
     private readonly ILogger _logger;
-    private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly Cloudinary _connection;    
+    private readonly ICloudinarySignatureService _cloudinarySignatureService;
+    private readonly Cloudinary _connection;
+    private readonly CloudinaryApiOptions _cloudinaryConfig;
 
-    public ImageHostingQueryRepository(ILogger<ImageHostingQueryRepository> logger, IDateTimeProvider dateTimeProvider, IOptions<CloudinaryApiOptions> cloudinaryOptions)
+    public ImageHostingQueryRepository(ICloudinarySignatureService signatureService, ILogger<ImageHostingQueryRepository> logger, IOptions<CloudinaryApiOptions> cloudinaryOptions)
     {
-        _dateTimeProvider = dateTimeProvider;
+        _cloudinarySignatureService = signatureService;
         _logger = logger;
 
-        var cloudinaryConfiguration = cloudinaryOptions.Value;
+        _cloudinaryConfig = cloudinaryOptions.Value;
         _connection = new Cloudinary(new Account(
-            cloudinaryConfiguration.CloudName,
-            cloudinaryConfiguration.ApiKey,
-            cloudinaryConfiguration.ApiSecret
+            _cloudinaryConfig.CloudName,
+            _cloudinaryConfig.ApiKey,
+            _cloudinaryConfig.ApiSecret
         ));
     }
 
-    public CloudinarySignatureDTO? GenerateClientSignature(string? publicId)
+    public CloudinarySignatureDTO? GenerateSignature(string? publicId = null)
     {
         try
         {
-            long timestamp = _dateTimeProvider.Now.ToUnixTimeSeconds();
-            Dictionary<string, object> signingParameters = new();
-
-            if (publicId is not null)
-            {
-                signingParameters.Add("public_id", publicId);
-            }
-
-            signingParameters.Add("timestamp", timestamp);
-
-            string signature = _connection.Api.SignParameters(signingParameters);           
-            return new() { Signature = signature, TimeStamp = timestamp };
+            return _cloudinarySignatureService.GenerateSignature(_connection, publicId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "There was error trying to generate a cloudinary client signature");
+            _logger.LogError(ex, "There was error trying to generate a cloudinary signature");
             return null;
         }
     }

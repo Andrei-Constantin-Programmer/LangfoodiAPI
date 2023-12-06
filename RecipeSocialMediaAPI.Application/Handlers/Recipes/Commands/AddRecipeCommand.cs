@@ -60,7 +60,8 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             chef,
             request.NewRecipeContract.Labels,
             dateOfCreation,
-            dateOfCreation
+            dateOfCreation,
+            null
         );
 
         return await Task.FromResult(_mapper

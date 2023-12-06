@@ -8,13 +8,16 @@ public sealed class CloudinaryApiOptionValidator : AbstractValidator<CloudinaryA
     public CloudinaryApiOptionValidator()
     {
         RuleFor(x => x.CloudName)
-            .NotEmpty();
+            .NotEmpty()
+            .WithMessage("The CloudName cannot be empty.");
 
         RuleFor(x => x.ApiKey)
-            .NotEmpty();
+            .NotEmpty()
+            .WithMessage("The ApiKey cannot be empty.");
 
         RuleFor(x => x.ApiSecret)
-            .NotEmpty();
+            .NotEmpty()
+            .WithMessage("The ApiSecret cannot be empty.");
     }
 }
  

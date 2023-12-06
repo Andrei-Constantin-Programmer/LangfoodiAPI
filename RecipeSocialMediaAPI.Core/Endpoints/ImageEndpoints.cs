@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Images.Queries;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
@@ -16,10 +17,25 @@ public static class ImageEndpoints
     private static RouteGroupBuilder AddImageEndpoints(this RouteGroupBuilder group)
     {
         group.MapPost("/get/cloudinary-signature", async (
-            [FromQuery] string? publicId,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery(publicId)));
+            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery()));
+        });
+
+        group.MapDelete("/single-delete", async (
+            [FromQuery] string publicId,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new RemoveImageCommand(publicId));
+            return Results.Ok();
+        });
+
+        group.MapDelete("/bulk-delete", async (
+            [FromQuery] string[] publicIds,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new RemoveMultipleImagesCommand(publicIds.ToList()));
+            return Results.Ok();
         });
 
         return group;

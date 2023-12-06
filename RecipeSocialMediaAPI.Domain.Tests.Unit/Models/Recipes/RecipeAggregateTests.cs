@@ -50,6 +50,21 @@ public class RecipeAggregateTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void ThumbnailId_CanBeModified()
+    {
+        // Given
+        string thumbnailId = "img_public_id_1";
+
+        // When
+        _recipeAggregateSUT.ThumbnailId = thumbnailId;
+
+        // Then
+        _recipeAggregateSUT.ThumbnailId.Should().Be(thumbnailId);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
     public void Description_CanBeModified()
     {
         // Given
