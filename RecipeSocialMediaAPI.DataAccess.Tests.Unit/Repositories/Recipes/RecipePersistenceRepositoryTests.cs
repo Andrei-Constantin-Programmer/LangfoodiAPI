@@ -131,7 +131,7 @@ public class RecipePersistenceRepositoryTests
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 10, 500, 2300),
+            new(new(), new(), 10, 500, 2300, new ServingSize(30, "kg")),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -165,7 +165,9 @@ public class RecipePersistenceRepositoryTests
                         && recipeDoc.NumberOfServings == recipe.Recipe.NumberOfServings
                         && recipeDoc.CookingTimeInSeconds == recipe.Recipe.CookingTimeInSeconds
                         && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories
-                        && recipeDoc.ThumbnailId == recipe.ThumbnailId),
+                        && recipeDoc.ThumbnailId == recipe.ThumbnailId
+                        && recipeDoc.ServingSize.GetValueOrDefault().Quantity == recipe.Recipe.ServingSize!.Quantity
+                        && recipeDoc.ServingSize.GetValueOrDefault().UnitOfMeasurement == recipe.Recipe.ServingSize!.UnitOfMeasurement),
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
                 Times.Once);
     }
@@ -189,7 +191,7 @@ public class RecipePersistenceRepositoryTests
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 10, 500, 2300),
+            new(new(), new(), 10, 500, 2300, new ServingSize(30, "kg")),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),

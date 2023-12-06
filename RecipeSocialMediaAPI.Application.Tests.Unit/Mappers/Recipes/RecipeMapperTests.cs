@@ -139,7 +139,7 @@ public class RecipeMapperTests
             new Recipe(new() {
                 new Ingredient("eggs", 1, "whole") },
                 new(new[] { new RecipeStep("step1", new RecipeImage("url")) }),
-                1),
+                1, null, null, new ServingSize(30, "kg")),
             "desc",
             testChef,
             _testDate,
@@ -173,6 +173,8 @@ public class RecipeMapperTests
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
         result.ThumbnailId.Should().Be("thumbnail_public_id_1");
+        result.ServingQuantity.Should().Be(30);
+        result.ServingUnitOfMeasurement.Should().Be("kg");
 
         result.Ingredients.First().Name.Should().Be("eggs");
         result.Ingredients.First().Quantity.Should().Be(1);
