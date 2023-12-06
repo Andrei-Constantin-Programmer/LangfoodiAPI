@@ -248,4 +248,17 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
         // Then
         conversationPersistenceRepository.Should().NotBeNull();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void GroupQueryRepository_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var groupQueryRepository = scope.ServiceProvider.GetService(typeof(IGroupQueryRepository)) as GroupQueryRepository;
+
+        // Then
+        groupQueryRepository.Should().NotBeNull();
+    }
 }

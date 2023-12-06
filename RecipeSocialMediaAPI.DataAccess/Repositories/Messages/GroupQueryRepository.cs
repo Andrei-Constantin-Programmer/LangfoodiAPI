@@ -3,12 +3,12 @@ using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using System.Text.RegularExpressions;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
-internal class GroupQueryRepository
+
+public class GroupQueryRepository : IGroupQueryRepository
 {
     private readonly ILogger<GroupQueryRepository> _logger;
     private readonly IGroupDocumentToModelMapper _mapper;
@@ -21,9 +21,8 @@ internal class GroupQueryRepository
         _groupCollection = mongoCollectionFactory.CreateCollection<GroupDocument>();
     }
 
-    public Group GetGroupById(string groupId)
+    public Group? GetGroupById(string groupId)
     {
-
         GroupDocument? groupDocument;
         try
         {
@@ -46,7 +45,6 @@ internal class GroupQueryRepository
         List<GroupDocument> groups = new();
         try
         {
-
             groups = _groupCollection
                 .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id));
         }
