@@ -159,7 +159,7 @@ public class GroupDocumentToModelMapperTests
             GroupId = "1",
             GroupName = "Test Name",
             GroupDescription = "Test Desc",
-            UserIds = new() { }
+            UserIds = new()
         };
         // When
         var result = _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
@@ -169,6 +169,6 @@ public class GroupDocumentToModelMapperTests
         result.GroupId.Should().Be(testDocument.Id);
         result.GroupName.Should().Be(testDocument.GroupName);
         result.GroupDescription.Should().Be(testDocument.GroupDescription);
-        result.Users.Should().BeEquivalentTo(new List<IUserAccount>() {  });
+        result.Users.Should().BeEmpty();
     }
 }
