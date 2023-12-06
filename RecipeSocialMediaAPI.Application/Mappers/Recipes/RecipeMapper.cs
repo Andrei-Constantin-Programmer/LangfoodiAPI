@@ -63,6 +63,8 @@ public class RecipeMapper : IRecipeMapper
             CreationDate = recipeAggregate.CreationDate,
             LastUpdatedDate = recipeAggregate.LastUpdatedDate,
             ThumbnailId = recipeAggregate.ThumbnailId,
+            ServingQuantity = recipeAggregate.Recipe.ServingSize?.Quantity,
+            ServingUnitOfMeasurement = recipeAggregate.Recipe.ServingSize?.UnitOfMeasurement
         };
     }
 

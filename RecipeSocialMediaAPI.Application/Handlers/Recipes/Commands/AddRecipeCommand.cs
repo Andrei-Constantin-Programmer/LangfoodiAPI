@@ -39,8 +39,6 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
 
-        var (servingSizeQuantity, unitOfMeasurement) = request.NewRecipeContract.ServingSize ?? default;
-
         RecipeAggregate insertedRecipe = _recipePersistenceRepository.CreateRecipe(
             request.NewRecipeContract.Title,
             new Recipe(
@@ -52,8 +50,8 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                 request.NewRecipeContract.NumberOfServings,
                 request.NewRecipeContract.CookingTime,
                 request.NewRecipeContract.KiloCalories,
-                request.NewRecipeContract.ServingSize is not null 
-                    ? new ServingSize(servingSizeQuantity, unitOfMeasurement) 
+                request.NewRecipeContract.ServingQuantity is not null 
+                    ? new ServingSize((double)request.NewRecipeContract.ServingQuantity, request.NewRecipeContract.ServingUnitOfMeasurement!) 
                     : null
             ),
             request.NewRecipeContract.Description,
@@ -97,5 +95,13 @@ public class AddRecipeCommandValidator : AbstractValidator<AddRecipeCommand>
 
         RuleFor(x => x.NewRecipeContract.RecipeSteps)
             .NotEmpty();
+
+        RuleFor(x => x.NewRecipeContract.ServingQuantity)
+            .NotEmpty()
+            .When(y => !string.IsNullOrEmpty(y.NewRecipeContract.ServingUnitOfMeasurement));
+
+        RuleFor(x => x.NewRecipeContract.ServingUnitOfMeasurement)
+            .NotEmpty()
+            .When(y => y.NewRecipeContract.ServingQuantity is not null);
     }
 }
