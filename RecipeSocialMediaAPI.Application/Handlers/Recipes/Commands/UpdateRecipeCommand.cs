@@ -34,8 +34,6 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             _recipeQueryRepository.GetRecipeById(request.UpdateRecipeContract.Id) 
             ?? throw new RecipeNotFoundException(request.UpdateRecipeContract.Id);
 
-        var (servingSizeQuantity, unitOfMeasurement) = request.UpdateRecipeContract.ServingSize ?? default;
-
         RecipeAggregate updatedRecipe = new(
             existingRecipe.Id,
             request.UpdateRecipeContract.Title,
@@ -48,8 +46,10 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
                 request.UpdateRecipeContract.NumberOfServings ?? existingRecipe.Recipe.NumberOfServings,
                 request.UpdateRecipeContract.CookingTime ?? existingRecipe.Recipe.CookingTimeInSeconds,
                 request.UpdateRecipeContract.KiloCalories ?? existingRecipe.Recipe.KiloCalories,
-                request.UpdateRecipeContract.ServingSize is not null 
-                    ? new ServingSize(servingSizeQuantity, unitOfMeasurement) 
+                request.UpdateRecipeContract.ServingQuantity is not null
+                    ? new ServingSize(
+                        (double)request.UpdateRecipeContract.ServingQuantity, 
+                        request.UpdateRecipeContract.ServingUnitOfMeasurement!)
                     : null
             ),
             request.UpdateRecipeContract.Description,
@@ -95,5 +95,13 @@ public class UpdateRecipeCommandValidator : AbstractValidator<UpdateRecipeComman
 
         RuleFor(x => x.UpdateRecipeContract.RecipeSteps)
             .NotEmpty();
+
+        RuleFor(x => x.UpdateRecipeContract.ServingQuantity)
+            .NotEmpty()
+            .When(y => !string.IsNullOrEmpty(y.UpdateRecipeContract.ServingUnitOfMeasurement));
+
+        RuleFor(x => x.UpdateRecipeContract.ServingUnitOfMeasurement)
+            .NotEmpty()
+            .When(y => y.UpdateRecipeContract.ServingQuantity is not null);
     }
 }

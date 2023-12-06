@@ -51,7 +51,9 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                 request.NewRecipeContract.CookingTime,
                 request.NewRecipeContract.KiloCalories,
                 request.NewRecipeContract.ServingQuantity is not null 
-                    ? new ServingSize((double)request.NewRecipeContract.ServingQuantity, request.NewRecipeContract.ServingUnitOfMeasurement!) 
+                    ? new ServingSize(
+                        (double)request.NewRecipeContract.ServingQuantity, 
+                        request.NewRecipeContract.ServingUnitOfMeasurement!) 
                     : null
             ),
             request.NewRecipeContract.Description,
