@@ -1,5 +1,4 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Users;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.DTO.Recipes;
 
@@ -16,7 +15,8 @@ public record RecipeDetailedDTO
     required public ISet<string> Labels { get; set; }
     required public List<IngredientDTO> Ingredients { get; set; }
     required public Stack<RecipeStepDTO> RecipeSteps { get; set; }
-    public (double Quantity, string UnitOfMeasurement)? ServingSize { get; set; }
+    public double? ServingQuantity { get; set; }
+    public string? ServingUnitOfMeasurement { get; set; }
     public DateTimeOffset? CreationDate { get; set; }
     public DateTimeOffset? LastUpdatedDate { get; set; }
 }
