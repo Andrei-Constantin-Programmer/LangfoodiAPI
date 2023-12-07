@@ -50,10 +50,8 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                 request.NewRecipeContract.NumberOfServings,
                 request.NewRecipeContract.CookingTime,
                 request.NewRecipeContract.KiloCalories,
-                request.NewRecipeContract.ServingQuantity is not null 
-                    ? new ServingSize(
-                        (double)request.NewRecipeContract.ServingQuantity, 
-                        request.NewRecipeContract.ServingUnitOfMeasurement!) 
+                request.NewRecipeContract.ServingSize is not null 
+                    ? _mapper.MapServingSizeDtoToServingSize(request.NewRecipeContract.ServingSize)
                     : null
             ),
             request.NewRecipeContract.Description,
@@ -97,13 +95,5 @@ public class AddRecipeCommandValidator : AbstractValidator<AddRecipeCommand>
 
         RuleFor(x => x.NewRecipeContract.RecipeSteps)
             .NotEmpty();
-
-        RuleFor(x => x.NewRecipeContract.ServingQuantity)
-            .NotEmpty()
-            .When(y => !string.IsNullOrEmpty(y.NewRecipeContract.ServingUnitOfMeasurement));
-
-        RuleFor(x => x.NewRecipeContract.ServingUnitOfMeasurement)
-            .NotEmpty()
-            .When(y => y.NewRecipeContract.ServingQuantity is not null);
     }
 }
