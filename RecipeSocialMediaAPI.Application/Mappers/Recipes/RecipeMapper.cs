@@ -51,7 +51,7 @@ public class RecipeMapper : IRecipeMapper
             Title = recipeAggregate.Title,
             Description = recipeAggregate.Description,
             Chef = _userMapper.MapUserAccountToUserAccountDto(recipeAggregate.Chef),
-            Labels = recipeAggregate.Labels,
+            Tags = recipeAggregate.Tags,
             Ingredients = recipeAggregate.Recipe.Ingredients
                 .Select(MapIngredientToIngredientDto)
                 .ToList(),
@@ -76,7 +76,7 @@ public class RecipeMapper : IRecipeMapper
             Title = recipeAggregate.Title,
             Description = recipeAggregate.Description,
             ChefUsername = recipeAggregate.Chef.UserName,
-            Labels = recipeAggregate.Labels,
+            Tags = recipeAggregate.Tags,
             KiloCalories = recipeAggregate.Recipe.KiloCalories,
             NumberOfServings = recipeAggregate.Recipe.NumberOfServings,
             CookingTime = recipeAggregate.Recipe.CookingTimeInSeconds,

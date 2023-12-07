@@ -18,7 +18,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
     {
         var recipeDocument = _recipeCollection
             .Insert(new RecipeDocument()
@@ -31,7 +31,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 ThumbnailId = thumbnailId,
                 CreationDate = creationDate,
                 LastUpdatedDate = lastUpdatedDate,
-                Labels = labels.ToList(),
+                Tags = tags.ToList(),
                 NumberOfServings = recipe.NumberOfServings,
                 CookingTimeInSeconds = recipe.CookingTimeInSeconds,
                 KiloCalories = recipe.KiloCalories,
@@ -56,7 +56,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 KiloCalories = recipe.Recipe.KiloCalories,
                 CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate,
-                Labels = recipe.Labels.ToList(),
+                Tags = recipe.Tags.ToList(),
                 ServingSize = recipe.Recipe.ServingSize is not null ? (recipe.Recipe.ServingSize.Quantity, recipe.Recipe.ServingSize.UnitOfMeasurement) : null
             },
             doc => doc.Id == recipe.Id

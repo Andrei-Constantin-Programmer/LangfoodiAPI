@@ -56,7 +56,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             existingRecipe.Chef,
             existingRecipe.CreationDate,
             _dateTimeProvider.Now,
-            request.UpdateRecipeContract.Labels,
+            request.UpdateRecipeContract.Tags,
             request.UpdateRecipeContract.ThumbnailId
         );
 

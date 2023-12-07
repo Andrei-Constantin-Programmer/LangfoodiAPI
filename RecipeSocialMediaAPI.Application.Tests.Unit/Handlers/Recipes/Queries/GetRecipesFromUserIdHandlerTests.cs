@@ -73,7 +73,7 @@ public class GetRecipesFromUserIdHandlerTests
             Description = testRecipeAggregate.Description,
             ChefUsername = testRecipeAggregate.Chef.UserName,
             CreationDate = testRecipeAggregate.CreationDate,
-            Labels = testRecipeAggregate.Labels,
+            Tags = testRecipeAggregate.Tags,
         };
 
         _recipeQueryRepositoryMock

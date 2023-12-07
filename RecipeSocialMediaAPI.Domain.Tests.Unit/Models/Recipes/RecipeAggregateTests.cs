@@ -111,33 +111,33 @@ public class RecipeAggregateTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void AddLabel_WhenLabelIsNotYetAdded_AddsLabelAndReturnsTrueAndDoesNotChangeReturnedSet()
+    public void AddTag_WhenTagIsNotYetAdded_AddsTagAndReturnsTrueAndDoesNotChangeReturnedSet()
     {
         // Given
-        string testLabel = "new_label";
+        string testTag = "new_tag";
 
         // When
-        var wasAdded = _recipeAggregateSUT.AddLabel(testLabel);
+        var wasAdded = _recipeAggregateSUT.AddTag(testTag);
 
         // Then
         wasAdded.Should().BeTrue();
-        _recipeAggregateSUT.Labels.Should().HaveCount(1).And.Contain(testLabel);
+        _recipeAggregateSUT.Tags.Should().HaveCount(1).And.Contain(testTag);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void AddLabel_WhenLabelIsAlreadyAdded_ReturnsFalse()
+    public void AddTag_WhenTagIsAlreadyAdded_ReturnsFalse()
     {
         // Given
-        string existingLabel = "existing";
-        _recipeAggregateSUT.AddLabel(existingLabel);
+        string existingTag = "existing";
+        _recipeAggregateSUT.AddTag(existingTag);
 
         // When
-        var wasAdded = _recipeAggregateSUT.AddLabel(existingLabel);
+        var wasAdded = _recipeAggregateSUT.AddTag(existingTag);
 
         // Then
         wasAdded.Should().BeFalse();
-        _recipeAggregateSUT.Labels.Should().HaveCount(1).And.Contain(existingLabel);
+        _recipeAggregateSUT.Tags.Should().HaveCount(1).And.Contain(existingTag);
     }
 }

@@ -53,7 +53,7 @@ public class UpdateRecipeHandlerTests
             Id = "1",
             Title = "Test",
             Description = "Test",            
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
             ThumbnailId = "img_id_1"
@@ -82,7 +82,7 @@ public class UpdateRecipeHandlerTests
             Id = "1",
             Title = "Test",
             Description = "Test",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
             ThumbnailId = "img_id_1"
@@ -132,7 +132,7 @@ public class UpdateRecipeHandlerTests
             Id = "1",
             Title = "Test",
             Description = "Test",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
             ThumbnailId = "img_id_1"

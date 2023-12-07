@@ -168,7 +168,7 @@ public class RecipeMapperTests
         result.Chef.Should().BeEquivalentTo(testChef);
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
-        result.Labels.Should().BeEmpty();
+        result.Tags.Should().BeEmpty();
         result.NumberOfServings.Should().Be(1);
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
@@ -220,7 +220,7 @@ public class RecipeMapperTests
         result.ChefUsername.Should().Be(testChef.UserName);
         result.CreationDate.Should().Be(_testDate);
         result.NumberOfServings.Should().Be(1);
-        result.Labels.Should().BeEmpty();
+        result.Tags.Should().BeEmpty();
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
         result.ThumbnailId.Should().Be("thumbnail_public_id_1");

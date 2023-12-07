@@ -70,7 +70,7 @@ public class GetRecipesFromUserHandlerTests
         {
             Id = testRecipeAggregate.Id,
             Title = testRecipeAggregate.Title,
-            Labels = testRecipeAggregate.Labels,
+            Tags = testRecipeAggregate.Tags,
             Description = testRecipeAggregate.Description,
             ChefUsername = testRecipeAggregate.Chef.UserName,
             CreationDate = testRecipeAggregate.CreationDate,
