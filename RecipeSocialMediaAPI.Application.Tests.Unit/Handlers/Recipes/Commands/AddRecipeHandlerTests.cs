@@ -97,6 +97,7 @@ public class AddRecipeHandlerTests
                 }
             },
             RecipeSteps = new Stack<RecipeStepDTO>(),
+            ThumbnailId = "img_id_1",
         };
 
         testContract.RecipeSteps.Push(new RecipeStepDTO()
@@ -160,7 +161,8 @@ public class AddRecipeHandlerTests
                 ),
                 NumberOfServings = recipe.Recipe.NumberOfServings,
                 CookingTime = recipe.Recipe.CookingTimeInSeconds,
-                KiloCalories = recipe.Recipe.KiloCalories
+                KiloCalories = recipe.Recipe.KiloCalories,
+                ThumbnailId = recipe.ThumbnailId
             });
 
         // When
@@ -179,6 +181,7 @@ public class AddRecipeHandlerTests
         result.RecipeSteps.First().ImageUrl.Should().Be("url");
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
+        result.ThumbnailId.Should().Be("img_id_1");
 
         _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);
