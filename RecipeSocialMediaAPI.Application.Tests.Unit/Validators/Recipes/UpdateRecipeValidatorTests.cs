@@ -42,6 +42,7 @@ public class UpdateRecipeValidatorTests
                 }
             },
             RecipeSteps = new Stack<RecipeStepDTO>(),
+            ServingSize = new ServingSizeDTO() { Quantity = 30, UnitOfMeasurement = "kg" }
         };
 
         testContract.RecipeSteps.Push(new RecipeStepDTO()
@@ -81,6 +82,7 @@ public class UpdateRecipeValidatorTests
             KiloCalories = -1,
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
+            ServingSize = new ServingSizeDTO() { Quantity = 30, UnitOfMeasurement = "kg" }
         };
 
         UpdateRecipeCommand testCommand = new(testContract);

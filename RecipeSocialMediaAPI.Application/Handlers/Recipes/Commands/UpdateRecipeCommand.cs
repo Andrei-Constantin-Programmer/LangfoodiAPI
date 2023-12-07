@@ -34,8 +34,6 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             _recipeQueryRepository.GetRecipeById(request.UpdateRecipeContract.Id) 
             ?? throw new RecipeNotFoundException(request.UpdateRecipeContract.Id);
 
-        var (servingSizeQuantity, unitOfMeasurement) = request.UpdateRecipeContract.ServingSize ?? default;
-
         RecipeAggregate updatedRecipe = new(
             existingRecipe.Id,
             request.UpdateRecipeContract.Title,
@@ -48,8 +46,8 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
                 request.UpdateRecipeContract.NumberOfServings ?? existingRecipe.Recipe.NumberOfServings,
                 request.UpdateRecipeContract.CookingTime ?? existingRecipe.Recipe.CookingTimeInSeconds,
                 request.UpdateRecipeContract.KiloCalories ?? existingRecipe.Recipe.KiloCalories,
-                request.UpdateRecipeContract.ServingSize is not null 
-                    ? new ServingSize(servingSizeQuantity, unitOfMeasurement) 
+                request.UpdateRecipeContract.ServingSize is not null
+                    ? _mapper.MapServingSizeDtoToServingSize(request.UpdateRecipeContract.ServingSize)
                     : null
             ),
             request.UpdateRecipeContract.Description,
