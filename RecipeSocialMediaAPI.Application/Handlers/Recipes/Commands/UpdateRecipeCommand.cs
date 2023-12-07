@@ -46,10 +46,8 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
                 request.UpdateRecipeContract.NumberOfServings ?? existingRecipe.Recipe.NumberOfServings,
                 request.UpdateRecipeContract.CookingTime ?? existingRecipe.Recipe.CookingTimeInSeconds,
                 request.UpdateRecipeContract.KiloCalories ?? existingRecipe.Recipe.KiloCalories,
-                request.UpdateRecipeContract.ServingQuantity is not null
-                    ? new ServingSize(
-                        (double)request.UpdateRecipeContract.ServingQuantity, 
-                        request.UpdateRecipeContract.ServingUnitOfMeasurement!)
+                request.UpdateRecipeContract.ServingSize is not null
+                    ? _mapper.MapServingSizeDtoToServingSize(request.UpdateRecipeContract.ServingSize)
                     : null
             ),
             request.UpdateRecipeContract.Description,
@@ -95,13 +93,5 @@ public class UpdateRecipeCommandValidator : AbstractValidator<UpdateRecipeComman
 
         RuleFor(x => x.UpdateRecipeContract.RecipeSteps)
             .NotEmpty();
-
-        RuleFor(x => x.UpdateRecipeContract.ServingQuantity)
-            .NotEmpty()
-            .When(y => !string.IsNullOrEmpty(y.UpdateRecipeContract.ServingUnitOfMeasurement));
-
-        RuleFor(x => x.UpdateRecipeContract.ServingUnitOfMeasurement)
-            .NotEmpty()
-            .When(y => y.UpdateRecipeContract.ServingQuantity is not null);
     }
 }

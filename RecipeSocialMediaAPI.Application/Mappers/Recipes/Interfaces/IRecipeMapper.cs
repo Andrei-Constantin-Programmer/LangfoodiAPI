@@ -5,6 +5,8 @@ namespace RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 
 public interface IRecipeMapper
 {
+    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO servingSizeDTO);
+    public ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize servingSize);
     public Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO);
     public IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient);
     public RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDTO recipeStepDTO);

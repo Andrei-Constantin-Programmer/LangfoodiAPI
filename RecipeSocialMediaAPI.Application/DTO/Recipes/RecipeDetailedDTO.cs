@@ -15,8 +15,7 @@ public record RecipeDetailedDTO
     required public ISet<string> Tags { get; set; }
     required public List<IngredientDTO> Ingredients { get; set; }
     required public Stack<RecipeStepDTO> RecipeSteps { get; set; }
-    public double? ServingQuantity { get; set; }
-    public string? ServingUnitOfMeasurement { get; set; }
+    public ServingSizeDTO? ServingSize { get; set; }
     public DateTimeOffset? CreationDate { get; set; }
     public DateTimeOffset? LastUpdatedDate { get; set; }
 }

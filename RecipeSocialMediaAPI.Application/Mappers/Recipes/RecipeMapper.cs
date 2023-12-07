@@ -14,6 +14,20 @@ public class RecipeMapper : IRecipeMapper
         _userMapper = userMapper;
     }
 
+    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO servingSizeDTO)
+    {
+        return new(servingSizeDTO.Quantity, servingSizeDTO.UnitOfMeasurement);
+    }
+
+    public ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize servingSize)
+    {
+        return new ServingSizeDTO
+        {
+            Quantity = servingSize.Quantity,
+            UnitOfMeasurement = servingSize.UnitOfMeasurement
+        };
+    }
+
     public Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO)
     {
         return new(ingredientDTO.Name, ingredientDTO.Quantity, ingredientDTO.UnitOfMeasurement);
@@ -63,8 +77,9 @@ public class RecipeMapper : IRecipeMapper
             CreationDate = recipeAggregate.CreationDate,
             LastUpdatedDate = recipeAggregate.LastUpdatedDate,
             ThumbnailId = recipeAggregate.ThumbnailId,
-            ServingQuantity = recipeAggregate.Recipe.ServingSize?.Quantity,
-            ServingUnitOfMeasurement = recipeAggregate.Recipe.ServingSize?.UnitOfMeasurement
+            ServingSize = recipeAggregate.Recipe.ServingSize is not null
+                ? MapServingSizeToServingSizeDto(recipeAggregate.Recipe.ServingSize)
+                : null
         };
     }
 

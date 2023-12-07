@@ -58,6 +58,7 @@ internal static class ServicesConfiguration
         builder.Services.AddScoped<IMessageDocumentToModelMapper, MessageDocumentToModelMapper>();
         builder.Services.AddScoped<IConnectionDocumentToModelMapper, ConnectionDocumentToModelMapper>();
         builder.Services.AddScoped<IConversationDocumentToModelMapper, ConversationDocumentToModelMapper>();
+        builder.Services.AddScoped<IGroupDocumentToModelMapper, GroupDocumentToModelMapper>();
 
         builder.Services.AddScoped<IRecipeQueryRepository, RecipeQueryRepository>();
         builder.Services.AddScoped<IRecipePersistenceRepository, RecipePersistenceRepository>();
