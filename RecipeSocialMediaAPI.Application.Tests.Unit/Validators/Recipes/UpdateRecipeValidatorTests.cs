@@ -42,8 +42,7 @@ public class UpdateRecipeValidatorTests
                 }
             },
             RecipeSteps = new Stack<RecipeStepDTO>(),
-            ServingQuantity = 30,
-            ServingUnitOfMeasurement = "kg"
+            ServingSize = new ServingSizeDTO() { Quantity = 30, UnitOfMeasurement = "kg" }
         };
 
         testContract.RecipeSteps.Push(new RecipeStepDTO()
@@ -83,7 +82,7 @@ public class UpdateRecipeValidatorTests
             KiloCalories = -1,
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
-            ServingUnitOfMeasurement = "kg"
+            ServingSize = new ServingSizeDTO() { Quantity = 30, UnitOfMeasurement = "kg" }
         };
 
         UpdateRecipeCommand testCommand = new(testContract);
@@ -103,7 +102,6 @@ public class UpdateRecipeValidatorTests
         validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Title);
         validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Ingredients);
         validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.RecipeSteps);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.ServingQuantity);
     }
 
     [Fact]
@@ -120,7 +118,6 @@ public class UpdateRecipeValidatorTests
             Labels = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>() { },
             RecipeSteps = new Stack<RecipeStepDTO>(),
-            ServingQuantity = 20
         };
 
         UpdateRecipeCommand testCommand = new(testContract);
@@ -137,6 +134,5 @@ public class UpdateRecipeValidatorTests
         validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Title);
         validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Ingredients);
         validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.RecipeSteps);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.ServingUnitOfMeasurement);
     }
 }

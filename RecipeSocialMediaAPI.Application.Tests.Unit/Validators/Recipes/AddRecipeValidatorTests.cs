@@ -81,7 +81,6 @@ public class AddRecipeValidatorTests
             KiloCalories = -1,
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
-            ServingQuantity = 30
         };
 
         AddRecipeCommand testCommand = new(testContract);
@@ -101,7 +100,6 @@ public class AddRecipeValidatorTests
         validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.Title);
         validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.Ingredients);
         validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.RecipeSteps);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.ServingUnitOfMeasurement);
     }
 
     [Fact]
@@ -118,7 +116,6 @@ public class AddRecipeValidatorTests
             Labels = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
-            ServingUnitOfMeasurement = "kg"
         };
 
         AddRecipeCommand testCommand = new(testContract);
@@ -135,7 +132,6 @@ public class AddRecipeValidatorTests
         validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.Title);
         validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.Ingredients);
         validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.RecipeSteps);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.ServingQuantity);
     }
 
 }
