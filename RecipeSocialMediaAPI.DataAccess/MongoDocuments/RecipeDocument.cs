@@ -16,6 +16,6 @@ public record RecipeDocument : MongoDocument
     public int? KiloCalories;
     required public DateTimeOffset CreationDate;
     required public DateTimeOffset LastUpdatedDate;
-    required public IList<string> Labels;
+    required public IList<string> Tags;
     public (double Quantity, string UnitOfMeasurement)? ServingSize;
 }

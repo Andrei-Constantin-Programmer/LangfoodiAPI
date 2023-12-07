@@ -56,7 +56,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             ),
             request.NewRecipeContract.Description,
             chef,
-            request.NewRecipeContract.Labels,
+            request.NewRecipeContract.Tags,
             dateOfCreation,
             dateOfCreation,
             request.NewRecipeContract.ThumbnailId

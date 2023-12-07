@@ -23,7 +23,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Title = "Test",
             Description = "Test",
             ChefId = "0",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             NumberOfServings = 1,
             KiloCalories = 2300,
             CookingTime = 500,
@@ -116,7 +116,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Title = "Test",
             Description = "Test",
             ChefId = "0",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             NumberOfServings = 1,
             KiloCalories = 2300,
             CookingTime = 500,
@@ -231,7 +231,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Title = "Test",
             Description = "Test",
             ChefId = "0",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             NumberOfServings = 1,
             KiloCalories = 2300,
             CookingTime = 500,
@@ -398,7 +398,7 @@ public class RecipeEndpointsTests : EndpointTestBase
                 }
             },
             RecipeSteps = _testRecipeContract.RecipeSteps,
-            Labels = new HashSet<string>()
+            Tags = new HashSet<string>()
         };
 
         await _client.PostAsJsonAsync("/user/create", _testUserContract);
@@ -450,7 +450,7 @@ public class RecipeEndpointsTests : EndpointTestBase
                 }
             },
             RecipeSteps = _testRecipeContract.RecipeSteps,
-            Labels = new HashSet<string>()
+            Tags = new HashSet<string>()
         };
 
         // When

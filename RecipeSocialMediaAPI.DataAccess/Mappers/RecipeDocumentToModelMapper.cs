@@ -22,7 +22,7 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
             description: recipeDocument.Description,
             creationDate: recipeDocument.CreationDate,
             lastUpdatedDate: recipeDocument.LastUpdatedDate,
-            labels: recipeDocument.Labels.ToHashSet(),
+            tags: recipeDocument.Tags.ToHashSet(),
             chef: chef,
             thumbnailId: recipeDocument.ThumbnailId,
             recipe: new Recipe(

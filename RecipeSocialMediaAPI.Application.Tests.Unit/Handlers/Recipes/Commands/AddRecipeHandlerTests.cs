@@ -56,7 +56,7 @@ public class AddRecipeHandlerTests
             Title = "Test",
             Description = "Test",
             ChefId = "1",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
         };
@@ -84,7 +84,7 @@ public class AddRecipeHandlerTests
             Title = "Test",
             Description = "Test",
             ChefId = "1",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             NumberOfServings = 1,
             KiloCalories = 2300,
             CookingTime = 500,
@@ -125,8 +125,8 @@ public class AddRecipeHandlerTests
             .Setup(x => x.CreateRecipe(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
                 It.IsAny<IUserAccount>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
                 It.IsAny<DateTimeOffset>(), It.IsAny<string?>()))
-            .Returns((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId) 
-                => new RecipeAggregate("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, labels, thumbnailId)
+            .Returns((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId) 
+                => new RecipeAggregate("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, tags, thumbnailId)
             );
 
         _recipeMapperMock
@@ -142,7 +142,7 @@ public class AddRecipeHandlerTests
             .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO() {
                 Id = "1", Title = recipe.Title, Description = recipe.Description,
                 Chef = new UserAccountDTO() { Id = "1", Handler = "handler", UserName = "name", AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) },
-                Labels = recipe.Labels, CreationDate = recipe.CreationDate,
+                Tags = recipe.Tags, CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate, 
                 Ingredients = new List<IngredientDTO>() {
                     new IngredientDTO() { 
