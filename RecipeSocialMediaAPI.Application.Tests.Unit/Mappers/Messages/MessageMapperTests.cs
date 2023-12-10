@@ -392,7 +392,7 @@ public class MessageMapperTests
         {
             Id = testMessage.Id,
             SenderId = testSender.Id,
-            Recipes = recipes, // TODO: put recipes here
+            Recipes = recipes,
             TextContent = testMessage.TextContent,
             RepliedToMessage = repliedToMessageDTO,
             SentDate = testMessage.SentDate,
