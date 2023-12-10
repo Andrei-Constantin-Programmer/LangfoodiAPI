@@ -352,13 +352,16 @@ public class MessageMapperTests
             UpdatedDate = repliedToMessage.UpdatedDate,
         };
 
+        RecipeAggregate recipe1 = new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE);
+        RecipeAggregate recipe2 = new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE);
+
         var testMessage = (RecipeMessage)_messageFactory.CreateRecipeMessage(
             "TestId",
             testSender,
             new List<RecipeAggregate>()
             {
-                new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE),
-                new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE)
+                recipe1,
+                recipe2
             },
             containsTextContent ? "Test text content" : null,
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
@@ -395,6 +398,16 @@ public class MessageMapperTests
             SentDate = testMessage.SentDate,
             UpdatedDate = testMessage.UpdatedDate,
         };
+
+        _recipeMapperMock
+            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe1))
+            .Returns(recipes[0]);
+
+
+        _recipeMapperMock
+            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe2))
+            .Returns(recipes[1]);
+
 
         // When
         var result = _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
