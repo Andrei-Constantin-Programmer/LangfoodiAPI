@@ -45,7 +45,20 @@ public class ConversationQueryRepository : IConversationQueryRepository
 
     public List<Conversation> GetConversationsByUser(IUserAccount userAccount)
     {
-        // TODO: Implement
-        throw new NotImplementedException();
+        List<ConversationDocument> conversations = new();
+
+        try
+        {
+            conversations = _conversationCollection
+                .GetAll(conversationDoc => ); // TODO: Implement condition for collecting conversations
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get the conversations for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
+        }
+
+        return conversations
+            .Select(_mapper.MapConversationFromDocument)
+            .ToList();
     }
 }
