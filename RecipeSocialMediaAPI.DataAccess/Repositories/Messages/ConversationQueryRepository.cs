@@ -13,10 +13,15 @@ namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 
 public class ConversationQueryRepository : IConversationQueryRepository
 {
+    private readonly ILogger<ConversationQueryRepository> _logger;
+    private readonly IConversationDocumentToModelMapper _mapper;
+    private readonly IMongoCollectionWrapper<ConversationDocument> _conversationCollection;
 
-    public ConversationQueryRepository()
+    public ConversationQueryRepository(ILogger<ConversationQueryRepository> logger, IConversationDocumentToModelMapper conversationDocumentToModelMapper, IMongoCollectionFactory mongoCollectionFactory)
     {
-
+        _logger = logger;
+        _mapper = conversationDocumentToModelMapper;
+        _conversationCollection = mongoCollectionFactory.CreateCollection<ConversationDocument>();
     }
 
     public Conversation? GetConversationById(string id)
