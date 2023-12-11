@@ -1,6 +1,8 @@
-﻿namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
+﻿using RecipeSocialMediaAPI.Application.Repositories.Messages;
 
-public class ConversationQueryRepository : IMessageQueryRepository
+namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
+
+public class ConversationQueryRepository : IConversationQueryRepository
 {
 
     public ConversationQueryRepository()
