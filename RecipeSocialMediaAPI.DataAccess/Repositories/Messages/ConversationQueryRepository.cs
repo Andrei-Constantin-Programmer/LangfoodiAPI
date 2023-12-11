@@ -26,8 +26,21 @@ public class ConversationQueryRepository : IConversationQueryRepository
 
     public Conversation? GetConversationById(string id)
     {
-        // TODO: Implement
-        throw new NotImplementedException();
+        ConversationDocument? conversationDocument;
+        try
+        {
+            conversationDocument = _conversationCollection.Find(
+                conversationDoc => (conversationDoc.Id == id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get conversation with id {id}: {ErrorMessage}", id, ex.Message);
+            return null;
+        }
+
+        return conversationDocument is not null
+            ? _mapper.MapConversationFromDocument(conversationDocument)
+            : null;
     }
 
     public List<Conversation> GetConversationsByUser(IUserAccount userAccount)
