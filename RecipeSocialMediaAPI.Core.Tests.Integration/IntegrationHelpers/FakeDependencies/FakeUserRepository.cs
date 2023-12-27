@@ -45,6 +45,8 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
 
     public IUserCredentials? GetUserByUsername(string username) => _collection.Find(user => user.Account.UserName == username);
 
+    public IUserCredentials? GetUserByHandler(string handler) => _collection.Find(user => user.Account.Handler == handler);
+
     public bool UpdateUser(IUserCredentials user)
     {
         IUserCredentials? updatedUser = _collection.FirstOrDefault(u => u.Account.Id == user.Account.Id);

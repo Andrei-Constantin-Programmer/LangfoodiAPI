@@ -35,17 +35,17 @@ public class AddUserValidatorTests
         );
 
         _userValidationServiceMock
+            .Setup(service => service.ValidHandler(It.IsAny<string>()))
+            .Returns(true);
+        _userValidationServiceMock
             .Setup(service => service.ValidUserName(It.IsAny<string>()))
-            .Returns(true)
-            .Verifiable();
+            .Returns(true);
         _userValidationServiceMock
             .Setup(service => service.ValidEmail(It.IsAny<string>()))
-            .Returns(true)
-            .Verifiable();
+            .Returns(true);
         _userValidationServiceMock
             .Setup(service => service.ValidPassword(It.IsAny<string>()))
-            .Returns(true)
-            .Verifiable();
+            .Returns(true);
 
         // When
         var validationResult = _addUserValidatorSUT.TestValidate(testCommand);
