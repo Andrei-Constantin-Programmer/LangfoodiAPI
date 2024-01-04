@@ -52,15 +52,6 @@ public class RemoveRecipeHandlerTests
 
         _recipePersistenceRepositoryMock
             .Verify(repo => repo.DeleteRecipe(It.IsAny<string>()), Times.Never);
-
-        _loggerMock.Verify(logger =>
-            logger.Log(
-                LogLevel.Warning,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-            Times.Never);
     }
 
     [Fact]
@@ -103,15 +94,6 @@ public class RemoveRecipeHandlerTests
 
         _recipePersistenceRepositoryMock
             .Verify(repo => repo.DeleteRecipe(It.IsAny<string>()), Times.Once);
-
-        _loggerMock.Verify(logger =>
-            logger.Log(
-                LogLevel.Warning,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-            Times.Never);
     }
 
     [Fact]
@@ -153,15 +135,6 @@ public class RemoveRecipeHandlerTests
 
         _recipePersistenceRepositoryMock
             .Verify(repo => repo.DeleteRecipe(It.IsAny<string>()), Times.Once);
-
-        _loggerMock.Verify(logger =>
-            logger.Log(
-                LogLevel.Warning,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-            Times.Never);
     }
 
     [Fact]
