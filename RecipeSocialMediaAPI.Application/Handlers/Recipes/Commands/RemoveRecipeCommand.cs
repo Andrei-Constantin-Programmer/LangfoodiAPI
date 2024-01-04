@@ -43,7 +43,7 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
         }
 
         bool isRecipeRemoved = _recipePersistenceRepository.DeleteRecipe(request.Id);
-        bool areImagesRemoved = _imageHostingPersistenceRepository.BulkRemoveHostedImages(imageIds);
+        bool areImagesRemoved = imageIds.Count <= 0 || _imageHostingPersistenceRepository.BulkRemoveHostedImages(imageIds);
 
         if (!areImagesRemoved)
         {
