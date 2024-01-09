@@ -182,4 +182,76 @@ public class GroupPersistenceRepositoryTests
         // Then
         result.Should().BeFalse();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteGroup_WhenDeleteIsSuccessful_ReturnTrue()
+    {
+        // Given
+        Group group = new("g1", "Group", "Group Description");
+
+        _groupCollectionMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _groupPersistenceRepositorySUT.DeleteGroup(group);
+
+        // Then
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteGroup_WhenDeleteIsUnsuccessful_ReturnFalse()
+    {
+        // Given
+        Group group = new("g1", "Group", "Group Description");
+
+        _groupCollectionMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _groupPersistenceRepositorySUT.DeleteGroup(group);
+
+        // Then
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteGroupById_WhenDeleteIsSuccessful_ReturnTrue()
+    {
+        // Given
+        _groupCollectionMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
+            .Returns(true);
+
+        // When
+        var result = _groupPersistenceRepositorySUT.DeleteGroup("g1");
+
+        // Then
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void DeleteGroupById_WhenDeleteIsUnsuccessful_ReturnFalse()
+    {
+        // Given
+        _groupCollectionMock
+            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
+            .Returns(false);
+
+        // When
+        var result = _groupPersistenceRepositorySUT.DeleteGroup("g1");
+
+        // Then
+        result.Should().BeFalse();
+    }
 }

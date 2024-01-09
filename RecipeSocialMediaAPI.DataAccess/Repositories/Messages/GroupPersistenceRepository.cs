@@ -43,6 +43,7 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
             groupDoc => groupDoc.Id == group.GroupId);
     }
 
-    public bool DeleteGroup(Group group) => throw new NotImplementedException();
-    public bool DeleteGroup(string groupId) => throw new NotImplementedException();
+    public bool DeleteGroup(Group group) => DeleteGroup(group.GroupId);
+
+    public bool DeleteGroup(string groupId) => _groupCollection.Delete(groupDoc => groupDoc.Id == groupId);
 }
