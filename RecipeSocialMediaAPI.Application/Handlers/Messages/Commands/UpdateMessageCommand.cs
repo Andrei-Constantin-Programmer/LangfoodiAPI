@@ -3,12 +3,11 @@ using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
-using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record UpdateMessageCommand(UpdateMessageContract UpdateMessageContract) : IValidatableRequest;
+public record UpdateMessageCommand(UpdateMessageContract UpdateMessageContract) : IRequest;
 
 internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
 {
