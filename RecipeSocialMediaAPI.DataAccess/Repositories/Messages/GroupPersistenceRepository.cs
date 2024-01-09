@@ -30,7 +30,19 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
         return _mapper.MapGroupFromDocument(groupDocument);
     }
 
-    public bool UpdateGroup(Group group) => throw new NotImplementedException();
+    public bool UpdateGroup(Group group)
+    {
+        return _groupCollection.UpdateRecord(
+            new GroupDocument()
+            {
+                Id = group.GroupId,
+                GroupName = group.GroupName,
+                GroupDescription = group.GroupDescription,
+                UserIds = group.Users.Select(user => user.Id).ToList()
+            },
+            groupDoc => groupDoc.Id == group.GroupId);
+    }
+
     public bool DeleteGroup(Group group) => throw new NotImplementedException();
     public bool DeleteGroup(string groupId) => throw new NotImplementedException();
 }
