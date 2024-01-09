@@ -46,6 +46,46 @@ public class AddUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenHandlerIsAlreadyInUse_DoNotCreateAndThrowHandlerAlreadyInUseException()
+    {
+        // Given
+        IUserCredentials existingUser = new TestUserCredentials
+        {
+            Account = new TestUserAccount
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "TestEmail",
+            Password = "TestPassword"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>()))
+            .Returns(existingUser);
+        AddUserCommand command = new(
+            new NewUserContract()
+            {
+                Handler = existingUser.Account.Handler,
+                UserName = existingUser.Account.UserName,
+                Email = "NewEmail",
+                Password = "NewPass"
+            });
+
+        // When
+        var action = async () => await _userHandlerSUT.Handle(command, CancellationToken.None);
+
+        // Then
+        await action.Should().ThrowAsync<HandlerAlreadyInUseException>();
+        _userPersistenceRepositoryMock
+            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUsernameIsAlreadyInUse_DoNotCreateAndThrowUsernameAlreadyInUseException()
     {
         // Given

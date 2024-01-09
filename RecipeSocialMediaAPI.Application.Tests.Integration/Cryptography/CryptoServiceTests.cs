@@ -17,7 +17,7 @@ public class CryptoServiceTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void ArePasswordsTheSame_WhenValidPasswordAndHash_ReturnsTrue()
+    public void ArePasswordsTheSame_WhenValidUnhashedPasswordAndHash_ReturnsTrue()
     {
         // Given
         string password = "P@ssw0rd";
@@ -33,7 +33,7 @@ public class CryptoServiceTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void ArePasswordsTheSame_WhenInvalidPasswordAndHash_ReturnsFalse()
+    public void ArePasswordsTheSame_WhenInvalidUnhashedPasswordAndHash_ReturnsFalse()
     {
         // Given
         string password = "P@ssw0rd";
@@ -41,6 +41,39 @@ public class CryptoServiceTests
 
         // When
         bool result = _cryptoServiceSUT.ArePasswordsTheSame(password, hash);
+
+        // Then
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void ArePasswordsTheSame_WhenValidHashedPasswordAndHash_ReturnsTrue()
+    {
+        // Given
+        string password = "P@ssw0rd";
+        string hash = BCrypter.HashPassword(password);
+
+        // When
+        bool result = _cryptoServiceSUT.ArePasswordsTheSame(hash, hash);
+
+        // Then
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void ArePasswordsTheSame_WhenInvalidHashedPasswordAndHash_ReturnsFalse()
+    {
+        // Given
+        string password = "P@ssw0rd";
+        string clientHash = BCrypter.HashPassword(password);
+        string serverHash = BCrypter.HashPassword(password);
+
+        // When
+        bool result = _cryptoServiceSUT.ArePasswordsTheSame(clientHash, serverHash);
 
         // Then
         result.Should().BeFalse();

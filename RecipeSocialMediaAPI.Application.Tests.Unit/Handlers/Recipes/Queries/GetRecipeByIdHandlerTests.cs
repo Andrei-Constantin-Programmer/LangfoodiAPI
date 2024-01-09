@@ -81,7 +81,7 @@ public class GetRecipeByIdHandlerTests
             },
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(new List<RecipeStepDTO>()),
-            Labels = testRecipeAggregate.Labels
+            Tags = testRecipeAggregate.Tags
         };
 
         _recipeQueryRepositoryMock

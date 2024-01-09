@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 using MediatR;
+using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Application.Validation;
-using RecipeSocialMediaAPI.Domain.Services.Interfaces;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Application.Contracts.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Validation;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
@@ -34,6 +34,11 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 
     public async Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
+        if (_userQueryRepository.GetUserByHandler(request.NewUserContract.Handler) is not null)
+        {
+            throw new HandlerAlreadyInUseException(request.NewUserContract.Handler);
+        }
+
         if (_userQueryRepository.GetUserByUsername(request.NewUserContract.UserName) is not null)
         {
             throw new UsernameAlreadyInUseException(request.NewUserContract.UserName);
@@ -64,6 +69,10 @@ public class AddUserCommandValidator : AbstractValidator<AddUserCommand>
     public AddUserCommandValidator(IUserValidationService userValidationService)
     {
         _userValidationService = userValidationService;
+
+        RuleFor(x => x.NewUserContract.Handler)
+            .NotEmpty()
+            .Must(_userValidationService.ValidHandler);
 
         RuleFor(x => x.NewUserContract.UserName)
             .NotEmpty()

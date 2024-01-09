@@ -29,8 +29,9 @@ public class RecipeDocumentToModelMapperTests
             Description = "Recipe Description",
             CreationDate = new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
             LastUpdatedDate = new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = "ChefId",
+            ThumbnailId = "publicid1",
             Ingredients = new List<(string, double, string)>(),
             Steps = new List<(string, string?)>()
         };
@@ -63,8 +64,9 @@ public class RecipeDocumentToModelMapperTests
             Description = "Recipe Description",
             CreationDate = new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
             LastUpdatedDate = new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
-            Labels = new List<string>() { "Label1", "Label2" },
+            Tags = new List<string>() { "Tag1", "Tag2" },
             ChefId = "ChefId",
+            ThumbnailId = "publicid1",
             Ingredients = new List<(string, double, string)>()
             {
                 new("Beef", 200, "g"),
@@ -114,8 +116,9 @@ public class RecipeDocumentToModelMapperTests
         result.Description.Should().Be(testDocument.Description);
         result.CreationDate.Should().Be(testDocument.CreationDate);
         result.LastUpdatedDate.Should().Be(testDocument.LastUpdatedDate);
-        result.Labels.Should().BeEquivalentTo(testDocument.Labels.ToHashSet());
+        result.Tags.Should().BeEquivalentTo(testDocument.Tags.ToHashSet());
         result.Chef.Should().Be(testSender);
+        result.ThumbnailId.Should().Be(testDocument.ThumbnailId);
         
         result.Recipe.Ingredients.Should().HaveCount(3);
         result.Recipe.Ingredients[0].Should().BeEquivalentTo(expectedIngredients[0]);

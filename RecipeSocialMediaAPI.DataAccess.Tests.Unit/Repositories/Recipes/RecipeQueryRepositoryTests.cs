@@ -82,8 +82,9 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId,
+            ThumbnailId = "public_id_1"
         };
         IUserCredentials testChef = new TestUserCredentials()
         {
@@ -106,7 +107,8 @@ public class RecipeQueryRepositoryTests
                 testChef.Account,
                 testDocument.CreationDate,
                 testDocument.LastUpdatedDate,
-                new HashSet<string>()
+                new HashSet<string>(),
+                testDocument.ThumbnailId
             );
 
         _recipeCollectionMock
@@ -144,8 +146,9 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
-            ChefId = chefId
+            Tags = new List<string>(),
+            ChefId = chefId,
+            ThumbnailId = "public_id_1"
         };
         IUserAccount testChef = new TestUserAccount()
         {
@@ -163,7 +166,8 @@ public class RecipeQueryRepositoryTests
                 testChef,
                 testDocument.CreationDate,
                 testDocument.LastUpdatedDate,
-                new HashSet<string>()
+                new HashSet<string>(),
+                testDocument.ThumbnailId
             );
 
         _recipeCollectionMock
@@ -206,8 +210,9 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId,
+            ThumbnailId = "public_id_1"
         };
         IUserCredentials testChef = new TestUserCredentials()
         {
@@ -230,7 +235,8 @@ public class RecipeQueryRepositoryTests
                 testChef.Account,
                 testDocument.CreationDate,
                 testDocument.LastUpdatedDate,
-                new HashSet<string>()
+                new HashSet<string>(),
+                testDocument.ThumbnailId
             );
 
         Exception testException = new("Test Exception");
@@ -330,7 +336,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId
         };
 
@@ -383,7 +389,7 @@ public class RecipeQueryRepositoryTests
                 Description = "TestShortDesc",
                 CreationDate = _testDate,
                 LastUpdatedDate = _testDate,
-                Labels = new List<string>(),
+                Tags = new List<string>(),
                 ChefId = chefId
             }
         };
@@ -433,7 +439,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId
         };
 
@@ -505,7 +511,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId
         };
 
@@ -600,7 +606,7 @@ public class RecipeQueryRepositoryTests
                 Description = "TestShortDesc",
                 CreationDate = _testDate,
                 LastUpdatedDate = _testDate,
-                Labels = new List<string>(),
+                Tags = new List<string>(),
                 ChefId = chefId
             }
         };
@@ -651,8 +657,9 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
-            ChefId = chefId
+            Tags = new List<string>(),
+            ChefId = chefId,
+            ThumbnailId = "public_id_1"
         };
 
         RecipeAggregate expectedResult = new(
@@ -663,7 +670,9 @@ public class RecipeQueryRepositoryTests
             testChef.Account,
             chefsRecipe.CreationDate,
             chefsRecipe.LastUpdatedDate,
-            new HashSet<string>());
+            new HashSet<string>(),
+            chefsRecipe.ThumbnailId
+        );
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
@@ -737,8 +746,9 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
-            ChefId = chefId
+            Tags = new List<string>(),
+            ChefId = chefId,
+            ThumbnailId = "public_id_1"
         };
 
         RecipeAggregate expectedResult = new(
@@ -749,7 +759,9 @@ public class RecipeQueryRepositoryTests
             testChef,
             chefsRecipe.CreationDate,
             chefsRecipe.LastUpdatedDate,
-            new HashSet<string>());
+            new HashSet<string>(),
+            chefsRecipe.ThumbnailId
+        );
 
         _recipeCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
@@ -823,7 +835,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId
         };
 

@@ -10,11 +10,12 @@ public record RecipeDocument : MongoDocument
     required public IList<(string Text, string? ImageLink)> Steps;
     required public string Description;
     required public string ChefId;
+    public string? ThumbnailId;
     public int? NumberOfServings;
     public int? CookingTimeInSeconds;
     public int? KiloCalories;
     required public DateTimeOffset CreationDate;
     required public DateTimeOffset LastUpdatedDate;
-    required public IList<string> Labels;
+    required public IList<string> Tags;
     public (double Quantity, string UnitOfMeasurement)? ServingSize;
 }

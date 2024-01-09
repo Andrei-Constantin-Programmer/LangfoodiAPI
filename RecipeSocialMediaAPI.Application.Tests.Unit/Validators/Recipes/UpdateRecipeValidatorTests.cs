@@ -29,7 +29,7 @@ public class UpdateRecipeValidatorTests
             Id = "1",
             Title = "Test",
             Description = "Test",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             NumberOfServings = 1,
             KiloCalories = 2300,
             CookingTime = 500,
@@ -42,6 +42,7 @@ public class UpdateRecipeValidatorTests
                 }
             },
             RecipeSteps = new Stack<RecipeStepDTO>(),
+            ServingSize = new ServingSizeDTO() { Quantity = 30, UnitOfMeasurement = "kg" }
         };
 
         testContract.RecipeSteps.Push(new RecipeStepDTO()
@@ -75,12 +76,13 @@ public class UpdateRecipeValidatorTests
             Id = "1",
             Title = "Test",
             Description = "Test",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             NumberOfServings = -1,
             CookingTime = -1,
             KiloCalories = -1,
             Ingredients = new List<IngredientDTO>(),
             RecipeSteps = new Stack<RecipeStepDTO>(),
+            ServingSize = new ServingSizeDTO() { Quantity = 30, UnitOfMeasurement = "kg" }
         };
 
         UpdateRecipeCommand testCommand = new(testContract);
@@ -113,7 +115,7 @@ public class UpdateRecipeValidatorTests
             Id = "1",
             Title = "Test",
             Description = "Test",
-            Labels = new HashSet<string>(),
+            Tags = new HashSet<string>(),
             Ingredients = new List<IngredientDTO>() { },
             RecipeSteps = new Stack<RecipeStepDTO>(),
         };

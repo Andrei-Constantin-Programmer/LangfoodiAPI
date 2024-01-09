@@ -13,12 +13,13 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         _collection = new List<RecipeAggregate>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
     {
        var id = _collection.Count.ToString();
         RecipeAggregate newRecipe = new(
             id, title, recipe, description, chef, 
-            creationDate, lastUpdatedDate, labels
+            creationDate, lastUpdatedDate, tags,
+            thumbnailId
         );
         _collection.Add(newRecipe);
 
@@ -45,7 +46,8 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
             existingRecipe.Id, recipe.Title,
             recipe.Recipe, recipe.Description,
             existingRecipe.Chef, existingRecipe.CreationDate,
-            existingRecipe.LastUpdatedDate, existingRecipe.Labels
+            existingRecipe.LastUpdatedDate, existingRecipe.Tags,
+            existingRecipe.ThumbnailId
         );
 
         _collection.Remove(existingRecipe);
