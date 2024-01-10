@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Validation;
@@ -25,7 +26,9 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
 
     public Task<bool> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
     {
-        Group group = _groupQueryRepository.GetGroupById(request.UpdateGroupContract.GroupId);
+        Group group = _groupQueryRepository.GetGroupById(request.UpdateGroupContract.GroupId)
+            ?? throw new GroupNotFoundException(request.UpdateGroupContract.GroupId);
+
         Group updatedGroup = new(
             groupId: request.UpdateGroupContract.GroupId,
             groupName: request.UpdateGroupContract.GroupName,

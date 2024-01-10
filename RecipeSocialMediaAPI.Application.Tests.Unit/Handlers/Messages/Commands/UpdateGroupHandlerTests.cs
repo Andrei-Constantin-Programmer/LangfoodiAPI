@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
@@ -438,5 +439,28 @@ public class UpdateGroupHandlerTests
 
         // Then
         result.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenGroupDoesNotExist_ThrowGroupNotFoundException()
+    {
+        // Given
+        UpdateGroupCommand command = new(new UpdateGroupContract(
+            "1",
+            "New Group Name",
+            "New Group Description",
+            new List<string>()));
+
+        _groupQueryRepositoryMock
+            .Setup(repo => repo.GetGroupById(It.IsAny<string>()))
+            .Returns((Group?)null);
+
+        // When
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<GroupNotFoundException>().WithMessage($"*{command.UpdateGroupContract.GroupId}*");
     }
 }
