@@ -28,6 +28,49 @@ public class RecipeMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapServingSizeDtoToServingSize_GivenServingSizeDto_ReturnServingSize()
+    {
+        // Given
+        ServingSizeDTO testServing = new()
+        {
+            Quantity = 30,
+            UnitOfMeasurement = "kg"
+        };
+
+        ServingSize expectedResult = new(testServing.Quantity, testServing.UnitOfMeasurement);
+
+        // When
+        var result = _mapperSUT.MapServingSizeDtoToServingSize(testServing);
+
+        // Then
+        result.Should().BeOfType<ServingSize>();
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapServingSizeToServingSizeDto_GivenServingSize_ReturnServingSizeDto()
+    {
+        // Given
+        ServingSize testServing = new(30, "kg");
+        ServingSizeDTO expectedResult = new()
+        {
+            Quantity = testServing.Quantity,
+            UnitOfMeasurement = testServing.UnitOfMeasurement,
+        };
+
+        // When
+        var result = _mapperSUT.MapServingSizeToServingSizeDto(testServing);
+
+        // Then
+        result.Should().BeOfType<ServingSizeDTO>();
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapRecipeStepDtoToRecipeStep_GivenRecipeStepDto_ReturnRecipeStep()
     {
         // Given
@@ -139,12 +182,13 @@ public class RecipeMapperTests
             new Recipe(new() {
                 new Ingredient("eggs", 1, "whole") },
                 new(new[] { new RecipeStep("step1", new RecipeImage("url")) }),
-                1),
+                1, null, null, new ServingSize(30, "kg")),
             "desc",
             testChef,
             _testDate,
             _testDate,
-            new HashSet<string>());
+            new HashSet<string>(),
+            "thumbnail_public_id_1");
 
         _userMapperMock
             .Setup(x => x.MapUserAccountToUserAccountDto(It.IsAny<IUserAccount>()))
@@ -167,10 +211,13 @@ public class RecipeMapperTests
         result.Chef.Should().BeEquivalentTo(testChef);
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
-        result.Labels.Should().BeEmpty();
+        result.Tags.Should().BeEmpty();
         result.NumberOfServings.Should().Be(1);
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
+        result.ThumbnailId.Should().Be("thumbnail_public_id_1");
+        result.ServingSize.Quantity.Should().Be(30);
+        result.ServingSize.UnitOfMeasurement.Should().Be("kg");
 
         result.Ingredients.First().Name.Should().Be("eggs");
         result.Ingredients.First().Quantity.Should().Be(1);
@@ -202,7 +249,8 @@ public class RecipeMapperTests
             testChef,
             _testDate,
             _testDate,
-            new HashSet<string>());
+            new HashSet<string>(),
+            "thumbnail_public_id_1");
 
         // When
         var result = _mapperSUT.MapRecipeAggregateToRecipeDto(testRecipe);
@@ -215,8 +263,9 @@ public class RecipeMapperTests
         result.ChefUsername.Should().Be(testChef.UserName);
         result.CreationDate.Should().Be(_testDate);
         result.NumberOfServings.Should().Be(1);
-        result.Labels.Should().BeEmpty();
+        result.Tags.Should().BeEmpty();
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
+        result.ThumbnailId.Should().Be("thumbnail_public_id_1");
     }
 }

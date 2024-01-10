@@ -4,7 +4,6 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
-using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;

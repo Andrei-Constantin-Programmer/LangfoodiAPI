@@ -7,7 +7,7 @@ public interface IRecipePersistenceRepository
 {
     RecipeAggregate CreateRecipe(
         string title, Recipe recipe, string description, 
-        IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, 
+        IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, 
         DateTimeOffset lastUpdatedDate, string? thumbnailId);
     bool UpdateRecipe(RecipeAggregate recipe);
     bool DeleteRecipe(RecipeAggregate recipe);

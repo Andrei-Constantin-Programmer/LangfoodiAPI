@@ -30,6 +30,11 @@ public class ExceptionMappingMiddleware
         {
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Invalid credentials");
         }
+        catch(HandlerAlreadyInUseException ex)
+        {
+            _logger.LogInformation(ex, "Attempted to add already existing user with handler {Handler}", ex.Handler);
+            await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, $"Handler {ex.Handler} already in use");
+        }
         catch (UsernameAlreadyInUseException ex)
         {
             _logger.LogInformation(ex, "Attempted to add already existing user with username {Username}", ex.Username);

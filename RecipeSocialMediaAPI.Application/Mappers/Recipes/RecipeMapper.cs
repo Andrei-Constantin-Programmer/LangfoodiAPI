@@ -14,6 +14,20 @@ public class RecipeMapper : IRecipeMapper
         _userMapper = userMapper;
     }
 
+    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO servingSizeDTO)
+    {
+        return new(servingSizeDTO.Quantity, servingSizeDTO.UnitOfMeasurement);
+    }
+
+    public ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize servingSize)
+    {
+        return new ServingSizeDTO
+        {
+            Quantity = servingSize.Quantity,
+            UnitOfMeasurement = servingSize.UnitOfMeasurement
+        };
+    }
+
     public Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO)
     {
         return new(ingredientDTO.Name, ingredientDTO.Quantity, ingredientDTO.UnitOfMeasurement);
@@ -51,7 +65,7 @@ public class RecipeMapper : IRecipeMapper
             Title = recipeAggregate.Title,
             Description = recipeAggregate.Description,
             Chef = _userMapper.MapUserAccountToUserAccountDto(recipeAggregate.Chef),
-            Labels = recipeAggregate.Labels,
+            Tags = recipeAggregate.Tags,
             Ingredients = recipeAggregate.Recipe.Ingredients
                 .Select(MapIngredientToIngredientDto)
                 .ToList(),
@@ -62,6 +76,10 @@ public class RecipeMapper : IRecipeMapper
             CookingTime = recipeAggregate.Recipe.CookingTimeInSeconds,
             CreationDate = recipeAggregate.CreationDate,
             LastUpdatedDate = recipeAggregate.LastUpdatedDate,
+            ThumbnailId = recipeAggregate.ThumbnailId,
+            ServingSize = recipeAggregate.Recipe.ServingSize is not null
+                ? MapServingSizeToServingSizeDto(recipeAggregate.Recipe.ServingSize)
+                : null
         };
     }
 
@@ -73,12 +91,13 @@ public class RecipeMapper : IRecipeMapper
             Title = recipeAggregate.Title,
             Description = recipeAggregate.Description,
             ChefUsername = recipeAggregate.Chef.UserName,
-            Labels = recipeAggregate.Labels,
+            Tags = recipeAggregate.Tags,
             KiloCalories = recipeAggregate.Recipe.KiloCalories,
             NumberOfServings = recipeAggregate.Recipe.NumberOfServings,
             CookingTime = recipeAggregate.Recipe.CookingTimeInSeconds,
             CreationDate = recipeAggregate.CreationDate,
-            LastUpdatedDate = recipeAggregate.LastUpdatedDate
+            LastUpdatedDate = recipeAggregate.LastUpdatedDate,
+            ThumbnailId = recipeAggregate.ThumbnailId
         };
     }
 }

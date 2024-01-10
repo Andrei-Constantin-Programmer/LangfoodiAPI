@@ -82,7 +82,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId,
             ThumbnailId = "public_id_1"
         };
@@ -146,7 +146,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId,
             ThumbnailId = "public_id_1"
         };
@@ -210,7 +210,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId,
             ThumbnailId = "public_id_1"
         };
@@ -336,7 +336,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId
         };
 
@@ -389,7 +389,7 @@ public class RecipeQueryRepositoryTests
                 Description = "TestShortDesc",
                 CreationDate = _testDate,
                 LastUpdatedDate = _testDate,
-                Labels = new List<string>(),
+                Tags = new List<string>(),
                 ChefId = chefId
             }
         };
@@ -439,7 +439,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId
         };
 
@@ -511,7 +511,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId
         };
 
@@ -606,7 +606,7 @@ public class RecipeQueryRepositoryTests
                 Description = "TestShortDesc",
                 CreationDate = _testDate,
                 LastUpdatedDate = _testDate,
-                Labels = new List<string>(),
+                Tags = new List<string>(),
                 ChefId = chefId
             }
         };
@@ -657,7 +657,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId,
             ThumbnailId = "public_id_1"
         };
@@ -746,7 +746,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId,
             ThumbnailId = "public_id_1"
         };
@@ -835,7 +835,7 @@ public class RecipeQueryRepositoryTests
             Description = "TestShortDesc",
             CreationDate = _testDate,
             LastUpdatedDate = _testDate,
-            Labels = new List<string>(),
+            Tags = new List<string>(),
             ChefId = chefId
         };
 

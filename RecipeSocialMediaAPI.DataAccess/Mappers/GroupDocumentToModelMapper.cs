@@ -3,8 +3,6 @@ using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using System.Collections.Immutable;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers;
 
@@ -19,14 +17,15 @@ public class GroupDocumentToModelMapper : IGroupDocumentToModelMapper
 
     public Group MapGroupFromDocument(GroupDocument groupDocument)
     {
-        List<IUserAccount> users = new();
-        foreach (string user in groupDocument.UserIds)
+        if (groupDocument.Id is null)
         {
-            users.Add(_userQueryRepository
-                .GetUserById(user)?.Account
-                ?? throw new UserDocumentNotFoundException(user));
+            throw new ArgumentException("Cannot map Group Document with null ID to Group");
         }
 
-        return new Group(groupDocument.Id!, groupDocument.GroupName, groupDocument.GroupDescription, users.ToImmutableList());
+        var users = groupDocument.UserIds
+            .Select(userId => _userQueryRepository.GetUserById(userId)?.Account
+                           ?? throw new UserDocumentNotFoundException(userId));
+        
+        return new Group(groupDocument.Id, groupDocument.GroupName, groupDocument.GroupDescription, users);
     }
 }

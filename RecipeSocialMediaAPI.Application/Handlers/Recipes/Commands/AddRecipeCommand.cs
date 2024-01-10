@@ -39,8 +39,6 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
 
-        var (servingSizeQuantity, unitOfMeasurement) = request.NewRecipeContract.ServingSize ?? default;
-
         RecipeAggregate insertedRecipe = _recipePersistenceRepository.CreateRecipe(
             request.NewRecipeContract.Title,
             new Recipe(
@@ -53,15 +51,15 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                 request.NewRecipeContract.CookingTime,
                 request.NewRecipeContract.KiloCalories,
                 request.NewRecipeContract.ServingSize is not null 
-                    ? new ServingSize(servingSizeQuantity, unitOfMeasurement) 
+                    ? _mapper.MapServingSizeDtoToServingSize(request.NewRecipeContract.ServingSize)
                     : null
             ),
             request.NewRecipeContract.Description,
             chef,
-            request.NewRecipeContract.Labels,
+            request.NewRecipeContract.Tags,
             dateOfCreation,
             dateOfCreation,
-            null
+            request.NewRecipeContract.ThumbnailId
         );
 
         return await Task.FromResult(_mapper
