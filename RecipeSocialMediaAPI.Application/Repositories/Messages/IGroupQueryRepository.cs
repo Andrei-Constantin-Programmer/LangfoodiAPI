@@ -6,5 +6,5 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 public interface IGroupQueryRepository
 {
     Group? GetGroupById(string groupId);
-    List<Group> GetGroupsByUser(IUserAccount userAccount);
+    IEnumerable<Group> GetGroupsByUser(IUserAccount userAccount);
 }

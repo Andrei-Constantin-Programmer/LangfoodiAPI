@@ -34,27 +34,24 @@ public class GroupQueryRepository : IGroupQueryRepository
             _logger.LogError(ex, "There was an error trying to get the group with the id {GroupID}: {ErrorMessage}", groupId, ex.Message);
             return null;
         }
-
+        
         return groupDocument is not null
             ? _mapper.MapGroupFromDocument(groupDocument)
             : null;
     }
 
-    public List<Group> GetGroupsByUser(IUserAccount userAccount)
+    public IEnumerable<Group> GetGroupsByUser(IUserAccount userAccount)
     {
-        List<GroupDocument> groups = new();
         try
         {
-            groups = _groupCollection
-                .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id));
+            return _groupCollection
+                .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id))
+                .Select(_mapper.MapGroupFromDocument);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "There was an error trying to get the groups for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
+            return Enumerable.Empty<Group>();
         }
-
-        return groups
-            .Select(_mapper.MapGroupFromDocument)
-            .ToList();
     }
 }
