@@ -229,4 +229,64 @@ public class GroupQueryRepositoryTests
         result.Should().Contain(group1);
         result.Should().Contain(group2);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetGroupsByUser_WhenUserHasNoGroups_ReturnEmptyCollection()
+    {
+        // Given
+        TestUserAccount testUser = new()
+        {
+            Id = "u1",
+            Handler = "user1",
+            UserName = "User 1",
+            AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        _groupCollectionMock
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
+            .Returns(new List<GroupDocument>());
+
+        // When
+        var result = _groupQueryRepositorySUT.GetGroupsByUser(testUser);
+
+        // Then
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetGroupsByUser_WhenMongoThrowsAnException_LogErrorAndReturnEmptyCollection()
+    {
+        // Given
+        TestUserAccount testUser = new()
+        {
+            Id = "u1",
+            Handler = "user1",
+            UserName = "User 1",
+            AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Exception testException = new("Test Exception");
+        _groupCollectionMock
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
+            .Throws(testException);
+
+        // When
+        var result = _groupQueryRepositorySUT.GetGroupsByUser(testUser);
+
+        // Then
+        result.Should().BeEmpty();
+        _loggerMock
+            .Verify(logger =>
+                logger.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+    }
 }
