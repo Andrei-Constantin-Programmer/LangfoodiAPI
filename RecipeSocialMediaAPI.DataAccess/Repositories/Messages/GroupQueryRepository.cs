@@ -44,6 +44,11 @@ public class GroupQueryRepository : IGroupQueryRepository
     {
         try
         {
+            var x = _groupCollection
+                .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id))
+                .ToList();
+            var y = x.Select(_mapper.MapGroupFromDocument)
+                .ToList();
             return _groupCollection
                 .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id))
                 .Select(_mapper.MapGroupFromDocument);
