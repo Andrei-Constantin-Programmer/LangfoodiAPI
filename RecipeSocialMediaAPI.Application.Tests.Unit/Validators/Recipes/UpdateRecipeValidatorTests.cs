@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Validators.Recipes;
+
 public class UpdateRecipeValidatorTests
 {
     private readonly UpdateRecipeCommandValidator _updateRecipeValidatorSUT;
@@ -34,7 +35,7 @@ public class UpdateRecipeValidatorTests
             KiloCalories = 2300,
             CookingTime = 500,
             Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
+                new()
                 {
                     Name = "eggs",
                     Quantity = 1,

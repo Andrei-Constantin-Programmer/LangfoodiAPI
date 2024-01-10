@@ -69,6 +69,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 public class UpdateRecipeCommandValidator : AbstractValidator<UpdateRecipeCommand>
 {
     private readonly IRecipeValidationService _recipeValidationService;
+
     public UpdateRecipeCommandValidator(IRecipeValidationService recipeValidationService)
     {
         _recipeValidationService = recipeValidationService;
