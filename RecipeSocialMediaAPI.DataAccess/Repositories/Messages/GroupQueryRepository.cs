@@ -27,7 +27,7 @@ public class GroupQueryRepository : IGroupQueryRepository
         try
         {
             groupDocument = _groupCollection.Find(
-                groupDoc => groupDoc.GroupId == groupId);
+                groupDoc => groupDoc.Id == groupId);
         }
         catch (Exception ex)
         {

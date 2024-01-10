@@ -5,7 +5,6 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using System.Collections.Immutable;
-using System.Reflection.Metadata;
 
 namespace RecipeSocialMediaAPI.DataAccess.Mappers;
 
@@ -27,6 +26,7 @@ public class GroupDocumentToModelMapper : IGroupDocumentToModelMapper
                 .GetUserById(user)?.Account
                 ?? throw new UserDocumentNotFoundException(user));
         }
-        return new Group(groupDocument.GroupId, groupDocument.GroupName, groupDocument.GroupDescription, users.ToImmutableList());
+
+        return new Group(groupDocument.Id!, groupDocument.GroupName, groupDocument.GroupDescription, users.ToImmutableList());
     }
 }

@@ -65,7 +65,6 @@ public class GroupDocumentToModelMapperTests
         GroupDocument testDocument = new()
         {
             Id = "1",
-            GroupId = "1",
             GroupName = "Test Name",
             GroupDescription = "Test Desc",
             UserIds = new() { testUser1.Account.Id, testUser2.Account.Id }
@@ -127,7 +126,6 @@ public class GroupDocumentToModelMapperTests
         GroupDocument testDocument = new()
         {
             Id = "1",
-            GroupId = "1",
             GroupName = "Test Name",
             GroupDescription = "Test Desc",
             UserIds = new() { userId1, userId2 }
@@ -156,7 +154,6 @@ public class GroupDocumentToModelMapperTests
         GroupDocument testDocument = new()
         {
             Id = "1",
-            GroupId = "1",
             GroupName = "Test Name",
             GroupDescription = "Test Desc",
             UserIds = new()
