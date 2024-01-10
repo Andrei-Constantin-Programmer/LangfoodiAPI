@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
@@ -64,5 +65,17 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
                 group.AddUser(user);
             }
         }
+    }
+}
+
+public class UpdateGroupCommandValidator : AbstractValidator<UpdateGroupCommand>
+{
+    public UpdateGroupCommandValidator()
+    {
+        RuleFor(x => x.UpdateGroupContract.GroupId)
+            .NotEmpty();
+
+        RuleFor(x => x.UpdateGroupContract.GroupName)
+            .NotEmpty();
     }
 }
