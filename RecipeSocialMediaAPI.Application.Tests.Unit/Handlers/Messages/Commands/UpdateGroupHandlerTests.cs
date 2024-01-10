@@ -463,4 +463,45 @@ public class UpdateGroupHandlerTests
         // Then
         await testAction.Should().ThrowAsync<GroupNotFoundException>().WithMessage($"*{command.UpdateGroupContract.GroupId}*");
     }
+
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenUserNotFoundInTheDatabase_ThrowUserNotFoundException()
+    {
+        // Given
+        TestUserAccount testUser = new()
+        {
+            Id = "1",
+            Handler = "user1",
+            UserName = "User 1",
+            AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(It.IsAny<string>()))
+            .Returns((IUserCredentials?)null);
+
+        Group existingGroup = new("1", "Group", "Group Desc");
+
+        UpdateGroupCommand command = new(new UpdateGroupContract(
+            existingGroup.GroupId,
+            existingGroup.GroupName,
+            existingGroup.GroupDescription,
+            new List<string>()
+            {
+                testUser.Id,
+            }));
+
+        _groupQueryRepositoryMock
+            .Setup(repo => repo.GetGroupById(existingGroup.GroupId))
+            .Returns(existingGroup);
+
+        // When
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<UserNotFoundException>().WithMessage($"*{testUser.Id}*");
+    }
 }

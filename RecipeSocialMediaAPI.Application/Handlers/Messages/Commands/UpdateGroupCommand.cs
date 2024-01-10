@@ -36,8 +36,10 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
             users: group.Users.ToList());
 
         var newUserList = request.UpdateGroupContract.UserIds
-            .Select(userId => _userQueryRepository.GetUserById(userId).Account)
+            .Select(userId => _userQueryRepository.GetUserById(userId)?.Account
+                           ?? throw new UserNotFoundException(userId))
             .ToList();
+
         UpdateGroupUserList(updatedGroup, newUserList);
 
         return Task.FromResult(_groupPersistenceRepository.UpdateGroup(updatedGroup));
