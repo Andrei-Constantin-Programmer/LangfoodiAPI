@@ -96,4 +96,48 @@ public class GroupQueryRepositoryTests
         // Then
         result.Should().Be(expectedGroup);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetGroupById_WhenDocumentIsNotInTheDatabase_ReturnNull()
+    {
+        // Given
+        _groupCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
+            .Returns((GroupDocument?)null);
+
+        // When
+        var result = _groupQueryRepositorySUT.GetGroupById("1");
+
+        // Then
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetGroupById_WhenMongoThrowsException_LogExceptionAndReturnNull()
+    {
+        // Given
+        Exception testException = new("Test Exception");
+        _groupCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
+            .Throws(testException);
+
+        // When
+        var result = _groupQueryRepositorySUT.GetGroupById("1");
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock
+            .Verify(logger =>
+                logger.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+    }
 }
