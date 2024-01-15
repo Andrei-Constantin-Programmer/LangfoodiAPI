@@ -43,7 +43,7 @@ public class UpdateGroupValidatorTests
         var validationResult = _updateGroupCommandValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateGroupContract.GroupId);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateGroupContract.GroupName);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.GroupId);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.GroupName);
     }
 }

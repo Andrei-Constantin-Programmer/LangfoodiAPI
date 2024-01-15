@@ -8,7 +8,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record UpdateConnectionCommand(UpdateConnectionContract UpdateConnectionContract) : IRequest<bool>;
+public record UpdateConnectionCommand(UpdateConnectionContract Contract) : IRequest<bool>;
 
 internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand, bool>
 {
@@ -25,10 +25,10 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
 
     public Task<bool> Handle(UpdateConnectionCommand request, CancellationToken cancellationToken)
     {
-        IUserAccount user1 = _userQueryRepository.GetUserById(request.UpdateConnectionContract.UserId1)?.Account
-            ?? throw new UserNotFoundException($"No user found with id {request.UpdateConnectionContract.UserId1}");
-        IUserAccount user2 = _userQueryRepository.GetUserById(request.UpdateConnectionContract.UserId2)?.Account
-            ?? throw new UserNotFoundException($"No user found with id {request.UpdateConnectionContract.UserId2}");
+        IUserAccount user1 = _userQueryRepository.GetUserById(request.Contract.UserId1)?.Account
+            ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId1}");
+        IUserAccount user2 = _userQueryRepository.GetUserById(request.Contract.UserId2)?.Account
+            ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId2}");
 
         IConnection? connection = _connectionQueryRepository.GetConnection(user1, user2);
 
@@ -37,10 +37,10 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
             return Task.FromResult(false);
         }
 
-        var isValidConnectionStatus = Enum.TryParse(request.UpdateConnectionContract.NewConnectionStatus, out ConnectionStatus newStatus);
+        var isValidConnectionStatus = Enum.TryParse(request.Contract.NewConnectionStatus, out ConnectionStatus newStatus);
         if (!isValidConnectionStatus)
         {
-            throw new ConnectionUpdateException($"Could not map {request.UpdateConnectionContract.NewConnectionStatus} to {typeof(ConnectionStatus)}");
+            throw new ConnectionUpdateException($"Could not map {request.Contract.NewConnectionStatus} to {typeof(ConnectionStatus)}");
         }
 
         if (connection.Status == newStatus)

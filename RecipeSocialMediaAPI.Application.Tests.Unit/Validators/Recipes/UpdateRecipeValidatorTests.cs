@@ -97,12 +97,12 @@ public class UpdateRecipeValidatorTests
         var validationResult = _updateRecipeValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.NumberOfServings);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.CookingTime);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.KiloCalories);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Title);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Ingredients);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.RecipeSteps);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.NumberOfServings);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.CookingTime);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.KiloCalories);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Title);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Ingredients);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.RecipeSteps);
     }
 
     [Fact]
@@ -132,8 +132,8 @@ public class UpdateRecipeValidatorTests
         var validationResult = _updateRecipeValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Title);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Ingredients);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.RecipeSteps);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Title);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Ingredients);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.RecipeSteps);
     }
 }

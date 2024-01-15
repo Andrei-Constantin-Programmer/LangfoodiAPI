@@ -10,7 +10,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record UpdateGroupCommand(UpdateGroupContract UpdateGroupContract) : IValidatableRequest<bool>;
+public record UpdateGroupCommand(UpdateGroupContract Contract) : IValidatableRequest<bool>;
 
 internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
 {
@@ -27,16 +27,16 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
 
     public Task<bool> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
     {
-        Group group = _groupQueryRepository.GetGroupById(request.UpdateGroupContract.GroupId)
-            ?? throw new GroupNotFoundException(request.UpdateGroupContract.GroupId);
+        Group group = _groupQueryRepository.GetGroupById(request.Contract.GroupId)
+            ?? throw new GroupNotFoundException(request.Contract.GroupId);
 
         Group updatedGroup = new(
-            groupId: request.UpdateGroupContract.GroupId,
-            groupName: request.UpdateGroupContract.GroupName,
-            groupDescription: request.UpdateGroupContract.GroupDescription,
+            groupId: request.Contract.GroupId,
+            groupName: request.Contract.GroupName,
+            groupDescription: request.Contract.GroupDescription,
             users: group.Users.ToList());
 
-        var newUserList = request.UpdateGroupContract.UserIds
+        var newUserList = request.Contract.UserIds
             .Select(userId => _userQueryRepository.GetUserById(userId)?.Account
                            ?? throw new UserNotFoundException(userId))
             .ToList();
@@ -72,10 +72,10 @@ public class UpdateGroupCommandValidator : AbstractValidator<UpdateGroupCommand>
 {
     public UpdateGroupCommandValidator()
     {
-        RuleFor(x => x.UpdateGroupContract.GroupId)
+        RuleFor(x => x.Contract.GroupId)
             .NotEmpty();
 
-        RuleFor(x => x.UpdateGroupContract.GroupName)
+        RuleFor(x => x.Contract.GroupName)
             .NotEmpty();
     }
 }
