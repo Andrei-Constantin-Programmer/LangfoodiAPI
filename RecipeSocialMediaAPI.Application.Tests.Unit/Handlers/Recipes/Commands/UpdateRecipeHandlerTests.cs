@@ -48,16 +48,15 @@ public class UpdateRecipeHandlerTests
     public async Task Handle_WhenRecipeDoesNotExist_ThrowRecipeNotFoundException()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",            
-            Tags = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-            ThumbnailId = "img_id_1"
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",            
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ThumbnailId: "img_id_1"
+        );
 
         // When
         var action = async () => await _updateRecipeHandlerSUT.Handle(new UpdateRecipeCommand(testContract), CancellationToken.None);
@@ -77,16 +76,15 @@ public class UpdateRecipeHandlerTests
     public async Task Handle_WhenRecipeExistsButUpdateFails_ThrowNewGeneralException()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",
-            Tags = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-            ThumbnailId = "img_id_1"
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ThumbnailId: "img_id_1"
+        );
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
@@ -127,16 +125,15 @@ public class UpdateRecipeHandlerTests
     public async Task Handle_WhenRecipeExistsAndUpdateSucceeds_ReturnsCompletedTask()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",
-            Tags = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-            ThumbnailId = "img_id_1"
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ThumbnailId: "img_id_1"
+        );
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))

@@ -51,15 +51,14 @@ public class AddRecipeHandlerTests
     public async Task Handle_WhenUserDoesNotExist_ThrowUserNotFoundException()
     {
         // Given
-        NewRecipeContract testContract = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "1",
-            Tags = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+        NewRecipeContract testContract = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "1",
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>()
+        );
 
         // When
         var action = async () => await _addRecipeHandlerSUT.Handle(new AddRecipeCommand(testContract), CancellationToken.None);
@@ -79,26 +78,25 @@ public class AddRecipeHandlerTests
     public async Task Handle_WhenUserExists_CreateAndReturnRecipe()
     {
         // Given
-        NewRecipeContract testContract = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "1",
-            Tags = new HashSet<string>(),
-            NumberOfServings = 1,
-            KiloCalories = 2300,
-            CookingTime = 500,
-            Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
+        NewRecipeContract testContract = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "1",
+            Tags: new HashSet<string>(),
+            NumberOfServings: 1,
+            KiloCalories: 2300,
+            CookingTime: 500,
+            Ingredients: new List<IngredientDTO>() {
+                new()
                 {
                     Name = "eggs",
                     Quantity = 1,
                     UnitOfMeasurement = "whole"
                 }
             },
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-            ThumbnailId = "img_id_1",
-        };
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ThumbnailId: "img_id_1"
+        );
 
         testContract.RecipeSteps.Push(new RecipeStepDTO()
         {
@@ -145,7 +143,7 @@ public class AddRecipeHandlerTests
                 Tags = recipe.Tags, CreationDate = recipe.CreationDate,
                 LastUpdatedDate = recipe.LastUpdatedDate, 
                 Ingredients = new List<IngredientDTO>() {
-                    new IngredientDTO() { 
+                    new() { 
                         Name = recipe.Recipe.Ingredients.First().Name,
                         Quantity = recipe.Recipe.Ingredients.First().Quantity,
                         UnitOfMeasurement = recipe.Recipe.Ingredients.First().UnitOfMeasurement
