@@ -27,20 +27,11 @@ public class RecipeEndpointsTests : EndpointTestBase
             KiloCalories: 2300,
             CookingTime: 500,
             Ingredients: new List<IngredientDTO>() {
-                new()
-                {
-                    Name = "eggs",
-                    Quantity = 1, 
-                    UnitOfMeasurement = "whole"
-                }
+                new("eggs", 1, "whole")
             },
             RecipeSteps: new Stack<RecipeStepDTO>(new[] 
             { 
-                new RecipeStepDTO()
-                {
-                    Text = "step",
-                    ImageUrl = "url"
-                }
+                new RecipeStepDTO("step", "url")
             })
         );
 
@@ -117,22 +108,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             NumberOfServings: 1,
             KiloCalories: 2300,
             CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() {
-                new()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
-            },
-            RecipeSteps: new Stack<RecipeStepDTO>(new[]
-            {
-                new RecipeStepDTO()
-                {
-                    Text = "step",
-                    ImageUrl = "url"
-                }
-            })
+            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(new[] { new RecipeStepDTO("step", "url") })
         );
 
         await _client.PostAsJsonAsync("/user/create", _testUserContract);
@@ -231,22 +208,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             NumberOfServings: 1,
             KiloCalories: 2300,
             CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() {
-                new()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
-            },
-            RecipeSteps: new Stack<RecipeStepDTO>(new[]
-            {
-                new RecipeStepDTO()
-                {
-                    Text = "step",
-                    ImageUrl = "url"
-                }
-            })
+            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(new[] { new RecipeStepDTO("step", "url") })
         );
 
         await _client.PostAsJsonAsync("/user/create", _testUserContract);
@@ -384,14 +347,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Title: "New Title",
             Description: "New Desc",
             KiloCalories: 1000,
-            Ingredients: new List<IngredientDTO>() {
-                new()
-                {
-                    Name = "lemons",
-                    Quantity = 2,
-                    UnitOfMeasurement = "whole"
-                }
-            },
+            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
             RecipeSteps: _testRecipeContract.RecipeSteps,
             Tags: new HashSet<string>()
         );
@@ -435,14 +391,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Title: "New Title",
             Description: "New Desc",
             KiloCalories: 1000,
-            Ingredients: new List<IngredientDTO>() {
-                new()
-                {
-                    Name = "lemons",
-                    Quantity = 2,
-                    UnitOfMeasurement = "whole"
-                }
-            },
+            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
             RecipeSteps: _testRecipeContract.RecipeSteps,
             Tags: new HashSet<string>()
         );

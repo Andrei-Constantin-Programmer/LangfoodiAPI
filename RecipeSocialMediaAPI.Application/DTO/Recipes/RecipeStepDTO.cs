@@ -1,7 +1,3 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Recipes;
 
-public record RecipeStepDTO
-{
-    required public string Text { get; set; }
-    public string? ImageUrl { get; set; }
-}
+public record RecipeStepDTO(string Text, string? ImageUrl = null);

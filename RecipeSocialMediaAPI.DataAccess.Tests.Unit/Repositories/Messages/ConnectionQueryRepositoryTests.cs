@@ -156,7 +156,7 @@ public class ConnectionQueryRepositoryTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 testException,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 
@@ -388,7 +388,7 @@ public class ConnectionQueryRepositoryTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 testException,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 }

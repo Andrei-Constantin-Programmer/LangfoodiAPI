@@ -33,23 +33,12 @@ public class UpdateRecipeValidatorTests
             NumberOfServings: 1,
             KiloCalories: 2300,
             CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() {
-                new()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
-            },
+            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
             RecipeSteps: new Stack<RecipeStepDTO>(),
-            ServingSize: new ServingSizeDTO() { Quantity = 30, UnitOfMeasurement = "kg" }
+            ServingSize: new ServingSizeDTO(30, "kg")
         );
 
-        testContract.RecipeSteps.Push(new RecipeStepDTO()
-        {
-            Text = "step",
-            ImageUrl = "url"
-        });
+        testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
 
         UpdateRecipeCommand testCommand = new(testContract);
 
@@ -81,7 +70,7 @@ public class UpdateRecipeValidatorTests
             KiloCalories: -1,
             Ingredients: new List<IngredientDTO>(),
             RecipeSteps: new Stack<RecipeStepDTO>(),
-            ServingSize: new ServingSizeDTO() { Quantity = 30, UnitOfMeasurement = "kg" }
+            ServingSize: new ServingSizeDTO(30, "kg")
         );
 
         UpdateRecipeCommand testCommand = new(testContract);

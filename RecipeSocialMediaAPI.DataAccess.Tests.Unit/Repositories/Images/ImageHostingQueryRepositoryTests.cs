@@ -14,15 +14,9 @@ public class ImageHostingQueryRepositoryTests
 {
     private readonly Mock<ILogger<ImageHostingQueryRepository>> _loggerMock;
     private readonly Mock<ICloudinarySignatureService> _signatureServiceMock;
-    private readonly CloudinarySignatureDTO _signatureTestData = new()
-    {
-        Signature = "signature1",
-        TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
-            .ToUnixTimeSeconds()
-    };
+    private readonly CloudinarySignatureDTO _signatureTestData = new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
     
     private readonly ImageHostingQueryRepository _imageHostingQueryRepositorySUT;
-
 
     public ImageHostingQueryRepositoryTests()
     {
@@ -105,7 +99,7 @@ public class ImageHostingQueryRepositoryTests
                    It.IsAny<EventId>(),
                    It.IsAny<It.IsAnyType>(),
                    testException,
-                   It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                   It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                Times.Once());
     }
 
@@ -132,7 +126,7 @@ public class ImageHostingQueryRepositoryTests
                    It.IsAny<EventId>(),
                    It.IsAny<It.IsAnyType>(),
                    testException,
-                   It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                   It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                Times.Once());
     }
 }

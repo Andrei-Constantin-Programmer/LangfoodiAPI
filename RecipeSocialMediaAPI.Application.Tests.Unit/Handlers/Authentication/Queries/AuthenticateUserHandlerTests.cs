@@ -140,14 +140,13 @@ public class AuthenticateUserHandlerTests
             Password = encryptedPassword
         };
 
-        UserDTO expectedUserDto = new() 
-        { 
-            Id = testUser.Account.Id,
-            Handler = testUser.Account.Handler,
-            UserName = testUser.Account.UserName,
-            Email = testUser.Email,
-            Password = testUser.Password
-        };
+        UserDTO expectedUserDto = new(
+            Id: testUser.Account.Id,
+            Handler: testUser.Account.Handler,
+            UserName: testUser.Account.UserName,
+            Email: testUser.Email,
+            Password: testUser.Password
+        );
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByHandler(It.Is<string>(handler => handler == testUser.Account.Handler)))
             .Returns(testUser);
@@ -185,14 +184,13 @@ public class AuthenticateUserHandlerTests
             Password = encryptedPassword
         };
 
-        UserDTO expectedUserDto = new()
-        { 
-            Id = testUser.Account.Id,
-            Handler = testUser.Account.Handler,
-            UserName = testUser.Account.UserName,
-            Email = testUser.Email,
-            Password = testUser.Password
-        };
+        UserDTO expectedUserDto = new(
+            Id: testUser.Account.Id,
+            Handler: testUser.Account.Handler,
+            UserName: testUser.Account.UserName,
+            Email: testUser.Email,
+            Password: testUser.Password
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))

@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
@@ -34,6 +35,7 @@ public class ImageHostingPersistenceRepository : IImageHostingPersistenceReposit
         try
         {
             var signature = _cloudinarySignatureService.GenerateSignature(_connection, publicId);
+
             return _cloudinaryWebClient.RemoveHostedImage(
                 signature,
                 _cloudinaryConfig.ApiKey,
@@ -42,7 +44,7 @@ public class ImageHostingPersistenceRepository : IImageHostingPersistenceReposit
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"There was error trying to remove the image: {publicId}");
+            _logger.LogError(ex, "There was error trying to remove the image: {ImagePublicId}", publicId);
             return false;
         }
     }

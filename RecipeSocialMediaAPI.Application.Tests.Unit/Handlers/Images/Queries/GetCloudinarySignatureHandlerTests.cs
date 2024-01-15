@@ -26,7 +26,7 @@ public class GetCloudinarySignatureHandlerTests
         // Given
         _imageHostingQueryRepositoryMock
             .Setup(x => x.GenerateSignature(null))
-            .Returns(new CloudinarySignatureDTO() { Signature = "sig", TimeStamp = 1000 });
+            .Returns(new CloudinarySignatureDTO("sig", 1000));
 
         // When
         var result = await _getCloudinarySignatureHandlerSUT.Handle(new GetCloudinarySignatureQuery(), CancellationToken.None);

@@ -31,11 +31,7 @@ public class RecipeMapperTests
     public void MapServingSizeDtoToServingSize_GivenServingSizeDto_ReturnServingSize()
     {
         // Given
-        ServingSizeDTO testServing = new()
-        {
-            Quantity = 30,
-            UnitOfMeasurement = "kg"
-        };
+        ServingSizeDTO testServing = new(30, "kg");
 
         ServingSize expectedResult = new(testServing.Quantity, testServing.UnitOfMeasurement);
 
@@ -54,11 +50,7 @@ public class RecipeMapperTests
     {
         // Given
         ServingSize testServing = new(30, "kg");
-        ServingSizeDTO expectedResult = new()
-        {
-            Quantity = testServing.Quantity,
-            UnitOfMeasurement = testServing.UnitOfMeasurement,
-        };
+        ServingSizeDTO expectedResult = new(testServing.Quantity, testServing.UnitOfMeasurement);
 
         // When
         var result = _mapperSUT.MapServingSizeToServingSizeDto(testServing);
@@ -74,13 +66,9 @@ public class RecipeMapperTests
     public void MapRecipeStepDtoToRecipeStep_GivenRecipeStepDto_ReturnRecipeStep()
     {
         // Given
-        RecipeStepDTO testStep = new()
-        {
-            Text = "Step 1",
-            ImageUrl = "image url"
-        };
+        RecipeStepDTO testStep = new("Step 1", "image url");
 
-        RecipeStep expectedResult = new(testStep.Text, new RecipeImage(testStep.ImageUrl));
+        RecipeStep expectedResult = new(testStep.Text, new RecipeImage(testStep.ImageUrl!));
 
         // When
         var result = _mapperSUT.MapRecipeStepDtoToRecipeStep(testStep);
@@ -98,11 +86,7 @@ public class RecipeMapperTests
         // Given
         RecipeStep testStep = new("Step 1", new RecipeImage("image url"));
 
-        RecipeStepDTO expectedResult = new()
-        {
-            Text = testStep.Text,
-            ImageUrl = testStep.Image!.ImageUrl
-        };
+        RecipeStepDTO expectedResult = new(testStep.Text, testStep.Image!.ImageUrl);
 
         // When
         var result = _mapperSUT.MapRecipeStepToRecipeStepDto(testStep);
@@ -118,12 +102,7 @@ public class RecipeMapperTests
     public void MapIngredientDtoToIngredient_GivenIngredientDto_ReturnIngredient()
     {
         // Given
-        IngredientDTO testIngredient = new()
-        {
-            Name = "eggs",
-            Quantity = 1,
-            UnitOfMeasurement = "whole"
-        };
+        IngredientDTO testIngredient = new("eggs", 1, "whole");
 
         Ingredient expectedResult = new(
             testIngredient.Name,
@@ -147,12 +126,7 @@ public class RecipeMapperTests
         // Given
         Ingredient testIngredient = new("eggs", 1, "whole");
 
-        IngredientDTO expectedResult = new()
-        {
-            Name = "eggs",
-            Quantity = 1,
-            UnitOfMeasurement = "whole"
-        };
+        IngredientDTO expectedResult = new("eggs", 1, "whole");
 
         // When
         var result = _mapperSUT.MapIngredientToIngredientDto(testIngredient);
@@ -192,13 +166,12 @@ public class RecipeMapperTests
 
         _userMapperMock
             .Setup(x => x.MapUserAccountToUserAccountDto(It.IsAny<IUserAccount>()))
-            .Returns((IUserAccount user) => new UserAccountDTO()
-            {
-                Id = user.Id,
-                Handler = user.Handler,
-                UserName = user.UserName,
-                AccountCreationDate = user.AccountCreationDate
-            });
+            .Returns((IUserAccount user) => new UserAccountDTO(
+                Id: user.Id,
+                Handler: user.Handler,
+                UserName: user.UserName,
+                AccountCreationDate: user.AccountCreationDate
+            ));
 
         // When
         var result = _mapperSUT.MapRecipeAggregateToRecipeDetailedDto(testRecipe);
@@ -216,7 +189,7 @@ public class RecipeMapperTests
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
         result.ThumbnailId.Should().Be("thumbnail_public_id_1");
-        result.ServingSize.Quantity.Should().Be(30);
+        result.ServingSize!.Quantity.Should().Be(30);
         result.ServingSize.UnitOfMeasurement.Should().Be("kg");
 
         result.Ingredients.First().Name.Should().Be("eggs");

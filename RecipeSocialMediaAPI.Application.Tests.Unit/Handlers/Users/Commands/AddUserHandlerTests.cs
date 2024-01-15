@@ -179,15 +179,14 @@ public class AddUserHandlerTests
 
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
-            .Returns((IUserCredentials user) => new UserDTO() 
-            { 
-                Id = user.Account.Id, 
-                Handler = user.Account.Handler, 
-                UserName = user.Account.UserName, 
-                Email = user.Email, 
-                Password = user.Password,
-                AccountCreationDate = user.Account.AccountCreationDate
-            });
+            .Returns((IUserCredentials user) => new UserDTO(
+                Id:user.Account.Id, 
+                Handler: user.Account.Handler, 
+                UserName: user.Account.UserName,
+                AccountCreationDate: user.Account.AccountCreationDate,
+                Email: user.Email, 
+                Password: user.Password
+            ));
 
         // When
         var result = await _userHandlerSUT.Handle(new AddUserCommand(contract), CancellationToken.None);

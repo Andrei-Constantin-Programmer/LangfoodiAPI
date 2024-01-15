@@ -87,22 +87,13 @@ public class AddRecipeHandlerTests
             KiloCalories: 2300,
             CookingTime: 500,
             Ingredients: new List<IngredientDTO>() {
-                new()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
+                new("eggs", 1, "whole")
             },
             RecipeSteps: new Stack<RecipeStepDTO>(),
             ThumbnailId: "img_id_1"
         );
 
-        testContract.RecipeSteps.Push(new RecipeStepDTO()
-        {
-            Text = "step",
-            ImageUrl = "url"
-        });
+        testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
 
         _userQueryRepositoryMock
             .Setup(x => x.GetUserById(It.IsAny<string>()))
@@ -137,31 +128,42 @@ public class AddRecipeHandlerTests
 
         _recipeMapperMock
             .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
-            .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO() {
-                Id = "1", Title = recipe.Title, Description = recipe.Description,
-                Chef = new UserAccountDTO() { Id = "1", Handler = "handler", UserName = "name", AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) },
-                Tags = recipe.Tags, CreationDate = recipe.CreationDate,
-                LastUpdatedDate = recipe.LastUpdatedDate, 
-                Ingredients = new List<IngredientDTO>() {
-                    new() { 
-                        Name = recipe.Recipe.Ingredients.First().Name,
-                        Quantity = recipe.Recipe.Ingredients.First().Quantity,
-                        UnitOfMeasurement = recipe.Recipe.Ingredients.First().UnitOfMeasurement
-                    }
+            .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO(
+                Id: "1", 
+                Title: recipe.Title, 
+                Description: recipe.Description,
+                Chef: new UserAccountDTO( 
+                    Id: "1", 
+                    Handler: "handler", 
+                    UserName: "name", 
+                    AccountCreationDate: new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) 
+                ),
+                Tags: recipe.Tags, 
+                CreationDate: recipe.CreationDate,
+                LastUpdatedDate: recipe.LastUpdatedDate, 
+                Ingredients: new List<IngredientDTO>() 
+                {
+                    new(
+                        recipe.Recipe.Ingredients[0].Name,
+                        recipe.Recipe.Ingredients[0].Quantity,
+                        recipe.Recipe.Ingredients[0].UnitOfMeasurement
+                    )
                 },
-                RecipeSteps = new Stack<RecipeStepDTO>(
-                    new[] { new RecipeStepDTO()
-                        {
-                            Text = recipe.Recipe.Steps.First().Text,
-                            ImageUrl = recipe.Recipe.Steps.First().Image!.ImageUrl
-                        }
+                RecipeSteps: new Stack<RecipeStepDTO>
+                (
+                    new[] 
+                    { 
+                        new RecipeStepDTO(
+                            recipe.Recipe.Steps.First().Text,
+                            recipe.Recipe.Steps.First().Image!.ImageUrl
+                        )
                     }    
                 ),
-                NumberOfServings = recipe.Recipe.NumberOfServings,
-                CookingTime = recipe.Recipe.CookingTimeInSeconds,
-                KiloCalories = recipe.Recipe.KiloCalories,
-                ThumbnailId = recipe.ThumbnailId
-            });
+                NumberOfServings: recipe.Recipe.NumberOfServings,
+                CookingTime: recipe.Recipe.CookingTimeInSeconds,
+                KiloCalories: recipe.Recipe.KiloCalories,
+                ThumbnailId: recipe.ThumbnailId
+            ));
 
         // When
         var result = await _addRecipeHandlerSUT.Handle(new AddRecipeCommand(testContract), CancellationToken.None);

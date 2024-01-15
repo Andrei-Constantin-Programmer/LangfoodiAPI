@@ -11,12 +11,7 @@ using System.Net.Http.Json;
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 public class ImageEndpointsTests : EndpointTestBase
 {
-    private readonly CloudinarySignatureDTO _signatureTestData = new()
-    {
-        Signature = "signature1",
-        TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
-            .ToUnixTimeSeconds()
-    };
+    private readonly CloudinarySignatureDTO _signatureTestData = new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
 
     public ImageEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) {}
 

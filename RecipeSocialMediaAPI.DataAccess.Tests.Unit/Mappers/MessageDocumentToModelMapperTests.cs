@@ -284,7 +284,7 @@ public class MessageDocumentToModelMapperTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Exactly(2));
     }
 
