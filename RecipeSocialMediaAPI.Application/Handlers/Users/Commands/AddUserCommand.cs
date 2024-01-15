@@ -13,7 +13,7 @@ using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
-public record AddUserCommand(NewUserContract NewUserContract) : IValidatableRequest<UserDTO>;
+public record AddUserCommand(NewUserContract Contract) : IValidatableRequest<UserDTO>;
 
 internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 {
@@ -34,27 +34,27 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
 
     public async Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if (_userQueryRepository.GetUserByHandler(request.NewUserContract.Handler) is not null)
+        if (_userQueryRepository.GetUserByHandler(request.Contract.Handler) is not null)
         {
-            throw new HandlerAlreadyInUseException(request.NewUserContract.Handler);
+            throw new HandlerAlreadyInUseException(request.Contract.Handler);
         }
 
-        if (_userQueryRepository.GetUserByUsername(request.NewUserContract.UserName) is not null)
+        if (_userQueryRepository.GetUserByUsername(request.Contract.UserName) is not null)
         {
-            throw new UsernameAlreadyInUseException(request.NewUserContract.UserName);
+            throw new UsernameAlreadyInUseException(request.Contract.UserName);
         }
 
-        if (_userQueryRepository.GetUserByEmail(request.NewUserContract.Email) is not null)
+        if (_userQueryRepository.GetUserByEmail(request.Contract.Email) is not null)
         {
-            throw new EmailAlreadyInUseException(request.NewUserContract.Email);
+            throw new EmailAlreadyInUseException(request.Contract.Email);
         }
 
-        var encryptedPassword = _cryptoService.Encrypt(request.NewUserContract.Password);
+        var encryptedPassword = _cryptoService.Encrypt(request.Contract.Password);
         IUserCredentials insertedUser = _userPersistenceRepository
             .CreateUser(
-                request.NewUserContract.Handler,
-                request.NewUserContract.UserName,
-                request.NewUserContract.Email,
+                request.Contract.Handler,
+                request.Contract.UserName,
+                request.Contract.Email,
                 encryptedPassword,
                 _dateTimeProvider.Now);
 
@@ -70,19 +70,19 @@ public class AddUserCommandValidator : AbstractValidator<AddUserCommand>
     {
         _userValidationService = userValidationService;
 
-        RuleFor(x => x.NewUserContract.Handler)
+        RuleFor(x => x.Contract.Handler)
             .NotEmpty()
             .Must(_userValidationService.ValidHandler);
 
-        RuleFor(x => x.NewUserContract.UserName)
+        RuleFor(x => x.Contract.UserName)
             .NotEmpty()
             .Must(_userValidationService.ValidUserName);
 
-        RuleFor(x => x.NewUserContract.Email)
+        RuleFor(x => x.Contract.Email)
             .NotEmpty()
             .Must(_userValidationService.ValidEmail);
 
-        RuleFor(x => x.NewUserContract.Password)
+        RuleFor(x => x.Contract.Password)
             .NotEmpty()
             .Must(_userValidationService.ValidPassword);
     }
