@@ -5,7 +5,7 @@ using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.TestHelpers;
 
-internal record TestFullMessage : TestMessage
+internal class TestFullMessage : TestMessage
 {
     public string Text { get; set; }
     public List<RecipeAggregate> Recipes { get; set; }

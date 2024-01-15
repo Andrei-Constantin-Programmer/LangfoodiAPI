@@ -83,11 +83,12 @@ public class ExceptionMappingMiddleware
 public record ValidationErrorResponse
 {
     public string Message { get; } = "Validation failed";
-    public IEnumerable<string> Errors { get; set; }
+    public IEnumerable<string> Errors { get; }
 
     public ValidationErrorResponse(ValidationException validationException)
         : this(validationException.Errors
-              .Select(error => $"Invalid {GetFormattedPropertyName(error.PropertyName)} with value '{error.AttemptedValue}'.").Distinct())
+              .Select(error => $"Invalid {GetFormattedPropertyName(error.PropertyName)} with value '{error.AttemptedValue}'.")
+              .Distinct())
     { }
 
     private ValidationErrorResponse(IEnumerable<string> errors)

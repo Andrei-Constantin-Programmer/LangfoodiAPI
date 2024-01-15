@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
-public abstract record Message
+public abstract class Message
 {
     public string Id { get; }
     public IUserAccount Sender { get; }

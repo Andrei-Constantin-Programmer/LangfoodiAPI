@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
-public record TextMessage : Message
+public class TextMessage : Message
 {
     private readonly IDateTimeProvider _dateTimeProvider;
 
