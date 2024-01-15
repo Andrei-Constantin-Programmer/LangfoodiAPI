@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
-public record RecipeMessage : Message
+public class RecipeMessage : Message
 {
     private readonly IDateTimeProvider _dateTimeProvider;
 

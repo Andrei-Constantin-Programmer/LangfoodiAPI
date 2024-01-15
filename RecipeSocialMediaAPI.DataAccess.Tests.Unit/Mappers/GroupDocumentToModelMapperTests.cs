@@ -61,13 +61,12 @@ public class GroupDocumentToModelMapperTests
             .Setup(repo => repo.GetUserById(testUser2.Account.Id))
             .Returns(testUser2);
 
-        GroupDocument testDocument = new()
-        {
-            Id = "1",
-            GroupName = "Test Name",
-            GroupDescription = "Test Desc",
-            UserIds = new() { testUser1.Account.Id, testUser2.Account.Id }
-        };
+        GroupDocument testDocument = new(
+            Id: "1",
+            GroupName: "Test Name",
+            GroupDescription: "Test Desc",
+            UserIds: new() { testUser1.Account.Id, testUser2.Account.Id }
+        );
 
         // When
         var result = _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
@@ -122,13 +121,13 @@ public class GroupDocumentToModelMapperTests
         string userId1 = testUser1?.Account.Id ?? "User1Id";
         string userId2 = testUser2?.Account.Id ?? "User2Id";
 
-        GroupDocument testDocument = new()
-        {
-            Id = "1",
-            GroupName = "Test Name",
-            GroupDescription = "Test Desc",
-            UserIds = new() { userId1, userId2 }
-        };
+        GroupDocument testDocument = new(
+            Id: "1",
+            GroupName: "Test Name",
+            GroupDescription: "Test Desc",
+            UserIds: new() { userId1, userId2 }
+        );
+
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(userId1))
             .Returns(testUser1);
@@ -149,14 +148,14 @@ public class GroupDocumentToModelMapperTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void MapGroupFromDocument_WhenListOfUsersIsEmpty_ShouldNotThrowUserDocumentNotFoundException()
     {
-        //given
-        GroupDocument testDocument = new()
-        {
-            Id = "1",
-            GroupName = "Test Name",
-            GroupDescription = "Test Desc",
-            UserIds = new()
-        };
+        // Given
+        GroupDocument testDocument = new(
+            Id: "1",
+            GroupName: "Test Name",
+            GroupDescription: "Test Desc",
+            UserIds: new()
+        );
+
         // When
         var result = _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
 

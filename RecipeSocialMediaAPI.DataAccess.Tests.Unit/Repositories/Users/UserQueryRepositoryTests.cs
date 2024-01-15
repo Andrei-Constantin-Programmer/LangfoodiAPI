@@ -69,7 +69,7 @@ public class UserQueryRepositoryTests
         List<UserDocument> existingUsers = new();
         for (int i = 0; i < numberOfUsers; i++)
         {
-            existingUsers.Add(new UserDocument { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" });
+            existingUsers.Add(new UserDocument("TestHandler", "TestName", "TestEmail", "TestPassword"));
         }
 
         _mongoCollectionWrapperMock
@@ -111,7 +111,7 @@ public class UserQueryRepositoryTests
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
-        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -147,7 +147,7 @@ public class UserQueryRepositoryTests
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
-        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -214,7 +214,7 @@ public class UserQueryRepositoryTests
         // Given
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -251,7 +251,7 @@ public class UserQueryRepositoryTests
         // Given
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = email, Password = "TestPassword" };
+        UserDocument testDocument = new("TestHandler", "TestName", email, "TestPassword");
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -318,7 +318,7 @@ public class UserQueryRepositoryTests
         // Given
         string username = "WrongUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
-        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -354,7 +354,7 @@ public class UserQueryRepositoryTests
         // Given
         string username = "TestUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == username;
-        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()

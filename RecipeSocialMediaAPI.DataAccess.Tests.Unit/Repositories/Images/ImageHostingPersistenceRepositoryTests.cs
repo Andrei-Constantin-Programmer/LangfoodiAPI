@@ -21,12 +21,8 @@ public class ImageHostingPersistenceRepositoryTests
     private readonly ImageHostingPersistenceRepository _imageHostingPersistenceRepositorySUT;
 
     private const string TEST_PUBLIC_ID = "354234535sgf45";
-    private readonly CloudinarySignatureDTO _signatureTestData = new()
-    {
-        Signature = "signature1",
-        TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
-            .ToUnixTimeSeconds()
-    };
+    private readonly CloudinarySignatureDTO _signatureTestData = new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
+
     private readonly List<string> _testPublicIds = new() { "id1", "id2", "id3" };
 
     public ImageHostingPersistenceRepositoryTests()
@@ -122,7 +118,7 @@ public class ImageHostingPersistenceRepositoryTests
                    It.IsAny<EventId>(),
                    It.IsAny<It.IsAnyType>(),
                    testException,
-                   It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                   It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                Times.Once());
     }
 
@@ -195,7 +191,7 @@ public class ImageHostingPersistenceRepositoryTests
                    It.IsAny<EventId>(),
                    It.IsAny<It.IsAnyType>(),
                    testException,
-                   It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                   It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                Times.Once());
     }
 }

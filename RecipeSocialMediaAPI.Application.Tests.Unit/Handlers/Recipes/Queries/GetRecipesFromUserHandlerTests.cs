@@ -66,15 +66,14 @@ public class GetRecipesFromUserHandlerTests
             _testDate
         );
 
-        RecipeDTO expectedResult = new()
-        {
-            Id = testRecipeAggregate.Id,
-            Title = testRecipeAggregate.Title,
-            Tags = testRecipeAggregate.Tags,
-            Description = testRecipeAggregate.Description,
-            ChefUsername = testRecipeAggregate.Chef.UserName,
-            CreationDate = testRecipeAggregate.CreationDate,
-        };
+        RecipeDTO expectedResult = new(
+            Id: testRecipeAggregate.Id,
+            Title: testRecipeAggregate.Title,
+            Tags: testRecipeAggregate.Tags,
+            Description: testRecipeAggregate.Description,
+            ChefUsername: testRecipeAggregate.Chef.UserName,
+            CreationDate: testRecipeAggregate.CreationDate
+        );
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipesByChefName(It.IsAny<string>()))

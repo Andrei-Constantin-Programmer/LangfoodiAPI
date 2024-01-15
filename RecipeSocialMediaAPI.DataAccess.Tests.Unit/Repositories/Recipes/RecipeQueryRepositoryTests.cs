@@ -73,19 +73,18 @@ public class RecipeQueryRepositoryTests
         string id = "1";
         string chefId = "50";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
-        RecipeDocument testDocument = new()
-        {
-            Id = id,
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId,
-            ThumbnailId = "public_id_1"
-        };
+        RecipeDocument testDocument = new(
+            Id: id,
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId,
+            ThumbnailId: "public_id_1"
+        );
         IUserCredentials testChef = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -137,19 +136,19 @@ public class RecipeQueryRepositoryTests
         string id = "1";
         string chefId = "50";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
-        RecipeDocument testDocument = new()
-        {
-            Id = id,
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId,
-            ThumbnailId = "public_id_1"
-        };
+        RecipeDocument testDocument = new(
+            Id: id,
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId,
+            ThumbnailId: "public_id_1"
+        );
+
         IUserAccount testChef = new TestUserAccount()
         {
             Id = chefId, 
@@ -188,7 +187,7 @@ public class RecipeQueryRepositoryTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
     
@@ -201,19 +200,19 @@ public class RecipeQueryRepositoryTests
         string id = "1";
         string chefId = "50";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
-        RecipeDocument testDocument = new()
-        {
-            Id = id,
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId,
-            ThumbnailId = "public_id_1"
-        };
+        RecipeDocument testDocument = new(
+            Id: id,
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId,
+            ThumbnailId: "public_id_1"
+        );
+
         IUserCredentials testChef = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -262,7 +261,7 @@ public class RecipeQueryRepositoryTests
                     It.IsAny<EventId>(),
                     It.IsAny<It.IsAnyType>(),
                     testException,
-                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once());
     }
 
@@ -327,21 +326,20 @@ public class RecipeQueryRepositoryTests
         };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        RecipeDocument chefsRecipe = new()
-        {
-            Id = "10",
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId
-        };
+        RecipeDocument chefsRecipe = new(
+            Id: "10",
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId
+        );
 
         RecipeAggregate expectedResult = new(
-            chefsRecipe.Id,
+            chefsRecipe.Id!,
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
@@ -380,18 +378,17 @@ public class RecipeQueryRepositoryTests
 
         List<RecipeDocument> testDocuments = new()
         {
-            new()
-            {
-                Id = "1",
-                Title = "TestTitle",
-                Ingredients = new List<(string, double, string)>(),
-                Steps = new List<(string, string?)>(),
-                Description = "TestShortDesc",
-                CreationDate = _testDate,
-                LastUpdatedDate = _testDate,
-                Tags = new List<string>(),
-                ChefId = chefId
-            }
+            new(
+                Id: "1",
+                Title: "TestTitle",
+                Ingredients: new List<(string, double, string)>(),
+                Steps: new List<(string, string?)>(),
+                Description: "TestShortDesc",
+                CreationDate: _testDate,
+                LastUpdatedDate: _testDate,
+                Tags: new List<string>(),
+                ChefId: chefId
+            )
         };
 
         _recipeCollectionMock
@@ -430,21 +427,20 @@ public class RecipeQueryRepositoryTests
         };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        RecipeDocument chefsRecipe = new()
-        {
-            Id = "10",
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId
-        };
+        RecipeDocument chefsRecipe = new(
+            Id: "10",
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId
+        );
 
         RecipeAggregate expectedResult = new(
-            chefsRecipe.Id,
+            chefsRecipe.Id!,
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
@@ -476,7 +472,7 @@ public class RecipeQueryRepositoryTests
                     It.IsAny<EventId>(),
                     It.IsAny<It.IsAnyType>(),
                     testException,
-                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once());
     }
 
@@ -502,21 +498,20 @@ public class RecipeQueryRepositoryTests
         };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        RecipeDocument chefsRecipe = new()
-        {
-            Id = "10",
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId
-        };
+        RecipeDocument chefsRecipe = new(
+            Id: "10",
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId
+        );
 
         RecipeAggregate expectedResult = new(
-            chefsRecipe.Id,
+            chefsRecipe.Id!,
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
@@ -597,18 +592,17 @@ public class RecipeQueryRepositoryTests
 
         List<RecipeDocument> testDocuments = new()
         {
-            new()
-            {
-                Id = "1",
-                Title = "TestTitle",
-                Ingredients = new List<(string, double, string)>(),
-                Steps = new List<(string, string?)>(),
-                Description = "TestShortDesc",
-                CreationDate = _testDate,
-                LastUpdatedDate = _testDate,
-                Tags = new List<string>(),
-                ChefId = chefId
-            }
+            new(
+                Id: "1",
+                Title: "TestTitle",
+                Ingredients: new List<(string, double, string)>(),
+                Steps: new List<(string, string?)>(),
+                Description: "TestShortDesc",
+                CreationDate: _testDate,
+                LastUpdatedDate: _testDate,
+                Tags: new List<string>(),
+                ChefId: chefId
+            )
         };
 
         _recipeCollectionMock
@@ -648,22 +642,21 @@ public class RecipeQueryRepositoryTests
         };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        RecipeDocument chefsRecipe = new()
-        {
-            Id = "10",
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId,
-            ThumbnailId = "public_id_1"
-        };
+        RecipeDocument chefsRecipe = new(
+            Id: "10",
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId,
+            ThumbnailId: "public_id_1"
+        );
 
         RecipeAggregate expectedResult = new(
-            chefsRecipe.Id,
+            chefsRecipe.Id!,
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
@@ -697,7 +690,7 @@ public class RecipeQueryRepositoryTests
                     It.IsAny<EventId>(),
                     It.IsAny<It.IsAnyType>(),
                     testException,
-                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once());
     }
 
@@ -737,22 +730,21 @@ public class RecipeQueryRepositoryTests
             
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        RecipeDocument chefsRecipe = new()
-        {
-            Id = "10",
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId,
-            ThumbnailId = "public_id_1"
-        };
+        RecipeDocument chefsRecipe = new(
+            Id: "10",
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId,
+            ThumbnailId: "public_id_1"
+        );
 
         RecipeAggregate expectedResult = new(
-            chefsRecipe.Id,
+            chefsRecipe.Id!,
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
@@ -826,21 +818,20 @@ public class RecipeQueryRepositoryTests
         };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        RecipeDocument chefsRecipe = new()
-        {
-            Id = "10",
-            Title = "TestTitle",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = "TestShortDesc",
-            CreationDate = _testDate,
-            LastUpdatedDate = _testDate,
-            Tags = new List<string>(),
-            ChefId = chefId
-        };
+        RecipeDocument chefsRecipe = new(
+            Id: "10",
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId
+        );
 
         RecipeAggregate expectedResult = new(
-            chefsRecipe.Id,
+            chefsRecipe.Id!,
             chefsRecipe.Title,
             new Recipe(new(), new()),
             chefsRecipe.Description,
@@ -869,7 +860,7 @@ public class RecipeQueryRepositoryTests
                     It.IsAny<EventId>(),
                     It.IsAny<It.IsAnyType>(),
                     testException,
-                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once());
     }
 }

@@ -74,13 +74,13 @@ public class MessageQueryRepositoryTests
         string messageId = "1";
         string senderId = "50";
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new("Text"),
-            SenderId = "1",
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new("Text"),
+            SenderId: "1",
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
+
         IUserAccount testSender = new TestUserAccount()
         {
             Id = senderId,
@@ -90,7 +90,7 @@ public class MessageQueryRepositoryTests
         };
 
         TestMessage testMessage = new(
-            testDocument.Id,
+            testDocument.Id!,
             testSender,
             testDocument.SentDate,
             null
@@ -114,7 +114,7 @@ public class MessageQueryRepositoryTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 
@@ -128,13 +128,12 @@ public class MessageQueryRepositoryTests
         string senderId = "50";
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new("Text"),
-            SenderId = senderId,
-            SentDate = new (2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new("Text"),
+            SenderId: senderId,
+            SentDate: new (2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserCredentials testSender = new()
         {
@@ -150,7 +149,7 @@ public class MessageQueryRepositoryTests
         };
     
         TestTextMessage textMessage = new(
-            testDocument.Id, 
+            testDocument.Id!,
             testSender.Account, 
             testDocument.MessageContent.Text!, 
             testDocument.SentDate, 
@@ -191,14 +190,13 @@ public class MessageQueryRepositoryTests
             "Image2"
         };
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new(hasText ? "Text" : null, null, imageURLs),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
-
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(hasText ? "Text" : null, null, imageURLs),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
+        
         TestUserCredentials testSender = new()
         {
             Account = new TestUserAccount()
@@ -213,8 +211,8 @@ public class MessageQueryRepositoryTests
         };
 
         TestImageMessage imageMessage = new(
-            testDocument.Id, 
-            testSender.Account, 
+            testDocument.Id!,
+            testSender.Account,
             testDocument.MessageContent.Text!, 
             testDocument.MessageContent.ImageURLs!, 
             testDocument.SentDate, 
@@ -255,13 +253,12 @@ public class MessageQueryRepositoryTests
             "id2"
         };
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new(hasText ? "Text" : null, recipeIds, null),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(hasText ? "Text" : null, recipeIds, null),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserCredentials testSender = new()
         {
@@ -297,7 +294,7 @@ public class MessageQueryRepositoryTests
         };
 
         TestRecipeMessage recipeMessage = new(
-            testDocument.Id, 
+            testDocument.Id!, 
             testSender.Account, 
             testDocument.MessageContent.Text!,
             recipes,
@@ -339,13 +336,12 @@ public class MessageQueryRepositoryTests
             "inexistent2"
         };
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new(null, recipeIds, null),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(null, recipeIds, null),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserCredentials testSender = new()
         {
@@ -381,7 +377,7 @@ public class MessageQueryRepositoryTests
         };
 
         TestRecipeMessage recipeMessage = new(
-            testDocument.Id,
+            testDocument.Id!,
             testSender.Account,
             testDocument.MessageContent.Text!,
             recipes,
@@ -420,13 +416,12 @@ public class MessageQueryRepositoryTests
         string senderId = "50";
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new("Text"),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new("Text"),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserCredentials testSender = new()
         {
@@ -448,7 +443,7 @@ public class MessageQueryRepositoryTests
             AccountCreationDate = new(2022, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
 
-        TestMessage testMessage = GenerateReplyTree(testDocument.Id, testSender.Account, innerMessageSender, testDocument.SentDate, nestingLevel);
+        TestMessage testMessage = GenerateReplyTree(testDocument.Id!, testSender.Account, innerMessageSender, testDocument.SentDate, nestingLevel);
             
         _mapperMock
             .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
@@ -480,14 +475,13 @@ public class MessageQueryRepositoryTests
             Expression<Func<MessageDocument, bool>> innerExpression = x => x.Id == id;
             _messageCollectionMock
                 .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(innerExpression, expr))))
-                .Returns(new MessageDocument()
-                {
-                    Id = newMessage.Id,
-                    SenderId = newMessage.Sender.Id,
-                    MessageContent = new(),
-                    SentDate = newMessage.SentDate,
-                    MessageRepliedToId = newMessage.RepliedToMessage?.Id
-                });
+                .Returns(new MessageDocument(
+                    Id: newMessage.Id,
+                    SenderId: newMessage.Sender.Id,
+                    MessageContent: new(),
+                    SentDate: newMessage.SentDate,
+                    MessageRepliedToId: newMessage.RepliedToMessage?.Id
+                ));
 
             return newMessage;
         }
@@ -506,16 +500,15 @@ public class MessageQueryRepositoryTests
         string senderId = "50";
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new(
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(
                 isTextNull ? null : "Test Text",
                 isRecipeListNull ? null : new List<string>(),
                 isImageListNull ? null : new List<string>()),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserCredentials testSender = new()
         {
@@ -531,7 +524,7 @@ public class MessageQueryRepositoryTests
         };
 
         TestTextMessage textMessage = new(
-            testDocument.Id,
+            testDocument.Id!,
             testSender.Account,
             testDocument.MessageContent.Text!,
             testDocument.SentDate,
@@ -579,7 +572,7 @@ public class MessageQueryRepositoryTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 testException,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 }

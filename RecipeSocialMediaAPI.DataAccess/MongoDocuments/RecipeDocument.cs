@@ -3,19 +3,19 @@
 namespace RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 
 [MongoCollection("Recipe")]
-public record RecipeDocument : MongoDocument
-{
-    required public string Title;
-    required public IList<(string Name, double Quantity, string UnitOfMeasurement)> Ingredients;
-    required public IList<(string Text, string? ImageLink)> Steps;
-    required public string Description;
-    required public string ChefId;
-    public string? ThumbnailId;
-    public int? NumberOfServings;
-    public int? CookingTimeInSeconds;
-    public int? KiloCalories;
-    required public DateTimeOffset CreationDate;
-    required public DateTimeOffset LastUpdatedDate;
-    required public IList<string> Tags;
-    public (double Quantity, string UnitOfMeasurement)? ServingSize;
-}
+public record RecipeDocument(
+    string Title,
+    IList<(string Name, double Quantity, string UnitOfMeasurement)> Ingredients,
+    IList<(string Text, string? ImageLink)> Steps,
+    string Description,
+    string ChefId,
+    DateTimeOffset CreationDate,
+    DateTimeOffset LastUpdatedDate,
+    IList<string> Tags,
+    string? ThumbnailId = null,
+    int? NumberOfServings = null,
+    int? CookingTimeInSeconds = null,
+    int? KiloCalories = null,
+    (double Quantity, string UnitOfMeasurement)? ServingSize = null,
+    string? Id = null
+) : MongoDocument(Id);

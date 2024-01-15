@@ -11,12 +11,7 @@ using System.Net.Http.Json;
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 public class ImageEndpointsTests : EndpointTestBase
 {
-    private readonly CloudinarySignatureDTO _signatureTestData = new()
-    {
-        Signature = "signature1",
-        TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
-            .ToUnixTimeSeconds()
-    };
+    private readonly CloudinarySignatureDTO _signatureTestData = new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
 
     public ImageEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) {}
 
@@ -39,23 +34,6 @@ public class ImageEndpointsTests : EndpointTestBase
 
         generatedSignature.Signature.Should().Be(_signatureTestData.Signature);
         generatedSignature.TimeStamp.Should().Be(_signatureTestData.TimeStamp);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_SignatureNotGenerated_ReturnNotOk()
-    {
-        // Given
-        _cloudinarySignatureServiceMock
-            .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), It.IsAny<string>()))
-            .Returns((CloudinarySignatureDTO?)null);
-
-        // When
-        var result = await _client.PostAsync("image/get/cloudinary-signature", null);
-
-        // Then
-        result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
     }
 
     [Fact]

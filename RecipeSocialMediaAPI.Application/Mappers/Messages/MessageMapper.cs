@@ -9,25 +9,20 @@ public class MessageMapper : IMessageMapper
 {
     public MessageDTO MapMessageToMessageDTO(Message message)
     {
-        MessageDTO messageDTO = new()
-        {
-            Id = message.Id,
-            SenderId = message.Sender.Id,
-            SentDate = message.SentDate,
-            UpdatedDate = message.UpdatedDate,
-            RepliedToMessageId = message.RepliedToMessage?.Id
-        };
-
-        HydrateMessageDTOWithContent(messageDTO, message);
+        MessageDTO messageDTO = new(
+            Id: message.Id,
+            SenderId: message.Sender.Id,
+            SentDate: message.SentDate,
+            UpdatedDate: message.UpdatedDate,
+            RepliedToMessageId: message.RepliedToMessage?.Id
+        );
         
-        return messageDTO;
+        return GetMessageDTOHydratedWithContent(messageDTO, message);
     }
 
-    private static void HydrateMessageDTOWithContent(MessageDTO messageDTO, Message message)
+    private static MessageDTO GetMessageDTOHydratedWithContent(MessageDTO messageDTO, Message message)
     {
-        (messageDTO.TextContent,
-            messageDTO.RecipeIds,
-            messageDTO.ImageURLs) = message switch
+        var (text, recipeIds, imageUrls) = message switch
             {
                 TextMessage textMessage => (
                     textMessage.TextContent,
@@ -44,5 +39,7 @@ public class MessageMapper : IMessageMapper
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
             };
+
+        return messageDTO with { TextContent = text, RecipeIds = recipeIds, ImageURLs = imageUrls };
     }
 }

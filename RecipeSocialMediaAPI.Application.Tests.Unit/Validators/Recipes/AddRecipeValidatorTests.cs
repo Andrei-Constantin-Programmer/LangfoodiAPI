@@ -24,31 +24,19 @@ public class AddRecipeValidatorTests
     public void AddRecipeValidation_WhenValidRecipe_DontThrow()
     {
         // Given
-        NewRecipeContract testContract = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "1",
-            Tags = new HashSet<string>(),
-            NumberOfServings = 1,
-            KiloCalories = 2300,
-            CookingTime = 500,
-            Ingredients = new List<IngredientDTO>() {
-                new()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
-            },
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+        NewRecipeContract testContract = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "1",
+            Tags: new HashSet<string>(),
+            NumberOfServings: 1,
+            KiloCalories: 2300,
+            CookingTime: 500,
+            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>()
+        );
 
-        testContract.RecipeSteps.Push(new RecipeStepDTO()
-        {
-            Text = "step",
-            ImageUrl = "url"
-        });
+        testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
 
         AddRecipeCommand testCommand = new(testContract);
 
@@ -70,18 +58,17 @@ public class AddRecipeValidatorTests
     public void AddRecipeValidation_WhenInvalidRecipe_ThrowValidationException()
     {
         // Given
-        NewRecipeContract testContract = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "1",
-            Tags = new HashSet<string>(),
-            NumberOfServings = -1,
-            CookingTime = -1,
-            KiloCalories = -1,
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+        NewRecipeContract testContract = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "1",
+            Tags: new HashSet<string>(),
+            NumberOfServings: -1,
+            CookingTime: -1,
+            KiloCalories: -1,
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>()
+        );
 
         AddRecipeCommand testCommand = new(testContract);
 
@@ -108,15 +95,14 @@ public class AddRecipeValidatorTests
     public void AddRecipeValidation_WhenRecipeWithInvalidOptionalProperties_ThrowValidationException()
     {
         // Given
-        NewRecipeContract testContract = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "1",
-            Tags = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+        NewRecipeContract testContract = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "1",
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>()
+        );
 
         AddRecipeCommand testCommand = new(testContract);
 

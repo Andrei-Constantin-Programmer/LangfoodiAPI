@@ -20,12 +20,7 @@ public class CloudinaryWebClientTests
     private const string TEST_API_KEY = "apiKey";
     private const string TEST_API_SECRET = "apiSecret";
     private readonly List<string> _testPublicIds = new() { "id1", "id2", "id3" };
-    private readonly CloudinarySignatureDTO _signatureTestData = new()
-    {
-        Signature = "signature1",
-        TimeStamp = new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero)
-            .ToUnixTimeSeconds()
-    };
+    private readonly CloudinarySignatureDTO _signatureTestData = new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
 
     public CloudinaryWebClientTests()
     {

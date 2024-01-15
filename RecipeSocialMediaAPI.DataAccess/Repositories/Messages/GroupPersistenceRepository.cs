@@ -20,12 +20,7 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
 
     public Group CreateGroup(string groupName, string groupDescription, List<IUserAccount> users)
     {
-        GroupDocument groupDocument = _groupCollection.Insert(new()
-        {
-            GroupName = groupName,
-            GroupDescription = groupDescription,
-            UserIds = users.Select(user => user.Id).ToList()
-        });
+        GroupDocument groupDocument = _groupCollection.Insert(new(groupName, groupDescription, users.Select(user => user.Id).ToList()));
 
         return _mapper.MapGroupFromDocument(groupDocument);
     }
@@ -33,13 +28,7 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
     public bool UpdateGroup(Group group)
     {
         return _groupCollection.UpdateRecord(
-            new GroupDocument()
-            {
-                Id = group.GroupId,
-                GroupName = group.GroupName,
-                GroupDescription = group.GroupDescription,
-                UserIds = group.Users.Select(user => user.Id).ToList()
-            },
+            new GroupDocument(group.GroupName, group.GroupDescription, group.Users.Select(user => user.Id).ToList(), group.GroupId),
             groupDoc => groupDoc.Id == group.GroupId);
     }
 
