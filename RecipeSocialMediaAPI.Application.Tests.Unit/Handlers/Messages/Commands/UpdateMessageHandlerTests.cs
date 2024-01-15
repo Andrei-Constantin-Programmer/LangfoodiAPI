@@ -52,7 +52,7 @@ public class UpdateMessageHandlerTests
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns((Message?)null);
 
         // When
@@ -85,7 +85,7 @@ public class UpdateMessageHandlerTests
             null);
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
 
         // When
@@ -115,7 +115,7 @@ public class UpdateMessageHandlerTests
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -130,7 +130,7 @@ public class UpdateMessageHandlerTests
             .Verify(repo => repo.UpdateMessage(It.Is<TextMessage>(message =>
                     message.Id == testMessage.Id
                     && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.TextContent == testCommand.Contract.Text
                     && message.SentDate == testMessage.SentDate
                     && message.UpdatedDate == _dateTimeProviderMock.Object.Now
                 )), Times.Once);
@@ -154,7 +154,7 @@ public class UpdateMessageHandlerTests
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -185,7 +185,7 @@ public class UpdateMessageHandlerTests
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -220,7 +220,7 @@ public class UpdateMessageHandlerTests
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -252,10 +252,10 @@ public class UpdateMessageHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, testCommand.UpdateMessageContract.Text!, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, testCommand.Contract.Text!, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -292,7 +292,7 @@ public class UpdateMessageHandlerTests
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -329,7 +329,7 @@ public class UpdateMessageHandlerTests
         var testMessage = (ImageMessage)_messageFactory.CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -344,7 +344,7 @@ public class UpdateMessageHandlerTests
             .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
                     message.Id == testMessage.Id
                     && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.TextContent == testCommand.Contract.Text
                     && message.SentDate == testMessage.SentDate
                     && message.UpdatedDate == _dateTimeProviderMock.Object.Now
                 )), Times.Once);
@@ -372,7 +372,7 @@ public class UpdateMessageHandlerTests
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -387,10 +387,10 @@ public class UpdateMessageHandlerTests
             .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
                     message.Id == testMessage.Id
                     && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.TextContent == testCommand.Contract.Text
                     && message.SentDate == testMessage.SentDate
                     && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                    && message.ImageURLs.Contains(testCommand.UpdateMessageContract.NewImageURLs!.First())
+                    && message.ImageURLs.Contains(testCommand.Contract.NewImageURLs!.First())
                 )), Times.Once);
     }
 
@@ -416,7 +416,7 @@ public class UpdateMessageHandlerTests
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -449,7 +449,7 @@ public class UpdateMessageHandlerTests
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -486,7 +486,7 @@ public class UpdateMessageHandlerTests
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -533,7 +533,7 @@ public class UpdateMessageHandlerTests
             .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -548,7 +548,7 @@ public class UpdateMessageHandlerTests
             .Verify(repo => repo.UpdateMessage(It.Is<RecipeMessage>(message =>
                     message.Id == testMessage.Id
                     && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.TextContent == testCommand.Contract.Text
                     && message.SentDate == testMessage.SentDate
                     && message.UpdatedDate == _dateTimeProviderMock.Object.Now
                 )), Times.Once);
@@ -594,7 +594,7 @@ public class UpdateMessageHandlerTests
             .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -612,7 +612,7 @@ public class UpdateMessageHandlerTests
             .Verify(repo => repo.UpdateMessage(It.Is<RecipeMessage>(message =>
                     message.Id == testMessage.Id
                     && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.UpdateMessageContract.Text
+                    && message.TextContent == testCommand.Contract.Text
                     && message.SentDate == testMessage.SentDate
                     && message.UpdatedDate == _dateTimeProviderMock.Object.Now
                     && message.Recipes.Contains(newRecipe)
@@ -650,7 +650,7 @@ public class UpdateMessageHandlerTests
             .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -707,7 +707,7 @@ public class UpdateMessageHandlerTests
             .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -761,7 +761,7 @@ public class UpdateMessageHandlerTests
             .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))
@@ -810,7 +810,7 @@ public class UpdateMessageHandlerTests
             .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.UpdateMessageContract.Id))
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.UpdateMessage(testMessage))

@@ -51,8 +51,8 @@ public class UpdateGroupHandlerTests
         _groupPersistenceRepositoryMock
             .Setup(repo => repo.UpdateGroup(It.Is<Group>(
                 group => group.GroupId == existingGroup.GroupId
-                      && group.GroupName == command.UpdateGroupContract.GroupName
-                      && group.GroupDescription == command.UpdateGroupContract.GroupDescription
+                      && group.GroupName == command.Contract.GroupName
+                      && group.GroupDescription == command.Contract.GroupDescription
                       && !group.Users.Any())))
             .Returns(true);
 
@@ -84,8 +84,8 @@ public class UpdateGroupHandlerTests
         _groupPersistenceRepositoryMock
             .Setup(repo => repo.UpdateGroup(It.Is<Group>(
                 group => group.GroupId == existingGroup.GroupId
-                      && group.GroupName == command.UpdateGroupContract.GroupName
-                      && group.GroupDescription == command.UpdateGroupContract.GroupDescription
+                      && group.GroupName == command.Contract.GroupName
+                      && group.GroupDescription == command.Contract.GroupDescription
                       && !group.Users.Any())))
             .Returns(false);
 
@@ -461,7 +461,7 @@ public class UpdateGroupHandlerTests
         var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await testAction.Should().ThrowAsync<GroupNotFoundException>().WithMessage($"*{command.UpdateGroupContract.GroupId}*");
+        await testAction.Should().ThrowAsync<GroupNotFoundException>().WithMessage($"*{command.Contract.GroupId}*");
     }
 
 
