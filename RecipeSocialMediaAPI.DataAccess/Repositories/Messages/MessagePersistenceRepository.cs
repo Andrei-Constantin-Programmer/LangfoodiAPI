@@ -23,13 +23,12 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
 
     public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo)
     {
-        MessageDocument messageDocument = _messageCollection.Insert(new MessageDocument()
-        {
-            SenderId = sender.Id,
-            MessageContent = new(text, recipeIds, imageURLs),
-            SentDate = sentDate,
-            MessageRepliedToId = messageRepliedTo?.Id
-        });
+        MessageDocument messageDocument = _messageCollection.Insert(new MessageDocument(
+            SenderId: sender.Id,
+            MessageContent: new(text, recipeIds, imageURLs),
+            SentDate: sentDate,
+            MessageRepliedToId: messageRepliedTo?.Id
+        ));
 
         return _mapper.MapMessageFromDocument(messageDocument, sender, messageRepliedTo);
     }
@@ -38,11 +37,10 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
     {
         try
         {
-            return _messageCollection.UpdateRecord(new MessageDocument()
-            {
-                Id = message.Id,
-                SenderId = message.Sender.Id,
-                MessageContent = message switch
+            return _messageCollection.UpdateRecord(new MessageDocument(
+                Id: message.Id,
+                SenderId: message.Sender.Id,
+                MessageContent: message switch
                 {
                     TextMessage textMessage => new(textMessage.TextContent, null, null),
                     ImageMessage imageMessage => new(imageMessage.TextContent, null, imageMessage.ImageURLs.ToList()),
@@ -50,10 +48,10 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
 
                     _ => throw new Exception($"Unable to update message with id {message.Id}")
                 },
-                SentDate = message.SentDate,
-                LastUpdatedDate = message.UpdatedDate,
-                MessageRepliedToId = message.RepliedToMessage?.Id
-            },
+                SentDate: message.SentDate,
+                LastUpdatedDate: message.UpdatedDate,
+                MessageRepliedToId: message.RepliedToMessage?.Id
+            ),
             doc => doc.Id == message.Id);
         }
         catch (Exception ex)

@@ -59,12 +59,7 @@ public class ConnectionQueryRepositoryTests
             doc => (doc.AccountId1 == testAccount1.Id && doc.AccountId2 == testAccount2.Id)
                 || (doc.AccountId1 == testAccount2.Id && doc.AccountId2 == testAccount1.Id);
 
-        ConnectionDocument testDocument = new()
-        {
-            AccountId1 = testAccount1.Id,
-            AccountId2 = testAccount2.Id,
-            ConnectionStatus = "Pending"
-        };
+        ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
@@ -184,12 +179,7 @@ public class ConnectionQueryRepositoryTests
             doc => (doc.AccountId1 == testAccount1.Id && doc.AccountId2 == testAccount2.Id)
                 || (doc.AccountId1 == testAccount2.Id && doc.AccountId2 == testAccount1.Id);
 
-        ConnectionDocument testDocument = new()
-        {
-            AccountId1 = testAccount1.Id,
-            AccountId2 = testAccount2.Id,
-            ConnectionStatus = "Pending"
-        };
+        ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
@@ -239,19 +229,10 @@ public class ConnectionQueryRepositoryTests
 
         List<ConnectionDocument> testDocuments = new()
         {
-            new()
-            {
-                AccountId1 = testAccount.Id,
-                AccountId2 = testAccount2.Id,
-                ConnectionStatus = "Pending"
-            },
-            new()
-            {
-                AccountId1 = testAccount3.Id,
-                AccountId2 = testAccount.Id,
-                ConnectionStatus = "Favourite"
-            }
+            new(testAccount.Id, testAccount2.Id, "Pending"),
+            new(testAccount3.Id, testAccount.Id, "Favourite")
         };
+
         List<Connection> testConnections = new()
         {
             new(testAccount, testAccount2, ConnectionStatus.Pending),
@@ -328,12 +309,8 @@ public class ConnectionQueryRepositoryTests
         Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount.Id
                                                                              || x.AccountId2 == testAccount.Id;
 
-        ConnectionDocument testDocument = new()
-        {
-            AccountId1 = testAccount.Id,
-            AccountId2 = testAccount2.Id,
-            ConnectionStatus = "Pending"
-        };
+        ConnectionDocument testDocument = new(testAccount.Id, testAccount2.Id, "Pending");
+
         _connectionCollectionMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(new List<ConnectionDocument>() { testDocument });

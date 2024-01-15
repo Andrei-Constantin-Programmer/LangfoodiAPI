@@ -2,8 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Application.Contracts.Recipes;
 
-public record UpdateRecipeContract
-(
+public record UpdateRecipeContract(
     string Id,
     string Title,
     string Description,

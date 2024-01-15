@@ -72,20 +72,19 @@ public class GroupQueryRepositoryTests
             .Select(user => user.Id)
             .ToList();
 
-        GroupDocument groupDoc = new()
-        {
-            Id = "1",
-            GroupName = "Group",
-            GroupDescription = "Group Description",
-            UserIds = userIds
-        };
+        GroupDocument groupDoc = new(
+            Id: "1",
+            GroupName: "Group",
+            GroupDescription: "Group Description",
+            UserIds: userIds
+        );
 
         Expression<Func<GroupDocument, bool>> expectedExpression = doc => doc.Id == groupDoc.Id;
         _groupCollectionMock
             .Setup(collection => collection.Find(It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(groupDoc);
         
-        Group expectedGroup = new(groupDoc.Id, groupDoc.GroupName, groupDoc.GroupDescription, users);
+        Group expectedGroup = new(groupDoc.Id!, groupDoc.GroupName, groupDoc.GroupDescription, users);
 
         _groupDocumentToModelMapperMock
             .Setup(mapper => mapper.MapGroupFromDocument(groupDoc))
@@ -191,28 +190,26 @@ public class GroupQueryRepositoryTests
             .Select(user => user.Id)
             .ToList();
 
-        GroupDocument groupDoc1 = new()
-        {
-            Id = "1",
-            GroupName = "Group 1",
-            GroupDescription = "Group Description 1",
-            UserIds = userIds.Take(3).ToList()
-        };
+        GroupDocument groupDoc1 = new(
+            Id: "1",
+            GroupName: "Group 1",
+            GroupDescription: "Group Description 1",
+            UserIds: userIds.Take(3).ToList()
+        );
 
-        GroupDocument groupDoc2 = new()
-        {
-            Id = "2",
-            GroupName = "Group 2",
-            GroupDescription = "Group Description 2",
-            UserIds = userIds.Take(1).Concat(userIds.Skip(3)).ToList()
-        };
+        GroupDocument groupDoc2 = new(
+            Id: "2",
+            GroupName: "Group 2",
+            GroupDescription: "Group Description 2",
+            UserIds: userIds.Take(1).Concat(userIds.Skip(3)).ToList()
+        );
 
         _groupCollectionMock
             .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
             .Returns(new List<GroupDocument>() { groupDoc1, groupDoc2 });
 
-        Group group1 = new(groupDoc1.Id, groupDoc1.GroupName, groupDoc1.GroupDescription, users.Take(3));
-        Group group2 = new(groupDoc2.Id, groupDoc2.GroupName, groupDoc2.GroupDescription, users.Take(1).Concat(users.Skip(3)).ToList());
+        Group group1 = new(groupDoc1.Id!, groupDoc1.GroupName, groupDoc1.GroupDescription, users.Take(3));
+        Group group2 = new(groupDoc2.Id!, groupDoc2.GroupName, groupDoc2.GroupDescription, users.Take(1).Concat(users.Skip(3)).ToList());
 
         _groupDocumentToModelMapperMock
             .Setup(mapper => mapper.MapGroupFromDocument(groupDoc1))

@@ -27,22 +27,20 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         ConnectionDocument connectionDocument = GetConnectionDocument(connection)
             ?? throw new ConnectionDocumentNotFoundException(connection.Account1, connection.Account2);
 
-        ConversationDocument conversationDocument = _conversationCollection.Insert(new()
-        {
-            ConnectionId = connectionDocument.Id,
-            Messages = new()
-        });
+        ConversationDocument conversationDocument = _conversationCollection.Insert(new(
+            ConnectionId: connectionDocument.Id,
+            Messages: new()
+        ));
 
         return _mapper.MapConversationFromDocument(conversationDocument, connection, null, new());
     }
 
     public Conversation CreateGroupConversation(Group group)
     {
-        ConversationDocument conversationDocument = _conversationCollection.Insert(new()
-        {
-            GroupId = group.GroupId,
-            Messages = new()
-        });
+        ConversationDocument conversationDocument = _conversationCollection.Insert(new(
+            GroupId: group.GroupId,
+            Messages: new()
+        ));
 
         return _mapper.MapConversationFromDocument(conversationDocument, null, group, new());
     }
@@ -64,13 +62,12 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
             _ => throw new InvalidConversationException($"Could not update conversation with id {conversation.ConversationId} of unknown type {conversation.GetType()}"),
         };
 
-        return _conversationCollection.UpdateRecord(new ConversationDocument()
-            {
-                Id = conversation.ConversationId,
-                ConnectionId = connectionId,
-                GroupId = groupId,
-                Messages = conversation.Messages.Select(message => message.Id).ToList()
-            },
+        return _conversationCollection.UpdateRecord(new ConversationDocument(
+                Id: conversation.ConversationId,
+                ConnectionId: connectionId,
+                GroupId: groupId,
+                Messages: conversation.Messages.Select(message => message.Id).ToList()
+            ),
             conversationDoc => conversationDoc.Id == conversation.ConversationId);
     }
 

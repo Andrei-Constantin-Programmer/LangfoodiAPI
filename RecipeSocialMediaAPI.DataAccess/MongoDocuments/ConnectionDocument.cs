@@ -3,9 +3,4 @@
 namespace RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 
 [MongoCollection("Connection")]
-public record ConnectionDocument : MongoDocument
-{
-    required public string AccountId1 { get; set; }
-    required public string AccountId2 { get; set; }
-    required public string ConnectionStatus { get; set; }
-}
+public record ConnectionDocument(string AccountId1, string AccountId2, string ConnectionStatus, string? Id = null) : MongoDocument(Id);

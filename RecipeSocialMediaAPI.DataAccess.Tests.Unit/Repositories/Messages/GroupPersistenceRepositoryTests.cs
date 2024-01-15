@@ -64,13 +64,12 @@ public class GroupPersistenceRepositoryTests
             .Select(user => user.Id)
             .ToList();
 
-        GroupDocument insertedDocument = new()
-        {
-            Id = "g1",
-            GroupName = groupName,
-            GroupDescription = groupDesc,
-            UserIds = userIds
-        };
+        GroupDocument insertedDocument = new(
+            Id: "g1",
+            GroupName: groupName,
+            GroupDescription: groupDesc,
+            UserIds: userIds
+        );
 
         _groupCollectionMock
             .Setup(collection => collection.Insert(It.Is<GroupDocument>(
@@ -80,7 +79,7 @@ public class GroupPersistenceRepositoryTests
                          && groupDoc.UserIds.SequenceEqual(userIds))))
             .Returns(insertedDocument);
 
-        Group expectedGroup = new(insertedDocument.Id, insertedDocument.GroupName, insertedDocument.GroupDescription, users);
+        Group expectedGroup = new(insertedDocument.Id!, insertedDocument.GroupName, insertedDocument.GroupDescription, users);
 
         _groupDocumentToModelMapperMock
             .Setup(mapper => mapper.MapGroupFromDocument(insertedDocument))

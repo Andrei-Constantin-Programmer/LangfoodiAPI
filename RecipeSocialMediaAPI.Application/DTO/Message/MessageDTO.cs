@@ -1,7 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Message;
 
-public record MessageDTO
-(
+public record MessageDTO(
     string Id,
     string SenderId,
     DateTimeOffset? SentDate = null,

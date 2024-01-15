@@ -27,15 +27,14 @@ public class UserDocumentToModelMapperTests
     public void MapUserDocumentToUser_WhenDocumentIdIsNull_ThrowArgumentException()
     {
         // Given
-        UserDocument testDocument = new()
-        {
-            Id = null,
-            Handler = "TestUserHandler",
-            UserName = "TestUser",
-            Email = "TestMail",
-            Password = "TestPassword",
-            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-        };
+        UserDocument testDocument = new(
+            Id: null,
+            Handler: "TestUserHandler",
+            UserName: "TestUser",
+            Email: "TestMail",
+            Password: "TestPassword",
+            AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        );
 
         // When
         var testAction = () => _userDocumentToModelMapperSUT.MapUserDocumentToUser(testDocument);
@@ -59,24 +58,23 @@ public class UserDocumentToModelMapperTests
     public void MapUserDocumentToUser_WhenDocumentIsValid_ReturnMappedUser()
     {
         // Given
-        UserDocument testDocument = new()
-        {
-            Id = "1",
-            Handler = "TestUserHandler",
-            UserName = "TestUser",
-            Email = "TestMail",
-            Password = "TestPassword",
-            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-        };
+        UserDocument testDocument = new(
+            Id: "1",
+            Handler: "TestUserHandler",
+            UserName: "TestUser",
+            Email: "TestMail",
+            Password: "TestPassword",
+            AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserCredentials testUser = new()
         {
             Account = new TestUserAccount()
             {
-                Id = testDocument.Id,
+                Id = testDocument.Id!,
                 Handler = testDocument.Handler,
                 UserName = testDocument.UserName,
-                AccountCreationDate = testDocument.AccountCreationDate
+                AccountCreationDate = testDocument.AccountCreationDate!.Value
             },
             Email = testDocument.Email,
             Password = testDocument.Password
@@ -84,7 +82,7 @@ public class UserDocumentToModelMapperTests
 
         _userFactoryMock
             .Setup(factory => factory.CreateUserCredentials(
-                testDocument.Id,
+                testDocument.Id!,
                 testDocument.Handler,
                 testDocument.UserName,
                 testDocument.Email,

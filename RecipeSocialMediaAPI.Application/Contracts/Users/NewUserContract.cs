@@ -1,7 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.Contracts.Users;
 
-public record NewUserContract
-(
+public record NewUserContract(
     string Handler,
     string UserName,
     string Email,

@@ -1,7 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.Contracts.Users;
 
-public record UpdateUserContract
-(
+public record UpdateUserContract(
     string Id,
     string UserName,
     string Email,

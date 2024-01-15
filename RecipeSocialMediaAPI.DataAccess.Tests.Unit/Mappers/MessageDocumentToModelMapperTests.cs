@@ -41,13 +41,12 @@ public class MessageDocumentToModelMapperTests
         string senderId = "50";
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new("Text"),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new("Text"),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserAccount testSender = new()
         {
@@ -58,14 +57,20 @@ public class MessageDocumentToModelMapperTests
         };
 
         TestTextMessage textMessage = new(
-            testDocument.Id,
+            testDocument.Id!,
             testSender,
             testDocument.MessageContent.Text!,
             testDocument.SentDate,
             null);
 
         _messageFactoryMock
-            .Setup(factory => factory.CreateTextMessage(textMessage.Id, testSender, textMessage.Text, textMessage.SentDate, textMessage.UpdatedDate, textMessage.RepliedToMessage))
+            .Setup(factory => factory.CreateTextMessage(
+                textMessage.Id,
+                testSender,
+                textMessage.Text,
+                textMessage.SentDate,
+                textMessage.UpdatedDate,
+                textMessage.RepliedToMessage))
             .Returns(textMessage);
 
         // When
@@ -93,13 +98,12 @@ public class MessageDocumentToModelMapperTests
             "Image2"
         };
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new(hasText ? "Text" : null, null, imageURLs),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(hasText ? "Text" : null, null, imageURLs),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserAccount testSender = new()
         {
@@ -110,7 +114,7 @@ public class MessageDocumentToModelMapperTests
         };
 
         TestImageMessage imageMessage = new(
-            testDocument.Id,
+            testDocument.Id!,
             testSender,
             testDocument.MessageContent.Text!,
             testDocument.MessageContent.ImageURLs!,
@@ -118,7 +122,14 @@ public class MessageDocumentToModelMapperTests
             null);
 
         _messageFactoryMock
-            .Setup(factory => factory.CreateImageMessage(imageMessage.Id, testSender, imageMessage.ImageURLs, imageMessage.Text, imageMessage.SentDate, imageMessage.UpdatedDate, null))
+            .Setup(factory => factory.CreateImageMessage(
+                imageMessage.Id,
+                testSender,
+                imageMessage.ImageURLs,
+                imageMessage.Text,
+                imageMessage.SentDate,
+                imageMessage.UpdatedDate,
+                null))
             .Returns(imageMessage);
 
         // When
@@ -146,13 +157,12 @@ public class MessageDocumentToModelMapperTests
             "id2"
         };
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new(hasText ? "Text" : null, recipeIds, null),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(hasText ? "Text" : null, recipeIds, null),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserAccount testSender = new()
         {
@@ -183,7 +193,7 @@ public class MessageDocumentToModelMapperTests
         };
 
         TestRecipeMessage recipeMessage = new(
-            testDocument.Id,
+            testDocument.Id!,
             testSender,
             testDocument.MessageContent.Text!,
             recipes,
@@ -194,7 +204,14 @@ public class MessageDocumentToModelMapperTests
             .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
             .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         _messageFactoryMock
-            .Setup(factory => factory.CreateRecipeMessage(recipeMessage.Id, testSender, recipeMessage.Recipes, recipeMessage.Text, recipeMessage.SentDate, recipeMessage.UpdatedDate, null))
+            .Setup(factory => factory.CreateRecipeMessage(
+                recipeMessage.Id,
+                testSender,
+                recipeMessage.Recipes,
+                recipeMessage.Text,
+                recipeMessage.SentDate,
+                recipeMessage.UpdatedDate,
+                null))
             .Returns(recipeMessage);
 
         // When
@@ -222,13 +239,12 @@ public class MessageDocumentToModelMapperTests
             "inexistent2"
         };
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new(null, recipeIds, null),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(null, recipeIds, null),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserAccount testSender = new()
         {
@@ -259,7 +275,7 @@ public class MessageDocumentToModelMapperTests
         };
 
         TestRecipeMessage recipeMessage = new(
-            testDocument.Id,
+            testDocument.Id!,
             testSender,
             testDocument.MessageContent.Text!,
             recipes,
@@ -270,7 +286,14 @@ public class MessageDocumentToModelMapperTests
             .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
             .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         _messageFactoryMock
-            .Setup(factory => factory.CreateRecipeMessage(recipeMessage.Id, testSender, recipeMessage.Recipes, recipeMessage.Text, recipeMessage.SentDate, recipeMessage.UpdatedDate, null))
+            .Setup(factory => factory.CreateRecipeMessage(
+                recipeMessage.Id,
+                testSender,
+                recipeMessage.Recipes,
+                recipeMessage.Text,
+                recipeMessage.SentDate,
+                recipeMessage.UpdatedDate,
+                null))
             .Returns(recipeMessage);
         
         // When
@@ -301,16 +324,15 @@ public class MessageDocumentToModelMapperTests
         string senderId = "50";
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
 
-        MessageDocument testDocument = new()
-        {
-            Id = messageId,
-            MessageContent = new(
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(
                 isTextNull ? null : "Test Text",
                 isRecipeListNull ? null : new List<string>(),
                 isImageListNull ? null : new List<string>()),
-            SenderId = senderId,
-            SentDate = new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
-        };
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
 
         TestUserAccount testSender = new()
         {
@@ -321,7 +343,7 @@ public class MessageDocumentToModelMapperTests
         };
 
         TestTextMessage textMessage = new(
-            testDocument.Id,
+            testDocument.Id!,
             testSender,
             testDocument.MessageContent.Text!,
             testDocument.SentDate,

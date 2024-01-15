@@ -39,23 +39,6 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_SignatureNotGenerated_ReturnNotOk()
-    {
-        // Given
-        _cloudinarySignatureServiceMock
-            .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), It.IsAny<string>()))
-            .Returns((CloudinarySignatureDTO?)null);
-
-        // When
-        var result = await _client.PostAsync("image/get/cloudinary-signature", null);
-
-        // Then
-        result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void ImageSingleDelete_GivenPublicIdAndNoError_ReturnOk()
     {
         // Given

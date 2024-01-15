@@ -27,17 +27,16 @@ public class ConversationDocumentToModelMapperTests
     public void MapConversationFromDocument_WhenDocumentIsValidAndIsConnectionConversation_ReturnMappedConversation()
     {
         // Given
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "myCoversationID",
-            ConnectionId = "myConnectionID",
-            GroupId = null,
-            Messages = new()
+        ConversationDocument conversationDocument = new(
+            Id: "myCoversationID",
+            ConnectionId: "myConnectionID",
+            GroupId: null,
+            Messages: new()
             {
                 "message1",
                 "message2",
             }
-        };
+        );
 
         TestUserAccount testUserAccount1 = new()
         {
@@ -75,17 +74,16 @@ public class ConversationDocumentToModelMapperTests
     public void MapConversationFromDocument_WhenDocumentIsValidAndIsGroupConversation_ReturnMappedConversation()
     {
         // Given
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "myCoversationID",
-            ConnectionId = null,
-            GroupId = "myGroupID",
-            Messages = new()
+        ConversationDocument conversationDocument = new(
+            Id: "myCoversationID",
+            ConnectionId: null,
+            GroupId: "myGroupID",
+            Messages: new()
             {
                 "message1",
                 "message2",
             }
-        };
+        );
 
         TestUserAccount testUserAccount1 = new()
         {
@@ -127,16 +125,14 @@ public class ConversationDocumentToModelMapperTests
     public void MapConversationFromDocument_WhenConversationDocumentIdIsNull_ThrowsArgumentException()
     {
         // Given
-        ConversationDocument conversationDocument = new()
-        {
-            Id = null,
-            ConnectionId = null,
-            GroupId = null,
-            Messages = new()
-        };
+        ConversationDocument conversationDocument = new(
+            Id: null,
+            ConnectionId: null,
+            GroupId: null,
+            Messages: new()
+        );
 
         List<Message> messages = new();
-
 
         // When
         var testAction = () => _conversationDocumentToModelMapperSUT.MapConversationFromDocument(conversationDocument, null, null, messages);
@@ -151,13 +147,12 @@ public class ConversationDocumentToModelMapperTests
     public void MapConversationFromDocument_WhenConnectionAndGroupAreNull_ThrowsMalformedConversationDocumentException()
     {
         // Given
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "myCoversationID",
-            ConnectionId = null,
-            GroupId = null,
-            Messages = new()
-        };
+        ConversationDocument conversationDocument = new(
+            Id: "myCoversationID",
+            ConnectionId: null,
+            GroupId: null,
+            Messages: new()
+        );
 
         // When
         var testAction = () => _conversationDocumentToModelMapperSUT.MapConversationFromDocument(conversationDocument, null, null, new List<Message>());
@@ -172,13 +167,12 @@ public class ConversationDocumentToModelMapperTests
     public void MapConversationFromDocument_WhenConnectionAndGroupAreNotNull_ThrowsMalformedConversationDocumentException()
     {
         // Given
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "myCoversationID",
-            ConnectionId = "myConnectionID",
-            GroupId = "myGroupID",
-            Messages = new()
-        };
+        ConversationDocument conversationDocument = new(
+            Id: "myCoversationID",
+            ConnectionId: "myConnectionID",
+            GroupId: "myGroupID",
+            Messages: new()
+        );
 
         TestUserAccount testUserAccount1 = new()
         {
