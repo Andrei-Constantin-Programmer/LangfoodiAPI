@@ -26,13 +26,10 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 
     public Task Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate? recipeToRemove = _recipeQueryRepository.GetRecipeById(request.Id);
-        if (recipeToRemove is null)
-        {
-            throw new RecipeNotFoundException(request.Id);
-        }
+        RecipeAggregate? recipeToRemove = _recipeQueryRepository.GetRecipeById(request.Id) 
+            ?? throw new RecipeNotFoundException(request.Id);
 
-        List<string> imageIds = recipeToRemove.Recipe.Steps
+        var imageIds = recipeToRemove.Recipe.Steps
             .Where(x => x.Image is not null)
             .Select(r => r.Image!.ImageUrl)
             .ToList();

@@ -34,7 +34,7 @@ public class AddRecipeValidatorTests
             KiloCalories = 2300,
             CookingTime = 500,
             Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
+                new()
                 {
                     Name = "eggs",
                     Quantity = 1,
@@ -94,12 +94,12 @@ public class AddRecipeValidatorTests
         var validationResult = _addRecipeValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.NumberOfServings);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.CookingTime);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.KiloCalories);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.Title);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.Ingredients);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.RecipeSteps);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.NumberOfServings);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.CookingTime);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.KiloCalories);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Title);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Ingredients);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.RecipeSteps);
     }
 
     [Fact]
@@ -129,9 +129,9 @@ public class AddRecipeValidatorTests
         var validationResult = _addRecipeValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.Title);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.Ingredients);
-        validationResult.ShouldHaveValidationErrorFor(command => command.NewRecipeContract.RecipeSteps);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Title);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Ingredients);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.RecipeSteps);
     }
 
 }
