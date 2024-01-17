@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Validators.Recipes;
+
 public class UpdateRecipeValidatorTests
 {
     private readonly UpdateRecipeCommandValidator _updateRecipeValidatorSUT;
@@ -24,31 +25,20 @@ public class UpdateRecipeValidatorTests
     public void UpdateRecipeValidation_WhenValidRecipe_DontThrow()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",
-            Labels = new HashSet<string>(),
-            NumberOfServings = 1,
-            KiloCalories = 2300,
-            CookingTime = 500,
-            Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
-            },
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",
+            Tags: new HashSet<string>(),
+            NumberOfServings: 1,
+            KiloCalories: 2300,
+            CookingTime: 500,
+            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ServingSize: new ServingSizeDTO(30, "kg")
+        );
 
-        testContract.RecipeSteps.Push(new RecipeStepDTO()
-        {
-            Text = "step",
-            ImageUrl = "url"
-        });
+        testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
 
         UpdateRecipeCommand testCommand = new(testContract);
 
@@ -70,18 +60,18 @@ public class UpdateRecipeValidatorTests
     public void UpdateRecipeValidation_WhenInvalidRecipe_ThrowValidationException()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",
-            Labels = new HashSet<string>(),
-            NumberOfServings = -1,
-            CookingTime = -1,
-            KiloCalories = -1,
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",
+            Tags: new HashSet<string>(),
+            NumberOfServings: -1,
+            CookingTime: -1,
+            KiloCalories: -1,
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ServingSize: new ServingSizeDTO(30, "kg")
+        );
 
         UpdateRecipeCommand testCommand = new(testContract);
 
@@ -94,12 +84,12 @@ public class UpdateRecipeValidatorTests
         var validationResult = _updateRecipeValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.NumberOfServings);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.CookingTime);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.KiloCalories);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Title);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Ingredients);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.RecipeSteps);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.NumberOfServings);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.CookingTime);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.KiloCalories);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Title);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Ingredients);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.RecipeSteps);
     }
 
     [Fact]
@@ -108,15 +98,14 @@ public class UpdateRecipeValidatorTests
     public void UpdateRecipeValidation_WhenRecipeWithInvalidOptionalProperties_ThrowValidationException()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",
-            Labels = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>() { },
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>() { },
+            RecipeSteps: new Stack<RecipeStepDTO>()
+        );
 
         UpdateRecipeCommand testCommand = new(testContract);
 
@@ -129,8 +118,8 @@ public class UpdateRecipeValidatorTests
         var validationResult = _updateRecipeValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Title);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.Ingredients);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateRecipeContract.RecipeSteps);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Title);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Ingredients);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.RecipeSteps);
     }
 }

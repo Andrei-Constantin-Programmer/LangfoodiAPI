@@ -276,7 +276,7 @@ public class MessagePersistenceRepositoryTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Exactly(1));
     }
 

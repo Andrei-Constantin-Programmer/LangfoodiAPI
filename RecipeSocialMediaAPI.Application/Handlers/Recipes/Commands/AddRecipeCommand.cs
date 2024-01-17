@@ -14,7 +14,7 @@ using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
-public record AddRecipeCommand(NewRecipeContract NewRecipeContract) : IValidatableRequest<RecipeDetailedDTO>;
+public record AddRecipeCommand(NewRecipeContract Contract) : IValidatableRequest<RecipeDetailedDTO>;
 
 internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetailedDTO>
 {
@@ -34,33 +34,32 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
         IUserAccount? chef = 
-            _userQueryRepository.GetUserById(request.NewRecipeContract.ChefId)?.Account
-            ?? throw new UserNotFoundException($"No user found with id {request.NewRecipeContract.ChefId}");
+            _userQueryRepository.GetUserById(request.Contract.ChefId)?.Account
+            ?? throw new UserNotFoundException($"No user found with id {request.Contract.ChefId}");
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
 
-        var (servingSizeQuantity, unitOfMeasurement) = request.NewRecipeContract.ServingSize ?? default;
-
         RecipeAggregate insertedRecipe = _recipePersistenceRepository.CreateRecipe(
-            request.NewRecipeContract.Title,
+            request.Contract.Title,
             new Recipe(
-                request.NewRecipeContract.Ingredients
+                request.Contract.Ingredients
                     .Select(_mapper.MapIngredientDtoToIngredient)
                     .ToList(),
-                new Stack<RecipeStep>(request.NewRecipeContract.RecipeSteps
+                new Stack<RecipeStep>(request.Contract.RecipeSteps
                     .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
-                request.NewRecipeContract.NumberOfServings,
-                request.NewRecipeContract.CookingTime,
-                request.NewRecipeContract.KiloCalories,
-                request.NewRecipeContract.ServingSize is not null 
-                    ? new ServingSize(servingSizeQuantity, unitOfMeasurement) 
+                request.Contract.NumberOfServings,
+                request.Contract.CookingTime,
+                request.Contract.KiloCalories,
+                request.Contract.ServingSize is not null 
+                    ? _mapper.MapServingSizeDtoToServingSize(request.Contract.ServingSize)
                     : null
             ),
-            request.NewRecipeContract.Description,
+            request.Contract.Description,
             chef,
-            request.NewRecipeContract.Labels,
+            request.Contract.Tags,
             dateOfCreation,
-            dateOfCreation
+            dateOfCreation,
+            request.Contract.ThumbnailId
         );
 
         return await Task.FromResult(_mapper
@@ -76,25 +75,25 @@ public class AddRecipeCommandValidator : AbstractValidator<AddRecipeCommand>
     {
         _recipeValidationService = recipeValidationService;
 
-        RuleFor(x => x.NewRecipeContract.Title)
+        RuleFor(x => x.Contract.Title)
             .Must(_recipeValidationService.ValidTitle);
 
-        RuleFor(x => x.NewRecipeContract.NumberOfServings)
+        RuleFor(x => x.Contract.NumberOfServings)
             .GreaterThanOrEqualTo(1)
-            .When(x => x.NewRecipeContract.NumberOfServings is not null);
+            .When(x => x.Contract.NumberOfServings is not null);
 
-        RuleFor(x => x.NewRecipeContract.CookingTime)
+        RuleFor(x => x.Contract.CookingTime)
             .GreaterThanOrEqualTo(0)
-            .When(x => x.NewRecipeContract.CookingTime is not null);
+            .When(x => x.Contract.CookingTime is not null);
 
-        RuleFor(x => x.NewRecipeContract.KiloCalories)
+        RuleFor(x => x.Contract.KiloCalories)
             .GreaterThanOrEqualTo(0)
-            .When(x => x.NewRecipeContract.KiloCalories is not null);
+            .When(x => x.Contract.KiloCalories is not null);
 
-        RuleFor(x => x.NewRecipeContract.Ingredients)
+        RuleFor(x => x.Contract.Ingredients)
             .NotEmpty();
 
-        RuleFor(x => x.NewRecipeContract.RecipeSteps)
+        RuleFor(x => x.Contract.RecipeSteps)
             .NotEmpty();
     }
 }

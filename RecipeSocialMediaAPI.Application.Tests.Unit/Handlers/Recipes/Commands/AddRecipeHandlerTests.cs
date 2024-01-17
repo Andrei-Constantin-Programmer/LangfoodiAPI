@@ -51,15 +51,14 @@ public class AddRecipeHandlerTests
     public async Task Handle_WhenUserDoesNotExist_ThrowUserNotFoundException()
     {
         // Given
-        NewRecipeContract testContract = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "1",
-            Labels = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+        NewRecipeContract testContract = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "1",
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>()
+        );
 
         // When
         var action = async () => await _addRecipeHandlerSUT.Handle(new AddRecipeCommand(testContract), CancellationToken.None);
@@ -79,31 +78,22 @@ public class AddRecipeHandlerTests
     public async Task Handle_WhenUserExists_CreateAndReturnRecipe()
     {
         // Given
-        NewRecipeContract testContract = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "1",
-            Labels = new HashSet<string>(),
-            NumberOfServings = 1,
-            KiloCalories = 2300,
-            CookingTime = 500,
-            Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
+        NewRecipeContract testContract = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "1",
+            Tags: new HashSet<string>(),
+            NumberOfServings: 1,
+            KiloCalories: 2300,
+            CookingTime: 500,
+            Ingredients: new List<IngredientDTO>() {
+                new("eggs", 1, "whole")
             },
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-        };
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ThumbnailId: "img_id_1"
+        );
 
-        testContract.RecipeSteps.Push(new RecipeStepDTO()
-        {
-            Text = "step",
-            ImageUrl = "url"
-        });
+        testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
 
         _userQueryRepositoryMock
             .Setup(x => x.GetUserById(It.IsAny<string>()))
@@ -123,9 +113,9 @@ public class AddRecipeHandlerTests
         _recipePersistenceRepositoryMock
             .Setup(x => x.CreateRecipe(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
                 It.IsAny<IUserAccount>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
-                It.IsAny<DateTimeOffset>()))
-            .Returns((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate) 
-                => new RecipeAggregate("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, labels)
+                It.IsAny<DateTimeOffset>(), It.IsAny<string?>()))
+            .Returns((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId) 
+                => new RecipeAggregate("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, tags, thumbnailId)
             );
 
         _recipeMapperMock
@@ -138,30 +128,42 @@ public class AddRecipeHandlerTests
 
         _recipeMapperMock
             .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
-            .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO() {
-                Id = "1", Title = recipe.Title, Description = recipe.Description,
-                Chef = new UserAccountDTO() { Id = "1", Handler = "handler", UserName = "name", AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) },
-                Labels = recipe.Labels, CreationDate = recipe.CreationDate,
-                LastUpdatedDate = recipe.LastUpdatedDate, 
-                Ingredients = new List<IngredientDTO>() {
-                    new IngredientDTO() { 
-                        Name = recipe.Recipe.Ingredients.First().Name,
-                        Quantity = recipe.Recipe.Ingredients.First().Quantity,
-                        UnitOfMeasurement = recipe.Recipe.Ingredients.First().UnitOfMeasurement
-                    }
+            .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO(
+                Id: "1", 
+                Title: recipe.Title, 
+                Description: recipe.Description,
+                Chef: new UserAccountDTO( 
+                    Id: "1", 
+                    Handler: "handler", 
+                    UserName: "name", 
+                    AccountCreationDate: new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero) 
+                ),
+                Tags: recipe.Tags, 
+                CreationDate: recipe.CreationDate,
+                LastUpdatedDate: recipe.LastUpdatedDate, 
+                Ingredients: new List<IngredientDTO>() 
+                {
+                    new(
+                        recipe.Recipe.Ingredients[0].Name,
+                        recipe.Recipe.Ingredients[0].Quantity,
+                        recipe.Recipe.Ingredients[0].UnitOfMeasurement
+                    )
                 },
-                RecipeSteps = new Stack<RecipeStepDTO>(
-                    new[] { new RecipeStepDTO()
-                        {
-                            Text = recipe.Recipe.Steps.First().Text,
-                            ImageUrl = recipe.Recipe.Steps.First().Image!.ImageUrl
-                        }
+                RecipeSteps: new Stack<RecipeStepDTO>
+                (
+                    new[] 
+                    { 
+                        new RecipeStepDTO(
+                            recipe.Recipe.Steps.First().Text,
+                            recipe.Recipe.Steps.First().Image!.ImageUrl
+                        )
                     }    
                 ),
-                NumberOfServings = recipe.Recipe.NumberOfServings,
-                CookingTime = recipe.Recipe.CookingTimeInSeconds,
-                KiloCalories = recipe.Recipe.KiloCalories
-            });
+                NumberOfServings: recipe.Recipe.NumberOfServings,
+                CookingTime: recipe.Recipe.CookingTimeInSeconds,
+                KiloCalories: recipe.Recipe.KiloCalories,
+                ThumbnailId: recipe.ThumbnailId
+            ));
 
         // When
         var result = await _addRecipeHandlerSUT.Handle(new AddRecipeCommand(testContract), CancellationToken.None);
@@ -179,6 +181,7 @@ public class AddRecipeHandlerTests
         result.RecipeSteps.First().ImageUrl.Should().Be("url");
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
+        result.ThumbnailId.Should().Be("img_id_1");
 
         _recipeMapperMock
             .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);

@@ -14,6 +14,16 @@ public class RecipeMapper : IRecipeMapper
         _userMapper = userMapper;
     }
 
+    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO servingSizeDTO)
+    {
+        return new(servingSizeDTO.Quantity, servingSizeDTO.UnitOfMeasurement);
+    }
+
+    public ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize servingSize)
+    {
+        return new ServingSizeDTO(servingSize.Quantity, servingSize.UnitOfMeasurement);
+    }
+
     public Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO)
     {
         return new(ingredientDTO.Name, ingredientDTO.Quantity, ingredientDTO.UnitOfMeasurement);
@@ -21,12 +31,7 @@ public class RecipeMapper : IRecipeMapper
 
     public IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient)
     {
-        return new IngredientDTO
-        {
-            Name = ingredient.Name,
-            Quantity = ingredient.Quantity,
-            UnitOfMeasurement = ingredient.UnitOfMeasurement
-        };
+        return new IngredientDTO(ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement);
     }
 
     public RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDTO recipeStepDTO)
@@ -36,49 +41,48 @@ public class RecipeMapper : IRecipeMapper
 
     public RecipeStepDTO MapRecipeStepToRecipeStepDto(RecipeStep recipeStep)
     {
-        return new RecipeStepDTO()
-        {
-            Text = recipeStep.Text,
-            ImageUrl = recipeStep.Image?.ImageUrl
-        };
+        return new RecipeStepDTO(recipeStep.Text, recipeStep.Image?.ImageUrl);
     }
 
     public RecipeDetailedDTO MapRecipeAggregateToRecipeDetailedDto(RecipeAggregate recipeAggregate)
     {
-        return new RecipeDetailedDTO()
-        {
-            Id = recipeAggregate.Id,
-            Title = recipeAggregate.Title,
-            Description = recipeAggregate.Description,
-            Chef = _userMapper.MapUserAccountToUserAccountDto(recipeAggregate.Chef),
-            Labels = recipeAggregate.Labels,
-            Ingredients = recipeAggregate.Recipe.Ingredients
+        return new RecipeDetailedDTO(
+            Id: recipeAggregate.Id,
+            Title: recipeAggregate.Title,
+            Description: recipeAggregate.Description,
+            Chef: _userMapper.MapUserAccountToUserAccountDto(recipeAggregate.Chef),
+            Tags: recipeAggregate.Tags,
+            Ingredients: recipeAggregate.Recipe.Ingredients
                 .Select(MapIngredientToIngredientDto)
                 .ToList(),
-            RecipeSteps = new Stack<RecipeStepDTO>(recipeAggregate.Recipe.Steps
+            RecipeSteps: new Stack<RecipeStepDTO>(recipeAggregate.Recipe.Steps
                 .Select(MapRecipeStepToRecipeStepDto)),
-            KiloCalories = recipeAggregate.Recipe.KiloCalories,
-            NumberOfServings = recipeAggregate.Recipe.NumberOfServings,
-            CookingTime = recipeAggregate.Recipe.CookingTimeInSeconds,
-            CreationDate = recipeAggregate.CreationDate,
-            LastUpdatedDate = recipeAggregate.LastUpdatedDate,
-        };
+            KiloCalories: recipeAggregate.Recipe.KiloCalories,
+            NumberOfServings: recipeAggregate.Recipe.NumberOfServings,
+            CookingTime: recipeAggregate.Recipe.CookingTimeInSeconds,
+            CreationDate: recipeAggregate.CreationDate,
+            LastUpdatedDate: recipeAggregate.LastUpdatedDate,
+            ThumbnailId: recipeAggregate.ThumbnailId,
+            ServingSize: recipeAggregate.Recipe.ServingSize is not null
+                ? MapServingSizeToServingSizeDto(recipeAggregate.Recipe.ServingSize)
+                : null
+        );
     }
 
     public RecipeDTO MapRecipeAggregateToRecipeDto(RecipeAggregate recipeAggregate)
     {
-        return new RecipeDTO()
-        {
-            Id = recipeAggregate.Id,
-            Title = recipeAggregate.Title,
-            Description = recipeAggregate.Description,
-            ChefUsername = recipeAggregate.Chef.UserName,
-            Labels = recipeAggregate.Labels,
-            KiloCalories = recipeAggregate.Recipe.KiloCalories,
-            NumberOfServings = recipeAggregate.Recipe.NumberOfServings,
-            CookingTime = recipeAggregate.Recipe.CookingTimeInSeconds,
-            CreationDate = recipeAggregate.CreationDate,
-            LastUpdatedDate = recipeAggregate.LastUpdatedDate
-        };
+        return new RecipeDTO(
+            Id: recipeAggregate.Id,
+            Title: recipeAggregate.Title,
+            Description: recipeAggregate.Description,
+            ChefUsername: recipeAggregate.Chef.UserName,
+            Tags: recipeAggregate.Tags,
+            KiloCalories: recipeAggregate.Recipe.KiloCalories,
+            NumberOfServings: recipeAggregate.Recipe.NumberOfServings,
+            CookingTime: recipeAggregate.Recipe.CookingTimeInSeconds,
+            CreationDate: recipeAggregate.CreationDate,
+            LastUpdatedDate: recipeAggregate.LastUpdatedDate,
+            ThumbnailId: recipeAggregate.ThumbnailId
+        );
     }
 }

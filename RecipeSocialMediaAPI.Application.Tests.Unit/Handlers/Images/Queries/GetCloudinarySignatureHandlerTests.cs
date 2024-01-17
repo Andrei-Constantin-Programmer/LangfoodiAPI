@@ -12,8 +12,6 @@ public class GetCloudinarySignatureHandlerTests
 
     private readonly GetCloudinarySignatureHandler _getCloudinarySignatureHandlerSUT;
 
-    private const string TEST_PUBLIC_ID = "354234535sgf45";
-
     public GetCloudinarySignatureHandlerTests()
     {
         _imageHostingQueryRepositoryMock = new Mock<IImageHostingQueryRepository>();
@@ -23,12 +21,12 @@ public class GetCloudinarySignatureHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenPublicIdIsNullAndGenerateClientSignatureWorks_ReturnSignatureDTO()
+    public async Task Handle_GenerateSignatureWorks_ReturnSignatureDTO()
     {
         // Given
         _imageHostingQueryRepositoryMock
-            .Setup(x => x.GenerateClientSignature(null))
-            .Returns(new CloudinarySignatureDTO() { Signature = "sig", TimeStamp = 1000 });
+            .Setup(x => x.GenerateSignature(null))
+            .Returns(new CloudinarySignatureDTO("sig", 1000));
 
         // When
         var result = await _getCloudinarySignatureHandlerSUT.Handle(new GetCloudinarySignatureQuery(), CancellationToken.None);
@@ -41,48 +39,11 @@ public class GetCloudinarySignatureHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenPublicIdIsNotNullAndGenerateClientSignatureWorks_ReturnSignatureDTO()
+    public async Task Handle_NoSignatureGenerated_ThrowsException()
     {
         // Given
         _imageHostingQueryRepositoryMock
-            .Setup(x => x.GenerateClientSignature(TEST_PUBLIC_ID))
-            .Returns(new CloudinarySignatureDTO() { Signature = "sig", TimeStamp = 1000 });
-
-        // When
-        var result = await _getCloudinarySignatureHandlerSUT.Handle(new GetCloudinarySignatureQuery(TEST_PUBLIC_ID), CancellationToken.None);
-
-        // Then
-        result.Signature.Should().Be("sig");
-        result.TimeStamp.Should().Be(1000);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenPublicIdIsNotNullAndNoSignatureGenerated_ThrowInvalidOperationException()
-    {
-        // Given
-        _imageHostingQueryRepositoryMock
-            .Setup(x => x.GenerateClientSignature(TEST_PUBLIC_ID))
-            .Returns((CloudinarySignatureDTO?)null);
-
-        // When
-        var action = async () => await _getCloudinarySignatureHandlerSUT.Handle(new GetCloudinarySignatureQuery(TEST_PUBLIC_ID), CancellationToken.None);
-
-        // Then
-        await action.Should()
-            .ThrowAsync<InvalidOperationException>()
-            .WithMessage("Failed to generate signature");
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenPublicIdIsNullAndNoSignatureGenerated_ThrowInvalidOperationException()
-    {
-        // Given
-        _imageHostingQueryRepositoryMock
-            .Setup(x => x.GenerateClientSignature(null))
+            .Setup(x => x.GenerateSignature(null))
             .Returns((CloudinarySignatureDTO?)null);
 
         // When
@@ -90,7 +51,7 @@ public class GetCloudinarySignatureHandlerTests
 
         // Then
         await action.Should()
-            .ThrowAsync<InvalidOperationException>()
+            .ThrowAsync<Exception>()
             .WithMessage("Failed to generate signature");
     }
 }

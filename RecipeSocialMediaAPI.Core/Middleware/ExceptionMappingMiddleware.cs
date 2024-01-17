@@ -30,6 +30,11 @@ public class ExceptionMappingMiddleware
         {
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Invalid credentials");
         }
+        catch(HandlerAlreadyInUseException ex)
+        {
+            _logger.LogInformation(ex, "Attempted to add already existing user with handler {Handler}", ex.Handler);
+            await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, $"Handler {ex.Handler} already in use");
+        }
         catch (UsernameAlreadyInUseException ex)
         {
             _logger.LogInformation(ex, "Attempted to add already existing user with username {Username}", ex.Username);
@@ -78,11 +83,12 @@ public class ExceptionMappingMiddleware
 public record ValidationErrorResponse
 {
     public string Message { get; } = "Validation failed";
-    public IEnumerable<string> Errors { get; set; }
+    public IEnumerable<string> Errors { get; }
 
     public ValidationErrorResponse(ValidationException validationException)
         : this(validationException.Errors
-              .Select(error => $"Invalid {GetFormattedPropertyName(error.PropertyName)} with value '{error.AttemptedValue}'.").Distinct())
+              .Select(error => $"Invalid {GetFormattedPropertyName(error.PropertyName)} with value '{error.AttemptedValue}'.")
+              .Distinct())
     { }
 
     private ValidationErrorResponse(IEnumerable<string> errors)

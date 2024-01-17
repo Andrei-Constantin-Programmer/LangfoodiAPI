@@ -17,14 +17,14 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
         var (servingSizeQuantity, unitOfMeasurement) = recipeDocument.ServingSize ?? default;
 
         return new(
-
             id: recipeDocument.Id,
             title: recipeDocument.Title,
             description: recipeDocument.Description,
             creationDate: recipeDocument.CreationDate,
             lastUpdatedDate: recipeDocument.LastUpdatedDate,
-            labels: recipeDocument.Labels.ToHashSet(),
+            tags: recipeDocument.Tags.ToHashSet(),
             chef: chef,
+            thumbnailId: recipeDocument.ThumbnailId,
             recipe: new Recipe(
                 recipeDocument.Ingredients
                     .Select(x => new Ingredient(x.Name, x.Quantity, x.UnitOfMeasurement))
@@ -41,6 +41,6 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
                     ? new ServingSize(servingSizeQuantity, unitOfMeasurement)
                     : null
                 )
-            );
+        );
     }
 }

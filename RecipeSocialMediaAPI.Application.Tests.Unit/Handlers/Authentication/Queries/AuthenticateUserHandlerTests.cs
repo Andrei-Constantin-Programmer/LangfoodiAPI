@@ -38,7 +38,7 @@ public class AuthenticateUserHandlerTests
         // Given
         UserCredentials? nullUser = null;
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
+            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>()))
             .Returns(nullUser);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
@@ -58,7 +58,7 @@ public class AuthenticateUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenUsernameIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
+    public async Task Handle_WhenHandlerIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
     {
         // Given
         var encryptedPassword = _cryptoServiceFake.Encrypt("TestPass");
@@ -75,10 +75,10 @@ public class AuthenticateUserHandlerTests
             Password = encryptedPassword
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.Account.UserName)))
+            .Setup(repo => repo.GetUserByHandler(It.Is<string>(handler => handler == testUser.Account.Handler)))
             .Returns(testUser);
 
-        AuthenticateUserQuery query = new(testUser.Account.UserName, "WrongPass");
+        AuthenticateUserQuery query = new(testUser.Account.Handler, "WrongPass");
 
         // When
         var action = async () => await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
@@ -122,7 +122,7 @@ public class AuthenticateUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenUsernameIsFoundAndCredentialsPass_ReturnMappedDTO()
+    public async Task Handle_WhenHandlerIsFoundAndCredentialsPass_ReturnMappedDTO()
     {
         // Given
         var decryptedPassword = "TestPass";
@@ -140,22 +140,21 @@ public class AuthenticateUserHandlerTests
             Password = encryptedPassword
         };
 
-        UserDTO expectedUserDto = new() 
-        { 
-            Id = testUser.Account.Id,
-            Handler = testUser.Account.Handler,
-            UserName = testUser.Account.UserName,
-            Email = testUser.Email,
-            Password = testUser.Password
-        };
+        UserDTO expectedUserDto = new(
+            Id: testUser.Account.Id,
+            Handler: testUser.Account.Handler,
+            UserName: testUser.Account.UserName,
+            Email: testUser.Email,
+            Password: testUser.Password
+        );
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.Account.UserName)))
+            .Setup(repo => repo.GetUserByHandler(It.Is<string>(handler => handler == testUser.Account.Handler)))
             .Returns(testUser);
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
             .Returns(expectedUserDto);
 
-        AuthenticateUserQuery query = new(testUser.Account.UserName, decryptedPassword);
+        AuthenticateUserQuery query = new(testUser.Account.Handler, decryptedPassword);
 
         // When
         var result = await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
@@ -185,17 +184,16 @@ public class AuthenticateUserHandlerTests
             Password = encryptedPassword
         };
 
-        UserDTO expectedUserDto = new()
-        { 
-            Id = testUser.Account.Id,
-            Handler = testUser.Account.Handler,
-            UserName = testUser.Account.UserName,
-            Email = testUser.Email,
-            Password = testUser.Password
-        };
+        UserDTO expectedUserDto = new(
+            Id: testUser.Account.Id,
+            Handler: testUser.Account.Handler,
+            UserName: testUser.Account.UserName,
+            Email: testUser.Email,
+            Password: testUser.Password
+        );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.Is<string>(email => email == testUser.Email)))
+            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
             .Returns(testUser);
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
