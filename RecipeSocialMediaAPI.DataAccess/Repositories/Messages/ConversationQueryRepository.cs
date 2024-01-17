@@ -61,4 +61,10 @@ public class ConversationQueryRepository : IConversationQueryRepository
             .Select(_mapper.MapConversationFromDocument)
             .ToList();
     }
+
+    private bool ConversationContainsUser(IUserAccount userAccount, ConversationDocument conversationDocument)
+    {
+
+        throw new NotImplementedException();
+    }
 }
