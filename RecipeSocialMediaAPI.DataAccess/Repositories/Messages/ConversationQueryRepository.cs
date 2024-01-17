@@ -17,6 +17,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
     private readonly IConversationDocumentToModelMapper _mapper;
     private readonly IMongoCollectionWrapper<ConversationDocument> _conversationCollection;
 
+    private readonly IConnectionQueryRepository _connectionQueryRepository;
     public ConversationQueryRepository(ILogger<ConversationQueryRepository> logger, IConversationDocumentToModelMapper conversationDocumentToModelMapper, IMongoCollectionFactory mongoCollectionFactory)
     {
         _logger = logger;
