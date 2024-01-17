@@ -50,7 +50,11 @@ public class ConversationQueryRepository : IConversationQueryRepository
         try
         {
             conversations = _conversationCollection
-                .GetAll(conversationDoc => ); // TODO: Implement condition for collecting conversations
+                .GetAll(conversationDoc => ConversationContainsUser(userAccount, conversationDoc)); // TODO: Implement condition for collecting conversations#
+
+            // need connection query repo and group query repo
+            // connection and group contains users in different formats
+            // check if user is in these list of users
         }
         catch (Exception ex)
         {
