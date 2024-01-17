@@ -38,6 +38,126 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnectionById_WhenConnectionIsFound_ReturnMappedConnection()
+    {
+        // Given
+        string connectionId = "conn1";
+
+        TestUserAccount testAccount1 = new()
+        {
+            Id = "User1",
+            Handler = "user1",
+            UserName = "User 1 Name",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount testAccount2 = new()
+        {
+            Id = "User2",
+            Handler = "user2",
+            UserName = "User 2 Name",
+            AccountCreationDate = new(2023, 2, 5, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = doc => doc.Id == connectionId;
+
+        ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(testDocument);
+
+        Connection testConnection = new(testAccount1, testAccount2, ConnectionStatus.Pending);
+        _connectionDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument))
+            .Returns(testConnection);
+
+        // When
+        var result = _connectionQueryRepositorySUT.GetConnection(connectionId);
+
+        // Then
+        result.Should().Be(testConnection);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnectionById_WhenConnectionIsNotFound_ReturnNullAndDontMap()
+    {
+        // Given
+        string connectionId = "conn1";
+
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = doc => doc.Id == connectionId;
+
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns((ConnectionDocument?)null);
+
+        // When
+        var result = _connectionQueryRepositorySUT.GetConnection(connectionId);
+
+        // Then
+        result.Should().BeNull();
+        _connectionDocumentToModelMapperMock
+            .Verify(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnectionById_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
+    {
+        // Given
+        string connectionId = "conn1";
+
+        Exception testException = new("Test Exception");
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
+            .Throws(testException);
+
+        // When
+        var result = _connectionQueryRepositorySUT.GetConnection(connectionId);
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConnectionById_WhenMapperThrowsException_ThrowException()
+    {
+        // Given
+        string connectionId = "conn1";
+
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = doc => doc.Id == connectionId;
+
+        ConnectionDocument testDocument = new("User1", "User2", "Pending");
+        _connectionCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(testDocument);
+
+        Exception testException = new("Test Exception");
+        _connectionDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()))
+            .Throws(testException);
+
+        // When
+        var testAction = () => _connectionQueryRepositorySUT.GetConnection(connectionId);
+
+        // Then
+        testAction.Should().Throw<Exception>().WithMessage(testException.Message);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetConnection_WhenConnectionIsFound_ReturnMappedConnection()
     {
         // Given
