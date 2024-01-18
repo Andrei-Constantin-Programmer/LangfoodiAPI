@@ -48,7 +48,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 
         return isSuccessful
             ? Task.CompletedTask 
-            : throw new Exception($"Could not update user with id {updatedUser.Account.Id}.");
+            : throw new UserUpdateException($"Could not update user with id {request.Contract.Id}.");
     }
 }
 
