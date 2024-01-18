@@ -52,7 +52,7 @@ public class ConversationDocumentToModelMapperTests
             UserName = "username2"
         };
 
-        Connection connection = new(testUserAccount1, testUserAccount2, ConnectionStatus.Connected);
+        Connection connection = new("0", testUserAccount1, testUserAccount2, ConnectionStatus.Connected);
 
         List<Message> messages = new()
         {
@@ -194,7 +194,7 @@ public class ConversationDocumentToModelMapperTests
             "Group Description",
             new List<IUserAccount>() { testUserAccount1, testUserAccount2 });
 
-        Connection connection = new(testUserAccount1, testUserAccount2, ConnectionStatus.Connected);
+        Connection connection = new("0", testUserAccount1, testUserAccount2, ConnectionStatus.Connected);
 
         // When
         var testAction = () => _conversationDocumentToModelMapperSUT.MapConversationFromDocument(conversationDocument, connection, group, new List<Message>());

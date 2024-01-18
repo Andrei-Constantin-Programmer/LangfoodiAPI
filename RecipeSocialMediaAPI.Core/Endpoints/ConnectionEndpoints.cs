@@ -15,7 +15,7 @@ public static class ConnectionEndpoints
 
     private static RouteGroupBuilder AddConnectionEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/get/userIds", async (
+        group.MapPost("/get", async (
             [FromQuery] string userId1,
             [FromQuery] string userId2,
             [FromServices] ISender sender) =>

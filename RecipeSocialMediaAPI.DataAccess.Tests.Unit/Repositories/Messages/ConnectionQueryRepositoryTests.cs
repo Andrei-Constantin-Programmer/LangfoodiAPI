@@ -65,7 +65,7 @@ public class ConnectionQueryRepositoryTests
             .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
 
-        Connection testConnection = new(testAccount1, testAccount2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", testAccount1, testAccount2, ConnectionStatus.Pending);
         _connectionDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConnectionFromDocument(testDocument))
             .Returns(testConnection);
@@ -184,7 +184,7 @@ public class ConnectionQueryRepositoryTests
             .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(testDocument);
 
-        Connection testConnection = new(testAccount1, testAccount2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", testAccount1, testAccount2, ConnectionStatus.Pending);
         _connectionDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConnectionFromDocument(testDocument))
             .Returns(testConnection);
@@ -355,8 +355,8 @@ public class ConnectionQueryRepositoryTests
 
         List<Connection> testConnections = new()
         {
-            new(testAccount, testAccount2, ConnectionStatus.Pending),
-            new(testAccount3, testAccount, ConnectionStatus.Favourite)
+            new("0", testAccount, testAccount2, ConnectionStatus.Pending),
+            new("1", testAccount3, testAccount, ConnectionStatus.Favourite)
         };
 
         _connectionCollectionMock

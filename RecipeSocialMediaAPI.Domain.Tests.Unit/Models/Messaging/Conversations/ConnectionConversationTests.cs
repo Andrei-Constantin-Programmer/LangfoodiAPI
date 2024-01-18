@@ -32,7 +32,7 @@ public class ConnectionConversationTests
             AccountCreationDate = new(2023, 10, 10, 17, 45, 0, TimeSpan.Zero)
         };
 
-        _connection = new (account1, account2, ConnectionStatus.Connected);
+        _connection = new ("0", account1, account2, ConnectionStatus.Connected);
 
         _connectionConversationSUT = new(_connection, "ConvoId");
     }

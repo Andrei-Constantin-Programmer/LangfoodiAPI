@@ -63,7 +63,7 @@ public class GetConnectionHandlerTests
             .Setup(repo => repo.GetUserById(user2.Account.Id))
             .Returns(user2);
 
-        Connection existingConnection = new(user1.Account, user2.Account, ConnectionStatus.Connected);
+        Connection existingConnection = new("0", user1.Account, user2.Account, ConnectionStatus.Connected);
 
         _connectionQueryRepositoryMock
             .Setup(repo => repo.GetConnection(
@@ -124,7 +124,7 @@ public class GetConnectionHandlerTests
             .Setup(repo => repo.GetUserById(user2.Account.Id))
             .Returns(user2Exists ? user2 : null);
 
-        Connection existingConnection = new(user1.Account, user2.Account, ConnectionStatus.Connected);
+        Connection existingConnection = new("0", user1.Account, user2.Account, ConnectionStatus.Connected);
 
         _connectionQueryRepositoryMock
             .Setup(repo => repo.GetConnection(
