@@ -25,7 +25,7 @@ public class UpdateUserHandlerTests
 
     public UpdateUserHandlerTests()
     {
-        _cryptoServiceFake = new CryptoServiceFake();
+        _cryptoServiceFake = new FakeCryptoService();
         _userFactoryMock = new Mock<IUserFactory>(); 
         _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();

@@ -25,7 +25,7 @@ public class AuthenticateUserHandlerTests
     {
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _mapperMock = new Mock<IUserMapper>();
-        _cryptoServiceFake = new CryptoServiceFake();
+        _cryptoServiceFake = new FakeCryptoService();
 
         _authenticateUserHandlerSUT = new AuthenticateUserHandler(_userQueryRepositoryMock.Object, _mapperMock.Object, _cryptoServiceFake);
     }
