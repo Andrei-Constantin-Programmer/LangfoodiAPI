@@ -5,6 +5,8 @@ using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
 using System.Net.Http.Json;
@@ -13,33 +15,65 @@ namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
 public class RecipeEndpointsTests : EndpointTestBase
 {
-    private readonly NewUserContract _testUserContract;
-    private readonly NewRecipeContract _testRecipeContract;
+    private readonly TestUserCredentials _testUser;
+    private readonly RecipeAggregate _testRecipe;
+    private readonly RecipeAggregate _secondTestRecipe;
 
     public RecipeEndpointsTests(WebApplicationFactory<Program> factory) : base(factory)
     {
-        _testRecipeContract = new(
-            Title: "Test",
-            Description: "Test",
-            ChefId: "0",
-            Tags: new HashSet<string>(),
-            NumberOfServings: 1,
-            KiloCalories: 2300,
-            CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() {
+        _testUser = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "0",
+                Handler = "testHandler",
+                UserName = "TestUsername",
+            },
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+
+        _testRecipe = new(
+            id: "0",
+            title: "Test",
+            description: "Test",
+            chef: _testUser.Account,
+            tags: new HashSet<string>(),
+            recipe: new(
+            numberOfServings: 1,
+            kiloCalories: 2300,
+            cookingTimeInSeconds: 500,
+            ingredients: new List<Ingredient>() {
                 new("eggs", 1, "whole")
             },
-            RecipeSteps: new Stack<RecipeStepDTO>(new[] 
-            { 
-                new RecipeStepDTO("step", "url")
-            })
+            steps: new Stack<RecipeStep>(new[]
+            {
+                new RecipeStep("step", new RecipeImage("url"))
+            })),
+            creationDate: new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            lastUpdatedDate: new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
         );
 
-        _testUserContract = new(
-            Handler: "testHandler",
-            UserName: "TestUsername",
-            Email: "test@mail.com",
-            Password: "Test@123"
+        _secondTestRecipe = new(
+            id: "0",
+            title: "Test2",
+            description: "Test 2",
+            chef: _testUser.Account,
+            tags: new HashSet<string>(),
+            recipe: new(
+            numberOfServings: 1,
+            kiloCalories: 1900,
+            cookingTimeInSeconds: 200,
+            ingredients: new List<Ingredient>() {
+                new("eggs", 2, "whole")
+            },
+            steps: new Stack<RecipeStep>(new[]
+            {
+                new RecipeStep("step1", new RecipeImage("url")),
+                new RecipeStep("step2", new RecipeImage("url2"))
+            })),
+            creationDate: new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            lastUpdatedDate: new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
         );
     }
 
@@ -51,8 +85,10 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
 
-        await _client.PostAsJsonAsync("/user/create", _testUserContract);
-        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         // When
         var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
@@ -63,13 +99,13 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(recipeId);
-        data.Title.Should().Be(_testRecipeContract.Title);
-        data.Description.Should().Be(_testRecipeContract.Description);
-        data.KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
-        data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data.Chef.Handler.Should().Be(_testUserContract.Handler);
-        data.Chef.UserName.Should().Be(_testUserContract.UserName);
+        data.Title.Should().Be(_testRecipe.Title);
+        data.Description.Should().Be(_testRecipe.Description);
+        data.KiloCalories.Should().Be(_testRecipe.Recipe.KiloCalories);
+        data.NumberOfServings.Should().Be(_testRecipe.Recipe.NumberOfServings);
+        data.CookingTime.Should().Be(_testRecipe.Recipe.CookingTimeInSeconds);
+        data.Chef.Handler.Should().Be(_testUser.Account.Handler);
+        data.Chef.UserName.Should().Be(_testUser.Account.UserName);
         data.Ingredients.First().Name.Should().Be("eggs");
         data.Ingredients.First().Quantity.Should().Be(1);
         data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
@@ -100,21 +136,12 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string userid = "0";
 
-        NewRecipeContract secondTestRecipe = new(
-            Title: "Test",
-            Description: "Test",
-            ChefId: "0",
-            Tags: new HashSet<string>(),
-            NumberOfServings: 1,
-            KiloCalories: 2300,
-            CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(new[] { new RecipeStepDTO("step", "url") })
-        );
-
-        await _client.PostAsJsonAsync("/user/create", _testUserContract);
-        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
-        await _client.PostAsJsonAsync("/recipe/create", secondTestRecipe);
+        _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+        _fakeRecipeRepository
+            .CreateRecipe(_secondTestRecipe.Title, _secondTestRecipe.Recipe, _secondTestRecipe.Description, _secondTestRecipe.Chef, _secondTestRecipe.Tags, _secondTestRecipe.CreationDate, _secondTestRecipe.LastUpdatedDate, _secondTestRecipe.ThumbnailId);
 
         // When
         var result = await _client.PostAsync($"/recipe/get/userid?id={userid}", null);
@@ -127,20 +154,20 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Should().NotBeEmpty();
         data!.Count.Should().Be(2);
         
-        data.First().ChefUsername.Should().Be(_testUserContract.UserName);
-        data.First().Title.Should().Be(_testRecipeContract.Title);
-        data.First().Description.Should().Be(_testRecipeContract.Description);
-        data.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data.First().ChefUsername.Should().Be(_testUser.Account.UserName);
+        data.First().Title.Should().Be(_testRecipe.Title);
+        data.First().Description.Should().Be(_testRecipe.Description);
+        data.First().NumberOfServings.Should().Be(_testRecipe.Recipe.NumberOfServings);
+        data.First().CookingTime.Should().Be(_testRecipe.Recipe.CookingTimeInSeconds);
+        data.First().KiloCalories.Should().Be(_testRecipe.Recipe.KiloCalories);
         data.First().CreationDate.Should().NotBeNull();
 
-        data.Last().ChefUsername.Should().Be(_testUserContract.UserName);
-        data.Last().Title.Should().Be(secondTestRecipe.Title);
-        data.Last().Description.Should().Be(secondTestRecipe.Description);
-        data.Last().NumberOfServings.Should().Be(secondTestRecipe.NumberOfServings);
-        data.Last().CookingTime.Should().Be(secondTestRecipe.CookingTime);
-        data.Last().KiloCalories.Should().Be(secondTestRecipe.KiloCalories);
+        data.Last().ChefUsername.Should().Be(_testUser.Account.UserName);
+        data.Last().Title.Should().Be(_secondTestRecipe.Title);
+        data.Last().Description.Should().Be(_secondTestRecipe.Description);
+        data.Last().NumberOfServings.Should().Be(_secondTestRecipe.Recipe.NumberOfServings);
+        data.Last().CookingTime.Should().Be(_secondTestRecipe.Recipe.CookingTimeInSeconds);
+        data.Last().KiloCalories.Should().Be(_secondTestRecipe.Recipe.KiloCalories);
         data.Last().CreationDate.Should().NotBeNull();
     }
 
@@ -152,8 +179,10 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string userid = "0";
 
-        await _client.PostAsJsonAsync("/user/create", _testUserContract);
-        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         // When
         var result = await _client.PostAsync($"/recipe/get/userid?id={userid}", null);
@@ -164,12 +193,12 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
-        data!.First().ChefUsername.Should().Be(_testUserContract.UserName);
-        data!.First().Title.Should().Be(_testRecipeContract.Title);
-        data!.First().Description.Should().Be(_testRecipeContract.Description);
-        data!.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data!.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data!.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data!.First().ChefUsername.Should().Be(_testUser.Account.UserName);
+        data!.First().Title.Should().Be(_testRecipe.Title);
+        data!.First().Description.Should().Be(_testRecipe.Description);
+        data!.First().NumberOfServings.Should().Be(_testRecipe.Recipe.NumberOfServings);
+        data!.First().CookingTime.Should().Be(_testRecipe.Recipe.CookingTimeInSeconds);
+        data!.First().KiloCalories.Should().Be(_testRecipe.Recipe.KiloCalories);
         data!.First().CreationDate.Should().NotBeNull();
     }
 
@@ -200,21 +229,12 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string username = "TestUsername";
 
-        NewRecipeContract secondTestRecipe = new(
-            Title: "Test",
-            Description: "Test",
-            ChefId: "0",
-            Tags: new HashSet<string>(),
-            NumberOfServings: 1,
-            KiloCalories: 2300,
-            CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(new[] { new RecipeStepDTO("step", "url") })
-        );
-
-        await _client.PostAsJsonAsync("/user/create", _testUserContract);
-        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
-        await _client.PostAsJsonAsync("/recipe/create", secondTestRecipe);
+        _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+        _fakeRecipeRepository
+            .CreateRecipe(_secondTestRecipe.Title, _secondTestRecipe.Recipe, _secondTestRecipe.Description, _secondTestRecipe.Chef, _secondTestRecipe.Tags, _secondTestRecipe.CreationDate, _secondTestRecipe.LastUpdatedDate, _secondTestRecipe.ThumbnailId);
 
         // When
         var result = await _client.PostAsync($"/recipe/get/username?username={username}", null);
@@ -227,20 +247,20 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Should().NotBeEmpty();
         data!.Count.Should().Be(2);
 
-        data.First().ChefUsername.Should().Be(_testUserContract.UserName);
-        data.First().Title.Should().Be(_testRecipeContract.Title);
-        data.First().Description.Should().Be(_testRecipeContract.Description);
-        data.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data.First().ChefUsername.Should().Be(_testUser.Account.UserName);
+        data.First().Title.Should().Be(_testRecipe.Title);
+        data.First().Description.Should().Be(_testRecipe.Description);
+        data.First().NumberOfServings.Should().Be(_testRecipe.Recipe.NumberOfServings);
+        data.First().CookingTime.Should().Be(_testRecipe.Recipe.CookingTimeInSeconds);
+        data.First().KiloCalories.Should().Be(_testRecipe.Recipe.KiloCalories);
         data.First().CreationDate.Should().NotBeNull();
 
-        data.Last().ChefUsername.Should().Be(_testUserContract.UserName);
-        data.Last().Title.Should().Be(secondTestRecipe.Title);
-        data.Last().Description.Should().Be(secondTestRecipe.Description);
-        data.Last().NumberOfServings.Should().Be(secondTestRecipe.NumberOfServings);
-        data.Last().CookingTime.Should().Be(secondTestRecipe.CookingTime);
-        data.Last().KiloCalories.Should().Be(secondTestRecipe.KiloCalories);
+        data.Last().ChefUsername.Should().Be(_testUser.Account.UserName);
+        data.Last().Title.Should().Be(_secondTestRecipe.Title);
+        data.Last().Description.Should().Be(_secondTestRecipe.Description);
+        data.Last().NumberOfServings.Should().Be(_secondTestRecipe.Recipe.NumberOfServings);
+        data.Last().CookingTime.Should().Be(_secondTestRecipe.Recipe.CookingTimeInSeconds);
+        data.Last().KiloCalories.Should().Be(_secondTestRecipe.Recipe.KiloCalories);
         data.Last().CreationDate.Should().NotBeNull();
     }
 
@@ -252,8 +272,10 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string username = "TestUsername";
 
-        await _client.PostAsJsonAsync("/user/create", _testUserContract);
-        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         // When
         var result = await _client.PostAsync($"/recipe/get/username?username={username}", null);
@@ -264,12 +286,12 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
-        data!.First().ChefUsername.Should().Be(_testUserContract.UserName);
-        data!.First().Title.Should().Be(_testRecipeContract.Title);
-        data!.First().Description.Should().Be(_testRecipeContract.Description);
-        data!.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data!.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data!.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data!.First().ChefUsername.Should().Be(_testUser.Account.UserName);
+        data!.First().Title.Should().Be(_testRecipe.Title);
+        data!.First().Description.Should().Be(_testRecipe.Description);
+        data!.First().NumberOfServings.Should().Be(_testRecipe.Recipe.NumberOfServings);
+        data!.First().CookingTime.Should().Be(_testRecipe.Recipe.CookingTimeInSeconds);
+        data!.First().KiloCalories.Should().Be(_testRecipe.Recipe.KiloCalories);
         data!.First().CreationDate.Should().NotBeNull();
     }
 
@@ -297,8 +319,23 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task RecipeCreate_WhenUserDoesNotExist_ReturnNotFound()
     {
+        // Given
+        NewRecipeContract newRecipe = new(
+            Title: "New Title",
+            Description: "New Desc",
+            KiloCalories: 1000,
+            ChefId: _testUser.Account.Id,
+            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            {
+                new("step1", "url1"),
+                new("step2", "url2")
+            }),
+            Tags: new HashSet<string>()
+        );
+
         // When
-        var result = await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        var result = await _client.PostAsJsonAsync("/recipe/create", newRecipe);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -311,10 +348,25 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         string recipeId = "0";
-        await _client.PostAsJsonAsync("/user/create", _testUserContract);
+        _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        NewRecipeContract newRecipe = new(
+            Title: "New Title",
+            Description: "New Desc",
+            KiloCalories: 1000,
+            ChefId: _testUser.Account.Id,
+            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            {
+                new("step1", "url1"),
+                new("step2", "url2")
+            }),
+            Tags: new HashSet<string>()
+        );
 
         // When
-        var result = await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        var result = await _client.PostAsJsonAsync("/recipe/create", newRecipe);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -322,17 +374,17 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(recipeId);
-        data.Title.Should().Be(_testRecipeContract.Title);
-        data.Description.Should().Be(_testRecipeContract.Description);
-        data.KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
-        data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data.Chef.UserName.Should().Be(_testUserContract.UserName);
-        data.Ingredients.First().Name.Should().Be("eggs");
-        data.Ingredients.First().Quantity.Should().Be(1);
+        data.Title.Should().Be(newRecipe.Title);
+        data.Description.Should().Be(newRecipe.Description);
+        data.KiloCalories.Should().Be(newRecipe.KiloCalories);
+        data.NumberOfServings.Should().Be(newRecipe.NumberOfServings);
+        data.CookingTime.Should().Be(newRecipe.CookingTime);
+        data.Chef.UserName.Should().Be(_testUser.Account.UserName);
+        data.Ingredients.First().Name.Should().Be("lemons");
+        data.Ingredients.First().Quantity.Should().Be(2);
         data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
-        data.RecipeSteps.First().Text.Should().Be("step");
-        data.RecipeSteps.First().ImageUrl.Should().Be("url");
+        data.RecipeSteps.First().Text.Should().Be("step1");
+        data.RecipeSteps.First().ImageUrl.Should().Be("url1");
     }
 
     [Fact]
@@ -348,12 +400,18 @@ public class RecipeEndpointsTests : EndpointTestBase
             Description: "New Desc",
             KiloCalories: 1000,
             Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
-            RecipeSteps: _testRecipeContract.RecipeSteps,
+            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            {
+                new("step1", "url1"),
+                new("step2", "url2")
+            }),
             Tags: new HashSet<string>()
         );
 
-        await _client.PostAsJsonAsync("/user/create", _testUserContract);
-        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         // When
         var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);
@@ -369,14 +427,14 @@ public class RecipeEndpointsTests : EndpointTestBase
         data.Title.Should().Be(newRecipe.Title);
         data.Description.Should().Be(newRecipe.Description);
         data.KiloCalories.Should().Be(newRecipe.KiloCalories);
-        data.NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data.CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data.Chef.UserName.Should().Be(_testUserContract.UserName);
+        data.NumberOfServings.Should().Be(_testRecipe.Recipe.NumberOfServings);
+        data.CookingTime.Should().Be(_testRecipe.Recipe.CookingTimeInSeconds);
+        data.Chef.UserName.Should().Be(_testUser.Account.UserName);
         data.Ingredients.First().Name.Should().Be("lemons");
         data.Ingredients.First().Quantity.Should().Be(2);
         data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
-        data.RecipeSteps.First().Text.Should().Be("step");
-        data.RecipeSteps.First().ImageUrl.Should().Be("url");
+        data.RecipeSteps.First().Text.Should().Be("step1");
+        data.RecipeSteps.First().ImageUrl.Should().Be("url1");
     }
 
     [Fact]
@@ -392,7 +450,11 @@ public class RecipeEndpointsTests : EndpointTestBase
             Description: "New Desc",
             KiloCalories: 1000,
             Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
-            RecipeSteps: _testRecipeContract.RecipeSteps,
+            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            {
+                new("step1", "url1"),
+                new("step2", "url2")
+            }),
             Tags: new HashSet<string>()
         );
 
@@ -412,8 +474,10 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         string recipeId = "0";
-        await _client.PostAsJsonAsync("/user/create", _testUserContract);
-        await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
+        _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         // When
         var removeResult = await _client.DeleteAsync($"/recipe/remove?id={recipeId}");
