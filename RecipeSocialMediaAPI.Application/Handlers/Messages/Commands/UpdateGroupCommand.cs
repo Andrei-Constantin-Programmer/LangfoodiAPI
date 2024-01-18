@@ -10,9 +10,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record UpdateGroupCommand(UpdateGroupContract Contract) : IValidatableRequest<bool>;
+public record UpdateGroupCommand(UpdateGroupContract Contract) : IValidatableRequest;
 
-internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
+internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
 {
     private readonly IGroupQueryRepository _groupQueryRepository;
     private readonly IGroupPersistenceRepository _groupPersistenceRepository;
@@ -25,7 +25,7 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
         _userQueryRepository = userQueryRepository;
     }
 
-    public Task<bool> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
+    public Task Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
     {
         Group group = _groupQueryRepository.GetGroupById(request.Contract.GroupId)
             ?? throw new GroupNotFoundException(request.Contract.GroupId);
@@ -43,7 +43,11 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
 
         UpdateGroupUserList(updatedGroup, newUserList);
 
-        return Task.FromResult(_groupPersistenceRepository.UpdateGroup(updatedGroup));
+        var isSuccessful = _groupPersistenceRepository.UpdateGroup(updatedGroup);
+
+        return isSuccessful
+            ? Task.CompletedTask
+            : throw new GroupUpdateException($"Could not update group with id {group.GroupId}");
     }
 
     private static void UpdateGroupUserList(Group group, List<IUserAccount> newUserList)

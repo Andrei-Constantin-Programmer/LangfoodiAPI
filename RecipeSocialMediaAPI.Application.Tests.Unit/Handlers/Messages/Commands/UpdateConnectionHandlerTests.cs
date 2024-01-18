@@ -36,7 +36,7 @@ public class UpdateConnectionHandlerTests
     [InlineData("Muted", ConnectionStatus.Muted)]
     [InlineData("Connected", ConnectionStatus.Connected)]
     [InlineData("Favourite", ConnectionStatus.Favourite)]
-    public async Task Handle_WhenUpdateContractIsValidAndUpdateIsSuccessful_UpdatesTheConnectionAndReturnsTrue(string newConnectionStatus, ConnectionStatus connectionStatusEnumValue)
+    public async Task Handle_WhenUpdateContractIsValidAndUpdateIsSuccessful_UpdatesTheConnectionAndDoesNotThrow(string newConnectionStatus, ConnectionStatus connectionStatusEnumValue)
     {
         // Given
         TestUserCredentials user1 = new()
@@ -89,10 +89,10 @@ public class UpdateConnectionHandlerTests
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, newConnectionStatus);
 
         // When
-        var result = await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
+        var testAction = async () => await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
 
         // Then
-        result.Should().BeTrue();
+        await testAction.Should().NotThrowAsync();
         _connectionPersistenceRepositoryMock
             .Verify(repo => repo.UpdateConnection(It.Is<IConnection>(connection => connection.Status == connectionStatusEnumValue)), Times.Once);
     }
@@ -100,7 +100,7 @@ public class UpdateConnectionHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenContractIsValidButUpdateIsUnsuccessful_ReturnsFalse()
+    public async Task Handle_WhenContractIsValidButUpdateIsUnsuccessful_ThrowsConnectionUpdateException()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -151,16 +151,16 @@ public class UpdateConnectionHandlerTests
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Connected");
 
         // When
-        var result = await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
+        var testAction = async () => await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
 
         // Then
-        result.Should().BeFalse();
+        await testAction.Should().ThrowAsync<ConnectionUpdateException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenUpdateContractIsValidButConnectionStatusHasNotChanged_DoesNotUpdateTheConnectionButReturnsTrue()
+    public async Task Handle_WhenUpdateContractIsValidButConnectionStatusHasNotChanged_DoesNotUpdateTheConnectionAndDoesNotThrow()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -207,10 +207,10 @@ public class UpdateConnectionHandlerTests
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Pending");
 
         // When
-        var result = await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
+        var testAction = async () => await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
 
         // Then
-        result.Should().BeTrue();
+        await testAction.Should().NotThrowAsync();
         _connectionPersistenceRepositoryMock
             .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
     }
@@ -278,7 +278,7 @@ public class UpdateConnectionHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenConnectionDoesNotExist_DoesNotUpdateAndReturnsFalse()
+    public async Task Handle_WhenConnectionDoesNotExist_DoesNotUpdateAndThrowConnectionNotFoundException()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -323,10 +323,10 @@ public class UpdateConnectionHandlerTests
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Connected");
 
         // When
-        var result = await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
+        var testAction = async () => await _updateConnectionHandlerSUT.Handle(new UpdateConnectionCommand(contract), CancellationToken.None);
 
-        // Then
-        result.Should().BeFalse();
+        // Thens
+        await testAction.Should().ThrowAsync<ConnectionNotFoundException>();
         _connectionPersistenceRepositoryMock
             .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
     }
@@ -382,6 +382,7 @@ public class UpdateConnectionHandlerTests
         await testAction.Should()
             .ThrowAsync<UserNotFoundException>()
             .WithMessage($"No user found with id {(!user1Exists ? user1.Account.Id : user2.Account.Id)}");
+
         _connectionPersistenceRepositoryMock
             .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
     }

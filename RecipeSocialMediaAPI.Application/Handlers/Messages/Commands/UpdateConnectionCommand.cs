@@ -8,9 +8,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record UpdateConnectionCommand(UpdateConnectionContract Contract) : IRequest<bool>;
+public record UpdateConnectionCommand(UpdateConnectionContract Contract) : IRequest;
 
-internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand, bool>
+internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand>
 {
     private readonly IConnectionQueryRepository _connectionQueryRepository;
     private readonly IConnectionPersistenceRepository _connectionPersistenceRepository;
@@ -23,19 +23,15 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
         _userQueryRepository = userQueryRepository;
     }
 
-    public Task<bool> Handle(UpdateConnectionCommand request, CancellationToken cancellationToken)
+    public Task Handle(UpdateConnectionCommand request, CancellationToken cancellationToken)
     {
         IUserAccount user1 = _userQueryRepository.GetUserById(request.Contract.UserId1)?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId1}");
         IUserAccount user2 = _userQueryRepository.GetUserById(request.Contract.UserId2)?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId2}");
 
-        IConnection? connection = _connectionQueryRepository.GetConnection(user1, user2);
-
-        if (connection is null)
-        {
-            return Task.FromResult(false);
-        }
+        IConnection? connection = _connectionQueryRepository.GetConnection(user1, user2)
+            ?? throw new ConnectionNotFoundException($"No connection found between users with ids {user1.Id} and {user2.Id}");
 
         var isValidConnectionStatus = Enum.TryParse(request.Contract.NewConnectionStatus, out ConnectionStatus newStatus);
         if (!isValidConnectionStatus)
@@ -45,11 +41,15 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
 
         if (connection.Status == newStatus)
         {
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
 
         connection.Status = newStatus;
-            
-        return Task.FromResult(_connectionPersistenceRepository.UpdateConnection(connection));
+
+        var isSuccessful = _connectionPersistenceRepository.UpdateConnection(connection);
+
+        return isSuccessful
+            ? Task.CompletedTask
+            : throw new ConnectionUpdateException($"Could not update connection between users with ids {user1.Id} and {user2.Id}");
     }
 }
