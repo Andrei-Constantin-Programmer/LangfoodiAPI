@@ -26,7 +26,7 @@ public class RemoveGroupHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task Handle_WhenDeleteIsSuccessful_DontThrow()
     {
         // Given
         RemoveGroupCommand command = new("1");
@@ -49,7 +49,7 @@ public class RemoveGroupHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenDeleteIsUnsuccessful_ReturnFalse()
+    public async Task Handle_WhenDeleteIsUnsuccessful_ThrowGroupRemovalException()
     {
         // Given
         RemoveGroupCommand command = new("1");

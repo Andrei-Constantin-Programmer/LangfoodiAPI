@@ -57,16 +57,16 @@ public class UpdateGroupHandlerTests
             .Returns(true);
 
         // When
-        var result = await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().BeTrue();
+        await testAction.Should().NotThrowAsync();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenGroupIsNotUpdatedSuccessfully_ReturnFalse()
+    public async Task Handle_WhenGroupIsNotUpdatedSuccessfully_ThrowsGroupUpdateException()
     {
         // Given
         Group existingGroup = new("1", "Group", "Group Desc");
@@ -90,16 +90,16 @@ public class UpdateGroupHandlerTests
             .Returns(false);
 
         // When
-        var result = await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().BeFalse();
+        await testAction.Should().ThrowAsync<GroupUpdateException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenGroupSuffersNoChanges_ReturnTrue()
+    public async Task Handle_WhenGroupSuffersNoChanges_DoesNotThrow()
     {
         // Given
         Group existingGroup = new("1", "Group", "Group Desc");
@@ -119,16 +119,16 @@ public class UpdateGroupHandlerTests
             .Returns(true);
 
         // When
-        var result = await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().BeTrue();
+        await testAction.Should().NotThrowAsync();
     }
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenGroupUsersAreRemoved_UpdateAndReturnTrue()
+    public async Task Handle_WhenGroupUsersAreRemoved_UpdateAndDontThrow()
     {
         // Given
         List<IUserCredentials> users = new()
@@ -223,16 +223,16 @@ public class UpdateGroupHandlerTests
             .Returns(true);
 
         // When
-        var result = await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().BeTrue();
+        await testAction.Should().NotThrowAsync();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenGroupUsersAreAdded_UpdateAndReturnTrue()
+    public async Task Handle_WhenGroupUsersAreAdded_UpdateAndDontThrow()
     {
         // Given
         List<IUserCredentials> users = new()
@@ -331,16 +331,16 @@ public class UpdateGroupHandlerTests
             .Returns(true);
 
         // When
-        var result = await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().BeTrue();
+        await testAction.Should().NotThrowAsync();
     }
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenGroupUsersAreBothAddedAndRemoved_UpdateAndReturnTrue()
+    public async Task Handle_WhenGroupUsersAreBothAddedAndRemoved_UpdateAndDontThrow()
     {
         // Given
         List<IUserCredentials> users = new()
@@ -435,10 +435,10 @@ public class UpdateGroupHandlerTests
             .Returns(true);
 
         // When
-        var result = await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().BeTrue();
+        await testAction.Should().NotThrowAsync();
     }
 
     [Fact]
@@ -463,7 +463,6 @@ public class UpdateGroupHandlerTests
         // Then
         await testAction.Should().ThrowAsync<GroupNotFoundException>().WithMessage($"*{command.Contract.GroupId}*");
     }
-
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]

@@ -57,7 +57,7 @@ public class RemoveRecipeHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_RecipeExistsButDeletionFailed_ThrowGeneralException()
+    public async Task Handle_RecipeExistsButDeletionFailed_ThrowRecipeRemovalException()
     {
         // Given
         string recipeId = "1";

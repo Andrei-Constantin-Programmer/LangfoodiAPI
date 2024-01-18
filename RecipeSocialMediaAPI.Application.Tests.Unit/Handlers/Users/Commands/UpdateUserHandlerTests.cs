@@ -136,7 +136,7 @@ public class UpdateUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenUpdateContractIsValidButOperationUnsuccessful_ThrowException()
+    public async Task Handle_WhenUpdateContractIsValidButOperationUnsuccessful_ThrowUserUpdateException()
     {
         // Given
         UpdateUserContract contract = new(
@@ -170,6 +170,6 @@ public class UpdateUserHandlerTests
         var action = async () => await _updateUserHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<Exception>();
+        await action.Should().ThrowAsync<UserUpdateException>();
     }
 }

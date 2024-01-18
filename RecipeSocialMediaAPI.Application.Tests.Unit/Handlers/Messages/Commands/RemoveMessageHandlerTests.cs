@@ -74,7 +74,7 @@ public class RemoveMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenMessageDoesExistButDeleteIsUnsuccessful_ThrowException()
+    public void Handle_WhenMessageDoesExistButDeleteIsUnsuccessful_ThrowMessageRemovalException()
     {
         // Given
         RemoveMessageCommand testCommand = new("MessageId");
