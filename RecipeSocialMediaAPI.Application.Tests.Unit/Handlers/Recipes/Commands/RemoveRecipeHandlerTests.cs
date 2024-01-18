@@ -48,7 +48,7 @@ public class RemoveRecipeHandlerTests
         // Then
         await action.Should()
             .ThrowAsync<RecipeNotFoundException>()
-            .WithMessage("The recipe with the id 1 was not found.");
+            .WithMessage("The recipe with the id 1 was not found");
 
         _recipePersistenceRepositoryMock
             .Verify(repo => repo.DeleteRecipe(It.IsAny<string>()), Times.Never);
@@ -89,8 +89,8 @@ public class RemoveRecipeHandlerTests
 
         // Then
         await action.Should()
-            .ThrowAsync<Exception>()
-            .WithMessage("Could not remove recipe with id 1.");
+            .ThrowAsync<RecipeRemovalException>()
+            .WithMessage($"*{recipeId}*");
 
         _recipePersistenceRepositoryMock
             .Verify(repo => repo.DeleteRecipe(It.IsAny<string>()), Times.Once);
@@ -196,7 +196,7 @@ public class RemoveRecipeHandlerTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Never);
     }
 
@@ -259,7 +259,7 @@ public class RemoveRecipeHandlerTests
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
                 null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 
