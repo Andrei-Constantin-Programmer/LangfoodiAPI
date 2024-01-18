@@ -8,9 +8,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetConnectionQuery(string UserId1, string UserId2) : IRequest<ConnectionDTO?>;
+public record GetConnectionQuery(string UserId1, string UserId2) : IRequest<ConnectionDTO>;
 
-internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, ConnectionDTO?>
+internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, ConnectionDTO>
 {
     private readonly IConnectionQueryRepository _connectionQueryRepository;
     private readonly IUserQueryRepository _userQueryRepository;
@@ -21,18 +21,16 @@ internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, Connec
         _userQueryRepository = userQueryRepository;
     }
 
-    public Task<ConnectionDTO?> Handle(GetConnectionQuery request, CancellationToken cancellationToken)
+    public Task<ConnectionDTO> Handle(GetConnectionQuery request, CancellationToken cancellationToken)
     {
         IUserAccount user1 = _userQueryRepository.GetUserById(request.UserId1)?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId1}");
         IUserAccount user2 = _userQueryRepository.GetUserById(request.UserId2)?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId2}");
 
-        IConnection? connection = _connectionQueryRepository.GetConnection(user1, user2);
+        IConnection connection = _connectionQueryRepository.GetConnection(user1, user2)
+            ?? throw new ConnectionNotFoundException($"No connection found between users with ids {request.UserId1} and {request.UserId2}");
 
-        return Task.FromResult(
-            connection is not null
-            ? new ConnectionDTO(connection.Account1.Id, connection.Account2.Id, connection.Status.ToString())
-            : null);
+        return Task.FromResult(new ConnectionDTO(connection.Account1.Id, connection.Account2.Id, connection.Status.ToString()));
     }
 }
