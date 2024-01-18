@@ -38,7 +38,7 @@ public class AddUserHandlerTests
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
 
-        _cryptoServiceFake = new CryptoServiceFake();
+        _cryptoServiceFake = new FakeCryptoService();
 
         _userHandlerSUT = new AddUserHandler(_mapperMock.Object, _dateTimeProviderMock.Object, _cryptoServiceFake, _userPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object);
     }

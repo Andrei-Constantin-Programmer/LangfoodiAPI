@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 
-public class CryptoServiceFake : ICryptoService
+public class FakeCryptoService : ICryptoService
 {
     private const string ENCRYPTION_PREFIX = "CRYPT_";
 

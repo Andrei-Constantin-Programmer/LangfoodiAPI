@@ -20,7 +20,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
     internal FakeRecipeRepository _fakeRecipeRepository;
     internal FakeUserRepository _fakeUserRepository;
 
-    internal CryptoServiceFake _fakeCryptoService; 
+    internal FakeCryptoService _fakeCryptoService; 
 
     public EndpointTestBase(WebApplicationFactory<Program> factory)
     {
@@ -29,7 +29,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
 
         _fakeRecipeRepository = new FakeRecipeRepository();
         _fakeUserRepository = new FakeUserRepository();
-        _fakeCryptoService = new CryptoServiceFake();
+        _fakeCryptoService = new FakeCryptoService();
 
         _client = factory
             .WithWebHostBuilder(builder => builder.ConfigureServices(services =>
