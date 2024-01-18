@@ -150,16 +150,8 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var oldUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(oldUsername)}", null);
-        var newUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(updateContract.UserName)}", null);
-
-        var oldUserExists = bool.Parse(await 
-            oldUserExistsResult.Content.ReadAsStringAsync());
-
-        var newUserExists = bool.Parse(
-            await(
-                newUserExistsResult)
-            .Content.ReadAsStringAsync());
+        var oldUserExists = _fakeUserRepository.GetUserByUsername(oldUsername) is not null;
+        var newUserExists = _fakeUserRepository.GetUserByUsername(updateContract.UserName) is not null;
 
         oldUserExists.Should().BeFalse();
         newUserExists.Should().BeTrue();
@@ -179,13 +171,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
-        var userExistsResult = await _client
-            .PostAsync($"user/username/exists?username={Uri.EscapeDataString(updateContract.UserName)}", null);
-
-        var userExists = bool.Parse(await
-            userExistsResult.Content
-            .ReadAsStringAsync());
-
+        var userExists = _fakeUserRepository.GetUserByUsername(updateContract.UserName) is not null;
         userExists.Should().BeFalse();
     }
 
@@ -228,9 +214,8 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(createContract.UserName)}", null);
-        var userExists = bool.Parse(await
-            userExistsResult.Content.ReadAsStringAsync());
+        
+        var userExists = _fakeUserRepository.GetUserByUsername(createContract.UserName) is not null;
         userExists.Should().BeFalse();
     }
 
@@ -250,9 +235,8 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var userExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(createContract.UserName)}", null);
-        var userExists = bool.Parse(await
-            userExistsResult.Content.ReadAsStringAsync());
+
+        var userExists = _fakeUserRepository.GetUserByUsername(createContract.UserName) is not null;
         userExists.Should().BeFalse();
     }
 

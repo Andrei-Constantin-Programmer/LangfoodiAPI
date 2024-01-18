@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
-using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -417,24 +416,22 @@ public class RecipeEndpointsTests : EndpointTestBase
         var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);
 
         // Then
-        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
         updateResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        getResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await getResult.Content.ReadFromJsonAsync<RecipeDetailedDTO>();
+        var recipe = _fakeRecipeRepository.GetRecipeById(recipeId);
 
-        data.Should().NotBeNull();
-        data!.Id.Should().Be(recipeId);
-        data.Title.Should().Be(newRecipe.Title);
-        data.Description.Should().Be(newRecipe.Description);
-        data.KiloCalories.Should().Be(newRecipe.KiloCalories);
-        data.NumberOfServings.Should().Be(_testRecipe.Recipe.NumberOfServings);
-        data.CookingTime.Should().Be(_testRecipe.Recipe.CookingTimeInSeconds);
-        data.Chef.UserName.Should().Be(_testUser.Account.UserName);
-        data.Ingredients.First().Name.Should().Be("lemons");
-        data.Ingredients.First().Quantity.Should().Be(2);
-        data.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
-        data.RecipeSteps.First().Text.Should().Be("step1");
-        data.RecipeSteps.First().ImageUrl.Should().Be("url1");
+        recipe.Should().NotBeNull();
+        recipe!.Id.Should().Be(recipeId);
+        recipe.Title.Should().Be(newRecipe.Title);
+        recipe.Description.Should().Be(newRecipe.Description);
+        recipe.Recipe.KiloCalories.Should().Be(newRecipe.KiloCalories);
+        recipe.Recipe.NumberOfServings.Should().Be(_testRecipe.Recipe.NumberOfServings);
+        recipe.Recipe.CookingTimeInSeconds.Should().Be(_testRecipe.Recipe.CookingTimeInSeconds);
+        recipe.Chef.UserName.Should().Be(_testUser.Account.UserName);
+        recipe.Recipe.Ingredients.First().Name.Should().Be("lemons");
+        recipe.Recipe.Ingredients.First().Quantity.Should().Be(2);
+        recipe.Recipe.Ingredients.First().UnitOfMeasurement.Should().Be("whole");
+        recipe.Recipe.Steps.First().Text.Should().Be("step1");
+        recipe.Recipe.Steps.First().Image!.ImageUrl.Should().Be("url1");
     }
 
     [Fact]
@@ -462,9 +459,10 @@ public class RecipeEndpointsTests : EndpointTestBase
         var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);
 
         // Then
-        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
         updateResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        getResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var recipe = _fakeRecipeRepository.GetRecipeById(recipeId);
+        recipe.Should().BeNull();
     }
 
     [Fact]
@@ -481,11 +479,12 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // When
         var removeResult = await _client.DeleteAsync($"/recipe/remove?id={recipeId}");
-        var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
 
         // Then
         removeResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        getResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var recipe = _fakeRecipeRepository.GetRecipeById(recipeId);
+        recipe.Should().BeNull();
     }
 
     [Fact]
