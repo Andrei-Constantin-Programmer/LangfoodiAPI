@@ -53,6 +53,18 @@ public class ExceptionMappingMiddleware
         {
             await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Recipe not found");
         }
+        catch (MessageNotFoundException)
+        {
+            await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Message not found");
+        }
+        catch (GroupNotFoundException)
+        {
+            await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Group not found");
+        }
+        catch (ConnectionNotFoundException)
+        {
+            await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Connection not found");
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Internal error: {ErrorMessage}", ex.Message);
