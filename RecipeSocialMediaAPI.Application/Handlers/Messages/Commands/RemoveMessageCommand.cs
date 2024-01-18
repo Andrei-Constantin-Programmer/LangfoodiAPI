@@ -28,6 +28,6 @@ internal class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
 
         return isSuccessful
             ? Task.CompletedTask
-            : throw new Exception($"Could not remove message with id {request.Id}");
+            : throw new MessageRemovalException(request.Id);
     }
 }

@@ -8,19 +8,19 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands;
 
-public class DeleteGroupHandlerTests
+public class RemoveGroupHandlerTests
 {
     private readonly Mock<IGroupPersistenceRepository> _groupPersistenceRepositoryMock;
     private readonly Mock<IGroupQueryRepository> _groupQueryRepositoryMock;
 
-    private readonly DeleteGroupHandler _deleteGroupHandlerSUT;
+    private readonly RemoveGroupHandler _removeGroupHandlerSUT;
 
-    public DeleteGroupHandlerTests()
+    public RemoveGroupHandlerTests()
     {
         _groupPersistenceRepositoryMock = new Mock<IGroupPersistenceRepository>();
         _groupQueryRepositoryMock = new Mock<IGroupQueryRepository>();
 
-        _deleteGroupHandlerSUT = new(_groupPersistenceRepositoryMock.Object, _groupQueryRepositoryMock.Object);
+        _removeGroupHandlerSUT = new(_groupPersistenceRepositoryMock.Object, _groupQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class DeleteGroupHandlerTests
     public async Task Handle_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
-        DeleteGroupCommand command = new("1");
+        RemoveGroupCommand command = new("1");
 
         _groupQueryRepositoryMock
             .Setup(repo => repo.GetGroupById(command.GroupId))
@@ -40,10 +40,10 @@ public class DeleteGroupHandlerTests
             .Returns(true);
 
         // When
-        var result = await _deleteGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _removeGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().BeTrue();
+        await testAction.Should().NotThrowAsync();
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class DeleteGroupHandlerTests
     public async Task Handle_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
-        DeleteGroupCommand command = new("1");
+        RemoveGroupCommand command = new("1");
 
         _groupQueryRepositoryMock
             .Setup(repo => repo.GetGroupById(command.GroupId))
@@ -63,10 +63,10 @@ public class DeleteGroupHandlerTests
             .Returns(false);
 
         // When
-        var result = await _deleteGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _removeGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().BeFalse();
+        await testAction.Should().ThrowAsync<GroupRemovalException>().WithMessage($"*{command.GroupId}*");
     }
 
     [Fact]
@@ -75,14 +75,14 @@ public class DeleteGroupHandlerTests
     public async Task Handle_WhenGroupIsNotFound_ThrowGroupNotFoundException()
     {
         // Given
-        DeleteGroupCommand command = new("1");
+        RemoveGroupCommand command = new("1");
 
         _groupQueryRepositoryMock
             .Setup(repo => repo.GetGroupById(command.GroupId))
             .Returns((Group?)null);
 
         // When
-        var testAction = async () => await _deleteGroupHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _removeGroupHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
         await testAction.Should().ThrowAsync<GroupNotFoundException>().WithMessage($"*{command.GroupId}*");

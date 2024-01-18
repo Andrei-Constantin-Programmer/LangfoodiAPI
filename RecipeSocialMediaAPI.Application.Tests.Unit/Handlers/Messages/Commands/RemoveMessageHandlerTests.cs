@@ -101,6 +101,6 @@ public class RemoveMessageHandlerTests
         var testAction = async () => await _removeMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().ThrowAsync<Exception>().WithMessage("Could not remove message with id MessageId");
+        testAction.Should().ThrowAsync<MessageRemovalException>().WithMessage($"*{testMessage.Id}*");
     }
 }

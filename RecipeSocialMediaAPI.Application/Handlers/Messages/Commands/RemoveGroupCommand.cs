@@ -4,26 +4,30 @@ using RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record DeleteGroupCommand(string GroupId) : IRequest<bool>;
+public record RemoveGroupCommand(string GroupId) : IRequest;
 
-internal class DeleteGroupHandler : IRequestHandler<DeleteGroupCommand, bool>
+internal class RemoveGroupHandler : IRequestHandler<RemoveGroupCommand>
 {
     private readonly IGroupPersistenceRepository _groupPersistenceRepository;
     private readonly IGroupQueryRepository _groupQueryRepository;
 
-    public DeleteGroupHandler(IGroupPersistenceRepository groupPersistenceRepository, IGroupQueryRepository groupQueryRepository)
+    public RemoveGroupHandler(IGroupPersistenceRepository groupPersistenceRepository, IGroupQueryRepository groupQueryRepository)
     {
         _groupPersistenceRepository = groupPersistenceRepository;
         _groupQueryRepository = groupQueryRepository;
     }
 
-    public Task<bool> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
+    public Task Handle(RemoveGroupCommand request, CancellationToken cancellationToken)
     {
         if (_groupQueryRepository.GetGroupById(request.GroupId) is null)
         {
             throw new GroupNotFoundException(request.GroupId);
         }
 
-        return Task.FromResult(_groupPersistenceRepository.DeleteGroup(request.GroupId));
+        bool isSuccessful = _groupPersistenceRepository.DeleteGroup(request.GroupId);
+
+        return isSuccessful
+            ? Task.CompletedTask
+            : throw new GroupRemovalException(request.GroupId);
     }
 }
