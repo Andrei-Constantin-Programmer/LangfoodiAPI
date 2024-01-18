@@ -158,7 +158,7 @@ public class RemoveUserHandlerTests
         var action = async () => await _removeUserHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<Exception>();
+        await action.Should().ThrowAsync<UserRemovalException>().WithMessage($"*{user.Account.Id}*");
     }
 
     [Fact]
@@ -193,6 +193,6 @@ public class RemoveUserHandlerTests
         var action = async () => await _removeUserHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<Exception>();
+        await action.Should().ThrowAsync<UserRemovalException>().WithMessage($"*{user.Account.Id}*");
     }
 }

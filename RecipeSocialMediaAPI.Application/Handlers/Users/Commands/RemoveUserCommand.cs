@@ -27,6 +27,6 @@ internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
 
         return isSuccessful
             ? Task.CompletedTask 
-            : throw new Exception($"Could not remove user with id {userId}.");
+            : throw new UserRemovalException(userId);
     }
 }
