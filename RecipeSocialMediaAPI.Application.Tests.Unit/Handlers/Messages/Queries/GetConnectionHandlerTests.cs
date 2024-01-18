@@ -63,7 +63,7 @@ public class GetConnectionHandlerTests
             .Setup(repo => repo.GetUserById(user2.Account.Id))
             .Returns(user2);
 
-        Connection existingConnection = new(user1.Account, user2.Account, ConnectionStatus.Connected);
+        Connection existingConnection = new("0", user1.Account, user2.Account, ConnectionStatus.Connected);
 
         _connectionQueryRepositoryMock
             .Setup(repo => repo.GetConnection(
@@ -124,7 +124,7 @@ public class GetConnectionHandlerTests
             .Setup(repo => repo.GetUserById(user2.Account.Id))
             .Returns(user2Exists ? user2 : null);
 
-        Connection existingConnection = new(user1.Account, user2.Account, ConnectionStatus.Connected);
+        Connection existingConnection = new("0", user1.Account, user2.Account, ConnectionStatus.Connected);
 
         _connectionQueryRepositoryMock
             .Setup(repo => repo.GetConnection(
@@ -146,7 +146,7 @@ public class GetConnectionHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenConnectionDoesNotExist_ReturnNull()
+    public async Task Handle_WhenConnectionDoesNotExist_ThrowConnectionNotFoundException()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -189,9 +189,9 @@ public class GetConnectionHandlerTests
         GetConnectionQuery query = new(user1.Account.Id, user2.Account.Id);
 
         // When
-        var result = await _getConnectionHandlerSUT.Handle(query, CancellationToken.None);
+        var testAction = async () => await _getConnectionHandlerSUT.Handle(query, CancellationToken.None);
 
         // Then
-        result.Should().BeNull();
+        await testAction.Should().ThrowAsync<ConnectionNotFoundException>();
     }
 }

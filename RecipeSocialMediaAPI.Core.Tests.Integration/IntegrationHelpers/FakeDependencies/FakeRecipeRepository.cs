@@ -15,7 +15,7 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
 
     public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
     {
-       var id = _collection.Count.ToString();
+        var id = _collection.Count.ToString();
         RecipeAggregate newRecipe = new(
             id, title, recipe, description, chef, 
             creationDate, lastUpdatedDate, tags,

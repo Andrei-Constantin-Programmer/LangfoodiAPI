@@ -8,6 +8,7 @@ using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 
@@ -19,6 +20,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
 
     internal FakeRecipeRepository _fakeRecipeRepository;
     internal FakeUserRepository _fakeUserRepository;
+    internal FakeConnectionRepository _fakeConnectionRepository;
 
     internal FakeCryptoService _fakeCryptoService; 
 
@@ -29,6 +31,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
 
         _fakeRecipeRepository = new FakeRecipeRepository();
         _fakeUserRepository = new FakeUserRepository();
+        _fakeConnectionRepository = new FakeConnectionRepository();
         _fakeCryptoService = new FakeCryptoService();
 
         _client = factory
@@ -39,6 +42,9 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
 
                 services.AddSingleton<IUserQueryRepository>(_fakeUserRepository);
                 services.AddSingleton<IUserPersistenceRepository>(_fakeUserRepository);
+
+                services.AddSingleton<IConnectionQueryRepository>(_fakeConnectionRepository);
+                services.AddSingleton<IConnectionPersistenceRepository>(_fakeConnectionRepository);
 
                 services.AddSingleton<ICryptoService>(_fakeCryptoService);
 

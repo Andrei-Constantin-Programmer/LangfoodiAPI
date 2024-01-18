@@ -56,7 +56,7 @@ public class CreateConnectionHandlerTests
 
         NewConnectionContract testContract = new(userAccount1.Id, userAccount2.Id);
 
-        Connection testConnection = new(userAccount1, userAccount2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", userAccount1, userAccount2, ConnectionStatus.Pending);
 
         _connectionPersistenceRepositoryMock
             .Setup(repo => repo.CreateConnection(userAccount1, userAccount2, ConnectionStatus.Pending))
@@ -101,6 +101,7 @@ public class CreateConnectionHandlerTests
                 .Setup(repo => repo.GetUserById(userAccount1.Id))
                 .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test1@mail.com", Password = "TestPass" });
         }
+
         if (user2Exists) 
         {
             _userQueryRepositoryMock
@@ -110,7 +111,7 @@ public class CreateConnectionHandlerTests
 
         NewConnectionContract testContract = new(userAccount1.Id, userAccount2.Id);
 
-        Connection testConnection = new(userAccount1, userAccount2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", userAccount1, userAccount2, ConnectionStatus.Pending);
 
         _connectionPersistenceRepositoryMock
             .Setup(repo => repo.CreateConnection(userAccount1, userAccount2, ConnectionStatus.Pending))

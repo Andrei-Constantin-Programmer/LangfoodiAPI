@@ -23,7 +23,7 @@ public class ConnectionTests
         };
 
         // When
-        var testAction = () => new Connection(account, account, ConnectionStatus.Connected);
+        var testAction = () => new Connection("0", account, account, ConnectionStatus.Connected);
 
         // Then
         testAction.Should().Throw<ArgumentException>();
