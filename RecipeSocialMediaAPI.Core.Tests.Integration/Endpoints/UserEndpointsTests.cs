@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
-using RecipeSocialMediaAPI.Application.DTO;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
@@ -61,9 +60,8 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        await (await _client
-            .PostAsJsonAsync("user/create", contract))
-            .Content.ReadFromJsonAsync<UserDTO>();
+        _ = _fakeUserRepository
+            .CreateUser(contract.Handler, contract.UserName, contract.Email, _fakeCryptoService.Encrypt(contract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(contract.UserName)}", null);
@@ -101,9 +99,8 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        await (await _client
-            .PostAsJsonAsync("user/create", contract))
-            .Content.ReadFromJsonAsync<UserDTO>();
+        _ = _fakeUserRepository
+            .CreateUser(contract.Handler, contract.UserName, contract.Email, _fakeCryptoService.Encrypt(contract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(contract.Email)}", null);
@@ -141,13 +138,11 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        var user = (await 
-            (await _client
-                .PostAsJsonAsync("user/create", createContract))
-            .Content
-            .ReadFromJsonAsync<UserDTO>())!;
+        var user = _fakeUserRepository
+           .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var oldUsername = user.Account.UserName;
 
-        UpdateUserContract updateContract = new(user.Id, "NewUsername", user.Email, user.Password);
+        UpdateUserContract updateContract = new(user.Account.Id, "NewUsername", user.Email, user.Password);
 
         // When
         var result = await _client.PutAsJsonAsync("user/update", updateContract);
@@ -155,7 +150,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var oldUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(user.UserName)}", null);
+        var oldUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(oldUsername)}", null);
         var newUserExistsResult = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(updateContract.UserName)}", null);
 
         var oldUserExists = bool.Parse(await 
@@ -205,13 +200,10 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        var user = (await
-            (await _client
-                .PostAsJsonAsync("user/create", createContract))
-            .Content
-            .ReadFromJsonAsync<UserDTO>())!;
+        var user = _fakeUserRepository
+            .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        NewUserContract updateContract = new(user.Id, username, email, password);
+        NewUserContract updateContract = new(user.Account.Id, username, email, password);
 
         // When
         var result = await _client.PutAsJsonAsync("user/update", updateContract);
@@ -228,9 +220,8 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        await(await _client
-            .PostAsJsonAsync("user/create", createContract))
-            .Content.ReadFromJsonAsync<UserDTO>();
+        _ = _fakeUserRepository
+           .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(createContract.Email)}");
@@ -251,12 +242,11 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        var user = await (await _client
-            .PostAsJsonAsync("user/create", createContract))
-            .Content.ReadFromJsonAsync<UserDTO>();
+        var user = _fakeUserRepository
+            .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user!.Id!)}");
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user.Account.Id)}");
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
