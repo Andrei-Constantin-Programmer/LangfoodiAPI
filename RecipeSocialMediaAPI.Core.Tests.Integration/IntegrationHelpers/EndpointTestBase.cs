@@ -6,6 +6,8 @@ using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using Moq;
 using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 
@@ -15,21 +17,30 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
     protected readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
     protected readonly HttpClient _client;
 
+    internal FakeRecipeRepository _fakeRecipeRepository;
+    internal FakeUserRepository _fakeUserRepository;
+
+    internal FakeCryptoService _fakeCryptoService; 
+
     public EndpointTestBase(WebApplicationFactory<Program> factory)
     {
         _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
         _cloudinarySignatureServiceMock = new Mock<ICloudinarySignatureService>();
 
+        _fakeRecipeRepository = new FakeRecipeRepository();
+        _fakeUserRepository = new FakeUserRepository();
+        _fakeCryptoService = new FakeCryptoService();
+
         _client = factory
             .WithWebHostBuilder(builder => builder.ConfigureServices(services =>
             {
-                var fakeRecipeRepository = new FakeRecipeRepository();
-                services.AddSingleton<IRecipeQueryRepository>(fakeRecipeRepository);
-                services.AddSingleton<IRecipePersistenceRepository>(fakeRecipeRepository);
+                services.AddSingleton<IRecipeQueryRepository>(_fakeRecipeRepository);
+                services.AddSingleton<IRecipePersistenceRepository>(_fakeRecipeRepository);
 
-                var fakeUserRepository = new FakeUserRepository();
-                services.AddSingleton<IUserQueryRepository>(fakeUserRepository);
-                services.AddSingleton<IUserPersistenceRepository>(fakeUserRepository);
+                services.AddSingleton<IUserQueryRepository>(_fakeUserRepository);
+                services.AddSingleton<IUserPersistenceRepository>(_fakeUserRepository);
+
+                services.AddSingleton<ICryptoService>(_fakeCryptoService);
 
                 services.AddSingleton(_cloudinaryWebClientMock.Object);
                 services.AddSingleton(_cloudinarySignatureServiceMock.Object);
