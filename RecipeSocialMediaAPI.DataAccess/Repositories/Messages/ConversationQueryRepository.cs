@@ -84,5 +84,15 @@ public class ConversationQueryRepository : IConversationQueryRepository
             .ToList();
     }
 
+    private List<Message> GetMessages(ConversationDocument conversationDocument) => conversationDocument.Messages
+        .Select(_messageQueryRepository.GetMessage)
+        .OfType<Message>()
+        .ToList();
+    private Group? GetGroup(ConversationDocument conversationDocument) => conversationDocument.GroupId is null
+        ? null
+        : _groupQueryRepository.GetGroupById(conversationDocument.GroupId);
 
+    private IConnection? GetConnection(ConversationDocument conversationDocument) => conversationDocument.ConnectionId is null
+        ? null
+        : _connectionQueryRepository.GetConnection(conversationDocument.ConnectionId);
 }
