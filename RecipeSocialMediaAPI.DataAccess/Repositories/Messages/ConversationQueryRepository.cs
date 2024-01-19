@@ -9,6 +9,8 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 
