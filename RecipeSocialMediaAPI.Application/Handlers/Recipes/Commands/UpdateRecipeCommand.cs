@@ -62,7 +62,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
         return isSuccessful
             ? Task.CompletedTask
-            : throw new Exception($"Could not update recipe with id {existingRecipe.Id}");
+            : throw new RecipeUpdateException($"Could not update recipe with id {existingRecipe.Id}");
     }
 }
 

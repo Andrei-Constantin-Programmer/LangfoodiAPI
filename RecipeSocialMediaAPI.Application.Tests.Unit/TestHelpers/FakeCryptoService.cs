@@ -2,13 +2,14 @@
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 
-internal class CryptoServiceFake : ICryptoService
+public class FakeCryptoService : ICryptoService
 {
     private const string ENCRYPTION_PREFIX = "CRYPT_";
 
     public bool ArePasswordsTheSame(string decryptedPassword, string encryptedPassword)
     {
-        return decryptedPassword == encryptedPassword.Remove(0, ENCRYPTION_PREFIX.Length);}
+        return decryptedPassword == encryptedPassword.Remove(0, ENCRYPTION_PREFIX.Length);
+    }
 
     public string Encrypt(string password)
     {

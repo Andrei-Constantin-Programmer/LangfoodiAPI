@@ -7,7 +7,6 @@ public class Connection : IConnection
     public string ConnectionId { get; }
     public IUserAccount Account1 { get; }
     public IUserAccount Account2 { get; }
-
     public ConnectionStatus Status { get; set; }
 
     public Connection(string connectionId, IUserAccount account1, IUserAccount account2, ConnectionStatus status)
@@ -18,10 +17,8 @@ public class Connection : IConnection
         }
 
         ConnectionId = connectionId;
-
         Account1 = account1;
         Account2 = account2;
-
         Status = status;
     }
 }
