@@ -9,12 +9,13 @@ public class RecipeAggregate
     public Recipe Recipe { get; }
     public string Title { get; set; }
     public string Description { get; set; }
+    public string? ThumbnailId { get; set; }
     public IUserAccount Chef { get; }
     public DateTimeOffset CreationDate { get; }
     public DateTimeOffset LastUpdatedDate { get; set; }
 
-    private readonly ISet<string> _labels;
-    public ISet<string> Labels => _labels.ToImmutableHashSet();
+    private readonly ISet<string> _tags;
+    public ISet<string> Tags => _tags.ToImmutableHashSet();
 
     public RecipeAggregate(
         string id,
@@ -24,7 +25,9 @@ public class RecipeAggregate
         IUserAccount chef,
         DateTimeOffset creationDate,
         DateTimeOffset lastUpdatedDate,
-        ISet<string>? labels = null)
+        ISet<string>? tags = null,
+        string? thumbnailId = null)
+
     {
         Id = id;
         Title = title;
@@ -33,11 +36,12 @@ public class RecipeAggregate
         Chef = chef;
         CreationDate = creationDate;
         LastUpdatedDate = lastUpdatedDate;
-        _labels = labels ?? new HashSet<string>();
+        _tags = tags ?? new HashSet<string>();
+        ThumbnailId = thumbnailId;
     }
 
-    public bool AddLabel(string label)
+    public bool AddTag(string tag)
     {
-        return _labels.Add(label);
+        return _tags.Add(tag);
     }
 }

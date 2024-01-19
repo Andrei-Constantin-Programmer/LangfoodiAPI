@@ -16,15 +16,14 @@ public class UserMapper : IUserMapper
 
     public UserDTO MapUserToUserDto(IUserCredentials userCredentials)
     {
-        return new UserDTO()
-        {
-            Id = userCredentials.Account.Id,
-            Handler = userCredentials.Account.Handler,
-            UserName = userCredentials.Account.UserName,
-            AccountCreationDate = userCredentials.Account.AccountCreationDate,
-            Email = userCredentials.Email,
-            Password = userCredentials.Password,
-        };
+        return new UserDTO(
+            Id: userCredentials.Account.Id,
+            Handler: userCredentials.Account.Handler,
+            UserName: userCredentials.Account.UserName,
+            AccountCreationDate: userCredentials.Account.AccountCreationDate,
+            Email: userCredentials.Email,
+            Password: userCredentials.Password
+        );
     }
 
     public IUserCredentials MapUserDtoToUser(UserDTO userDto)
@@ -40,13 +39,12 @@ public class UserMapper : IUserMapper
 
     public UserAccountDTO MapUserAccountToUserAccountDto(IUserAccount userAccount)
     {
-        return new UserAccountDTO()
-        {
-            Id = userAccount.Id,
-            Handler = userAccount.Handler,
-            UserName = userAccount.UserName,
-            AccountCreationDate = userAccount.AccountCreationDate,
-        };
+        return new UserAccountDTO(
+            Id: userAccount.Id,
+            Handler: userAccount.Handler,
+            UserName: userAccount.UserName,
+            AccountCreationDate: userAccount.AccountCreationDate
+        );
     }
 
     public IUserAccount MapUserAccountDtoToUserAccount(UserAccountDTO userAccountDto)

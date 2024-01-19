@@ -57,15 +57,14 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero), 
             repliedToMessage);
 
-        MessageDTO expectedResult = new()
-        {
-            Id = testMessage.Id,
-            SenderId = testSender.Id,
-            TextContent = testMessage.TextContent,
-            RepliedToMessageId = testMessage.RepliedToMessage!.Id,
-            SentDate = testMessage.SentDate,
-            UpdatedDate = testMessage.UpdatedDate,
-        };
+        MessageDTO expectedResult = new(
+            Id: testMessage.Id,
+            SenderId: testSender.Id,
+            TextContent: testMessage.TextContent,
+            RepliedToMessageId: testMessage.RepliedToMessage!.Id,
+            SentDate: testMessage.SentDate,
+            UpdatedDate: testMessage.UpdatedDate
+        );
 
         // When
         var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);
@@ -101,16 +100,15 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
-        MessageDTO expectedResult = new()
-        {
-            Id = testMessage.Id,
-            SenderId = testSender.Id,
-            ImageURLs = testMessage.ImageURLs.ToList(),
-            TextContent = testMessage.TextContent,
-            RepliedToMessageId = testMessage.RepliedToMessage!.Id,
-            SentDate = testMessage.SentDate,
-            UpdatedDate = testMessage.UpdatedDate,
-        };
+        MessageDTO expectedResult = new(
+            Id: testMessage.Id,
+            SenderId: testSender.Id,
+            ImageURLs: testMessage.ImageURLs.ToList(),
+            TextContent: testMessage.TextContent,
+            RepliedToMessageId: testMessage.RepliedToMessage!.Id,
+            SentDate: testMessage.SentDate,
+            UpdatedDate: testMessage.UpdatedDate
+        );
 
         // When
         var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);
@@ -150,16 +148,15 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
-        MessageDTO expectedResult = new()
-        {
-            Id = testMessage.Id,
-            SenderId = testSender.Id,
-            RecipeIds = new() { "Recipe1", "Recipe2" },
-            TextContent = testMessage.TextContent,
-            RepliedToMessageId = testMessage.RepliedToMessage!.Id,
-            SentDate = testMessage.SentDate,
-            UpdatedDate = testMessage.UpdatedDate,
-        };
+        MessageDTO expectedResult = new(
+            Id: testMessage.Id,
+            SenderId: testSender.Id,
+            RecipeIds: new() { "Recipe1", "Recipe2" },
+            TextContent: testMessage.TextContent,
+            RepliedToMessageId: testMessage.RepliedToMessage!.Id,
+            SentDate: testMessage.SentDate,
+            UpdatedDate: testMessage.UpdatedDate
+        );
 
         // When
         var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);

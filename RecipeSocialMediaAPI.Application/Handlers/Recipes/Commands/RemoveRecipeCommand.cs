@@ -1,6 +1,9 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
@@ -8,25 +11,43 @@ public record RemoveRecipeCommand(string Id) : IRequest;
 
 internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 {
+    private readonly ILogger<RemoveRecipeCommand> _logger;
     private readonly IRecipePersistenceRepository _recipePersistenceRepository;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
+    private readonly IImageHostingPersistenceRepository _imageHostingPersistenceRepository;
 
-    public RemoveRecipeHandler(IRecipePersistenceRepository recipePersistenceRepository, IRecipeQueryRepository recipeQueryRepository)
+    public RemoveRecipeHandler(IRecipePersistenceRepository recipePersistenceRepository, IRecipeQueryRepository recipeQueryRepository, IImageHostingPersistenceRepository imageHostingPersistenceRepository, ILogger<RemoveRecipeCommand> logger)
     {
         _recipePersistenceRepository = recipePersistenceRepository;
         _recipeQueryRepository = recipeQueryRepository;
+        _imageHostingPersistenceRepository = imageHostingPersistenceRepository;
+        _logger = logger;
     }
 
     public Task Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
     {
-        if (_recipeQueryRepository.GetRecipeById(request.Id) is null)
+        RecipeAggregate? recipeToRemove = _recipeQueryRepository.GetRecipeById(request.Id) 
+            ?? throw new RecipeNotFoundException(request.Id);
+
+        var imageIds = recipeToRemove.Recipe.Steps
+            .Where(x => x.Image is not null)
+            .Select(r => r.Image!.ImageUrl)
+            .ToList();
+
+        if (recipeToRemove.ThumbnailId is not null)
         {
-            throw new RecipeNotFoundException(request.Id);
+            imageIds.Add(recipeToRemove.ThumbnailId);
         }
 
-        bool isSuccessful = _recipePersistenceRepository.DeleteRecipe(request.Id);
+        bool isRecipeRemoved = _recipePersistenceRepository.DeleteRecipe(request.Id);
+        bool areImagesRemoved = imageIds.Count <= 0 || _imageHostingPersistenceRepository.BulkRemoveHostedImages(imageIds);
 
-        return isSuccessful
+        if (!areImagesRemoved)
+        {
+            _logger.LogWarning("Some of the recipe's related images failed to be removed, ids: {imageIds}", string.Join(",",imageIds));
+        }
+
+        return isRecipeRemoved
             ? Task.CompletedTask
             : throw new Exception($"Could not remove recipe with id {request.Id}.");
     }

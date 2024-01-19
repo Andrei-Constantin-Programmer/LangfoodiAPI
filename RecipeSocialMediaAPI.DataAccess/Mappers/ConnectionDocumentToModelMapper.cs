@@ -16,7 +16,7 @@ public class ConnectionDocumentToModelMapper : IConnectionDocumentToModelMapper
         _userQueryRepository = userQueryRepository;
     }
 
-    public Connection MapConnectionFromDocument(ConnectionDocument connectionDocument)
+    public IConnection MapConnectionFromDocument(ConnectionDocument connectionDocument)
     {
         IUserAccount user1 = _userQueryRepository
             .GetUserById(connectionDocument.AccountId1)?.Account
@@ -27,7 +27,7 @@ public class ConnectionDocumentToModelMapper : IConnectionDocumentToModelMapper
             ?? throw new UserDocumentNotFoundException(connectionDocument.AccountId2);
 
         return Enum.TryParse(connectionDocument.ConnectionStatus, out ConnectionStatus status)
-            ? new Connection(user1, user2, status)
+            ? new Connection(connectionDocument.Id, user1, user2, status)
             : throw new InvalidConnectionStatusException(connectionDocument);
     }
 }

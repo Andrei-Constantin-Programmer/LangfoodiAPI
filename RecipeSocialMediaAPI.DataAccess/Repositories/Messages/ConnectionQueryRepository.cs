@@ -21,7 +21,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public Connection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2)
+    public IConnection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2)
     {
         ConnectionDocument? connectionDocument;
         try
@@ -41,7 +41,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
             : null;
     }
 
-    public List<Connection> GetConnectionsForUser(IUserAccount userAccount)
+    public List<IConnection> GetConnectionsForUser(IUserAccount userAccount)
     {
         List<ConnectionDocument> connections = new();
 

@@ -21,13 +21,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserCreate_WhenValidUser_ReturnUserWithId()
     {
         // Given
-        NewUserContract contract = new()
-        {
-            Handler = "TestHandler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract contract = new("TestHandler", "TestUsername", "test@mail.com", "Test@123");
 
         // When
         var result = await _client.PostAsJsonAsync("user/create", contract);
@@ -50,13 +44,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserCreate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
-        NewUserContract contract = new()
-        {
-            Handler = "handler",
-            UserName = username,
-            Email = email,
-            Password = password
-        };
+        NewUserContract contract = new("handler", username, email, password);
 
         // When
         var result = await _client.PostAsJsonAsync("user/create", contract);
@@ -71,13 +59,8 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUsernameExists_WhenUsernameExists_ReturnTrue()
     {
         // Given
-        NewUserContract contract = new()
-        {
-            Handler = "handler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
+
         await (await _client
             .PostAsJsonAsync("user/create", contract))
             .Content.ReadFromJsonAsync<UserDTO>();
@@ -98,14 +81,8 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
     {
         // Given
-        NewUserContract contract = new()
-        {
-            Handler = "handler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
-        
+        NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
+
         // When
         var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(contract.UserName)}", null);
 
@@ -122,13 +99,8 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserEmailExists_WhenEmailExists_ReturnTrue()
     {
         // Given
-        NewUserContract contract = new()
-        {
-            Handler = "handler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
+
         await (await _client
             .PostAsJsonAsync("user/create", contract))
             .Content.ReadFromJsonAsync<UserDTO>();
@@ -149,13 +121,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
     {
         // Given
-        NewUserContract contract = new()
-        {
-            Handler = "handler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
         // When
         var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(contract.Email)}", null);
@@ -173,26 +139,15 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
-        NewUserContract createContract = new()
-        {
-            Handler = "handler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
+
         var user = (await 
             (await _client
                 .PostAsJsonAsync("user/create", createContract))
             .Content
             .ReadFromJsonAsync<UserDTO>())!;
 
-        UpdateUserContract updateContract = new()
-        {
-            Id = user.Id,
-            UserName = "NewUsername",
-            Password = user.Password,
-            Email = user.Email,
-        };
+        UpdateUserContract updateContract = new(user.Id, "NewUsername", user.Email, user.Password);
 
         // When
         var result = await _client.PutAsJsonAsync("user/update", updateContract);
@@ -221,13 +176,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
     {
         // Given
-        UpdateUserContract updateContract = new()
-        {
-            Id = "TestId",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        UpdateUserContract updateContract = new("TestId", "TestUsername", "test@mail.com", "Test@123");
 
         // When
         var result = await _client.PutAsJsonAsync("user/update", updateContract);
@@ -254,26 +203,15 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
-        NewUserContract createContract = new()
-        {
-            Handler = "handler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
+
         var user = (await
             (await _client
                 .PostAsJsonAsync("user/create", createContract))
             .Content
             .ReadFromJsonAsync<UserDTO>())!;
 
-        UpdateUserContract updateContract = new()
-        {
-            Id = user.Id,
-            UserName = username,
-            Password = email,
-            Email = password,
-        };
+        NewUserContract updateContract = new(user.Id, username, email, password);
 
         // When
         var result = await _client.PutAsJsonAsync("user/update", updateContract);
@@ -288,13 +226,8 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        NewUserContract createContract = new()
-        {
-            Handler = "handler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
+
         await(await _client
             .PostAsJsonAsync("user/create", createContract))
             .Content.ReadFromJsonAsync<UserDTO>();
@@ -316,13 +249,8 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        NewUserContract createContract = new()
-        {
-            Handler = "handler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
+
         var user = await (await _client
             .PostAsJsonAsync("user/create", createContract))
             .Content.ReadFromJsonAsync<UserDTO>();

@@ -37,7 +37,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         List<TestDocument> existingDocuments = new();
         for(int i = 0; i <= 10; i++)
         {
-            existingDocuments.Add(new() { TestProperty = i.ToString() });
+            existingDocuments.Add(new(i.ToString()));
         }
 
         _dbFixture.TestCollection.InsertMany(existingDocuments);
@@ -59,7 +59,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         List<TestDocument> existingDocuments = new();
         for (int i = 0; i <= 10; i++)
         {
-            existingDocuments.Add(new() { TestProperty = i.ToString() });
+            existingDocuments.Add(new(i.ToString()));
         }
 
         _dbFixture.TestCollection.InsertMany(existingDocuments);
@@ -91,7 +91,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void Insert_AddsDocumentToTheDatabaseAndReturnsDocument()
     {
         // Given
-        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        TestDocument testDocument = new("Test 1");
 
         // When
         var document = _mongoCollectionWrapperSUT.Insert(testDocument);
@@ -108,7 +108,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsException()
     {
         // Given
-        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
@@ -124,7 +124,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrue()
     {
         // Given
-        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
@@ -143,10 +143,10 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         // Given
         List<TestDocument> testDocuments = new()
         {
-            new() { TestProperty = "To Delete 1" },
-            new() { TestProperty = "To Delete 2" },
-            new() { TestProperty = "To Keep 1" },
-            new() { TestProperty = "To Keep 2" },
+            new("To Delete 1"),
+            new("To Delete 2"),
+            new("To Keep 1"),
+            new("To Keep 2"),
         };
         _dbFixture.TestCollection.InsertMany(testDocuments);
 
@@ -166,7 +166,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void Delete_WhenNoDocumentWithConditionExists_ReturnFalse()
     {
         // Given
-        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
@@ -197,7 +197,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void Find_WhenNoDocumentWithConditionExists_ReturnNull()
     {
         // Given
-        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
@@ -227,7 +227,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void Find_WhenDocumentWithConditionExists_ReturnDocument()
     {
         // Given
-        TestDocument testDocument = new() { TestProperty = "Test 1" };
+        TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
@@ -245,10 +245,10 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         // Given
         List<TestDocument> testDocuments = new()
         {
-            new() { TestProperty = "Example 1" },
-            new() { TestProperty = "Example 2" },
-            new() { TestProperty = "Test 1" },
-            new() { TestProperty = "Test 2" },
+            new("Example 1"),
+            new("Example 2"),
+            new("Test 1"),
+            new("Test 2"),
         };
         _dbFixture.TestCollection.InsertMany(testDocuments);
 
@@ -265,10 +265,10 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdate()
     {
         // Given
-        TestDocument testDocument = new() { TestProperty = "Test" };
+        TestDocument testDocument = new("Test");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
-        TestDocument updatedDocument = new() { TestProperty = "Updated" };
+        TestDocument updatedDocument = new("Updated");
 
         // When
         var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.TestProperty == "Nonexistent");
@@ -285,7 +285,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdate()
     {
         // Given
-        TestDocument updatedDocument = new() { TestProperty = "Updated" };
+        TestDocument updatedDocument = new("Updated");
 
         // When
         var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => true);
@@ -301,10 +301,10 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public void UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdate()
     {
         // Given
-        TestDocument testDocument = new() { TestProperty = "Test" };
+        TestDocument testDocument = new("Test");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
-        TestDocument updatedDocument = new() { Id = testDocument.Id, TestProperty = "Updated" };
+        TestDocument updatedDocument = new(Id: testDocument.Id, TestProperty: "Updated");
 
         // When
         var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.Id == testDocument.Id);

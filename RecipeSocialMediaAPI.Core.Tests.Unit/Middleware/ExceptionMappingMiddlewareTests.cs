@@ -79,6 +79,32 @@ public class ExceptionMappingMiddlewareTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task InvokeAsync_WhenRequestThrowsHandlerAlreadyInUseException_WriteMessageAndSetStatusCodeToBadRequest()
+    {
+        // Given
+        string handler = "TestHandler";
+        _nextMock
+            .Setup(next => next(It.IsAny<HttpContext>()))
+            .Throws(new HandlerAlreadyInUseException(handler))
+            .Verifiable();
+
+        HttpContext context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+
+        // When
+        await _exceptionMappingMiddlewareSUT.InvokeAsync(context);
+
+        // Then
+        HttpResponse response = context.Response;
+        response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
+        var responseBody = await HttpContextHelper.GetResponseBodyAsync(context);
+        responseBody.Should().Contain(handler);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task InvokeAsync_WhenRequestThrowsUsernameAlreadyInUseException_WriteMessageAndSetStatusCodeToBadRequest()
     {
         // Given
@@ -136,7 +162,7 @@ public class ExceptionMappingMiddlewareTests
         // Given
         _nextMock
             .Setup(next => next(It.IsAny<HttpContext>()))
-            .Throws(new UserNotFoundException())
+            .Throws(new UserNotFoundException("Test message"))
             .Verifiable();
 
         HttpContext context = new DefaultHttpContext();

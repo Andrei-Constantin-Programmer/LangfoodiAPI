@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.TestHelpers;
 
-internal record TestTextMessage : TestMessage
+internal class TestTextMessage : TestMessage
 {
     public string Text { get; set; }
 

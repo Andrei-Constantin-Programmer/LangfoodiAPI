@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 
@@ -17,12 +18,15 @@ public class ConversationQueryRepository : IConversationQueryRepository
     private readonly IConversationDocumentToModelMapper _mapper;
     private readonly IMongoCollectionWrapper<ConversationDocument> _conversationCollection;
     private readonly IConnectionQueryRepository _connectionQueryRepository;
+    private readonly IGroupQueryRepository _groupQueryRepository;
 
-    public ConversationQueryRepository(ILogger<ConversationQueryRepository> logger, IConversationDocumentToModelMapper conversationDocumentToModelMapper, IMongoCollectionFactory mongoCollectionFactory)
+    public ConversationQueryRepository(ILogger<ConversationQueryRepository> logger, IConversationDocumentToModelMapper conversationDocumentToModelMapper, IMongoCollectionFactory mongoCollectionFactory, IConnectionQueryRepository connectionQueryRepository, IGroupQueryRepository groupQueryRepository)
     {
         _logger = logger;
         _mapper = conversationDocumentToModelMapper;
         _conversationCollection = mongoCollectionFactory.CreateCollection<ConversationDocument>();
+        _connectionQueryRepository = connectionQueryRepository;
+        _groupQueryRepository = groupQueryRepository;
     }
 
     public Conversation? GetConversationById(string id)
@@ -31,13 +35,15 @@ public class ConversationQueryRepository : IConversationQueryRepository
         try
         {
             conversationDocument = _conversationCollection.Find(
-                conversationDoc => (conversationDoc.Id == id);
+                conversationDoc => (conversationDoc.Id == id));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "There was an error trying to get conversation with id {id}: {ErrorMessage}", id, ex.Message);
             return null;
         }
+
+        var connection = _connectionQueryRepository.GetConnection();
 
         return conversationDocument is not null
             ? _mapper.MapConversationFromDocument(conversationDocument)
@@ -50,8 +56,15 @@ public class ConversationQueryRepository : IConversationQueryRepository
 
         try
         {
+            var groups = _groupQueryRepository.GetGroupsByUser(userAccount); // TODO: Implement condition for collecting conversations#
+            var connections = _connectionQueryRepository.GetConnectionsForUser(userAccount);
+
             conversations = _conversationCollection
-                .GetAll(conversationDoc => ConversationContainsUser(userAccount, conversationDoc)); // TODO: Implement condition for collecting conversations#
+                .GetAll(conversationDoc => conversationDoc.ConnectionId == null 
+                                        ? groups.Any(group => group.GroupId == conversationDoc.GroupId) 
+                                        : connections.Any(connection => connection.ConnectionId == conversationDoc.ConnectionId));
+
+            
 
             // need connection query repo and group query repo
             // connection and group contains users in different formats
@@ -67,9 +80,5 @@ public class ConversationQueryRepository : IConversationQueryRepository
             .ToList();
     }
 
-    private bool ConversationContainsUser(IUserAccount userAccount, ConversationDocument conversationDocument)
-    {
 
-        throw new NotImplementedException();
-    }
 }

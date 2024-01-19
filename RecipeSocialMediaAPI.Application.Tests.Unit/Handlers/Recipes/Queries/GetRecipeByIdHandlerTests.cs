@@ -65,24 +65,22 @@ public class GetRecipeByIdHandlerTests
             _testDate
         );
 
-        RecipeDetailedDTO expectedResult = new()
-        {
-            Id = recipeId,
-            Title = testRecipeAggregate.Title,
-            Description = testRecipeAggregate.Description,
-            CreationDate = testRecipeAggregate.CreationDate,
-            LastUpdatedDate = testRecipeAggregate.LastUpdatedDate,
-            Chef = new UserAccountDTO
-            {
-                Id = testRecipeAggregate.Chef.Id,
-                UserName = testRecipeAggregate.Chef.UserName,
-                Handler = testRecipeAggregate.Chef.Handler,
-                AccountCreationDate = testRecipeAggregate.Chef.AccountCreationDate
-            },
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(new List<RecipeStepDTO>()),
-            Labels = testRecipeAggregate.Labels
-        };
+        RecipeDetailedDTO expectedResult = new(
+            Id: recipeId,
+            Title: testRecipeAggregate.Title,
+            Description: testRecipeAggregate.Description,
+            CreationDate: testRecipeAggregate.CreationDate,
+            LastUpdatedDate: testRecipeAggregate.LastUpdatedDate,
+            Chef: new UserAccountDTO(
+                Id: testRecipeAggregate.Chef.Id,
+                UserName: testRecipeAggregate.Chef.UserName,
+                Handler: testRecipeAggregate.Chef.Handler,
+                AccountCreationDate: testRecipeAggregate.Chef.AccountCreationDate
+            ),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>(new List<RecipeStepDTO>()),
+            Tags: testRecipeAggregate.Tags
+        );
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))

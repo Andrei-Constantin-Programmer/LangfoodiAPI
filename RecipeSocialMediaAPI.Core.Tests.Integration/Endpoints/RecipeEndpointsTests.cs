@@ -18,46 +18,35 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     public RecipeEndpointsTests(WebApplicationFactory<Program> factory) : base(factory)
     {
-        _testRecipeContract = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "0",
-            Labels = new HashSet<string>(),
-            NumberOfServings = 1,
-            KiloCalories = 2300,
-            CookingTime = 500,
-            Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
+        _testRecipeContract = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "0",
+            Tags: new HashSet<string>(),
+            NumberOfServings: 1,
+            KiloCalories: 2300,
+            CookingTime: 500,
+            Ingredients: new List<IngredientDTO>() {
+                new("eggs", 1, "whole")
             },
-            RecipeSteps = new Stack<RecipeStepDTO>(new[] 
+            RecipeSteps: new Stack<RecipeStepDTO>(new[] 
             { 
-                new RecipeStepDTO()
-                {
-                    Text = "step",
-                    ImageUrl = "url"
-                }
-            }),
-        };
+                new RecipeStepDTO("step", "url")
+            })
+        );
 
-        _testUserContract = new()
-        {
-            Handler = "testHandler",
-            UserName = "TestUsername",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        _testUserContract = new(
+            Handler: "testHandler",
+            UserName: "TestUsername",
+            Email: "test@mail.com",
+            Password: "Test@123"
+        );
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeGetById_WhenRecipeExists_ReturnRecipe()
+    public async Task RecipeGetById_WhenRecipeExists_ReturnRecipe()
     {
         // Given
         string recipeId = "0";
@@ -70,10 +59,10 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result!;
+        var data = await result.Content.ReadFromJsonAsync<RecipeDetailedDTO>();
 
         data.Should().NotBeNull();
-        data.Id.Should().Be(recipeId);
+        data!.Id.Should().Be(recipeId);
         data.Title.Should().Be(_testRecipeContract.Title);
         data.Description.Should().Be(_testRecipeContract.Description);
         data.KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
@@ -106,37 +95,22 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUserId_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
+    public async Task RecipesGetFromUserId_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
     {
         // Given
         string userid = "0";
 
-        NewRecipeContract secondTestRecipe = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "0",
-            Labels = new HashSet<string>(),
-            NumberOfServings = 1,
-            KiloCalories = 2300,
-            CookingTime = 500,
-            Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
-            },
-            RecipeSteps = new Stack<RecipeStepDTO>(new[]
-            {
-                new RecipeStepDTO()
-                {
-                    Text = "step",
-                    ImageUrl = "url"
-                }
-            }),
-        };
+        NewRecipeContract secondTestRecipe = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "0",
+            Tags: new HashSet<string>(),
+            NumberOfServings: 1,
+            KiloCalories: 2300,
+            CookingTime: 500,
+            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(new[] { new RecipeStepDTO("step", "url") })
+        );
 
         await _client.PostAsJsonAsync("/user/create", _testUserContract);
         await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
@@ -147,11 +121,11 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result!;
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
-        data.Count.Should().Be(2);
+        data!.Count.Should().Be(2);
         
         data.First().ChefUsername.Should().Be(_testUserContract.UserName);
         data.First().Title.Should().Be(_testRecipeContract.Title);
@@ -186,23 +160,23 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result!;
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
-        data.First().ChefUsername.Should().Be(_testUserContract.UserName);
-        data.First().Title.Should().Be(_testRecipeContract.Title);
-        data.First().Description.Should().Be(_testRecipeContract.Description);
-        data.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
-        data.First().CreationDate.Should().NotBeNull();
+        data!.First().ChefUsername.Should().Be(_testUserContract.UserName);
+        data!.First().Title.Should().Be(_testRecipeContract.Title);
+        data!.First().Description.Should().Be(_testRecipeContract.Description);
+        data!.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
+        data!.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
+        data!.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data!.First().CreationDate.Should().NotBeNull();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUserId_WhenNoRecipesExist_ReturnEmptyList()
+    public async Task RecipesGetFromUserId_WhenNoRecipesExist_ReturnEmptyList()
     {
         // Given
         string userid = "0";
@@ -212,7 +186,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
 
         data.Should().NotBeNull();
         data.Should().BeEmpty();
@@ -221,37 +195,22 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUsername_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
+    public async Task RecipesGetFromUsername_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
     {
         // Given
         string username = "TestUsername";
 
-        NewRecipeContract secondTestRecipe = new()
-        {
-            Title = "Test",
-            Description = "Test",
-            ChefId = "0",
-            Labels = new HashSet<string>(),
-            NumberOfServings = 1,
-            KiloCalories = 2300,
-            CookingTime = 500,
-            Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
-                {
-                    Name = "eggs",
-                    Quantity = 1,
-                    UnitOfMeasurement = "whole"
-                }
-            },
-            RecipeSteps = new Stack<RecipeStepDTO>(new[]
-            {
-                new RecipeStepDTO()
-                {
-                    Text = "step",
-                    ImageUrl = "url"
-                }
-            }),
-        };
+        NewRecipeContract secondTestRecipe = new(
+            Title: "Test",
+            Description: "Test",
+            ChefId: "0",
+            Tags: new HashSet<string>(),
+            NumberOfServings: 1,
+            KiloCalories: 2300,
+            CookingTime: 500,
+            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(new[] { new RecipeStepDTO("step", "url") })
+        );
 
         await _client.PostAsJsonAsync("/user/create", _testUserContract);
         await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
@@ -262,11 +221,11 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result!;
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
-        data.Count.Should().Be(2);
+        data!.Count.Should().Be(2);
 
         data.First().ChefUsername.Should().Be(_testUserContract.UserName);
         data.First().Title.Should().Be(_testRecipeContract.Title);
@@ -288,7 +247,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUserName_WhenOneRecipeExists_ReturnFoundRecipe()
+    public async Task RecipesGetFromUserName_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
         string username = "TestUsername";
@@ -301,23 +260,23 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result!;
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
-        data.First().ChefUsername.Should().Be(_testUserContract.UserName);
-        data.First().Title.Should().Be(_testRecipeContract.Title);
-        data.First().Description.Should().Be(_testRecipeContract.Description);
-        data.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
-        data.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
-        data.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
-        data.First().CreationDate.Should().NotBeNull();
+        data!.First().ChefUsername.Should().Be(_testUserContract.UserName);
+        data!.First().Title.Should().Be(_testRecipeContract.Title);
+        data!.First().Description.Should().Be(_testRecipeContract.Description);
+        data!.First().NumberOfServings.Should().Be(_testRecipeContract.NumberOfServings);
+        data!.First().CookingTime.Should().Be(_testRecipeContract.CookingTime);
+        data!.First().KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
+        data!.First().CreationDate.Should().NotBeNull();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUsername_WhenNoRecipesExist_ReturnEmptyList()
+    public async Task RecipesGetFromUsername_WhenNoRecipesExist_ReturnEmptyList()
     {
         // Given
         string username = "TestUsername";
@@ -327,7 +286,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<List<RecipeDTO>>().Result;
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
 
         data.Should().NotBeNull();
         data.Should().BeEmpty();
@@ -336,7 +295,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeCreate_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task RecipeCreate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // When
         var result = await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
@@ -348,7 +307,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeCreate_WhenUserExists_ReturnCreatedRecipe()
+    public async Task RecipeCreate_WhenUserExists_ReturnCreatedRecipe()
     {
         // Given
         string recipeId = "0";
@@ -359,10 +318,10 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = result.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result!;
+        var data = await result.Content.ReadFromJsonAsync<RecipeDetailedDTO>();
 
         data.Should().NotBeNull();
-        data.Id.Should().Be(recipeId);
+        data!.Id.Should().Be(recipeId);
         data.Title.Should().Be(_testRecipeContract.Title);
         data.Description.Should().Be(_testRecipeContract.Description);
         data.KiloCalories.Should().Be(_testRecipeContract.KiloCalories);
@@ -379,27 +338,19 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeUpdate_WhenRecipeExists_UpdateTheRecipe()
+    public async Task RecipeUpdate_WhenRecipeExists_UpdateTheRecipe()
     {
         // Given
         string recipeId = "0";
-        UpdateRecipeContract newRecipe = new()
-        {
-            Id = recipeId,
-            Title = "New Title",
-            Description = "New Desc",
-            KiloCalories = 1000,
-            Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
-                {
-                    Name = "lemons",
-                    Quantity = 2,
-                    UnitOfMeasurement = "whole"
-                }
-            },
-            RecipeSteps = _testRecipeContract.RecipeSteps,
-            Labels = new HashSet<string>()
-        };
+        UpdateRecipeContract newRecipe = new(
+            Id: recipeId,
+            Title: "New Title",
+            Description: "New Desc",
+            KiloCalories: 1000,
+            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
+            RecipeSteps: _testRecipeContract.RecipeSteps,
+            Tags: new HashSet<string>()
+        );
 
         await _client.PostAsJsonAsync("/user/create", _testUserContract);
         await _client.PostAsJsonAsync("/recipe/create", _testRecipeContract);
@@ -411,10 +362,10 @@ public class RecipeEndpointsTests : EndpointTestBase
         var getResult = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
         updateResult.StatusCode.Should().Be(HttpStatusCode.OK);
         getResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = getResult.Content.ReadFromJsonAsync<RecipeDetailedDTO>().Result!;
+        var data = await getResult.Content.ReadFromJsonAsync<RecipeDetailedDTO>();
 
         data.Should().NotBeNull();
-        data.Id.Should().Be(recipeId);
+        data!.Id.Should().Be(recipeId);
         data.Title.Should().Be(newRecipe.Title);
         data.Description.Should().Be(newRecipe.Description);
         data.KiloCalories.Should().Be(newRecipe.KiloCalories);
@@ -431,27 +382,19 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeUpdate_WhenRecipeDoesNotExist_ReturnNotFound()
+    public async Task RecipeUpdate_WhenRecipeDoesNotExist_ReturnNotFound()
     {
         // Given
         string recipeId = "0";
-        UpdateRecipeContract newRecipe = new()
-        {
-            Id = recipeId,
-            Title = "New Title",
-            Description = "New Desc",
-            KiloCalories = 1000,
-            Ingredients = new List<IngredientDTO>() {
-                new IngredientDTO()
-                {
-                    Name = "lemons",
-                    Quantity = 2,
-                    UnitOfMeasurement = "whole"
-                }
-            },
-            RecipeSteps = _testRecipeContract.RecipeSteps,
-            Labels = new HashSet<string>()
-        };
+        UpdateRecipeContract newRecipe = new(
+            Id: recipeId,
+            Title: "New Title",
+            Description: "New Desc",
+            KiloCalories: 1000,
+            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
+            RecipeSteps: _testRecipeContract.RecipeSteps,
+            Tags: new HashSet<string>()
+        );
 
         // When
         var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);

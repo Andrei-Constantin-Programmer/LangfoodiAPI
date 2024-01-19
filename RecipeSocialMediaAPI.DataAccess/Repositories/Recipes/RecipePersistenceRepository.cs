@@ -18,44 +18,45 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> labels, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate)
+    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
     {
         var recipeDocument = _recipeCollection
-            .Insert(new RecipeDocument()
-            {
-                Title = title,
-                Ingredients = recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
-                Steps = recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
-                Description = description,
-                ChefId = chef.Id,
-                CreationDate = creationDate,
-                LastUpdatedDate = lastUpdatedDate,
-                Labels = labels.ToList(),
-                NumberOfServings = recipe.NumberOfServings,
-                CookingTimeInSeconds = recipe.CookingTimeInSeconds,
-                KiloCalories = recipe.KiloCalories,
-                ServingSize = recipe.ServingSize is not null ? (recipe.ServingSize!.Quantity, recipe.ServingSize!.UnitOfMeasurement) : null
-            });
+            .Insert(new RecipeDocument(
+                Title: title,
+                Ingredients: recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
+                Steps: recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
+                Description: description,
+                ChefId: chef.Id,
+                ThumbnailId: thumbnailId,
+                CreationDate: creationDate,
+                LastUpdatedDate: lastUpdatedDate,
+                Tags: tags.ToList(),
+                NumberOfServings: recipe.NumberOfServings,
+                CookingTimeInSeconds: recipe.CookingTimeInSeconds,
+                KiloCalories: recipe.KiloCalories,
+                ServingSize: recipe.ServingSize is not null ? (recipe.ServingSize.Quantity, recipe.ServingSize.UnitOfMeasurement) : null
+            ));
 
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
     public bool UpdateRecipe(RecipeAggregate recipe) => _recipeCollection.UpdateRecord(
-            new RecipeDocument()
-            {
-                Id = recipe.Id,
-                Title = recipe.Title,
-                Ingredients = recipe.Recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
-                Steps = recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
-                Description = recipe.Description,
-                ChefId = recipe.Chef.Id,
-                NumberOfServings = recipe.Recipe.NumberOfServings,
-                CookingTimeInSeconds = recipe.Recipe.CookingTimeInSeconds,
-                KiloCalories = recipe.Recipe.KiloCalories,
-                CreationDate = recipe.CreationDate,
-                LastUpdatedDate = recipe.LastUpdatedDate,
-                Labels = recipe.Labels.ToList(),
-            },
+            new RecipeDocument(
+                Id: recipe.Id,
+                Title: recipe.Title,
+                Ingredients: recipe.Recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
+                Steps: recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
+                Description: recipe.Description,
+                ChefId: recipe.Chef.Id,
+                ThumbnailId: recipe.ThumbnailId,
+                NumberOfServings: recipe.Recipe.NumberOfServings,
+                CookingTimeInSeconds: recipe.Recipe.CookingTimeInSeconds,
+                KiloCalories: recipe.Recipe.KiloCalories,
+                CreationDate: recipe.CreationDate,
+                LastUpdatedDate: recipe.LastUpdatedDate,
+                Tags: recipe.Tags.ToList(),
+                ServingSize: recipe.Recipe.ServingSize is not null ? (recipe.Recipe.ServingSize.Quantity, recipe.Recipe.ServingSize.UnitOfMeasurement) : null
+            ),
             doc => doc.Id == recipe.Id
         );
 

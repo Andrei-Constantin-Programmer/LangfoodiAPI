@@ -28,16 +28,47 @@ public class RecipeMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapServingSizeDtoToServingSize_GivenServingSizeDto_ReturnServingSize()
+    {
+        // Given
+        ServingSizeDTO testServing = new(30, "kg");
+
+        ServingSize expectedResult = new(testServing.Quantity, testServing.UnitOfMeasurement);
+
+        // When
+        var result = _mapperSUT.MapServingSizeDtoToServingSize(testServing);
+
+        // Then
+        result.Should().BeOfType<ServingSize>();
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapServingSizeToServingSizeDto_GivenServingSize_ReturnServingSizeDto()
+    {
+        // Given
+        ServingSize testServing = new(30, "kg");
+        ServingSizeDTO expectedResult = new(testServing.Quantity, testServing.UnitOfMeasurement);
+
+        // When
+        var result = _mapperSUT.MapServingSizeToServingSizeDto(testServing);
+
+        // Then
+        result.Should().BeOfType<ServingSizeDTO>();
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapRecipeStepDtoToRecipeStep_GivenRecipeStepDto_ReturnRecipeStep()
     {
         // Given
-        RecipeStepDTO testStep = new()
-        {
-            Text = "Step 1",
-            ImageUrl = "image url"
-        };
+        RecipeStepDTO testStep = new("Step 1", "image url");
 
-        RecipeStep expectedResult = new(testStep.Text, new RecipeImage(testStep.ImageUrl));
+        RecipeStep expectedResult = new(testStep.Text, new RecipeImage(testStep.ImageUrl!));
 
         // When
         var result = _mapperSUT.MapRecipeStepDtoToRecipeStep(testStep);
@@ -55,11 +86,7 @@ public class RecipeMapperTests
         // Given
         RecipeStep testStep = new("Step 1", new RecipeImage("image url"));
 
-        RecipeStepDTO expectedResult = new()
-        {
-            Text = testStep.Text,
-            ImageUrl = testStep.Image!.ImageUrl
-        };
+        RecipeStepDTO expectedResult = new(testStep.Text, testStep.Image!.ImageUrl);
 
         // When
         var result = _mapperSUT.MapRecipeStepToRecipeStepDto(testStep);
@@ -75,12 +102,7 @@ public class RecipeMapperTests
     public void MapIngredientDtoToIngredient_GivenIngredientDto_ReturnIngredient()
     {
         // Given
-        IngredientDTO testIngredient = new()
-        {
-            Name = "eggs",
-            Quantity = 1,
-            UnitOfMeasurement = "whole"
-        };
+        IngredientDTO testIngredient = new("eggs", 1, "whole");
 
         Ingredient expectedResult = new(
             testIngredient.Name,
@@ -104,12 +126,7 @@ public class RecipeMapperTests
         // Given
         Ingredient testIngredient = new("eggs", 1, "whole");
 
-        IngredientDTO expectedResult = new()
-        {
-            Name = "eggs",
-            Quantity = 1,
-            UnitOfMeasurement = "whole"
-        };
+        IngredientDTO expectedResult = new("eggs", 1, "whole");
 
         // When
         var result = _mapperSUT.MapIngredientToIngredientDto(testIngredient);
@@ -139,22 +156,22 @@ public class RecipeMapperTests
             new Recipe(new() {
                 new Ingredient("eggs", 1, "whole") },
                 new(new[] { new RecipeStep("step1", new RecipeImage("url")) }),
-                1),
+                1, null, null, new ServingSize(30, "kg")),
             "desc",
             testChef,
             _testDate,
             _testDate,
-            new HashSet<string>());
+            new HashSet<string>(),
+            "thumbnail_public_id_1");
 
         _userMapperMock
             .Setup(x => x.MapUserAccountToUserAccountDto(It.IsAny<IUserAccount>()))
-            .Returns((IUserAccount user) => new UserAccountDTO()
-            {
-                Id = user.Id,
-                Handler = user.Handler,
-                UserName = user.UserName,
-                AccountCreationDate = user.AccountCreationDate
-            });
+            .Returns((IUserAccount user) => new UserAccountDTO(
+                Id: user.Id,
+                Handler: user.Handler,
+                UserName: user.UserName,
+                AccountCreationDate: user.AccountCreationDate
+            ));
 
         // When
         var result = _mapperSUT.MapRecipeAggregateToRecipeDetailedDto(testRecipe);
@@ -167,10 +184,13 @@ public class RecipeMapperTests
         result.Chef.Should().BeEquivalentTo(testChef);
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
-        result.Labels.Should().BeEmpty();
+        result.Tags.Should().BeEmpty();
         result.NumberOfServings.Should().Be(1);
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
+        result.ThumbnailId.Should().Be("thumbnail_public_id_1");
+        result.ServingSize!.Quantity.Should().Be(30);
+        result.ServingSize.UnitOfMeasurement.Should().Be("kg");
 
         result.Ingredients.First().Name.Should().Be("eggs");
         result.Ingredients.First().Quantity.Should().Be(1);
@@ -202,7 +222,8 @@ public class RecipeMapperTests
             testChef,
             _testDate,
             _testDate,
-            new HashSet<string>());
+            new HashSet<string>(),
+            "thumbnail_public_id_1");
 
         // When
         var result = _mapperSUT.MapRecipeAggregateToRecipeDto(testRecipe);
@@ -215,8 +236,9 @@ public class RecipeMapperTests
         result.ChefUsername.Should().Be(testChef.UserName);
         result.CreationDate.Should().Be(_testDate);
         result.NumberOfServings.Should().Be(1);
-        result.Labels.Should().BeEmpty();
+        result.Tags.Should().BeEmpty();
         result.CookingTime.Should().BeNull();
         result.KiloCalories.Should().BeNull();
+        result.ThumbnailId.Should().Be("thumbnail_public_id_1");
     }
 }

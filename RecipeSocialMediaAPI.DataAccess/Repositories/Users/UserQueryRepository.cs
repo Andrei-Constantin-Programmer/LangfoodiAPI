@@ -63,6 +63,26 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
+    public IUserCredentials? GetUserByHandler(string handler)
+    {
+        UserDocument? userDocument;
+
+        try
+        {
+            userDocument = _userCollection
+                .Find(userDoc => userDoc.Handler == handler);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex, "There was an error trying to get user by handler {Handler}: {ErrorMessage}", handler, ex.Message);
+            userDocument = null;
+        }
+
+        return userDocument is null
+            ? null
+            : _mapper.MapUserDocumentToUser(userDocument);
+    }
+
     public IUserCredentials? GetUserByUsername(string username)
     {
         UserDocument? userDocument;

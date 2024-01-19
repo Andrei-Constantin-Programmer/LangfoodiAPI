@@ -1,13 +1,12 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Authentication;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
 using System.Net.Http.Json;
-using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
@@ -18,16 +17,10 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenValidUserWithUsername_ReturnUserFromDB()
+    public async void Authenticate_WhenValidUserWithHandler_ReturnUserFromDB()
     {
         // Given
-        NewUserContract userToCreate = new()
-        {
-            Handler = "testHandler",
-            UserName = "testUser",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
         var userInDb = (await
             (await _client
                 .PostAsJsonAsync("user/create", userToCreate))
@@ -35,17 +28,14 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             .ReadFromJsonAsync<UserDTO>())!;
 
         // When
-        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract() 
-        { 
-            UsernameOrEmail = userToCreate.UserName, 
-            Password = userToCreate.Password 
-        });
+        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Handler, userToCreate.Password));
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         UserDTO authenticatedUser = (await result.Content.ReadFromJsonAsync<UserDTO>())!;
 
         authenticatedUser.Id.Should().Be(userInDb.Id);
+        authenticatedUser.Handler.Should().Be(userInDb.Handler);
         authenticatedUser.UserName.Should().Be(userInDb.UserName);
         authenticatedUser.Email.Should().Be(userInDb.Email);
         authenticatedUser.Password.Should().Be(userInDb.Password);
@@ -57,13 +47,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     public async void Authenticate_WhenValidUserWithEmail_ReturnUserFromDB()
     {
         // Given
-        NewUserContract userToCreate = new()
-        {
-            Handler = "testHandler",
-            UserName = "testUser",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
         var userInDb = (await
             (await _client
                 .PostAsJsonAsync("user/create", userToCreate))
@@ -71,11 +55,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             .ReadFromJsonAsync<UserDTO>())!;
 
         // When
-        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract()
-        {
-            UsernameOrEmail = userToCreate.Email,
-            Password = userToCreate.Password
-        });
+        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Email, userToCreate.Password));
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -93,13 +73,8 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     public async void Authenticate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
-        NewUserContract userToCreate = new()
-        {
-            Handler = "testHandler",
-            UserName = "testUser",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
+
         await
             (await _client
                 .PostAsJsonAsync("user/create", userToCreate))
@@ -107,11 +82,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             .ReadFromJsonAsync<UserDTO>();
 
         // When
-        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract()
-        {
-            UsernameOrEmail = "Inexistant user",
-            Password = userToCreate.Password
-        });
+        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract("Inexistant user", userToCreate.Password));
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -123,25 +94,16 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     public async void Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
     {
         // Given
-        NewUserContract userToCreate = new()
-        {
-            Handler = "testHandler",
-            UserName = "testUser",
-            Email = "test@mail.com",
-            Password = "Test@123"
-        };
+        NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
+
         await
             (await _client
-                .PostAsJsonAsync("user/create", userToCreate))
+            .PostAsJsonAsync("user/create", userToCreate))
             .Content
             .ReadFromJsonAsync<UserDTO>();
 
         // When
-        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract()
-        {
-            UsernameOrEmail = userToCreate.UserName,
-            Password = ""
-        });
+        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Handler, string.Empty));
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);

@@ -1,21 +1,20 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Users;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.DTO.Recipes;
 
-public record RecipeDetailedDTO
-{
-    required public string Id { get; set; }
-    required public string Title { get; set; }
-    required public string Description { get; set; }
-    required public UserAccountDTO Chef { get; set; }
-    public int? NumberOfServings { get; set; }
-    public int? CookingTime { get; set; }
-    public int? KiloCalories { get; set; }
-    required public ISet<string> Labels { get; set; }
-    required public List<IngredientDTO> Ingredients { get; set; }
-    required public Stack<RecipeStepDTO> RecipeSteps { get; set; }
-    public (double Quantity, string UnitOfMeasurement)? ServingSize { get; set; }
-    public DateTimeOffset? CreationDate { get; set; }
-    public DateTimeOffset? LastUpdatedDate { get; set; }
-}
+public record RecipeDetailedDTO(
+    string Id,
+    string Title,
+    string Description,
+    UserAccountDTO Chef,
+    ISet<string> Tags,
+    List<IngredientDTO> Ingredients,
+    Stack<RecipeStepDTO> RecipeSteps,
+    string? ThumbnailId = null,
+    int? NumberOfServings = null,
+    int? CookingTime = null,
+    int? KiloCalories = null,
+    ServingSizeDTO? ServingSize = null,
+    DateTimeOffset? CreationDate = null,
+    DateTimeOffset? LastUpdatedDate = null
+);

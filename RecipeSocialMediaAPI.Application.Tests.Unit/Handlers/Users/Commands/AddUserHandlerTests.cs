@@ -46,6 +46,45 @@ public class AddUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenHandlerIsAlreadyInUse_DoNotCreateAndThrowHandlerAlreadyInUseException()
+    {
+        // Given
+        IUserCredentials existingUser = new TestUserCredentials
+        {
+            Account = new TestUserAccount
+            {
+                Id = "TestId",
+                Handler = "TestHandler",
+                UserName = "TestUsername",
+                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "TestEmail",
+            Password = "TestPassword"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>()))
+            .Returns(existingUser);
+        AddUserCommand command = new(
+            new NewUserContract(
+                Handler: existingUser.Account.Handler,
+                UserName: existingUser.Account.UserName,
+                Email: "NewEmail",
+                Password: "NewPass"
+            ));
+
+        // When
+        var action = async () => await _userHandlerSUT.Handle(command, CancellationToken.None);
+
+        // Then
+        await action.Should().ThrowAsync<HandlerAlreadyInUseException>();
+        _userPersistenceRepositoryMock
+            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenUsernameIsAlreadyInUse_DoNotCreateAndThrowUsernameAlreadyInUseException()
     {
         // Given
@@ -66,13 +105,12 @@ public class AddUserHandlerTests
             .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
             .Returns(existingUser);
         AddUserCommand command = new(
-            new NewUserContract() 
-            { 
-                Handler = existingUser.Account.Handler,
-                UserName = existingUser.Account.UserName,
-                Email = "NewEmail", 
-                Password = "NewPass" 
-            });
+            new NewUserContract(
+                Handler: existingUser.Account.Handler,
+                UserName: existingUser.Account.UserName,
+                Email: "NewEmail", 
+                Password: "NewPass"
+            ));
 
         // When
         var action = async () => await _userHandlerSUT.Handle(command, CancellationToken.None);
@@ -105,7 +143,7 @@ public class AddUserHandlerTests
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
             .Returns(existingUser);
-        NewUserContract contract = new() { Handler = "TestHandler", UserName = "NewUser", Email = existingUser.Email, Password = "NewPass" };
+        NewUserContract contract = new("TestHandler", "NewUser", existingUser.Email,"NewPass");
 
         // When
         var action = async () => await _userHandlerSUT.Handle(new AddUserCommand(contract), CancellationToken.None);
@@ -122,7 +160,7 @@ public class AddUserHandlerTests
     public async Task Handle_WhenUserIsNew_CreateUserAndReturnDto()
     {
         // Given
-        NewUserContract contract = new() { Handler = "NewHandler", UserName = "NewUser", Email = "NewEmail", Password = "NewPass" };
+        NewUserContract contract = new("NewHandler", "NewUser", "NewEmail", "NewPass");
         
         _userPersistenceRepositoryMock
             .Setup(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>()))
@@ -141,15 +179,14 @@ public class AddUserHandlerTests
 
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
-            .Returns((IUserCredentials user) => new UserDTO() 
-            { 
-                Id = user.Account.Id, 
-                Handler = user.Account.Handler, 
-                UserName = user.Account.UserName, 
-                Email = user.Email, 
-                Password = user.Password,
-                AccountCreationDate = user.Account.AccountCreationDate
-            });
+            .Returns((IUserCredentials user) => new UserDTO(
+                Id:user.Account.Id, 
+                Handler: user.Account.Handler, 
+                UserName: user.Account.UserName,
+                AccountCreationDate: user.Account.AccountCreationDate,
+                Email: user.Email, 
+                Password: user.Password
+            ));
 
         // When
         var result = await _userHandlerSUT.Handle(new AddUserCommand(contract), CancellationToken.None);

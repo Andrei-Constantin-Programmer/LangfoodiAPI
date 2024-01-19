@@ -49,7 +49,7 @@ public class RecipePersistenceRepositoryTests
             AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
         };
 
-        string testLabel = "TestLabel";
+        string testTag = "TestTag";
 
         RecipeAggregate expectedResult = new(
             "TestId",
@@ -59,25 +59,26 @@ public class RecipePersistenceRepositoryTests
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
+            new HashSet<string>() { testTag },
+            "thumbnail_id_1"
         );
 
-        RecipeDocument newRecipeDocument = new()
-        {
-            Id = expectedResult.Id,
-            Title = expectedResult.Title,
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = expectedResult.Description,
-            ChefId = testChef.Id,
-            CreationDate = expectedResult.CreationDate,
-            LastUpdatedDate = expectedResult.LastUpdatedDate,
-            Labels = new List<string>() { testLabel },
-            CookingTimeInSeconds = expectedResult.Recipe.CookingTimeInSeconds,
-            KiloCalories = expectedResult.Recipe.KiloCalories,
-            NumberOfServings = expectedResult.Recipe.NumberOfServings,
-            ServingSize = (expectedResult.Recipe.ServingSize!.Quantity, expectedResult.Recipe.ServingSize!.UnitOfMeasurement)
-        };
+        RecipeDocument newRecipeDocument = new(
+            Id: expectedResult.Id,
+            Title: expectedResult.Title,
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: expectedResult.Description,
+            ChefId: testChef.Id,
+            CreationDate: expectedResult.CreationDate,
+            LastUpdatedDate: expectedResult.LastUpdatedDate,
+            Tags: new List<string>() { testTag },
+            ThumbnailId: expectedResult.ThumbnailId,
+            CookingTimeInSeconds: expectedResult.Recipe.CookingTimeInSeconds,
+            KiloCalories: expectedResult.Recipe.KiloCalories,
+            NumberOfServings: expectedResult.Recipe.NumberOfServings,
+            ServingSize: (expectedResult.Recipe.ServingSize!.Quantity, expectedResult.Recipe.ServingSize!.UnitOfMeasurement)
+        );
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Insert(It.IsAny<RecipeDocument>()))
@@ -90,8 +91,8 @@ public class RecipePersistenceRepositoryTests
         // When
         var result = _recipePersistenceRepositorySUT.CreateRecipe(
             expectedResult.Title, expectedResult.Recipe,
-            expectedResult.Description, testChef, expectedResult.Labels,
-            expectedResult.CreationDate, expectedResult.LastUpdatedDate);
+            expectedResult.Description, testChef, expectedResult.Tags,
+            expectedResult.CreationDate, expectedResult.LastUpdatedDate, expectedResult.ThumbnailId);
 
         // Then
         result.Should().Be(expectedResult);
@@ -105,7 +106,7 @@ public class RecipePersistenceRepositoryTests
                     && doc.LastUpdatedDate == expectedResult.LastUpdatedDate
                     && doc.Ingredients.Count == 0
                     && doc.Steps.Count == 0
-                    && doc.Labels.Contains(testLabel) && doc.Labels.Count == 1
+                    && doc.Tags.Contains(testTag) && doc.Tags.Count == 1
                     && doc.ServingSize!.Value.Quantity == expectedResult.Recipe.ServingSize.Quantity
                     && doc.ServingSize!.Value.UnitOfMeasurement == expectedResult.Recipe.ServingSize.UnitOfMeasurement
                 )), Times.Once);
@@ -124,17 +125,18 @@ public class RecipePersistenceRepositoryTests
             UserName = "TestChef",
             AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
         };
-        string testLabel = "TestLabel";
+        string testTag = "TestTag";
 
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 10, 500, 2300),
+            new(new(), new(), 10, 500, 2300, new ServingSize(30, "kg")),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
+            new HashSet<string>() { testTag },
+            "thumbnail_id_1"
         );
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
@@ -156,12 +158,15 @@ public class RecipePersistenceRepositoryTests
                         && recipeDoc.Description == recipe.Description
                         && recipeDoc.CreationDate == recipe.CreationDate
                         && recipeDoc.LastUpdatedDate == recipe.LastUpdatedDate
-                        && recipeDoc.Labels.Contains(testLabel) && recipe.Labels.Count == 1
+                        && recipeDoc.Tags.Contains(testTag) && recipe.Tags.Count == 1
                         && recipeDoc.Ingredients.Count == 0
                         && recipeDoc.Steps.Count == 0
                         && recipeDoc.NumberOfServings == recipe.Recipe.NumberOfServings
                         && recipeDoc.CookingTimeInSeconds == recipe.Recipe.CookingTimeInSeconds
-                        && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories),
+                        && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories
+                        && recipeDoc.ThumbnailId == recipe.ThumbnailId
+                        && recipeDoc.ServingSize.GetValueOrDefault().Quantity == recipe.Recipe.ServingSize!.Quantity
+                        && recipeDoc.ServingSize.GetValueOrDefault().UnitOfMeasurement == recipe.Recipe.ServingSize!.UnitOfMeasurement),
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
                 Times.Once);
     }
@@ -180,17 +185,17 @@ public class RecipePersistenceRepositoryTests
             AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
         };
 
-        string testLabel = "TestLabel";
+        string testTag = "TestTag";
 
         RecipeAggregate recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 10, 500, 2300),
+            new(new(), new(), 10, 500, 2300, new ServingSize(30, "kg")),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            new HashSet<string>() { testLabel }
+            new HashSet<string>() { testTag }
         );
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 

@@ -28,14 +28,7 @@ public class UserMapperTests
     public void MapUserDtoToUser_GivenUserDto_ReturnUser()
     {
         // Given
-        UserDTO testUser = new()
-        {
-            Id = "1",
-            Handler = "handler",
-            UserName = "user",
-            Email = "mail",
-            Password = "password",
-        };
+        UserDTO testUser = new("1", "handler", "user", "mail", "password");
 
         IUserCredentials expectedResult = new TestUserCredentials
         {
@@ -52,7 +45,7 @@ public class UserMapperTests
 
         _userFactoryMock
             .Setup(factory => factory
-                .CreateUserCredentials(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>()))
+                .CreateUserCredentials(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>()))
             .Returns(expectedResult);
 
         // When
@@ -81,15 +74,14 @@ public class UserMapperTests
             Password = "password"
         };
 
-        UserDTO expectedResult = new()
-        {
-            Id = testUser.Account.Id,
-            Handler = testUser.Account.Handler,
-            UserName = testUser.Account.UserName,
-            Email = testUser.Email,
-            Password = testUser.Password,
-            AccountCreationDate = testUser.Account.AccountCreationDate
-        };
+        UserDTO expectedResult = new(
+            Id: testUser.Account.Id,
+            Handler: testUser.Account.Handler,
+            UserName: testUser.Account.UserName,
+            Email: testUser.Email,
+            Password: testUser.Password,
+            AccountCreationDate: testUser.Account.AccountCreationDate
+        );
 
         // When
         var result = _userMapperSUT.MapUserToUserDto(testUser);

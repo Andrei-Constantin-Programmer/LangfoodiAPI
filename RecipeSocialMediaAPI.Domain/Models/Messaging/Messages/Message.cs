@@ -1,12 +1,8 @@
 ﻿using RecipeSocialMediaAPI.Domain.Models.Users;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Domain.Tests.Unit")]
-[assembly: InternalsVisibleTo("RecipeSocialMediaAPI.Domain.Tests.Shared")]
 
 namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
-public abstract record Message
+public abstract class Message
 {
     public string Id { get; }
     public IUserAccount Sender { get; }
