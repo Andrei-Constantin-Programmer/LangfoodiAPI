@@ -21,14 +21,16 @@ public class ConversationQueryRepository : IConversationQueryRepository
     private readonly IMongoCollectionWrapper<ConversationDocument> _conversationCollection;
     private readonly IConnectionQueryRepository _connectionQueryRepository;
     private readonly IGroupQueryRepository _groupQueryRepository;
+    private readonly IMessageQueryRepository _messageQueryRepository;
 
-    public ConversationQueryRepository(ILogger<ConversationQueryRepository> logger, IConversationDocumentToModelMapper conversationDocumentToModelMapper, IMongoCollectionFactory mongoCollectionFactory, IConnectionQueryRepository connectionQueryRepository, IGroupQueryRepository groupQueryRepository)
+    public ConversationQueryRepository(ILogger<ConversationQueryRepository> logger, IConversationDocumentToModelMapper conversationDocumentToModelMapper, IMongoCollectionFactory mongoCollectionFactory, IConnectionQueryRepository connectionQueryRepository, IGroupQueryRepository groupQueryRepository, IMessageQueryRepository messageQueryRepository)
     {
         _logger = logger;
         _mapper = conversationDocumentToModelMapper;
         _conversationCollection = mongoCollectionFactory.CreateCollection<ConversationDocument>();
         _connectionQueryRepository = connectionQueryRepository;
         _groupQueryRepository = groupQueryRepository;
+        _messageQueryRepository = messageQueryRepository;
     }
 
     public Conversation? GetConversationById(string id)
