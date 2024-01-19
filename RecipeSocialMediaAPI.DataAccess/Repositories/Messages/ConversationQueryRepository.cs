@@ -40,6 +40,10 @@ public class ConversationQueryRepository : IConversationQueryRepository
         {
             conversationDocument = _conversationCollection.Find(
                 conversationDoc => (conversationDoc.Id == id));
+            if (conversationDocument is null)
+            {
+                return null;
+        }
         }
         catch (Exception ex)
         {
