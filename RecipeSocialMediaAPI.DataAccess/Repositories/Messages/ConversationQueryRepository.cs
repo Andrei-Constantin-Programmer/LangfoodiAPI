@@ -80,7 +80,14 @@ public class ConversationQueryRepository : IConversationQueryRepository
         }
 
         return conversations
-            .Select(_mapper.MapConversationFromDocument)
+            .Select(conversationDoc => 
+            {
+                IConnection? connection = GetConnection(conversationDoc);
+                Group? group = GetGroup(conversationDoc);
+                List<Message> messages = GetMessages(conversationDoc);
+
+                return _mapper.MapConversationFromDocument(conversationDoc, connection, group, messages);
+            })
             .ToList();
     }
 
