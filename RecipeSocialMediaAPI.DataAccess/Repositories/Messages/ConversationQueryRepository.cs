@@ -51,10 +51,12 @@ public class ConversationQueryRepository : IConversationQueryRepository
             return null;
         }
 
-        var connection = _connectionQueryRepository.GetConnection();
+        IConnection? connection = GetConnection(conversationDocument);
+        Group? group = GetGroup(conversationDocument);
+        List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument)
+            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
             : null;
     }
 
