@@ -73,12 +73,6 @@ public class ConversationQueryRepository : IConversationQueryRepository
                 .GetAll(conversationDoc => conversationDoc.ConnectionId == null 
                                         ? groups.Any(group => group.GroupId == conversationDoc.GroupId) 
                                         : connections.Any(connection => connection.ConnectionId == conversationDoc.ConnectionId));
-
-            
-
-            // need connection query repo and group query repo
-            // connection and group contains users in different formats
-            // check if user is in these list of users
         }
         catch (Exception ex)
         {
