@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
@@ -117,5 +118,23 @@ public class GetConversationByConnectionHandlerTests
         result.LastMessage.Should().Be(lastMessageDto);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenThereIsNoConversationFound_ThrowConversationNotFoundException()
+    {
+        // Given
+        string connectionId = "conn1";
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationByConnection(connectionId))
+            .Returns((Conversation?)null);
 
+        GetConversationByConnectionQuery query = new(connectionId);
+
+        // When
+        var testAction = async () => await _getConversationByConnectionHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<ConversationNotFoundException>();
+    }
 }
