@@ -248,6 +248,19 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
         // Then
         conversationDocumentToModelMapper.Should().NotBeNull();
     }
+    
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ConversationQueryRepository_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var conversationQueryRepository = scope.ServiceProvider.GetService(typeof(IConversationQueryRepository)) as ConversationQueryRepository;
+
+        // Then
+        conversationQueryRepository.Should().NotBeNull();
+    }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]

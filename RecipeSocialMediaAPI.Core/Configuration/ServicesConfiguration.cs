@@ -67,6 +67,7 @@ internal static class ServicesConfiguration
         builder.Services.AddScoped<IMessagePersistenceRepository, MessagePersistenceRepository>();
         builder.Services.AddScoped<IConnectionQueryRepository, ConnectionQueryRepository>();
         builder.Services.AddScoped<IConnectionPersistenceRepository, ConnectionPersistenceRepository>();
+        builder.Services.AddScoped<IConversationQueryRepository, ConversationQueryRepository>();
         builder.Services.AddScoped<IConversationPersistenceRepository, ConversationPersistenceRepository>();
         builder.Services.AddScoped<IGroupQueryRepository, GroupQueryRepository>();
         builder.Services.AddScoped<IGroupPersistenceRepository, GroupPersistenceRepository>();

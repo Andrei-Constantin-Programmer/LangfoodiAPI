@@ -7,5 +7,7 @@ public interface IConversationQueryRepository
 {
     Conversation? GetConversationById(string id);
 
+    Conversation? GetConversationByConnection(string connectionId);
+
     List<Conversation> GetConversationsByUser(IUserAccount userAccount);
 }
