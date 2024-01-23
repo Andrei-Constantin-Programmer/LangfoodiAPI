@@ -36,7 +36,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         try
         {
             conversationDocument = _conversationCollection.Find(
-                conversationDoc => (conversationDoc.Id == id));
+                conversationDoc => conversationDoc.Id == id);
             if (conversationDocument is null)
             {
                 return null;
@@ -45,6 +45,33 @@ public class ConversationQueryRepository : IConversationQueryRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "There was an error trying to get conversation with id {id}: {ErrorMessage}", id, ex.Message);
+            return null;
+        }
+
+        IConnection? connection = GetConnection(conversationDocument);
+        Group? group = GetGroup(conversationDocument);
+        List<Message> messages = GetMessages(conversationDocument);
+
+        return conversationDocument is not null
+            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
+            : null;
+    }
+
+    public Conversation? GetConversationByConnection(string connectionId)
+    {
+        ConversationDocument? conversationDocument;
+        try
+        {
+            conversationDocument = _conversationCollection.Find(
+                conversationDoc => conversationDoc.ConnectionId == connectionId);
+            if (conversationDocument is null)
+            {
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get conversation for connection with id {id}: {ErrorMessage}", connectionId, ex.Message);
             return null;
         }
 
