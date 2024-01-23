@@ -8,6 +8,7 @@ public interface IConversationQueryRepository
     Conversation? GetConversationById(string id);
 
     Conversation? GetConversationByConnection(string connectionId);
+    Conversation? GetConversationByGroup(string groupId);
 
     List<Conversation> GetConversationsByUser(IUserAccount userAccount);
 }

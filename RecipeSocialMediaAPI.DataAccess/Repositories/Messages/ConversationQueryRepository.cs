@@ -84,6 +84,33 @@ public class ConversationQueryRepository : IConversationQueryRepository
             : null;
     }
 
+    public Conversation? GetConversationByGroup(string groupId)
+    {
+        ConversationDocument? conversationDocument;
+        try
+        {
+            conversationDocument = _conversationCollection.Find(
+                conversationDoc => conversationDoc.GroupId == groupId);
+            if (conversationDocument is null)
+            {
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get conversation for connection with id {id}: {ErrorMessage}", groupId, ex.Message);
+            return null;
+        }
+
+        IConnection? connection = GetConnection(conversationDocument);
+        Group? group = GetGroup(conversationDocument);
+        List<Message> messages = GetMessages(conversationDocument);
+
+        return conversationDocument is not null
+            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
+            : null;
+    }
+
     public List<Conversation> GetConversationsByUser(IUserAccount userAccount)
     {
         List<ConversationDocument> conversations = new();
