@@ -52,9 +52,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         Group? group = GetGroup(conversationDocument);
         List<Message> messages = GetMessages(conversationDocument);
 
-        return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
-            : null;
+        return _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages);
     }
 
     public Conversation? GetConversationByConnection(string connectionId)

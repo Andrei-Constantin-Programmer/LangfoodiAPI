@@ -164,4 +164,56 @@ public class ConversationQueryRepositoryTests
         // Then
         result.Should().Be(conversation);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConversationById_WhenConversationDoesNotExist_ReturnNull()
+    {
+        // Given
+        string conversationId = "convo1";
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversationId;
+        _conversationCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns((ConversationDocument?)null);
+
+        // When
+        var result = _conversationQueryRepositorySUT.GetConversationById(conversationId);
+
+        // Then
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConversationById_WhenMongoThrowsAnException_ReturnNullAndLogException()
+    {
+        // Given
+        string conversationId = "convo1";
+
+        Exception testException = new("Test Exception");
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversationId;
+        _conversationCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Throws(testException);
+
+        // When
+        var result = _conversationQueryRepositorySUT.GetConversationById(conversationId);
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+
 }
