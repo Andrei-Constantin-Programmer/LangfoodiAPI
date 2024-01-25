@@ -40,7 +40,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
             if (conversationDocument is null)
             {
                 return null;
-        }
+            }
         }
         catch (Exception ex)
         {
