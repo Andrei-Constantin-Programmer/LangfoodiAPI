@@ -26,6 +26,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
     internal FakeUserRepository _fakeUserRepository;
     internal FakeConnectionRepository _fakeConnectionRepository;
     internal FakeMessageRepository _fakeMessageRepository;
+    internal FakeGroupRepository _fakeGroupRepository;
 
     internal FakeCryptoService _fakeCryptoService; 
 
@@ -40,6 +41,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
         _fakeUserRepository = new FakeUserRepository();
         _fakeConnectionRepository = new FakeConnectionRepository();
         _fakeMessageRepository = new FakeMessageRepository(new MessageFactory(_dateTimeProvider), _fakeRecipeRepository);
+        _fakeGroupRepository = new FakeGroupRepository();
         _fakeCryptoService = new FakeCryptoService();
 
         _client = factory
@@ -58,6 +60,9 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
 
                 services.AddSingleton<IMessageQueryRepository>(_fakeMessageRepository);
                 services.AddSingleton<IMessagePersistenceRepository>(_fakeMessageRepository);
+
+                services.AddSingleton<IGroupQueryRepository>(_fakeGroupRepository);
+                services.AddSingleton<IGroupPersistenceRepository>(_fakeGroupRepository);
 
                 services.AddSingleton<ICryptoService>(_fakeCryptoService);
 
