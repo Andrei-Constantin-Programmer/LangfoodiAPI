@@ -5,6 +5,7 @@ namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 public class GroupConversation : Conversation
 {
     private readonly Group _group;
+    public Group Group => _group;
 
     public GroupConversation(Group group, string conversationId, IEnumerable<Message>? messages = null)
         : base(conversationId, messages)
