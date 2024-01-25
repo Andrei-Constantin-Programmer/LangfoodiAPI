@@ -215,5 +215,219 @@ public class ConversationQueryRepositoryTests
             Times.Once);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConversationByConnection_WhenConversationExists_ReturnMappedConversation()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "u1",
+            Handler = "user1",
+            UserName = "User 1",
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "u2",
+            Handler = "user2",
+            UserName = "User 2",
+        };
 
+        List<Message> messages = new()
+        {
+            new TestMessage("m1", user1, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null),
+            new TestMessage("m2", user2, new(2024, 1, 1, 0, 15, 30, TimeSpan.Zero), null)
+        };
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(messages[0].Id))
+            .Returns(messages[0]);
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(messages[1].Id))
+            .Returns(messages[1]);
+
+        Connection connection = new("conn1", user1, user2, ConnectionStatus.Connected);
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnection(connection.ConnectionId))
+            .Returns(connection);
+
+        ConnectionConversation conversation = new(connection, "convo1", messages);
+        ConversationDocument document = new(messages.Select(message => message.Id).ToList(), connection.ConnectionId, null, conversation.ConversationId);
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connection.ConnectionId;
+        _conversationCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(document);
+
+        _conversationDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConversationFromDocument(document, connection, null, messages))
+            .Returns(conversation);
+
+        // When
+        var result = _conversationQueryRepositorySUT.GetConversationByConnection(connection.ConnectionId) as ConnectionConversation;
+
+        // Then
+        result.Should().Be(conversation);
+        _groupQueryRepositoryMock
+            .Verify(repo => repo.GetGroupById(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConversationByConnection_WhenConversationDoesNotExist_ReturnNull()
+    {
+        // Given
+        string connectionId = "conn1";
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connectionId;
+        _conversationCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns((ConversationDocument?)null);
+
+        // When
+        var result = _conversationQueryRepositorySUT.GetConversationByConnection(connectionId);
+
+        // Then
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConversationByConnection_WhenMongoThrowsAnException_ReturnNullAndLogException()
+    {
+        // Given
+        string connectionId = "conn1";
+
+        Exception testException = new("Test Exception");
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connectionId;
+        _conversationCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Throws(testException);
+
+        // When
+        var result = _conversationQueryRepositorySUT.GetConversationByConnection(connectionId);
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConversationByGroup_WhenConversationExists_ReturnMappedConversation()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "u1",
+            Handler = "user1",
+            UserName = "User 1",
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "u2",
+            Handler = "user2",
+            UserName = "User 2",
+        };
+
+        List<Message> messages = new()
+        {
+            new TestMessage("m1", user1, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null),
+            new TestMessage("m2", user2, new(2024, 1, 1, 0, 15, 30, TimeSpan.Zero), null)
+        };
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(messages[0].Id))
+            .Returns(messages[0]);
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(messages[1].Id))
+            .Returns(messages[1]);
+
+        Group group = new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1, user2 });
+        _groupQueryRepositoryMock
+            .Setup(repo => repo.GetGroupById(group.GroupId))
+            .Returns(group);
+
+        GroupConversation conversation = new(group, "convo1", messages);
+        ConversationDocument document = new(messages.Select(message => message.Id).ToList(), null, group.GroupId, conversation.ConversationId);
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == group.GroupId;
+        _conversationCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(document);
+
+        _conversationDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConversationFromDocument(document, null, group, messages))
+            .Returns(conversation);
+
+        // When
+        var result = _conversationQueryRepositorySUT.GetConversationByGroup(group.GroupId) as GroupConversation;
+
+        // Then
+        result.Should().Be(conversation);
+        _connectionQueryRepositoryMock
+            .Verify(repo => repo.GetConnection(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConversationByGroup_WhenConversationDoesNotExist_ReturnNull()
+    {
+        // Given
+        string groupId = "g1";
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == groupId;
+        _conversationCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns((ConversationDocument?)null);
+
+        // When
+        var result = _conversationQueryRepositorySUT.GetConversationByGroup(groupId);
+
+        // Then
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetConversationByGroup_WhenMongoThrowsAnException_ReturnNullAndLogException()
+    {
+        // Given
+        string connectionId = "conn1";
+
+        Exception testException = new("Test Exception");
+
+        Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == connectionId;
+        _conversationCollectionMock
+            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Throws(testException);
+
+        // When
+        var result = _conversationQueryRepositorySUT.GetConversationByGroup(connectionId);
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
 }

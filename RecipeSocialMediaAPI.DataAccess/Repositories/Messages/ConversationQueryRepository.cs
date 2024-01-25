@@ -74,11 +74,10 @@ public class ConversationQueryRepository : IConversationQueryRepository
         }
 
         IConnection? connection = GetConnection(conversationDocument);
-        Group? group = GetGroup(conversationDocument);
         List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
+            ? _mapper.MapConversationFromDocument(conversationDocument, connection, null, messages)
             : null;
     }
 
@@ -100,12 +99,11 @@ public class ConversationQueryRepository : IConversationQueryRepository
             return null;
         }
 
-        IConnection? connection = GetConnection(conversationDocument);
         Group? group = GetGroup(conversationDocument);
         List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
+            ? _mapper.MapConversationFromDocument(conversationDocument, null, group, messages)
             : null;
     }
 
