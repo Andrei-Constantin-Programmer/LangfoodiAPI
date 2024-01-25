@@ -28,9 +28,9 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
 
     public List<Conversation> GetConversationsByUser(IUserAccount userAccount) => _collection
         .Where(conversation => (conversation is ConnectionConversation connConvo 
-                                && (connConvo.Connection.Account1 == userAccount || connConvo.Connection.Account2 == userAccount))
+                                && (connConvo.Connection.Account1.Id == userAccount.Id || connConvo.Connection.Account2.Id == userAccount.Id))
                             || (conversation is GroupConversation groupConvo
-                                && groupConvo.Group.Users.Contains(userAccount)))
+                                && groupConvo.Group.Users.Any(user => user.Id == userAccount.Id)))
         .ToList();
 
     public Conversation CreateConnectionConversation(IConnection connection)

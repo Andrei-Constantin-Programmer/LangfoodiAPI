@@ -16,7 +16,7 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
     public Group? GetGroupById(string groupId) => _collection.FirstOrDefault(group => group.GroupId == groupId);
 
     public IEnumerable<Group> GetGroupsByUser(IUserAccount userAccount) => _collection
-        .Where(group => group.Users.Contains(userAccount));
+        .Where(group => group.Users.Any(user => user.Id == userAccount.Id));
 
     public Group CreateGroup(string groupName, string groupDescription, List<IUserAccount> users)
     {
@@ -42,8 +42,12 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
         return true;
     }
 
-    public bool DeleteGroup(Group group) => throw new NotImplementedException();
+    public bool DeleteGroup(Group group) => _collection.Remove(group);
 
-    public bool DeleteGroup(string groupId) => throw new NotImplementedException();
+    public bool DeleteGroup(string groupId)
+    {
+        var group = GetGroupById(groupId);
 
+        return group is not null && _collection.Remove(group);
+    }
 }
