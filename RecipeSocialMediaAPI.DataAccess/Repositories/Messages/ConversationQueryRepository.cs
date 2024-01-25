@@ -146,6 +146,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         .Select(_messageQueryRepository.GetMessage)
         .OfType<Message>()
         .ToList();
+    
     private Group? GetGroup(ConversationDocument conversationDocument) => conversationDocument.GroupId is null
         ? null
         : _groupQueryRepository.GetGroupById(conversationDocument.GroupId);
