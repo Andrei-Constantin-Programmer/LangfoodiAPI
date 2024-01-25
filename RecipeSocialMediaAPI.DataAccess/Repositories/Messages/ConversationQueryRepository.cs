@@ -113,13 +113,13 @@ public class ConversationQueryRepository : IConversationQueryRepository
 
         try
         {
-            var groups = _groupQueryRepository.GetGroupsByUser(userAccount); // TODO: Implement condition for collecting conversations#
+            var groups = _groupQueryRepository.GetGroupsByUser(userAccount);
             var connections = _connectionQueryRepository.GetConnectionsForUser(userAccount);
 
             conversations = _conversationCollection
                 .GetAll(conversationDoc => conversationDoc.ConnectionId == null 
-                                        ? groups.Any(group => group.GroupId == conversationDoc.GroupId) 
-                                        : connections.Any(connection => connection.ConnectionId == conversationDoc.ConnectionId));
+                                         ? groups.Any(group => group.GroupId == conversationDoc.GroupId) 
+                                         : connections.Any(connection => connection.ConnectionId == conversationDoc.ConnectionId));
         }
         catch (Exception ex)
         {
