@@ -40,7 +40,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
             if (conversationDocument is null)
             {
                 return null;
-        }
+            }
         }
         catch (Exception ex)
         {
@@ -52,9 +52,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         Group? group = GetGroup(conversationDocument);
         List<Message> messages = GetMessages(conversationDocument);
 
-        return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
-            : null;
+        return _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages);
     }
 
     public Conversation? GetConversationByConnection(string connectionId)
@@ -76,11 +74,10 @@ public class ConversationQueryRepository : IConversationQueryRepository
         }
 
         IConnection? connection = GetConnection(conversationDocument);
-        Group? group = GetGroup(conversationDocument);
         List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
+            ? _mapper.MapConversationFromDocument(conversationDocument, connection, null, messages)
             : null;
     }
 
@@ -102,12 +99,11 @@ public class ConversationQueryRepository : IConversationQueryRepository
             return null;
         }
 
-        IConnection? connection = GetConnection(conversationDocument);
         Group? group = GetGroup(conversationDocument);
         List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages)
+            ? _mapper.MapConversationFromDocument(conversationDocument, null, group, messages)
             : null;
     }
 
@@ -117,13 +113,13 @@ public class ConversationQueryRepository : IConversationQueryRepository
 
         try
         {
-            var groups = _groupQueryRepository.GetGroupsByUser(userAccount); // TODO: Implement condition for collecting conversations#
+            var groups = _groupQueryRepository.GetGroupsByUser(userAccount);
             var connections = _connectionQueryRepository.GetConnectionsForUser(userAccount);
 
             conversations = _conversationCollection
                 .GetAll(conversationDoc => conversationDoc.ConnectionId == null 
-                                        ? groups.Any(group => group.GroupId == conversationDoc.GroupId) 
-                                        : connections.Any(connection => connection.ConnectionId == conversationDoc.ConnectionId));
+                                         ? groups.Any(group => group.GroupId == conversationDoc.GroupId) 
+                                         : connections.Any(connection => connection.ConnectionId == conversationDoc.ConnectionId));
         }
         catch (Exception ex)
         {
@@ -146,6 +142,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         .Select(_messageQueryRepository.GetMessage)
         .OfType<Message>()
         .ToList();
+    
     private Group? GetGroup(ConversationDocument conversationDocument) => conversationDocument.GroupId is null
         ? null
         : _groupQueryRepository.GetGroupById(conversationDocument.GroupId);
