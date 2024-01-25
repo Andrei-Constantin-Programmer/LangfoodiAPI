@@ -16,12 +16,12 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
     public IConnection? GetConnection(string connectionId) => _collection.FirstOrDefault(conn => conn.ConnectionId == connectionId);
 
     public IConnection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2) => 
-        _collection.FirstOrDefault(conn => (conn.Account1 == userAccount1 && conn.Account2 == userAccount2)
-                                              || (conn.Account1 == userAccount2 && conn.Account2 == userAccount1));
+        _collection.FirstOrDefault(conn => (conn.Account1.Id == userAccount1.Id && conn.Account2.Id == userAccount2.Id)
+                                              || (conn.Account1.Id == userAccount2.Id && conn.Account2.Id == userAccount1.Id));
 
     public List<IConnection> GetConnectionsForUser(IUserAccount userAccount) => 
         _collection
-            .Where(conn => conn.Account1 == userAccount || conn.Account2 == userAccount)
+            .Where(conn => conn.Account1.Id == userAccount.Id || conn.Account2.Id == userAccount.Id)
             .ToList();
 
     public IConnection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus)

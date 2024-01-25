@@ -23,6 +23,13 @@ public static class ConnectionEndpoints
             return Results.Ok(await sender.Send(new GetConnectionQuery(userId1, userId2)));
         });
 
+        group.MapPost("/get-by-user", async (
+            [FromQuery] string userId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetConnectionsByUserQuery(userId)));
+        });
+
         return group;
     }
 }
