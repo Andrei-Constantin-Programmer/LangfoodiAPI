@@ -14,6 +14,8 @@ using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
+using RecipeSocialMediaAPI.Application.Repositories.Images;
+using RecipeSocialMediaAPI.DataAccess.Repositories.Images;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
@@ -76,6 +78,19 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
         // Then
         connectionDocumentToModelMapper.Should().NotBeNull();
+    }
+    
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void GroupDocumentToModelMapper_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var groupDocumentToModelMapper = scope.ServiceProvider.GetService(typeof(IGroupDocumentToModelMapper)) as GroupDocumentToModelMapper;
+
+        // Then
+        groupDocumentToModelMapper.Should().NotBeNull();
     }
 
     [Fact]
@@ -198,6 +213,19 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ImageHostingPersistenceRepository_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var imageHostingQueryRepository = scope.ServiceProvider.GetService(typeof(IImageHostingPersistenceRepository)) as ImageHostingPersistenceRepository;
+
+        // Then
+        imageHostingQueryRepository.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void MongoCollectionFactory_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -208,4 +236,68 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
         mongoCollectionFactory.Should().NotBeNull();
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ConversationDocumentToModelMapper_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var conversationDocumentToModelMapper = scope.ServiceProvider.GetService(typeof(IConversationDocumentToModelMapper)) as ConversationDocumentToModelMapper;
+
+        // Then
+        conversationDocumentToModelMapper.Should().NotBeNull();
+    }
+    
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ConversationQueryRepository_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var conversationQueryRepository = scope.ServiceProvider.GetService(typeof(IConversationQueryRepository)) as ConversationQueryRepository;
+
+        // Then
+        conversationQueryRepository.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ConversationPersistenceRepository_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var conversationPersistenceRepository = scope.ServiceProvider.GetService(typeof(IConversationPersistenceRepository)) as ConversationPersistenceRepository;
+
+        // Then
+        conversationPersistenceRepository.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void GroupPersistenceRepository_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var groupPersistenceRepository = scope.ServiceProvider.GetService(typeof(IGroupPersistenceRepository)) as GroupPersistenceRepository;
+
+        // Then
+        groupPersistenceRepository.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void GroupQueryRepository_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var groupQueryRepository = scope.ServiceProvider.GetService(typeof(IGroupQueryRepository)) as GroupQueryRepository;
+
+        // Then
+        groupQueryRepository.Should().NotBeNull();
+    }
 }

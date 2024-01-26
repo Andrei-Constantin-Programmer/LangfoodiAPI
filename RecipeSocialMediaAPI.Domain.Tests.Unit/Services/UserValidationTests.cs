@@ -16,6 +16,38 @@ public class UserValidationTests
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    [InlineData("handler")]
+    [InlineData("handler123")]
+    public void ValidHandle_WhenValidHandler_ReturnsTrue(string handler)
+    {
+        // Given
+
+        // When
+        bool result = _userValidationServiceSUT.ValidHandler(handler);
+
+        // Then
+        result.Should().BeTrue();
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    [InlineData("h1")]
+    [InlineData("12")]
+    public void ValidHandler_WhenInvalidHandler_ReturnsFalse(string handler)
+    {
+        // Given
+
+        // When
+        bool result = _userValidationServiceSUT.ValidHandler(handler);
+
+        // Then
+        result.Should().BeFalse();
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
     [InlineData("username")]
     [InlineData("username123")]
     public void ValidUserName_WhenValidUserName_ReturnsTrue(string userName)
@@ -32,7 +64,7 @@ public class UserValidationTests
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    [InlineData("invalid_username")]
+    [InlineData("u1")]
     [InlineData("12")]
     public void ValidUserName_WhenInvalidUserName_ReturnsFalse(string userName)
     {

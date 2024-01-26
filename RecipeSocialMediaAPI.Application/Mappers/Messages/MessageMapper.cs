@@ -19,18 +19,15 @@ public class MessageMapper : IMessageMapper
 
     public MessageDTO MapMessageToMessageDTO(Message message)
     {
-        MessageDTO messageDTO = new()
-        {
-            Id = message.Id,
-            SenderId = message.Sender.Id,
-            SentDate = message.SentDate,
-            UpdatedDate = message.UpdatedDate,
-            RepliedToMessageId = message.RepliedToMessage?.Id
-        };
-
-        HydrateMessageDTOWithContent(messageDTO, message);
+        MessageDTO messageDTO = new(
+            Id: message.Id,
+            SenderId: message.Sender.Id,
+            SentDate: message.SentDate,
+            UpdatedDate: message.UpdatedDate,
+            RepliedToMessageId: message.RepliedToMessage?.Id
+        );
         
-        return messageDTO;
+        return GetMessageDTOHydratedWithContent(messageDTO, message);
     }
 
     public MessageDetailedDTO MapMessageToDetailedMessageDTO(Message message)
@@ -44,16 +41,12 @@ public class MessageMapper : IMessageMapper
             RepliedToMessage =  message.RepliedToMessage is not null ? MapMessageToDetailedMessageDTO(message.RepliedToMessage) : null
         };
 
-        HydrateMessageDetailedDTOWithContent(messageDetailedDTO, message);
-
-        return messageDetailedDTO;
+        return GetDetailedMessageDTOHydratedWithContent(messageDetailedDTO, message);
     }
-
-    private static void HydrateMessageDTOWithContent(MessageDTO messageDTO, Message message)
+    
+    private static MessageDTO GetMessageDTOHydratedWithContent(MessageDTO messageDTO, Message message)
     {
-        (messageDTO.TextContent,
-            messageDTO.RecipeIds,
-            messageDTO.ImageURLs) = message switch
+        var (text, recipeIds, imageUrls) = message switch
             {
                 TextMessage textMessage => (
                     textMessage.TextContent,
@@ -70,13 +63,13 @@ public class MessageMapper : IMessageMapper
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
             };
+
+        return messageDTO with { TextContent = text, RecipeIds = recipeIds, ImageURLs = imageUrls };
     }
 
-    private void HydrateMessageDetailedDTOWithContent(MessageDetailedDTO messageDetailedDTO, Message message)
+    private MessageDetailedDTO GetDetailedMessageDTOHydratedWithContent(MessageDetailedDTO messageDetailedDTO, Message message)
     {
-        (messageDetailedDTO.TextContent,
-            messageDetailedDTO.Recipes,
-            messageDetailedDTO.ImageURLs) = message switch
+        var (text, recipes, images) = message switch
             {
                 TextMessage textMessage => (
                     textMessage.TextContent,
@@ -93,5 +86,7 @@ public class MessageMapper : IMessageMapper
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
             };
+
+        return messageDetailedDTO with { TextContent = text, Recipes = recipes, ImageURLs = images };
     }
 }

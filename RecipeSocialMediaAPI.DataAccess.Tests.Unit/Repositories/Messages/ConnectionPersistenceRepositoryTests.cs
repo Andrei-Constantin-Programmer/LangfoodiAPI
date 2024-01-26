@@ -15,7 +15,6 @@ namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.Repositories.Messages;
 
 public class ConnectionPersistenceRepositoryTests
 {
-    private readonly Mock<ILogger<ConnectionPersistenceRepository>> _loggerMock;
     private readonly Mock<IConnectionDocumentToModelMapper> _connectionDocumentToModelMapperMock;
     private readonly Mock<IMongoCollectionWrapper<ConnectionDocument>> _connectionCollectionMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
@@ -24,7 +23,6 @@ public class ConnectionPersistenceRepositoryTests
 
     public ConnectionPersistenceRepositoryTests()
     {
-        _loggerMock = new Mock<ILogger<ConnectionPersistenceRepository>>();
         _connectionDocumentToModelMapperMock = new Mock<IConnectionDocumentToModelMapper>();
         _connectionCollectionMock = new Mock<IMongoCollectionWrapper<ConnectionDocument>>();
         _mongoCollectionFactoryMock = new Mock<IMongoCollectionFactory>();
@@ -32,7 +30,7 @@ public class ConnectionPersistenceRepositoryTests
             .Setup(factory => factory.CreateCollection<ConnectionDocument>())
             .Returns(_connectionCollectionMock.Object);
 
-        _connectionPersistenceRepositorySUT = new ConnectionPersistenceRepository(_loggerMock.Object, _connectionDocumentToModelMapperMock.Object, _mongoCollectionFactoryMock.Object);
+        _connectionPersistenceRepositorySUT = new ConnectionPersistenceRepository(_connectionDocumentToModelMapperMock.Object, _mongoCollectionFactoryMock.Object);
     }
 
     [Fact]
@@ -57,13 +55,9 @@ public class ConnectionPersistenceRepositoryTests
             AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
         };
 
-        ConnectionDocument testDocument = new()
-        {
-            AccountId1 = testUser1.Id,
-            AccountId2 = testUser2.Id,
-            ConnectionStatus = "Pending"
-        };
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Pending);
+        ConnectionDocument testDocument = new(testUser1.Id, testUser2.Id, "Pending");
+
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         _connectionCollectionMock
             .Setup(collection => collection.Insert(It.IsAny<ConnectionDocument>()))
@@ -107,7 +101,7 @@ public class ConnectionPersistenceRepositoryTests
             AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Connected);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Connected);
 
         Expression<Func<ConnectionDocument, bool>> expectedExpression = 
             doc => (doc.AccountId1 == testUser1.Id && doc.AccountId2 == testUser2.Id)
@@ -150,7 +144,7 @@ public class ConnectionPersistenceRepositoryTests
             AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Connected);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Connected);
 
         Expression<Func<ConnectionDocument, bool>> expectedExpression =
             doc => (doc.AccountId1 == testUser1.Id && doc.AccountId2 == testUser2.Id)
@@ -275,7 +269,7 @@ public class ConnectionPersistenceRepositoryTests
             .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(true);
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         // When
         var result = _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);
@@ -314,7 +308,7 @@ public class ConnectionPersistenceRepositoryTests
             .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(false);
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         // When
         var result = _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);

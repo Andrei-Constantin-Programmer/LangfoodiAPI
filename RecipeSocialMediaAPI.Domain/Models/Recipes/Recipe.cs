@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Domain.Models.Recipes;
 
-public record Recipe
+public class Recipe
 {
     private readonly List<Ingredient> _ingredients;
     private readonly Stack<RecipeStep> _steps;

@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Domain.Tests.Shared;
 
-public record TestMessage : Message
+public class TestMessage : Message
 {
     public TestMessage(string id, IUserAccount sender, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null)
         : base(id, sender, sentDate, updatedDate, repliedToMessage)

@@ -4,7 +4,7 @@ using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Unit.TestHelpers;
 
-internal record TestImageMessage : TestMessage
+internal class TestImageMessage : TestMessage
 {
     public string Text { get; set; }
     public List<string> ImageURLs { get; set; }

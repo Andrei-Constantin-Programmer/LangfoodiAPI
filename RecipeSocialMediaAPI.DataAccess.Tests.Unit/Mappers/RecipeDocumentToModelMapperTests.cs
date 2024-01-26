@@ -22,18 +22,18 @@ public class RecipeDocumentToModelMapperTests
     public void MapRecipeDocumentToRecipeAggregate_WhenIdIsNull_ThrowArgumentException()
     {
         // Given
-        RecipeDocument testDocument = new()
-        {
-            Id = null,
-            Title = "Recipe Title",
-            Description = "Recipe Description",
-            CreationDate = new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
-            LastUpdatedDate = new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
-            Labels = new List<string>(),
-            ChefId = "ChefId",
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>()
-        };
+        RecipeDocument testDocument = new(
+            Id: null,
+            Title: "Recipe Title",
+            Description: "Recipe Description",
+            CreationDate: new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
+            LastUpdatedDate: new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
+            Tags: new List<string>(),
+            ChefId: "ChefId",
+            ThumbnailId: "publicid1",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>()
+        );
 
         TestUserAccount testSender = new()
         {
@@ -56,32 +56,32 @@ public class RecipeDocumentToModelMapperTests
     public void MapRecipeDocumentToRecipeAggregate_WhenDocumentIsValid_ReturnMappedRecipeModel()
     {
         // Given
-        RecipeDocument testDocument = new()
-        {
-            Id = "RecipeId",
-            Title = "Recipe Title",
-            Description = "Recipe Description",
-            CreationDate = new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
-            LastUpdatedDate = new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
-            Labels = new List<string>() { "Label1", "Label2" },
-            ChefId = "ChefId",
-            Ingredients = new List<(string, double, string)>()
+        RecipeDocument testDocument = new(
+            Id: "RecipeId",
+            Title: "Recipe Title",
+            Description: "Recipe Description",
+            CreationDate: new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
+            LastUpdatedDate: new(2023, 11, 6, 0, 0, 0, TimeSpan.Zero),
+            Tags: new List<string>() { "Tag1", "Tag2" },
+            ChefId: "ChefId",
+            ThumbnailId: "publicid1",
+            Ingredients: new List<(string, double, string)>()
             {
                 new("Beef", 200, "g"),
                 new("Onion", 150, "g"),
                 new("Chicken Stock", 500, "mL"),
             },
-            Steps = new List<(string, string?)>()
+            Steps: new List<(string, string?)>()
             {
                 new("Chop onions", "chopping.png"),
                 new("Put it all together", null),
                 new("Boil for 10 minutes", "boil.png")
             },
-            NumberOfServings = 2,
-            CookingTimeInSeconds = 1200,
-            KiloCalories = 300,
-            ServingSize = (200, "g")
-        };
+            NumberOfServings: 2,
+            CookingTimeInSeconds: 1200,
+            KiloCalories: 300,
+            ServingSize: (200, "g")
+        );
 
         TestUserAccount testSender = new()
         {
@@ -114,8 +114,9 @@ public class RecipeDocumentToModelMapperTests
         result.Description.Should().Be(testDocument.Description);
         result.CreationDate.Should().Be(testDocument.CreationDate);
         result.LastUpdatedDate.Should().Be(testDocument.LastUpdatedDate);
-        result.Labels.Should().BeEquivalentTo(testDocument.Labels.ToHashSet());
+        result.Tags.Should().BeEquivalentTo(testDocument.Tags.ToHashSet());
         result.Chef.Should().Be(testSender);
+        result.ThumbnailId.Should().Be(testDocument.ThumbnailId);
         
         result.Recipe.Ingredients.Should().HaveCount(3);
         result.Recipe.Ingredients[0].Should().BeEquivalentTo(expectedIngredients[0]);
@@ -131,6 +132,6 @@ public class RecipeDocumentToModelMapperTests
         result.Recipe.CookingTimeInSeconds.Should().Be(testDocument.CookingTimeInSeconds);
         result.Recipe.NumberOfServings.Should().Be(testDocument.NumberOfServings);
         result.Recipe.KiloCalories.Should().Be(testDocument.KiloCalories);
-        result.Recipe.ServingSize.Should().BeEquivalentTo(new ServingSize(testDocument.ServingSize.Value.Quantity, testDocument.ServingSize.Value.UnitOfMeasurement));
+        result.Recipe.ServingSize.Should().BeEquivalentTo(new ServingSize(testDocument.ServingSize!.Value.Quantity, testDocument.ServingSize.Value.UnitOfMeasurement));
     }
 }

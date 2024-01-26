@@ -21,7 +21,25 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public Connection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2)
+    public IConnection? GetConnection(string connectionId)
+    {
+        ConnectionDocument? connectionDocument;
+        try
+        {
+            connectionDocument = _connectionCollection.Find(connectionDoc => connectionDoc.Id == connectionId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to get connection with id {ConnectionId}: {ErrorMessage}", connectionId, ex.Message);
+            return null;
+        }
+
+        return connectionDocument is not null
+            ? _mapper.MapConnectionFromDocument(connectionDocument)
+            : null;
+    }
+
+    public IConnection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2)
     {
         ConnectionDocument? connectionDocument;
         try
@@ -41,7 +59,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
             : null;
     }
 
-    public List<Connection> GetConnectionsForUser(IUserAccount userAccount)
+    public List<IConnection> GetConnectionsForUser(IUserAccount userAccount)
     {
         List<ConnectionDocument> connections = new();
 

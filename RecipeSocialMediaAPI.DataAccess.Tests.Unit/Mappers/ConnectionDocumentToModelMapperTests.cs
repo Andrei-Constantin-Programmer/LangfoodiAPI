@@ -61,12 +61,11 @@ public class ConnectionDocumentToModelMapperTests
             Password = "password"
         };
 
-        ConnectionDocument testDocument = new()
-        {
-            AccountId1 = testUser1.Account.Id,
-            AccountId2 = testUser2.Account.Id,
-            ConnectionStatus = connectionStatus.ToString()
-        };
+        ConnectionDocument testDocument = new(
+            AccountId1: testUser1.Account.Id,
+            AccountId2: testUser2.Account.Id,
+            ConnectionStatus: connectionStatus.ToString()
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(testUser1.Account.Id))
@@ -126,12 +125,7 @@ public class ConnectionDocumentToModelMapperTests
         string userId1 = testUser1?.Account.Id ?? "User1Id";
         string userId2 = testUser2?.Account.Id ?? "User2Id";
 
-        ConnectionDocument testDocument = new()
-        {
-            AccountId1 = userId1,
-            AccountId2 = userId2,
-            ConnectionStatus = "Pending"
-        };
+        ConnectionDocument testDocument = new(userId1, userId2, "Pending");
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(userId1))
@@ -179,12 +173,7 @@ public class ConnectionDocumentToModelMapperTests
             Password = "password"
         };
 
-        ConnectionDocument testDocument = new()
-        {
-            AccountId1 = testUser1.Account.Id,
-            AccountId2 = testUser2.Account.Id,
-            ConnectionStatus = "MalformedStatus"
-        };
+        ConnectionDocument testDocument = new(testUser1.Account.Id, testUser2.Account.Id, "MalformedStatus");
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(testUser1.Account.Id))
@@ -219,12 +208,7 @@ public class ConnectionDocumentToModelMapperTests
             Password = "password"
         };
 
-        ConnectionDocument testDocument = new()
-        {
-            AccountId1 = testUser.Account.Id,
-            AccountId2 = testUser.Account.Id,
-            ConnectionStatus = "Pending"
-        };
+        ConnectionDocument testDocument = new(testUser.Account.Id, testUser.Account.Id, "Pending");
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(testUser.Account.Id))

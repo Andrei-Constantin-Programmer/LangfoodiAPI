@@ -5,7 +5,8 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 public interface IConnectionQueryRepository
 {
-    Connection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2);
+    IConnection? GetConnection(string connectionId);
+    IConnection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2);
 
-    List<Connection> GetConnectionsForUser(IUserAccount userAccount);
+    List<IConnection> GetConnectionsForUser(IUserAccount userAccount);
 }

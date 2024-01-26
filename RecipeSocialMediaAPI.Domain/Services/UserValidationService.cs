@@ -1,5 +1,4 @@
 ﻿using RecipeSocialMediaAPI.Domain.Services.Interfaces;
-using System.Text.RegularExpressions;
 
 namespace RecipeSocialMediaAPI.Domain.Services;
 
@@ -12,5 +11,8 @@ public class UserValidationService : BaseValidationService, IUserValidationServi
         RegexPatternMatch(@"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)+$", email);
 
     public bool ValidUserName(string userName) =>
-        RegexPatternMatch(@"^[a-zA-Z0-9]{3,}$", userName);
+        RegexPatternMatch(@"^[a-zA-Z0-9_]+[a-zA-Z0-9_ ]{2,}$", userName);
+
+    public bool ValidHandler(string handler) =>
+        RegexPatternMatch(@"^[a-zA-Z0-9_]+[a-zA-Z0-9_ ]{2,}$", handler);
 }

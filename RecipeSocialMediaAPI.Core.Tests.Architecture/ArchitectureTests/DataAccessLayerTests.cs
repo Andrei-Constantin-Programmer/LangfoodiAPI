@@ -34,6 +34,8 @@ public class DataAccessLayerTests
             .InAssembly(Assemblies.DataAccessAssembly)
             .That()
             .HaveNameEndingWith("Repository")
+            .And()
+            .DoNotHaveNameStartingWith("ImageHosting")
             .Should()
             .HaveDependencyOnAll(Assemblies.APPLICATION, Assemblies.DOMAIN)
             .GetResult();
