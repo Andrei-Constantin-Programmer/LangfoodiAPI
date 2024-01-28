@@ -21,4 +21,22 @@ internal class CreateConversationHandler : IRequestHandler<CreateConnectionComma
         _connectionQueryRepository = connectionQueryRepository;
     }
 
+    public async Task<> Handle(CreateConversationCommand request, CancellationToken cancellationToken)
+    {
+        var conversationType = request.Contract.conversationType;
+        var conversationId = request.Contract.conversationId;
+        var conversationDTO = null;
+
+        if (conversationType == "connection")
+        {
+            var createdConversation = _conversationPersistenceRepository.CreateConnectionConversation(conversationId);
+            conversationDTO = new ConnectionConversationDTO(conversationId, createdConversation.ConversationId, null);
+
+        }
+
+        else if (conversationType == "group")
+        {
+            var createdConversation = _conversationPersistenceRepository.CreateGroupConversation(conversationId);
+            conversationDTO = new GroupConversationDTO(conversationId, createdConversation.GroupId, null;
+        }    }
 }
