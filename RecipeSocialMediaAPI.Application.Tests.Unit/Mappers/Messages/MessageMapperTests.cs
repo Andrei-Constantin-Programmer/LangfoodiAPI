@@ -60,6 +60,7 @@ public class MessageMapperTests
         MessageDTO expectedResult = new(
             Id: testMessage.Id,
             SenderId: testSender.Id,
+            SenderName: testSender.UserName,
             TextContent: testMessage.TextContent,
             RepliedToMessageId: testMessage.RepliedToMessage!.Id,
             SentDate: testMessage.SentDate,
@@ -103,6 +104,7 @@ public class MessageMapperTests
         MessageDTO expectedResult = new(
             Id: testMessage.Id,
             SenderId: testSender.Id,
+            SenderName: testSender.UserName,
             ImageURLs: testMessage.ImageURLs.ToList(),
             TextContent: testMessage.TextContent,
             RepliedToMessageId: testMessage.RepliedToMessage!.Id,
@@ -141,7 +143,7 @@ public class MessageMapperTests
             new List<RecipeAggregate>() 
             { 
                 new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE),
-                new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE)
+                new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE, thumbnailId: "ThumbnailId2")
             },
             containsTextContent ? "Test text content" : null,
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
@@ -151,7 +153,12 @@ public class MessageMapperTests
         MessageDTO expectedResult = new(
             Id: testMessage.Id,
             SenderId: testSender.Id,
-            RecipeIds: new() { "Recipe1", "Recipe2" },
+            SenderName: testSender.UserName,
+            RecipeIds: new List<DTO.Recipes.RecipePreviewDTO>()
+            {
+                new("Recipe1", "First recipe", null),
+                new("Recipe2", "Second recipe", "ThumbnailId2")
+            },
             TextContent: testMessage.TextContent,
             RepliedToMessageId: testMessage.RepliedToMessage!.Id,
             SentDate: testMessage.SentDate,

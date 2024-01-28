@@ -1,4 +1,5 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -12,6 +13,7 @@ public class MessageMapper : IMessageMapper
         MessageDTO messageDTO = new(
             Id: message.Id,
             SenderId: message.Sender.Id,
+            SenderName: message.Sender.UserName,
             SentDate: message.SentDate,
             UpdatedDate: message.UpdatedDate,
             RepliedToMessageId: message.RepliedToMessage?.Id
@@ -26,15 +28,17 @@ public class MessageMapper : IMessageMapper
             {
                 TextMessage textMessage => (
                     textMessage.TextContent,
-                    default(List<string>?),
+                    default(List<RecipePreviewDTO>?),
                     default(List<string>?)),
                 ImageMessage imageMessage => (
                     imageMessage.TextContent,
-                    default(List<string>?),
+                    default(List<RecipePreviewDTO>?),
                     imageMessage.ImageURLs.ToList()),
                 RecipeMessage recipeMessage => (
                     recipeMessage.TextContent,
-                    recipeMessage.Recipes.Select(recipe => recipe.Id).ToList(),
+                    recipeMessage.Recipes
+                        .Select(recipe => new RecipePreviewDTO(recipe.Id, recipe.Title, recipe.ThumbnailId))
+                        .ToList(),
                     default(List<string>?)),
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
