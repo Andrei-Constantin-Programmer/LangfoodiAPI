@@ -38,5 +38,13 @@ internal class CreateConversationHandler : IRequestHandler<CreateConnectionComma
         {
             var createdConversation = _conversationPersistenceRepository.CreateGroupConversation(conversationId);
             conversationDTO = new GroupConversationDTO(conversationId, createdConversation.GroupId, null;
-        }    }
+        }
+
+        else
+        {
+            throw new ArgumentException($"Invalid conversation type {conversationType} given")
+        }
+
+        return await Task.FromResult(new conversationDTO);
+    }
 }
