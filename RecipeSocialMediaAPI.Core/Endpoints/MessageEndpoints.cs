@@ -1,5 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.Contracts.Recipes;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
@@ -15,7 +18,7 @@ public static class MessageEndpoints
 
     private static RouteGroupBuilder AddMessageEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/get-by-id", async (
+        group.MapPost("/get/id", async (
             [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
