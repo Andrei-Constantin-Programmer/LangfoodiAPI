@@ -1,7 +1,6 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -37,6 +36,7 @@ public class MessageMapper : IMessageMapper
         {
             Id = message.Id,
             SenderId = message.Sender.Id,
+            SenderName = message.Sender.UserName,
             SentDate = message.SentDate,
             UpdatedDate = message.UpdatedDate,
             RepliedToMessage =  message.RepliedToMessage is not null ? MapMessageToDetailedMessageDTO(message.RepliedToMessage) : null
@@ -76,15 +76,15 @@ public class MessageMapper : IMessageMapper
             {
                 TextMessage textMessage => (
                     textMessage.TextContent,
-                    default(List<RecipeDTO>?),
+                    default(List<RecipePreviewDTO>?),
                     default(List<string>?)),
                 ImageMessage imageMessage => (
                     imageMessage.TextContent,
-                    default(List<RecipeDTO>?),
+                    default(List<RecipePreviewDTO>?),
                     imageMessage.ImageURLs.ToList()),
                 RecipeMessage recipeMessage => (
                     recipeMessage.TextContent,
-                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipeDto).ToList(),
+                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipePreviewDto).ToList(),
                     default(List<string>?)),
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
