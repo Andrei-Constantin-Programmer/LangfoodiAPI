@@ -39,6 +39,14 @@ public static class ConnectionEndpoints
             return Results.Ok(await sender.Send(new CreateConnectionCommand(newConnectionContract)));
         });
 
+        group.MapPut("/update", async (
+        [FromBody] UpdateConnectionContract updateConnectionContract,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new UpdateConnectionCommand(updateConnectionContract));
+            return Results.Ok();
+        });
+
         return group;
     }
 }
