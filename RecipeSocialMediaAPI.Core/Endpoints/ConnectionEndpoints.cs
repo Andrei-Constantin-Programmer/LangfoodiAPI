@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
@@ -28,6 +30,13 @@ public static class ConnectionEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetConnectionsByUserQuery(userId)));
+        });
+
+        group.MapPost("/create", async (
+            [FromBody] NewConnectionContract newConnectionContract,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new CreateConnectionCommand(newConnectionContract)));
         });
 
         return group;

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
@@ -190,6 +191,57 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // When
         var result = await _client.PostAsync($"connection/get-by-user/?userId={_testUser1.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateConnection_WhenUsersExist_ReturnNewConnection()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+
+        NewConnectionContract newConnection = new(user1.Account.Id, user2.Account.Id);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"connection/create", newConnection);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<ConnectionDTO>();
+        data!.UserId1.Should().Be(user1.Account.Id);
+        data.UserId2.Should().Be(user2.Account.Id);
+        data.ConnectionStatus.Should().Be("Pending");
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async void CreateConnection_WhenUsersDoNotExist_ReturnNewConnection(bool user1Exists, bool user2Exists)
+    {
+        // Given
+        var user1 = user1Exists 
+            ? _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
+            : null;
+        var user2 = user2Exists 
+            ? _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
+            : null;
+
+        NewConnectionContract newConnection = new(user1?.Account.Id ?? "user1", user2?.Account.Id ?? "user2");
+
+        // When
+        var result = await _client.PostAsJsonAsync($"connection/create", newConnection);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
