@@ -159,7 +159,7 @@ public class MessageMapperTests
             Id: testMessage.Id,
             SenderId: testSender.Id,
             SenderName: testSender.UserName,
-            RecipeIds: new List<RecipePreviewDTO>()
+            Recipes: new List<RecipePreviewDTO>()
             {
                 new("Recipe1", "First recipe", null),
                 new("Recipe2", "Second recipe", "ThumbnailId2")
@@ -169,6 +169,15 @@ public class MessageMapperTests
             SentDate: testMessage.SentDate,
             UpdatedDate: testMessage.UpdatedDate
         );
+
+        _recipeMapperMock
+            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(testMessage.Recipes[0]))
+            .Returns(expectedResult.Recipes[0]);
+
+
+        _recipeMapperMock
+            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(testMessage.Recipes[1]))
+            .Returns(expectedResult.Recipes[1]);
 
         // When
         var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);

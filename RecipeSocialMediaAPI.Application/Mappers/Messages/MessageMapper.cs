@@ -45,7 +45,7 @@ public class MessageMapper : IMessageMapper
         return GetDetailedMessageDTOHydratedWithContent(messageDetailedDTO, message);
     }
     
-    private static MessageDTO GetMessageDTOHydratedWithContent(MessageDTO messageDTO, Message message)
+    private MessageDTO GetMessageDTOHydratedWithContent(MessageDTO messageDTO, Message message)
     {
         var (text, recipeIds, imageUrls) = message switch
             {
@@ -59,15 +59,13 @@ public class MessageMapper : IMessageMapper
                     imageMessage.ImageURLs.ToList()),
                 RecipeMessage recipeMessage => (
                     recipeMessage.TextContent,
-                    recipeMessage.Recipes
-                        .Select(recipe => new RecipePreviewDTO(recipe.Id, recipe.Title, recipe.ThumbnailId))
-                        .ToList(),
+                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipePreviewDto).ToList(),
                     default(List<string>?)),
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
             };
 
-        return messageDTO with { TextContent = text, RecipeIds = recipeIds, ImageURLs = imageUrls };
+        return messageDTO with { TextContent = text, Recipes = recipeIds, ImageURLs = imageUrls };
     }
 
     private MessageDetailedDTO GetDetailedMessageDTOHydratedWithContent(MessageDetailedDTO messageDetailedDTO, Message message)

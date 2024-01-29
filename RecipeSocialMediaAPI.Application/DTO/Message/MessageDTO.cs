@@ -11,5 +11,5 @@ public record MessageDTO(
     string? RepliedToMessageId = null,
     string? TextContent = null,
     List<string>? ImageURLs = null,
-    List<RecipePreviewDTO>? RecipeIds = null
+    List<RecipePreviewDTO>? Recipes = null
 );
