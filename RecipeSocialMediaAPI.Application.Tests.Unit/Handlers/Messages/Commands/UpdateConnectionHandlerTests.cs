@@ -269,8 +269,7 @@ public class UpdateConnectionHandlerTests
 
         // Then
         await testAction.Should()
-            .ThrowAsync<ConnectionUpdateException>()
-            .WithMessage("Could not map Unsupported Status to *ConnectionStatus");
+            .ThrowAsync<UnsupportedConnectionStatusException>();
         _connectionPersistenceRepositoryMock
             .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
     }
