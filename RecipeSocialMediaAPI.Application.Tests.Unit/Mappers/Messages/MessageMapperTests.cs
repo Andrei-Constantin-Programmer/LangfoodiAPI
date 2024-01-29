@@ -159,7 +159,7 @@ public class MessageMapperTests
             Id: testMessage.Id,
             SenderId: testSender.Id,
             SenderName: testSender.UserName,
-            RecipeIds: new List<DTO.Recipes.RecipePreviewDTO>()
+            RecipeIds: new List<RecipePreviewDTO>()
             {
                 new("Recipe1", "First recipe", null),
                 new("Recipe2", "Second recipe", "ThumbnailId2")
@@ -227,6 +227,7 @@ public class MessageMapperTests
         {
             Id = repliedToMessage.Id,
             SenderId = repliedToMessage.Sender.Id,
+            SenderName = repliedToMessage.Sender.UserName,
             TextContent = repliedToMessage.TextContent,
             RepliedToMessage = null,
             SentDate = repliedToMessage.SentDate,
@@ -245,6 +246,7 @@ public class MessageMapperTests
         {
             Id = testMessage.Id,
             SenderId = testSender.Id,
+            SenderName = testSender.UserName,
             TextContent = testMessage.TextContent,
             RepliedToMessage = repliedToMessageDTO,
             SentDate = testMessage.SentDate,
@@ -288,6 +290,7 @@ public class MessageMapperTests
         {
             Id = repliedToMessage.Id,
             SenderId = repliedToMessage.Sender.Id,
+            SenderName = repliedToMessage.Sender.UserName,
             TextContent = repliedToMessage.TextContent,
             RepliedToMessage = null,
             SentDate = repliedToMessage.SentDate,
@@ -307,6 +310,7 @@ public class MessageMapperTests
         {
             Id = testMessage.Id,
             SenderId = testSender.Id,
+            SenderName = testSender.UserName,
             ImageURLs = testMessage.ImageURLs.ToList(),
             TextContent = testMessage.TextContent,
             RepliedToMessage = repliedToMessageDTO,
@@ -350,6 +354,7 @@ public class MessageMapperTests
         {
             Id = repliedToMessage.Id,
             SenderId = repliedToMessage.Sender.Id,
+            SenderName = repliedToMessage.Sender.UserName,
             TextContent = repliedToMessage.TextContent,
             RepliedToMessage = null,
             SentDate = repliedToMessage.SentDate,
@@ -372,21 +377,17 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
-        List<RecipeDTO> recipes = new()
+        List<RecipePreviewDTO> recipes = new()
         {
             new(
                 Id: "Recipe1Id",
                 Title: "Recipe1Title",
-                Description: "Description",
-                ChefUsername: "chefA",
-                Tags: new HashSet<string>{"labelA" , "labelB"}
+                ThumbnailId: null
             ),
             new(
                 Id: "Recipe2Id",
                 Title: "Recipe2Title",
-                Description: "Description",
-                ChefUsername: "chefB",
-                Tags: new HashSet<string>{"labelC" , "labelD"}
+                ThumbnailId: "Recipe2ThumbnailId"
             ),
         };
 
@@ -394,6 +395,7 @@ public class MessageMapperTests
         {
             Id = testMessage.Id,
             SenderId = testSender.Id,
+            SenderName = testSender.UserName,
             Recipes = recipes,
             TextContent = testMessage.TextContent,
             RepliedToMessage = repliedToMessageDTO,
@@ -402,12 +404,12 @@ public class MessageMapperTests
         };
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe1))
+            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(recipe1))
             .Returns(recipes[0]);
 
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe2))
+            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(recipe2))
             .Returns(recipes[1]);
 
 
