@@ -85,4 +85,13 @@ public class RecipeMapper : IRecipeMapper
             ThumbnailId: recipeAggregate.ThumbnailId
         );
     }
+
+    public RecipePreviewDTO MapRecipeAggregateToRecipePreviewDto(RecipeAggregate recipeAggregate)
+    {
+        return new RecipePreviewDTO(
+            recipeAggregate.Id,
+            recipeAggregate.Title,
+            recipeAggregate.ThumbnailId
+        );
+    }
 }

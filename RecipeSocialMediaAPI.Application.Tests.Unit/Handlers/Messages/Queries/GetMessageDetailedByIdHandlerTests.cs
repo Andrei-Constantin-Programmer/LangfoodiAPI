@@ -67,6 +67,7 @@ public class GetMessageDetailedByIdHandlerTests
         {
             Id = testMessage.Id,
             SenderId = testSender.Id,
+            SenderName = testSender.UserName,
             SentDate = testMessage.SentDate,
             UpdatedDate = testMessage.UpdatedDate,
         };

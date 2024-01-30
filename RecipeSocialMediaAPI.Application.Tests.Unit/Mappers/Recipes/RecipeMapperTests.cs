@@ -139,6 +139,41 @@ public class RecipeMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapRecipeAggregateToRecipePreviewDto_GivenRecipeAggregate_ReturnRecipePreviewDto()
+    {
+        // Given
+        IUserAccount testChef = new TestUserAccount
+        {
+            Id = "TestId",
+            Handler = "TestHandler",
+            UserName = "TestUsername",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        RecipeAggregate testRecipe = new(
+            "1",
+            "title",
+            new Recipe(new(), new(), 1),
+            "desc",
+            testChef,
+            _testDate,
+            _testDate,
+            new HashSet<string>(),
+            "thumbnail_public_id_1");
+
+        // When
+        var result = _mapperSUT.MapRecipeAggregateToRecipePreviewDto(testRecipe);
+
+        // Then
+        result.Should().BeOfType<RecipePreviewDTO>();
+        result.Id.Should().Be(testRecipe.Id);
+        result.ThumbnailId.Should().Be(testRecipe.ThumbnailId);
+        result.Title.Should().Be(testRecipe.Title);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapRecipeAggregateToRecipeDetailedDto_GivenRecipeAggregate_ReturnRecipeDetailedDto()
     {
         // Given
