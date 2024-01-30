@@ -12,5 +12,5 @@ public record MessageDetailedDTO
     public MessageDetailedDTO? RepliedToMessage { get; set; }
     public string? TextContent { get; set; }
     public List<string>? ImageURLs { get; set; }
-    public List<RecipePreviewDTO>? Recipes { get; set; }
+    public List<RecipeDTO>? Recipes { get; set; }
 }

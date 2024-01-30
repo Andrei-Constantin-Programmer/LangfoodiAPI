@@ -74,15 +74,15 @@ public class MessageMapper : IMessageMapper
             {
                 TextMessage textMessage => (
                     textMessage.TextContent,
-                    default(List<RecipePreviewDTO>?),
+                    default(List<RecipeDTO>?),
                     default(List<string>?)),
                 ImageMessage imageMessage => (
                     imageMessage.TextContent,
-                    default(List<RecipePreviewDTO>?),
+                    default(List<RecipeDTO>?),
                     imageMessage.ImageURLs.ToList()),
                 RecipeMessage recipeMessage => (
                     recipeMessage.TextContent,
-                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipePreviewDto).ToList(),
+                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipeDto).ToList(),
                     default(List<string>?)),
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")

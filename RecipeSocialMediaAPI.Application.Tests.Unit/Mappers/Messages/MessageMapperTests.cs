@@ -386,17 +386,21 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
-        List<RecipePreviewDTO> recipes = new()
+        List<RecipeDTO> recipes = new()
         {
             new(
                 Id: "Recipe1Id",
                 Title: "Recipe1Title",
-                ThumbnailId: null
+                Description: "Description",
+                ChefUsername: "chefA",
+                Tags: new HashSet<string>{"labelA" , "labelB"}
             ),
             new(
                 Id: "Recipe2Id",
                 Title: "Recipe2Title",
-                ThumbnailId: "Recipe2ThumbnailId"
+                Description: "Description",
+                ChefUsername: "chefB",
+                Tags: new HashSet<string>{"labelC" , "labelD"}
             ),
         };
 
@@ -413,12 +417,12 @@ public class MessageMapperTests
         };
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(recipe1))
+            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe1))
             .Returns(recipes[0]);
 
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(recipe2))
+            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe2))
             .Returns(recipes[1]);
 
 
