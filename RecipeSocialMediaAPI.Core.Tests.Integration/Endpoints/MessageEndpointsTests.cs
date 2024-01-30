@@ -9,6 +9,7 @@ using System.Net.Http.Json;
 using System.Net;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 public class MessageEndpointsTests : EndpointTestBase
@@ -87,7 +88,7 @@ public class MessageEndpointsTests : EndpointTestBase
         data!.UpdatedDate.Should().Be(message.UpdatedDate);
         data!.TextContent.Should().Be((message as TextMessage)!.TextContent);
         data!.ImageURLs.Should().BeNull();
-        data!.RecipeIds.Should().BeNull();
+        data!.Recipes.Should().BeNull();
     }
 
     [Fact]
@@ -118,7 +119,13 @@ public class MessageEndpointsTests : EndpointTestBase
         data!.UpdatedDate.Should().Be(message.UpdatedDate);
         data!.TextContent.Should().Be((message as RecipeMessage)!.TextContent);
         data!.ImageURLs.Should().BeNull();
-        data!.RecipeIds.Should().BeEquivalentTo(new List<string>() { _testRecipe.Id});
+        data!.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDTO>() { 
+            new RecipePreviewDTO(
+                _testRecipe.Id, 
+                _testRecipe.Title,
+                _testRecipe.ThumbnailId
+            ) 
+        });
     }
 
     [Fact]
@@ -146,10 +153,8 @@ public class MessageEndpointsTests : EndpointTestBase
         data!.UpdatedDate.Should().Be(message.UpdatedDate);
         data!.TextContent.Should().Be((message as ImageMessage)!.TextContent);
         data!.ImageURLs.Should().BeEquivalentTo((message as ImageMessage)!.ImageURLs);
-        data!.RecipeIds.Should().BeNull();
+        data!.Recipes.Should().BeNull();
     }
-
-
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
