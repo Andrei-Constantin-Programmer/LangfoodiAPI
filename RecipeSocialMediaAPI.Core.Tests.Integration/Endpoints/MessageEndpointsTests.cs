@@ -196,4 +196,71 @@ public class MessageEndpointsTests : EndpointTestBase
         data!.ImageURLs.Should().BeNull();
         data!.Recipes.Should().BeNull();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetMessageDetailed_WhenRecipeMessageFound_ReturnMessage()
+    {
+        // Given
+
+        _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+           .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+        var message = _fakeMessageRepository
+            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+
+        // When
+        var result = await _client.PostAsync($"message/get-detailed/?id={message.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<MessageDetailedDTO>();
+
+        data.Should().NotBeNull();
+        data!.Id.Should().Be(message.Id);
+        data!.SenderId.Should().Be(message.Sender.Id);
+        data!.SentDate.Should().Be(message.SentDate);
+        data!.UpdatedDate.Should().Be(message.UpdatedDate);
+        data!.TextContent.Should().Be((message as RecipeMessage)!.TextContent);
+        data!.ImageURLs.Should().BeNull();
+
+        data!.Recipes![0].Id.Should().Be(_testRecipe.Id);
+        data!.Recipes![0].Title.Should().Be(_testRecipe.Title);
+        data!.Recipes![0].Description.Should().Be(_testRecipe.Description);
+        data!.Recipes![0].ChefUsername.Should().Be(_testRecipe.Chef.UserName);
+        data!.Recipes![0].Tags.Should().BeEquivalentTo(_testRecipe.Tags);
+        data!.Recipes![0].ThumbnailId.Should().Be(_testRecipe.ThumbnailId);
+        data!.Recipes![0].CreationDate.Should().Be(_testRecipe.CreationDate);
+        data!.Recipes![0].LastUpdatedDate.Should().Be(_testRecipe.LastUpdatedDate);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetMessageDetailed_WhenImageMessageFound_ReturnMessage()
+    {
+        // Given
+        _ = _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = _fakeMessageRepository
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+
+        // When
+        var result = await _client.PostAsync($"message/getDetailed/?id={message.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<MessageDetailedDTO>();
+
+        data.Should().NotBeNull();
+        data!.Id.Should().Be(message.Id);
+        data!.SenderId.Should().Be(message.Sender.Id);
+        data!.SentDate.Should().Be(message.SentDate);
+        data!.UpdatedDate.Should().Be(message.UpdatedDate);
+        data!.TextContent.Should().Be((message as ImageMessage)!.TextContent);
+        data!.ImageURLs.Should().BeEquivalentTo((message as ImageMessage)!.ImageURLs);
+        data!.Recipes.Should().BeNull();
+    }
 }
