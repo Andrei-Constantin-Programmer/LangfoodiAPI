@@ -25,6 +25,15 @@ public static class MessageEndpoints
             return Results.Ok(await sender.Send(new GetMessageByIdQuery(id)));
         });
 
+        group.MapPost("/get-detailed", async (
+            [FromQuery] string id,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetMessageDetailedByIdQuery(id)));
+        });
+
         return group;
     }
+
+
 }
