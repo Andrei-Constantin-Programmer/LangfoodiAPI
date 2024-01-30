@@ -9,6 +9,7 @@ using System.Net.Http.Json;
 using System.Net;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 public class MessageEndpointsTests : EndpointTestBase
@@ -168,4 +169,31 @@ public class MessageEndpointsTests : EndpointTestBase
     }
 
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetMessageDeailed_WhenTextMessageFound_ReturnMessage()
+    {
+        // Given
+        _ = _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = _fakeMessageRepository
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+
+        // When
+        var result = await _client.PostAsync($"message/get-detailed/?id={message.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<MessageDetailedDTO>();
+
+        data.Should().NotBeNull();
+        data!.Id.Should().Be(message.Id);
+        data!.SenderId.Should().Be(message.Sender.Id);
+        data!.SentDate.Should().Be(message.SentDate);
+        data!.UpdatedDate.Should().Be(message.UpdatedDate);
+        data!.TextContent.Should().Be((message as TextMessage)!.TextContent);
+        data!.ImageURLs.Should().BeNull();
+        data!.Recipes.Should().BeNull();
+    }
 }
