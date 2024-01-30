@@ -18,7 +18,7 @@ public static class MessageEndpoints
 
     private static RouteGroupBuilder AddMessageEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/get/id", async (
+        group.MapPost("/get", async (
             [FromQuery] string id,
             [FromServices] ISender sender) =>
         {
