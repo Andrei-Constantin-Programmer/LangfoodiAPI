@@ -12,5 +12,6 @@ public static class EndpointsConfiguration
         app.MapImageEndpoints();
         app.MapTestEndpoints();
         app.MapConnectionEndpoints();
+        app.MapMessageEndpoints();
     }
 }
