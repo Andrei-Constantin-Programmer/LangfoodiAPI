@@ -263,7 +263,7 @@ public class MessageEndpointsTests : EndpointTestBase
             .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage);
 
         // When
-        var result = await _client.PostAsync($"message/getDetailed/?id={message.Id}", null);
+        var result = await _client.PostAsync($"message/get-detailed/?id={message.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
