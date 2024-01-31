@@ -63,7 +63,7 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
         ConnectionDocument connectionDoc = new(
             Id: "connId",
             AccountId1: user1.Id,
@@ -125,7 +125,7 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
 
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
@@ -207,7 +207,7 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
         ConnectionDocument connectionDoc = new(
             Id: "ConnId",
             AccountId1: user1.Id,
@@ -265,7 +265,7 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
         ConnectionDocument connectionDoc = new(
             Id: "ConnId",
             AccountId1: user1.Id,
@@ -316,7 +316,7 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
             .Returns((ConnectionDocument?)null);
@@ -358,7 +358,7 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
         ConnectionDocument connectionDoc = new(
             Id: "ConnId",
             AccountId1: user1.Id,

@@ -5,4 +5,5 @@ namespace RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 public interface IMessageMapper
 {
     MessageDTO MapMessageToMessageDTO(Message message);
+    MessageDetailedDTO MapMessageToDetailedMessageDTO(Message message);
 }

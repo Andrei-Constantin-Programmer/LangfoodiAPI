@@ -57,7 +57,7 @@ public class ConnectionPersistenceRepositoryTests
 
         ConnectionDocument testDocument = new(testUser1.Id, testUser2.Id, "Pending");
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         _connectionCollectionMock
             .Setup(collection => collection.Insert(It.IsAny<ConnectionDocument>()))
@@ -101,7 +101,7 @@ public class ConnectionPersistenceRepositoryTests
             AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Connected);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Connected);
 
         Expression<Func<ConnectionDocument, bool>> expectedExpression = 
             doc => (doc.AccountId1 == testUser1.Id && doc.AccountId2 == testUser2.Id)
@@ -144,7 +144,7 @@ public class ConnectionPersistenceRepositoryTests
             AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Connected);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Connected);
 
         Expression<Func<ConnectionDocument, bool>> expectedExpression =
             doc => (doc.AccountId1 == testUser1.Id && doc.AccountId2 == testUser2.Id)
@@ -269,7 +269,7 @@ public class ConnectionPersistenceRepositoryTests
             .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(true);
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         // When
         var result = _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);
@@ -308,7 +308,7 @@ public class ConnectionPersistenceRepositoryTests
             .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(false);
 
-        Connection testConnection = new(testUser1, testUser2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         // When
         var result = _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);

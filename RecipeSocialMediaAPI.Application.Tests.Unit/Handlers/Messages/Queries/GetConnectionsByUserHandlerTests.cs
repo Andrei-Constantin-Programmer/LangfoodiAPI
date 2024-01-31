@@ -87,6 +87,7 @@ public class GetConnectionsByUserHandlerTests
             .Returns(testUser);
 
         Connection connection1 = new(
+            "0",
             testUser.Account, 
             new TestUserAccount()
             {
@@ -98,6 +99,7 @@ public class GetConnectionsByUserHandlerTests
             ConnectionStatus.Pending);
         
         Connection connection2 = new(
+            "1",
             testUser.Account, 
             new TestUserAccount()
             {

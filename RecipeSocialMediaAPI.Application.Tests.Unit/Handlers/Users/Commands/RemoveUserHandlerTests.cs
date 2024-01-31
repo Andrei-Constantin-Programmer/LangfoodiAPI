@@ -129,7 +129,7 @@ public class RemoveUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenUserIdExistsButDeleteIsUnsuccessful_ThrowException()
+    public async Task Handle_WhenUserIdExistsButDeleteIsUnsuccessful_ThrowUserRemovalException()
     {
         // Given
         IUserCredentials user = new TestUserCredentials
@@ -158,13 +158,13 @@ public class RemoveUserHandlerTests
         var action = async () => await _removeUserHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<Exception>();
+        await action.Should().ThrowAsync<UserRemovalException>().WithMessage($"*{user.Account.Id}*");
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenUserEmailExistsButDeleteIsUnsuccessful_ThrowException()
+    public async Task Handle_WhenUserEmailExistsButDeleteIsUnsuccessful_ThrowUserRemovalException()
     {
         // Given
         IUserCredentials user = new TestUserCredentials
@@ -193,6 +193,6 @@ public class RemoveUserHandlerTests
         var action = async () => await _removeUserHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<Exception>();
+        await action.Should().ThrowAsync<UserRemovalException>().WithMessage($"*{user.Account.Id}*");
     }
 }

@@ -44,11 +44,11 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 
         if (!areImagesRemoved)
         {
-            _logger.LogWarning("Some of the recipe's related images failed to be removed, ids: {imageIds}", string.Join(",",imageIds));
+            _logger.LogWarning("Some of the images for recipe {RecipeId} failed to be removed, ids: {ImageIds}", recipeToRemove.Id, string.Join(",",imageIds));
         }
 
         return isRecipeRemoved
             ? Task.CompletedTask
-            : throw new Exception($"Could not remove recipe with id {request.Id}.");
+            : throw new RecipeRemovalException(recipeToRemove.Id);
     }
 }

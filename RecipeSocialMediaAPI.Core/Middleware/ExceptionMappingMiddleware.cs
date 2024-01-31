@@ -45,6 +45,11 @@ public class ExceptionMappingMiddleware
             _logger.LogInformation(ex, "Attempted to add already existing user with email {Email}", ex.Email);
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, $"Email {ex.Email} already in use");
         }
+        catch (UnsupportedConnectionStatusException ex)
+        {
+            _logger.LogInformation(ex, "Attempted to change connection status to unsupported status {UnsupportedStatus}", ex.UnsupportedStatus);
+            await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Unsupported connection status");
+        }
         catch (UserNotFoundException)
         {
             await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "User not found");
@@ -52,6 +57,18 @@ public class ExceptionMappingMiddleware
         catch (RecipeNotFoundException)
         {
             await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Recipe not found");
+        }
+        catch (MessageNotFoundException)
+        {
+            await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Message not found");
+        }
+        catch (GroupNotFoundException)
+        {
+            await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Group not found");
+        }
+        catch (ConnectionNotFoundException)
+        {
+            await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Connection not found");
         }
         catch (Exception ex)
         {
