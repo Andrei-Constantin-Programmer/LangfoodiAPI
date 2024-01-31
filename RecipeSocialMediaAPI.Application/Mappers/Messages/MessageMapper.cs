@@ -32,14 +32,13 @@ public class MessageMapper : IMessageMapper
 
     public MessageDetailedDTO MapMessageToDetailedMessageDTO(Message message)
     {
-        MessageDetailedDTO messageDetailedDTO = new()
-        {
-            Id = message.Id,
-            SenderId = message.Sender.Id,
-            SentDate = message.SentDate,
-            UpdatedDate = message.UpdatedDate,
-            RepliedToMessage =  message.RepliedToMessage is not null ? MapMessageToDetailedMessageDTO(message.RepliedToMessage) : null
-        };
+        MessageDetailedDTO messageDetailedDTO = new(
+            Id: message.Id,
+            SenderId: message.Sender.Id,
+            SentDate: message.SentDate,
+            UpdatedDate: message.UpdatedDate,
+            RepliedToMessage:  message.RepliedToMessage is not null ? MapMessageToDetailedMessageDTO(message.RepliedToMessage) : null
+        );
 
         return GetDetailedMessageDTOHydratedWithContent(messageDetailedDTO, message);
     }
