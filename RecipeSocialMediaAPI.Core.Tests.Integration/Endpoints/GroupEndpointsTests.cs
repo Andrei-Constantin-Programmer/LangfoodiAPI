@@ -94,4 +94,42 @@ public class GroupEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void DeleteGroup_WhenGroupExists_ReturnOk()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user3 = _fakeUserRepository
+            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+
+        Group group = _fakeGroupRepository
+            .CreateGroup("Test Group", "Test Group Description", new() { user1, user2, user3 });
+
+        // When
+        var result = await _client.DeleteAsync($"group/delete/?groupId={group.GroupId}");
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        _fakeGroupRepository.GetGroupById(group.GroupId).Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void DeleteGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        
+        // When
+        var result = await _client.DeleteAsync($"group/delete/?groupId=1");
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
 }
