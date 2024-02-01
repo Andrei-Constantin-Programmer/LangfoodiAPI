@@ -78,6 +78,7 @@ public class GetConnectionHandlerTests
 
         // Then
         result.Should().NotBeNull();
+        result!.ConnectionId.Should().Be(existingConnection.ConnectionId);
         result!.UserId1.Should().BeOneOf(user1.Account.Id, user2.Account.Id);
         result!.UserId2.Should().BeOneOf(user1.Account.Id, user2.Account.Id);
         result!.UserId1.Should().NotBe(result.UserId2);

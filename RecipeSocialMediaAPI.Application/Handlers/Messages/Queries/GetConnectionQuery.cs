@@ -31,6 +31,6 @@ internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, Connec
         IConnection connection = _connectionQueryRepository.GetConnection(user1, user2)
             ?? throw new ConnectionNotFoundException($"No connection found between users with ids {request.UserId1} and {request.UserId2}");
 
-        return Task.FromResult(new ConnectionDTO(connection.Account1.Id, connection.Account2.Id, connection.Status.ToString()));
+        return Task.FromResult(new ConnectionDTO(connection.ConnectionId, connection.Account1.Id, connection.Account2.Id, connection.Status.ToString()));
     }
 }

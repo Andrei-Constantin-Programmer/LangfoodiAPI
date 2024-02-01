@@ -6,14 +6,16 @@ namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class GroupEndpoints
 {
-    public static void MapGroupEndpoints(this WebApplication app)
+    public static WebApplication MapGroupEndpoints(this WebApplication app)
     {
         app.MapGroup("/group")
-            .AddConnectionEndpoints()
+            .AddGroupEndpoints()
             .WithTags("Group");
+
+        return app;
     }
 
-    private static RouteGroupBuilder AddConnectionEndpoints(this RouteGroupBuilder group)
+    private static RouteGroupBuilder AddGroupEndpoints(this RouteGroupBuilder group)
     {
         group.MapPost("/get", async (
             [FromQuery] string groupId,

@@ -9,11 +9,13 @@ namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class UserEndpoints
 {
-    public static void MapUserEndpoints(this WebApplication app)
+    public static WebApplication MapUserEndpoints(this WebApplication app)
     {
         app.MapGroup("/user")
             .AddUserEndpoints()
             .WithTags("User");
+
+        return app;
     }
 
     private static RouteGroupBuilder AddUserEndpoints(this RouteGroupBuilder group)

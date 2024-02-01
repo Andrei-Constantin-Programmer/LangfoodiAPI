@@ -8,11 +8,13 @@ namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class ConnectionEndpoints
 {
-    public static void MapConnectionEndpoints(this WebApplication app)
+    public static WebApplication MapConnectionEndpoints(this WebApplication app)
     {
         app.MapGroup("/connection")
             .AddConnectionEndpoints()
             .WithTags("Connection");
+
+        return app;
     }
 
     private static RouteGroupBuilder AddConnectionEndpoints(this RouteGroupBuilder group)
