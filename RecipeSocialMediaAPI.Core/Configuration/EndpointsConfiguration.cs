@@ -13,6 +13,7 @@ public static class EndpointsConfiguration
             .MapImageEndpoints()
             .MapMessageEndpoints()
             .MapConnectionEndpoints()
+            .MapGroupEndpoints()
             .MapConversationEndpoints()
             .MapTestEndpoints();
     }

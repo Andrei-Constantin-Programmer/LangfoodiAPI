@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
@@ -66,7 +67,7 @@ public class GetGroupHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async Task Handle_WhenGroupIsNotFound_ReturnNull()
+    public async Task Handle_WhenGroupIsNotFound_ThrowGroupNotFoundException()
     {
         // Given
         _groupQueryRepositoryMock
@@ -76,9 +77,9 @@ public class GetGroupHandlerTests
         GetGroupQuery query = new("g1");
 
         // When
-        var result = await _getGroupHandlerSUT.Handle(query, CancellationToken.None);
+        var testAction = async() => await _getGroupHandlerSUT.Handle(query, CancellationToken.None);
 
         // Then
-        result.Should().BeNull();
+        await testAction.Should().ThrowAsync<GroupNotFoundException>();
     }
 }
