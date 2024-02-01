@@ -9,11 +9,13 @@ namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class MessageEndpoints
 {
-    public static void MapMessageEndpoints(this WebApplication app)
+    public static WebApplication MapMessageEndpoints(this WebApplication app)
     {
         app.MapGroup("/message")
             .AddMessageEndpoints()
             .WithTags("Message");
+
+        return app;
     }
 
     private static RouteGroupBuilder AddMessageEndpoints(this RouteGroupBuilder group)

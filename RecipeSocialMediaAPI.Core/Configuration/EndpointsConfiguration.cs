@@ -6,12 +6,14 @@ public static class EndpointsConfiguration
 {
     public static void MapEndpoints(this WebApplication app)
     {
-        app.MapUserEndpoints();
-        app.MapRecipeEndpoints();
-        app.MapAuthenticationEndpoints();
-        app.MapImageEndpoints();
-        app.MapTestEndpoints();
-        app.MapConnectionEndpoints();
-        app.MapMessageEndpoints();
+        app
+            .MapAuthenticationEndpoints()
+            .MapUserEndpoints()
+            .MapRecipeEndpoints()
+            .MapImageEndpoints()
+            .MapMessageEndpoints()
+            .MapConnectionEndpoints()
+            .MapConversationEndpoints()
+            .MapTestEndpoints();
     }
 }
