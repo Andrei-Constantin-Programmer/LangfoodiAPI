@@ -24,6 +24,13 @@ public static class ConversationEndpoints
             return Results.Ok(await sender.Send(new GetConversationByConnectionQuery(connectionId)));
         });
 
+        group.MapPost("/get-by-group", async (
+            [FromQuery] string groupId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetConversationByGroupQuery(groupId)));
+        });
+
         return group;
     }
 }
