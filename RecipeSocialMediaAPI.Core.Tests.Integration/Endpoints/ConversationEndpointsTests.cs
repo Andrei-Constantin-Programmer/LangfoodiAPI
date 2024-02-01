@@ -110,4 +110,39 @@ public class ConversationEndpointsTests : EndpointTestBase
         data.LastMessage.SenderName.Should().Be(testMessage3.Sender.UserName);
         data.LastMessage.SentDate.Should().Be(testMessage3.SentDate);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetConversation_WhenConversationDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+
+        var connection = _fakeConnectionRepository
+            .CreateConnection(user1, user2, Domain.Models.Messaging.Connections.ConnectionStatus.Connected);
+
+        // When
+        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetConversation_WhenConnectionDoesNotExist_ReturnNotFound()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId=1", null);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
 }
