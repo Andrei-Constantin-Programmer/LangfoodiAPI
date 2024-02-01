@@ -9,15 +9,15 @@ public static class ConversationEndpoints
     public static WebApplication MapConversationEndpoints(this WebApplication app)
     {
         app.MapGroup("/conversation")
-            .AddConnectionEndpoints()
+            .AddConversationEndpoints()
             .WithTags("Conversation");
 
         return app;
     }
 
-    private static RouteGroupBuilder AddConnectionEndpoints(this RouteGroupBuilder group)
+    private static RouteGroupBuilder AddConversationEndpoints(this RouteGroupBuilder group)
     {
-        group.MapPost("/get", async (
+        group.MapPost("/get-by-connection", async (
             [FromQuery] string connectionId,
             [FromServices] ISender sender) =>
         {
