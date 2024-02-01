@@ -94,6 +94,4 @@ public class GroupEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
-
-
 }
