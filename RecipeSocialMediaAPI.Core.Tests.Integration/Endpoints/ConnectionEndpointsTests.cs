@@ -1,11 +1,9 @@
-﻿using Amazon.Runtime.Internal.Util;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
@@ -69,7 +67,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
+        var existingConnection = _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         // When
@@ -80,6 +78,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var data = await result.Content.ReadFromJsonAsync<ConnectionDTO>();
 
         data.Should().NotBeNull();
+        data!.ConnectionId.Should().Be(existingConnection.ConnectionId);
         data!.UserId1.Should().Be(user1.Account.Id);
         data!.UserId2.Should().Be(user2.Account.Id);
         data!.ConnectionStatus.Should().Be("Pending");
@@ -141,9 +140,9 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
+        var connection1 = _fakeConnectionRepository
             .CreateConnection(_testUser1.Account, _testUser2.Account, ConnectionStatus.Pending);
-        _ = _fakeConnectionRepository
+        var connection2 = _fakeConnectionRepository
             .CreateConnection(_testUser1.Account, _testUser3.Account, ConnectionStatus.Connected);
         _ = _fakeConnectionRepository
             .CreateConnection(_testUser3.Account, _testUser2.Account, ConnectionStatus.Blocked);
@@ -156,10 +155,12 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var data = await result.Content.ReadFromJsonAsync<List<ConnectionDTO>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(2);
-        data![0].UserId1.Should().Be(user1.Account.Id);
+        data![0].ConnectionId.Should().Be(connection1.ConnectionId);
+        data[0].UserId1.Should().Be(user1.Account.Id);
         data[0].UserId2.Should().Be(user2.Account.Id);
         data[0].ConnectionStatus.Should().Be("Pending");
 
+        data[1].ConnectionId.Should().Be(connection2.ConnectionId);
         data[1].UserId1.Should().Be(user1.Account.Id);
         data[1].UserId2.Should().Be(user3.Account.Id);
         data[1].ConnectionStatus.Should().Be("Connected");
@@ -216,7 +217,8 @@ public class ConnectionEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         var data = await result.Content.ReadFromJsonAsync<ConnectionDTO>();
-        data!.UserId1.Should().Be(user1.Account.Id);
+        data!.ConnectionId.Should().Be("0");
+        data.UserId1.Should().Be(user1.Account.Id);
         data.UserId2.Should().Be(user2.Account.Id);
         data.ConnectionStatus.Should().Be("Pending");
     }

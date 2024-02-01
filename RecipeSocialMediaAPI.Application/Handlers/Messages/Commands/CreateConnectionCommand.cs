@@ -35,6 +35,7 @@ internal class CreateConnectionHandler : IRequestHandler<CreateConnectionCommand
             .CreateConnection(user1, user2, ConnectionStatus.Pending);
 
         return await Task.FromResult(new ConnectionDTO(
+            createdConnection.ConnectionId,
             createdConnection.Account1.Id, 
             createdConnection.Account2.Id, 
             createdConnection.Status.ToString()));

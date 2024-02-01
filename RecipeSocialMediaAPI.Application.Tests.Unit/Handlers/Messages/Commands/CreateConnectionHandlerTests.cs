@@ -67,6 +67,7 @@ public class CreateConnectionHandlerTests
 
         // Then
         result.Should().NotBeNull();
+        result.ConnectionId.Should().Be(testConnection.ConnectionId);
         result.UserId1.Should().Be(testContract.UserId1);
         result.UserId2.Should().Be(testContract.UserId2);
         result.ConnectionStatus.Should().Be("Pending");
