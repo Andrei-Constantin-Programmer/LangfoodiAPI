@@ -13,5 +13,6 @@ public static class EndpointsConfiguration
         app.MapTestEndpoints();
         app.MapConnectionEndpoints();
         app.MapMessageEndpoints();
+        app.MapGroupEndpoints();
     }
 }
