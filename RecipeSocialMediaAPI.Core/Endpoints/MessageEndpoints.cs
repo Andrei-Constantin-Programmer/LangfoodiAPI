@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RecipeSocialMediaAPI.Application.Contracts.Messages;
-using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
@@ -25,6 +23,14 @@ public static class MessageEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetMessageByIdQuery(id)));
+        });
+
+        group.MapDelete("/delete", async (
+            [FromQuery] string id,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new RemoveMessageCommand(id));
+            return Results.Ok();
         });
 
         return group;

@@ -17,6 +17,7 @@ public class MessageEndpointsTests : EndpointTestBase
     private readonly TestMessage _testMessage1;
     private readonly TestUserCredentials _testUser;
     private readonly RecipeAggregate _testRecipe;
+
     public MessageEndpointsTests(WebApplicationFactory<Program> factory) : base(factory)
     {
         _testUser = new()
@@ -61,7 +62,6 @@ public class MessageEndpointsTests : EndpointTestBase
         );
 
     }
-
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
@@ -120,7 +120,7 @@ public class MessageEndpointsTests : EndpointTestBase
         data!.TextContent.Should().Be((message as RecipeMessage)!.TextContent);
         data!.ImageURLs.Should().BeNull();
         data!.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDTO>() { 
-            new RecipePreviewDTO(
+            new(
                 _testRecipe.Id, 
                 _testRecipe.Title,
                 _testRecipe.ThumbnailId
@@ -172,5 +172,36 @@ public class MessageEndpointsTests : EndpointTestBase
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void DeleteMessage_WhenMessageExists_ReturnOk()
+    {
+        // Given
+        _ = _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = _fakeMessageRepository
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage);
 
+        // When
+        var result = await _client.DeleteAsync($"message/delete/?id={message.Id}");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        _fakeMessageRepository.GetMessage(message.Id).Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void DeleteMessage_WhenMessageDoesNotExist_ReturnNotFound()
+    {
+        // Given
+
+        // When
+        var result = await _client.DeleteAsync($"message/delete/?id=1");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }
