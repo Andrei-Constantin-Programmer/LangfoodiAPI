@@ -80,4 +80,20 @@ public class GroupEndpointsTests : EndpointTestBase
         data.Description.Should().Be(group.GroupDescription);
         data.UserIds.Should().BeEquivalentTo(new List<string> { user1.Id, user2.Id, user3.Id });
     }
+    
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync($"group/get/?groupId=1", null);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
+
+
 }
