@@ -26,6 +26,13 @@ public static class GroupEndpoints
             return Results.Ok(await sender.Send(new GetGroupQuery(groupId)));
         });
 
+        group.MapPost("/get-by-user", async (
+            [FromQuery] string userId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetGroupsByUserQuery(userId)));
+        });
+
         group.MapPut("/update", async (
             [FromBody] UpdateGroupContract updateGroupContract,
             [FromServices] ISender sender) =>
