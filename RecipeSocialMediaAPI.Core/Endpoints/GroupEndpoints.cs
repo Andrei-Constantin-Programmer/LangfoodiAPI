@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
@@ -23,6 +24,14 @@ public static class GroupEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetGroupQuery(groupId)));
+        });
+
+        group.MapPut("/update", async (
+            [FromBody] UpdateGroupContract updateGroupContract,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new UpdateGroupCommand(updateGroupContract));
+            return Results.Ok();
         });
 
         group.MapDelete("/delete", async (

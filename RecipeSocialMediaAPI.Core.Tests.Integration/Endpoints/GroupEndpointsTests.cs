@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net.Http.Json;
@@ -90,6 +92,80 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // When
         var result = await _client.PostAsync($"group/get/?groupId=1", null);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void UpdateGroup_WhenGroupExists_ReturnOk()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user3 = _fakeUserRepository
+            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+
+        Group existingGroup = _fakeGroupRepository
+            .CreateGroup("Test Group", "Test Group Description", new() { user1, user2, user3 });
+
+        UpdateGroupContract contract = new(existingGroup.GroupId, "New Group", "New Group Description", new() { user1.Id, user2.Id });
+
+        // When
+        var result = await _client.PutAsJsonAsync($"group/update", contract);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        var group = _fakeGroupRepository.GetGroupById(existingGroup.GroupId);
+        group.Should().NotBeNull();
+        group!.GroupName.Should().Be(contract.GroupName);
+        group.GroupDescription.Should().Be(contract.GroupDescription);
+        group.Users.Should().BeEquivalentTo(new List<IUserAccount> { user1, user2 });
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void UpdateGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        
+        UpdateGroupContract contract = new("1", "New Group", "New Group Description", new() { user1.Id, user2.Id });
+
+        // When
+        var result = await _client.PutAsJsonAsync($"group/update", contract);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
+
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void UpdateGroup_WhenUserDoesNotExist_ReturnOk()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        
+        Group existingGroup = _fakeGroupRepository
+            .CreateGroup("Test Group", "Test Group Description", new() { user1, user2 });
+
+        UpdateGroupContract contract = new(existingGroup.GroupId, "New Group", "New Group Description", new() { user1.Id, user2.Id, "nonExistentUser" });
+
+        // When
+        var result = await _client.PutAsJsonAsync($"group/update", contract);
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
