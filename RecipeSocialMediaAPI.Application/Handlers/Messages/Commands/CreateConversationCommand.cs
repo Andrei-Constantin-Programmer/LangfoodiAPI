@@ -1,10 +1,8 @@
 ﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
@@ -14,6 +12,7 @@ internal class CreateConversationHandler : IRequestHandler<CreateConnectionComma
 {
     private readonly IConversationPersistenceRepository _conversationPersistenceRepository;
     private readonly IConnectionQueryRepository _connectionQueryRepository;
+    private readonly IGroupQueryRepository _groupQueryRepository;
 
     public CreateConversationHandler(IConversationPersistenceRepository conversationPersistenceRepository, IConnectionQueryRepository connectionQueryRepository)
     {
@@ -23,28 +22,33 @@ internal class CreateConversationHandler : IRequestHandler<CreateConnectionComma
 
     public async Task<> Handle(CreateConversationCommand request, CancellationToken cancellationToken)
     {
-        var conversationType = request.Contract.conversationType;
-        var conversationId = request.Contract.conversationId;
-        var conversationDTO = null;
 
-        if (conversationType == "connection")
+        if(_connectionQueryRepository.GetConnection(request.Contract.GroupOrConnectionId) != null) 
         {
-            var createdConversation = _conversationPersistenceRepository.CreateConnectionConversation(conversationId);
-            conversationDTO = new ConnectionConversationDTO(conversationId, createdConversation.ConversationId, null);
-
+            Conversation newConversation = _conversationPersistenceRepository.CreateConnectionConversation(_connectionQueryRepository.GetConnection(request.Contract.GroupOrConnectionId));
+            if (newConversation != null)
+            {
+                return await Task.FromResult(new ConnectionConversationDTO(
+                    newConversation.ConversationId,
+                    request.Contract.GroupOrConnectionId,
+                    null
+                ));
+            }
         }
 
-        else if (conversationType == "group")
+        else if(_groupQueryRepository.GetGroupById(request.Contract.GroupOrConnectionId) != null)
         {
-            var createdConversation = _conversationPersistenceRepository.CreateGroupConversation(conversationId);
-            conversationDTO = new GroupConversationDTO(conversationId, createdConversation.GroupId, null;
+            Conversation newConversation = _conversationPersistenceRepository.CreateGroupConversation(_groupQueryRepository.GetGroupById(request.Contract.GroupOrConnectionId));
+            if (newConversation != null)
+            {
+                return await Task.FromResult(new GroupConversationDTO(
+                    newConversation.ConversationId,
+                    request.Contract.GroupOrConnectionId,
+                    null
+                ));
+            }
         }
 
-        else
-        {
-            throw new ArgumentException($"Invalid conversation type {conversationType} given")
-        }
-
-        return await Task.FromResult(new conversationDTO);
+        throw new ArgumentException($"Given Id {request.Contract.GroupOrConnectionId} does not match to a Conversation or Group");
     }
 }
