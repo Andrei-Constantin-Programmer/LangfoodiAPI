@@ -1,6 +1,13 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Moq;
+using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands;
 
@@ -19,6 +26,9 @@ public class CreateConnectionConversationHandlerTests
         _connectionConversationHandlerSUT = new(_conversationPersistenceRepositoryMock.Object, _connectionQueryRepositoryMock.Object);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenConnectionIdMatches_CreateAndReturnConnectionConversation()
     {
         // Given
@@ -43,7 +53,7 @@ public class CreateConnectionConversationHandlerTests
             account2: userAccount2,
             status: ConnectionStatus.Connected
         );
-        
+
         _connectionQueryRepositoryMock
             .Setup(repo => repo.GetConnection(connection.ConnectionId))
             .Returns(connection);
