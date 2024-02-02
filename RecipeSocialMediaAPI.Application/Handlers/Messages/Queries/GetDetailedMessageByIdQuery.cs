@@ -7,24 +7,24 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetMessageByIdQuery(string Id) : IRequest<MessageDTO>;
+public record GetMessageDetailedByIdQuery(string Id) : IRequest<MessageDetailedDTO>;
 
-internal class GetMessageByIdHandler : IRequestHandler<GetMessageByIdQuery, MessageDTO>
+internal class GetMessageDetailedByIdHandler : IRequestHandler<GetMessageDetailedByIdQuery, MessageDetailedDTO>
 {
     private readonly IMessageMapper _mapper;
     private readonly IMessageQueryRepository _messageQueryRepository;
 
-    public GetMessageByIdHandler(IMessageMapper mapper, IMessageQueryRepository messageQueryRepository)
+    public GetMessageDetailedByIdHandler(IMessageMapper mapper, IMessageQueryRepository messageQueryRepository)
     {
         _mapper = mapper;
         _messageQueryRepository = messageQueryRepository;
     }
 
-    public async Task<MessageDTO> Handle(GetMessageByIdQuery request, CancellationToken cancellationToken)
+    public async Task<MessageDetailedDTO> Handle(GetMessageDetailedByIdQuery request, CancellationToken cancellationToken)
     {
         Message message = _messageQueryRepository.GetMessage(request.Id)
             ?? throw new MessageNotFoundException(request.Id);
 
-        return await Task.FromResult(_mapper.MapMessageToMessageDTO(message));
+        return await Task.FromResult(_mapper.MapMessageToDetailedMessageDTO(message));
     }
 }

@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
-using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -67,7 +67,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
+        var existingConnection = _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         // When
@@ -78,6 +78,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var data = await result.Content.ReadFromJsonAsync<ConnectionDTO>();
 
         data.Should().NotBeNull();
+        data!.ConnectionId.Should().Be(existingConnection.ConnectionId);
         data!.UserId1.Should().Be(user1.Account.Id);
         data!.UserId2.Should().Be(user2.Account.Id);
         data!.ConnectionStatus.Should().Be("Pending");
@@ -139,9 +140,9 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
+        var connection1 = _fakeConnectionRepository
             .CreateConnection(_testUser1.Account, _testUser2.Account, ConnectionStatus.Pending);
-        _ = _fakeConnectionRepository
+        var connection2 = _fakeConnectionRepository
             .CreateConnection(_testUser1.Account, _testUser3.Account, ConnectionStatus.Connected);
         _ = _fakeConnectionRepository
             .CreateConnection(_testUser3.Account, _testUser2.Account, ConnectionStatus.Blocked);
@@ -154,10 +155,12 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var data = await result.Content.ReadFromJsonAsync<List<ConnectionDTO>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(2);
-        data![0].UserId1.Should().Be(user1.Account.Id);
+        data![0].ConnectionId.Should().Be(connection1.ConnectionId);
+        data[0].UserId1.Should().Be(user1.Account.Id);
         data[0].UserId2.Should().Be(user2.Account.Id);
         data[0].ConnectionStatus.Should().Be("Pending");
 
+        data[1].ConnectionId.Should().Be(connection2.ConnectionId);
         data[1].UserId1.Should().Be(user1.Account.Id);
         data[1].UserId2.Should().Be(user3.Account.Id);
         data[1].ConnectionStatus.Should().Be("Connected");
@@ -193,5 +196,177 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateConnection_WhenUsersExist_ReturnNewConnection()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+
+        NewConnectionContract newConnection = new(user1.Account.Id, user2.Account.Id);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"connection/create", newConnection);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<ConnectionDTO>();
+        data!.ConnectionId.Should().Be("0");
+        data.UserId1.Should().Be(user1.Account.Id);
+        data.UserId2.Should().Be(user2.Account.Id);
+        data.ConnectionStatus.Should().Be("Pending");
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async void CreateConnection_WhenUsersDoNotExist_ReturnNewConnection(bool user1Exists, bool user2Exists)
+    {
+        // Given
+        var user1 = user1Exists 
+            ? _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
+            : null;
+        var user2 = user2Exists 
+            ? _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
+            : null;
+
+        NewConnectionContract contract = new(user1?.Account.Id ?? "user1", user2?.Account.Id ?? "user2");
+
+        // When
+        var result = await _client.PostAsJsonAsync($"connection/create", contract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [InlineData(ConnectionStatus.Connected)]
+    [InlineData(ConnectionStatus.Blocked)]
+    public async void UpdateConnection_WhenConnectionExists_UpdateTheConnection(ConnectionStatus connectionStatus)
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, connectionStatus.ToString());
+
+        // When
+        var result = await _client.PutAsJsonAsync($"connection/update", contract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var connection = _fakeConnectionRepository.GetConnection(user1.Account, user2.Account);
+        connection.Should().NotBeNull();
+        connection!.Status.Should().Be(connectionStatus);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void UpdateConnection_WhenConnectionDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+
+        UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Created");
+
+        // When
+        var result = await _client.PutAsJsonAsync($"connection/update", contract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async void UpdateConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
+    {
+        // Given
+        var user1 = user1Exists
+            ? _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
+            : new TestUserCredentials()
+            {
+                Account = new TestUserAccount()
+                {
+                    Id = "u1",
+                    Handler = "user1",
+                    UserName = "User 1"
+                },
+                Email = "u1@mail.com",
+                Password = "Test@123"
+            };
+
+        var user2 = user2Exists
+            ? _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
+            : new TestUserCredentials()
+            {
+                Account = new TestUserAccount()
+                {
+                    Id = "u2",
+                    Handler = "user2",
+                    UserName = "User 2"
+                },
+                Email = "u2@mail.com",
+                Password = "Test@123"
+            };
+
+        _ = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Created");
+
+        // When
+        var result = await _client.PutAsJsonAsync($"connection/update", contract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void UpdateConnection_WhenConnectionStatusIsNotSupported_ReturnBadRequest()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Unsupported Status");
+
+        // When
+        var result = await _client.PutAsJsonAsync($"connection/update", contract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

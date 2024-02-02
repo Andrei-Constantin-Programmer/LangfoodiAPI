@@ -36,7 +36,7 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
         var isValidConnectionStatus = Enum.TryParse(request.Contract.NewConnectionStatus, out ConnectionStatus newStatus);
         if (!isValidConnectionStatus)
         {
-            throw new ConnectionUpdateException($"Could not map {request.Contract.NewConnectionStatus} to {typeof(ConnectionStatus)}");
+            throw new UnsupportedConnectionStatusException(request.Contract.NewConnectionStatus);
         }
 
         if (connection.Status == newStatus)

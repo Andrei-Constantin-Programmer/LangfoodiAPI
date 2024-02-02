@@ -121,12 +121,14 @@ public class GetConnectionsByUserHandlerTests
 
         // Then
         result.Should().HaveCount(2);
-        
-        result[0].UserId1.Should().Be(testUser.Account.Id);
+
+        result[0].ConnectionId.Should().Be(connection1.ConnectionId);
+        result[0].UserId1.Should().Be(connection1.Account1.Id);
         result[0].UserId2.Should().Be(connection1.Account2.Id);
         result[0].ConnectionStatus.Should().Be("Pending");
-        
-        result[1].UserId1.Should().Be(testUser.Account.Id);
+
+        result[1].ConnectionId.Should().Be(connection2.ConnectionId);
+        result[1].UserId1.Should().Be(connection2.Account1.Id);
         result[1].UserId2.Should().Be(connection2.Account2.Id);
         result[1].ConnectionStatus.Should().Be("Connected");
     }

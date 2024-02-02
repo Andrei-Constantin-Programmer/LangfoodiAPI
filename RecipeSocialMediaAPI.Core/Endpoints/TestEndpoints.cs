@@ -2,11 +2,13 @@
 
 public static class TestEndpoints
 {
-    public static void MapTestEndpoints(this WebApplication app)
+    public static WebApplication MapTestEndpoints(this WebApplication app)
     {
         app.MapGroup("/test")
             .AddTestEndpoints()
             .WithTags("Test");
+
+        return app;
     }
 
     private static RouteGroupBuilder AddTestEndpoints(this RouteGroupBuilder group)

@@ -11,47 +11,45 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Queries;
 
-public class GetMessageByIdHandlerTests
+public class GetMessageDetailedByIdHandlerTests
 {
     private readonly Mock<IMessageMapper> _messageMapperMock;
     private readonly Mock<IMessageQueryRepository> _messageQueryRepository;
+    private readonly GetMessageDetailedByIdHandler _getMessageDetailedByIdHandlerSUT;
 
-    private readonly GetMessageByIdHandler _getMessageByIdHandlerSUT;
-
-    public GetMessageByIdHandlerTests()
+    public GetMessageDetailedByIdHandlerTests()
     {
         _messageMapperMock = new Mock<IMessageMapper>();
         _messageQueryRepository = new Mock<IMessageQueryRepository>();
-
-        _getMessageByIdHandlerSUT = new(_messageMapperMock.Object, _messageQueryRepository.Object);
+        _getMessageDetailedByIdHandlerSUT = new(_messageMapperMock.Object, _messageQueryRepository.Object);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenMessageIsNotFound_ThrowMessageNotFoundException()
+    public void Handle_WhenMessageDetailedIsNotFound_ThrowMessageNotFoundException()
     {
         // Given
         _messageQueryRepository
             .Setup(repo => repo.GetMessage(It.IsAny<string>()))
             .Returns((Message?)null);
 
-        GetMessageByIdQuery testQuery = new("MessageId");
+        GetMessageDetailedByIdQuery testQuery = new("MessageId");
 
         // When
-        var testAction = async() => await _getMessageByIdHandlerSUT.Handle(testQuery, CancellationToken.None);
+        var testAction = async () => await _getMessageDetailedByIdHandlerSUT.Handle(testQuery, CancellationToken.None);
 
         // Then
         testAction.Should().ThrowAsync<MessageNotFoundException>();
 
         _messageMapperMock
-            .Verify(mapper => mapper.MapMessageToMessageDTO(It.IsAny<Message>()), Times.Never);
+            .Verify(mapper => mapper.MapMessageToDetailedMessageDTO(It.IsAny<Message>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenMessageIsFound_ReturnMappedMessageDTO()
+    public async Task Handle_WhenMessageIsFound_ReturnMappedMessageDetailedDTO()
     {
         // Given
         TestUserAccount testSender = new()
@@ -65,21 +63,30 @@ public class GetMessageByIdHandlerTests
         TestMessage repliedToMessage = new("RepliedToId", testSender, new(2023, 10, 18, 0, 0, 0, TimeSpan.Zero), null, null);
         TestMessage testMessage = new("TestId", testSender, new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero), new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero), repliedToMessage);
 
-        MessageDTO mappedMessage = new(testMessage.Id, testSender.Id, testSender.UserName, testMessage.SentDate, testMessage.UpdatedDate);
+        MessageDetailedDTO mappedMessage = new()
+        {
+            Id = testMessage.Id,
+            SenderId = testSender.Id,
+            SenderName = testSender.UserName,
+            SentDate = testMessage.SentDate,
+            UpdatedDate = testMessage.UpdatedDate,
+        };
 
         _messageQueryRepository
             .Setup(repo => repo.GetMessage(testMessage.Id))
             .Returns(testMessage);
         _messageMapperMock
-            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Setup(mapper => mapper.MapMessageToDetailedMessageDTO(testMessage))
             .Returns(mappedMessage);
 
-        GetMessageByIdQuery testQuery = new(testMessage.Id);
+        GetMessageDetailedByIdQuery testQuery = new(testMessage.Id);
 
         // When
-        var result = await _getMessageByIdHandlerSUT.Handle(testQuery, CancellationToken.None);
+        var result = await _getMessageDetailedByIdHandlerSUT.Handle(testQuery, CancellationToken.None);
 
         // Then
         result.Should().Be(mappedMessage);
     }
+
+
 }
