@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
@@ -22,10 +23,10 @@ internal class CreateConnectionConversationHandler : IRequestHandler<CreateConne
 
     public async Task<ConnectionConversationDTO> Handle(CreateConnectionConversationCommand request, CancellationToken cancellationToken)
     {
-        IConnection newConnection = _connectionQueryRepository.GetConnection(request.Contract.GroupOrConnectionId)
-                                    ?? throw new ArgumentException($"Connection with id {request.Contract.GroupOrConnectionId} was not found");
+        IConnection connection = _connectionQueryRepository.GetConnection(request.Contract.GroupOrConnectionId)
+                                    ?? throw new ConnectionNotFoundException($"Connection with id {request.Contract.GroupOrConnectionId} was not found");
 
-        Conversation newConversation = _conversationPersistenceRepository.CreateConnectionConversation(newConnection);
+        Conversation newConversation = _conversationPersistenceRepository.CreateConnectionConversation(connection);
 
         return await Task.FromResult(new ConnectionConversationDTO(
             newConversation.ConversationId,

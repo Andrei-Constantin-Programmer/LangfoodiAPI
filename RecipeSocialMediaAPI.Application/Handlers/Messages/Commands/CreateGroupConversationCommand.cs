@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
@@ -22,10 +23,10 @@ internal class CreateGroupConversationHandler : IRequestHandler<CreateGroupConve
 
     public async Task<GroupConversationDTO> Handle(CreateGroupConversationCommand request, CancellationToken cancellationToken)
     {
-        Group newGroup = _groupQueryRepository.GetGroupById(request.Contract.GroupOrConnectionId)
-                                    ?? throw new ArgumentException($"Group with id {request.Contract.GroupOrConnectionId} was not found");
+        Group group = _groupQueryRepository.GetGroupById(request.Contract.GroupOrConnectionId)
+                                    ?? throw new GroupNotFoundException(request.Contract.GroupOrConnectionId);
 
-        Conversation newConversation = _conversationPersistenceRepository.CreateGroupConversation(newGroup);
+        Conversation newConversation = _conversationPersistenceRepository.CreateGroupConversation(group);
 
         return await Task.FromResult(new GroupConversationDTO(
             newConversation.ConversationId,
