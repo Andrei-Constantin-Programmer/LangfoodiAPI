@@ -22,6 +22,27 @@ public class CreateConnectionConversationHandlerTests
     public async Task Handle_WhenConnectionIdMatches_CreateAndReturnConnectionConversation()
     {
         // Given
+        TestUserAccount userAccount1 = new()
+        {
+            Id = "user1",
+            Handler = "user1",
+            UserName = "UserName 1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount userAccount2 = new()
+        {
+            Id = "user2",
+            Handler = "user2",
+            UserName = "UserName 2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        Connection connection = new(
+            connectionId: "connection1",
+            account1: userAccount1,
+            account2: userAccount2,
+            status: ConnectionStatus.Connected
+        );
         
 
         // When
