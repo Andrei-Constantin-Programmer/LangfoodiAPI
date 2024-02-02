@@ -1,6 +1,11 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
+using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands;
 
@@ -44,6 +49,7 @@ public class CreateGroupConversationHandlerTests
         NewConversationContract testContract = new(group.GroupId);
 
         // When
+        var result = await _groupConversationHandlerSUT.Handle(new CreateGroupConversationCommand(testContract), CancellationToken.None);
 
 
         // Then
