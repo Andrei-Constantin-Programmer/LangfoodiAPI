@@ -14,16 +14,21 @@ internal class CreateConversationHandler : IRequestHandler<CreateConnectionComma
     private readonly IConnectionQueryRepository _connectionQueryRepository;
     private readonly IGroupQueryRepository _groupQueryRepository;
 
-    public CreateConversationHandler(IConversationPersistenceRepository conversationPersistenceRepository, IConnectionQueryRepository connectionQueryRepository)
+    public CreateConversationHandler(IConversationPersistenceRepository conversationPersistenceRepository, IConnectionQueryRepository connectionQueryRepository, IGroupQueryRepository groupQueryRepository)
     {
         _conversationPersistenceRepository = conversationPersistenceRepository;
         _connectionQueryRepository = connectionQueryRepository;
+        _groupQueryRepository = groupQueryRepository;
     }
 
     public async Task<> Handle(CreateConversationCommand request, CancellationToken cancellationToken)
     {
+        if(request.Contract.GroupOrConnectionId == null)
+        {
+            throw new ArgumentException($"Given Id {request.Contract.GroupOrConnectionId} is null");
+        }
 
-        if(_connectionQueryRepository.GetConnection(request.Contract.GroupOrConnectionId) != null) 
+        if(_connectionQueryRepository.GetConnection(request.Contract.GroupOrConnectionId) != null)
         {
             Conversation newConversation = _conversationPersistenceRepository.CreateConnectionConversation(_connectionQueryRepository.GetConnection(request.Contract.GroupOrConnectionId));
             if (newConversation != null)
