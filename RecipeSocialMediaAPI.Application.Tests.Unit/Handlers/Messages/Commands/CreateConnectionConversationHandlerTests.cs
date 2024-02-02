@@ -19,7 +19,7 @@ public class CreateConnectionConversationHandlerTests
         _connectionConversationHandlerSUT = new(_conversationPersistenceRepositoryMock.Object, _connectionQueryRepositoryMock.Object);
     }
 
-    public async Task Handle_WhenIdIsConnection_CreateAndReturnConnectionConversation()
+    public async Task Handle_WhenConnectionIdMatches_CreateAndReturnConnectionConversation()
     {
         // Given
         
@@ -31,7 +31,7 @@ public class CreateConnectionConversationHandlerTests
 
     }
 
-    public async Task Handle_WhenIdIsNotFound_ThrowArgumentException()
+    public async Task Handle_WhenConnectionIdIsNotFound_ThrowArgumentException()
     {
         // Given
 
