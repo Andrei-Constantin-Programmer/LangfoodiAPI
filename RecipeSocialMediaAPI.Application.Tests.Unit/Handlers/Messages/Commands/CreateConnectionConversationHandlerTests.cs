@@ -58,10 +58,13 @@ public class CreateConnectionConversationHandlerTests
 
 
         // When
-
+        var result = await _connectionConversationHandlerSUT.Handle(new CreateConnectionConversationCommand(testContract), CancellationToken.None);
 
         // Then
-
+        result.Should().NotBeNull();
+        result.ConversationId.Should().Be(expectedConversation.ConversationId);
+        result.ConnectionId.Should().Be(connection.ConnectionId);
+        result.LastMessage.Should().BeNull();
     }
 
     public async Task Handle_WhenConnectionIdIsNotFound_ThrowArgumentException()
