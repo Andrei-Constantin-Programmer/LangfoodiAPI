@@ -29,7 +29,7 @@ public class CreateGroupConversationHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenGroupIdMatches_CreateAndReturnConnectionConversation()
+    public async Task Handle_WhenGroupIdMatches_CreateAndReturnGroupConversation()
     {
         // Given
         Group group = new(
