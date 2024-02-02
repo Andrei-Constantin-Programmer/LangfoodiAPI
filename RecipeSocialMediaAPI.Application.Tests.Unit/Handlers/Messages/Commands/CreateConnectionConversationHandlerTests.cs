@@ -8,17 +8,15 @@ public class CreateConnectionConversationHandlerTests
 {
     private readonly Mock<IConversationPersistenceRepository> _conversationPersistenceRepositoryMock;
     private readonly Mock<IConnectionQueryRepository> _connectionQueryRepositoryMock;
-    private readonly Mock<IGroupQueryRepository> _groupQueryRepositoryMock;
 
-    private readonly CreateConnectionConversationHandler _conversationHandlerSUT;
+    private readonly CreateConnectionConversationHandler _connectionConversationHandlerSUT;
 
     public CreateConnectionConversationHandlerTests()
     {
         _conversationPersistenceRepositoryMock = new Mock<IConversationPersistenceRepository>();
         _connectionQueryRepositoryMock = new Mock<IConnectionQueryRepository>();
-        _groupQueryRepositoryMock = new Mock<IGroupQueryRepository>();
 
-        _conversationHandlerSUT = new(_conversationPersistenceRepositoryMock.Object, _connectionQueryRepositoryMock.Object);
+        _connectionConversationHandlerSUT = new(_conversationPersistenceRepositoryMock.Object, _connectionQueryRepositoryMock.Object);
     }
 
     public async Task Handle_WhenIdIsConnection_CreateAndReturnConnectionConversation()
