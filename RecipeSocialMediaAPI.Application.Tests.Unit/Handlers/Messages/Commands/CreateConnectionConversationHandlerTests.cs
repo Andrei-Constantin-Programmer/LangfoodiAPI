@@ -44,6 +44,18 @@ public class CreateConnectionConversationHandlerTests
             status: ConnectionStatus.Connected
         );
         
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnection(connection.ConnectionId))
+            .Returns(connection);
+
+        ConnectionConversation expectedConversation = new(connection, "conversation1");
+
+        _conversationPersistenceRepositoryMock
+            .Setup(repo => repo.CreateConnectionConversation(connection))
+            .Returns(expectedConversation);
+
+        NewConversationContract testContract = new(connection.ConnectionId);
+
 
         // When
 
