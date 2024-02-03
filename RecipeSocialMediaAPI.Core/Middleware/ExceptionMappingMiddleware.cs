@@ -30,7 +30,7 @@ public class ExceptionMappingMiddleware
         {
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Invalid credentials");
         }
-        catch(HandlerAlreadyInUseException ex)
+        catch (HandlerAlreadyInUseException ex)
         {
             _logger.LogInformation(ex, "Attempted to add already existing user with handler {Handler}", ex.Handler);
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, $"Handler {ex.Handler} already in use");
@@ -69,6 +69,10 @@ public class ExceptionMappingMiddleware
         catch (ConnectionNotFoundException)
         {
             await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Connection not found");
+        }
+        catch (ConversationNotFoundException)
+        {
+            await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Conversation not found");
         }
         catch (Exception ex)
         {

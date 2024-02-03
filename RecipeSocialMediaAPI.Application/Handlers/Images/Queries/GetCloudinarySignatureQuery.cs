@@ -16,10 +16,9 @@ internal class GetCloudinarySignatureHandler : IRequestHandler<GetCloudinarySign
 
     public async Task<CloudinarySignatureDTO> Handle(GetCloudinarySignatureQuery request, CancellationToken cancellationToken)
     {
-        CloudinarySignatureDTO? signature = _imageHostingQueryRepository.GenerateSignature();
+        CloudinarySignatureDTO signature = _imageHostingQueryRepository.GenerateSignature()
+            ?? throw new InvalidOperationException("Failed to generate signature");
 
-        return signature is null
-            ? throw new InvalidOperationException("Failed to generate signature")
-            : await Task.FromResult(signature);
+        return await Task.FromResult(signature);
     }
 }

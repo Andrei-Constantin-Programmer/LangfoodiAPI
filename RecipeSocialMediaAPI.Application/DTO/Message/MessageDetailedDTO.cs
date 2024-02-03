@@ -6,6 +6,7 @@ public record MessageDetailedDTO
 (
     string Id,
     string SenderId,
+    string SenderName,
     DateTimeOffset? SentDate = null,
     DateTimeOffset? UpdatedDate = null,
     MessageDetailedDTO? RepliedToMessage = null,
