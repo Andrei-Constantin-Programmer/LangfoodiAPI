@@ -282,4 +282,19 @@ public class ConversationEndpointsTests : EndpointTestBase
         data.ConversationId.Should().Be("0");
         data.LastMessage.Should().BeNull();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateConnectionConversation_WhenConnectionIsNotFound_ReturnNotFound()
+    {
+        // Given
+        NewConversationContract newConversation = new("0");
+
+        // When
+        var result = await _client.PostAsJsonAsync("/conversation/create-by-connection", newConversation);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
 }
