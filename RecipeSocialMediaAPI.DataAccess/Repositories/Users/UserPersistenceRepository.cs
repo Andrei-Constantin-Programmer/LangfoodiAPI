@@ -19,14 +19,7 @@ public class UserPersistenceRepository : IUserPersistenceRepository
 
     public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate)
     {
-        UserDocument newUserDocument = new()
-        {
-            Handler = handler,
-            UserName = username,
-            Email = email,
-            Password = password,
-            AccountCreationDate = accountCreationDate,
-        };
+        UserDocument newUserDocument = new(handler, username, email, password, accountCreationDate);
         
         newUserDocument = _userCollection.Insert(newUserDocument);
 
@@ -46,10 +39,13 @@ public class UserPersistenceRepository : IUserPersistenceRepository
             return false;
         }
 
-        userDocument.UserName = user.Account.UserName;
-        userDocument.Email = user.Email;
-        userDocument.Password = user.Password;
+        var updatedUserDocument = userDocument with
+        {
+            UserName = user.Account.UserName,
+            Email = user.Email,
+            Password = user.Password,
+        };
 
-        return _userCollection.UpdateRecord(userDocument, userDoc => userDoc.Id == userDocument.Id);
+        return _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id);
     }
 }

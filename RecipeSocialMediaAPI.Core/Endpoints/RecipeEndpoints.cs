@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
-using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 
@@ -9,11 +8,13 @@ namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class RecipeEndpoints
 {
-    public static void MapRecipeEndpoints(this WebApplication app)
+    public static WebApplication MapRecipeEndpoints(this WebApplication app)
     {
         app.MapGroup("/recipe")
             .AddRecipeEndpoints()
             .WithTags("Recipe");
+
+        return app;
     }
 
     private static RouteGroupBuilder AddRecipeEndpoints(this RouteGroupBuilder group)

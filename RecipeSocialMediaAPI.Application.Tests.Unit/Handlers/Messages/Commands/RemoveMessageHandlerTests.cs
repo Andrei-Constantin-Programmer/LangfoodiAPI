@@ -74,7 +74,7 @@ public class RemoveMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenMessageDoesExistButDeleteIsUnsuccessful_ThrowException()
+    public void Handle_WhenMessageDoesExistButDeleteIsUnsuccessful_ThrowMessageRemovalException()
     {
         // Given
         RemoveMessageCommand testCommand = new("MessageId");
@@ -101,6 +101,6 @@ public class RemoveMessageHandlerTests
         var testAction = async () => await _removeMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().ThrowAsync<Exception>().WithMessage("Could not remove message with id MessageId");
+        testAction.Should().ThrowAsync<MessageRemovalException>().WithMessage($"*{testMessage.Id}*");
     }
 }

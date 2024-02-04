@@ -10,7 +10,7 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
-public record UpdateUserCommand(UpdateUserContract UpdateUserContract) : IValidatableRequest;
+public record UpdateUserCommand(UpdateUserContract Contract) : IValidatableRequest;
 
 internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
@@ -31,15 +31,15 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
     public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         IUserCredentials existingUser = 
-            _userQueryRepository.GetUserById(request.UpdateUserContract.Id)
-            ?? throw new UserNotFoundException($"No user found with id {request.UpdateUserContract.Id}");
+            _userQueryRepository.GetUserById(request.Contract.Id)
+            ?? throw new UserNotFoundException($"No user found with id {request.Contract.Id}");
 
-        var encryptedPassword = _cryptoService.Encrypt(request.UpdateUserContract.Password);
+        var encryptedPassword = _cryptoService.Encrypt(request.Contract.Password);
         IUserCredentials updatedUser = _userFactory.CreateUserCredentials(
-            request.UpdateUserContract.Id,
+            request.Contract.Id,
             existingUser.Account.Handler,
-            request.UpdateUserContract.UserName,
-            request.UpdateUserContract.Email,
+            request.Contract.UserName,
+            request.Contract.Email,
             encryptedPassword,
             existingUser.Account.AccountCreationDate
         );
@@ -48,7 +48,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 
         return isSuccessful
             ? Task.CompletedTask 
-            : throw new Exception($"Could not update user with id {updatedUser.Account.Id}.");
+            : throw new UserUpdateException($"Could not update user with id {request.Contract.Id}.");
     }
 }
 
@@ -60,15 +60,15 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     {
         _userValidationService = userValidationService;
 
-        RuleFor(x => x.UpdateUserContract.UserName)
+        RuleFor(x => x.Contract.UserName)
             .NotEmpty()
             .Must(_userValidationService.ValidUserName);
 
-        RuleFor(x => x.UpdateUserContract.Email)
+        RuleFor(x => x.Contract.Email)
             .NotEmpty()
             .Must(_userValidationService.ValidEmail);
 
-        RuleFor(x => x.UpdateUserContract.Password)
+        RuleFor(x => x.Contract.Password)
             .NotEmpty()
             .Must(_userValidationService.ValidPassword);
     }

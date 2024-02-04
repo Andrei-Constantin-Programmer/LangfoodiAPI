@@ -63,14 +63,13 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
-        ConnectionDocument connectionDoc = new()
-        {
-            Id = "connId",
-            AccountId1 = user1.Id,
-            AccountId2 = user2.Id,
-            ConnectionStatus = "Pending"
-        };
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
+        ConnectionDocument connectionDoc = new(
+            Id: "connId",
+            AccountId1: user1.Id,
+            AccountId2: user2.Id,
+            ConnectionStatus: "Pending"
+        );
 
         Expression<Func<ConnectionDocument, bool>> expectedExpression = connDoc => 
             (connDoc.AccountId1 == user1.Id && connDoc.AccountId2 == user2.Id)
@@ -80,19 +79,18 @@ public partial class ConversationPersistenceRepositoryTests
             .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
             .Returns(connectionDoc);
 
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "convoId",
-            ConnectionId = connectionDoc.Id,
-            GroupId = null,
-            Messages = new()
-        };
+        ConversationDocument conversationDocument = new(
+            Id: "convoId",
+            ConnectionId: connectionDoc.Id,
+            GroupId: null,
+            Messages: new()
+        );
 
         _conversationCollectionMock
             .Setup(collection => collection.Insert(It.Is<ConversationDocument>(doc => doc.ConnectionId == connectionDoc.Id && doc.GroupId == null)))
             .Returns(conversationDocument);
 
-        ConnectionConversation mappedConversation = new(testConnection, conversationDocument.Id);
+        ConnectionConversation mappedConversation = new(testConnection, conversationDocument.Id!);
 
         _conversationDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConversationFromDocument(conversationDocument, testConnection, null, It.IsAny<List<Message>>()))
@@ -127,7 +125,7 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
 
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
@@ -163,19 +161,18 @@ public partial class ConversationPersistenceRepositoryTests
 
         Group testGroup = new("GroupId", "Group Name", "Group Description", new[] { user1, user2 });
         
-        ConversationDocument conversationDocument = new()
-        {
-            Id = "convoId",
-            ConnectionId = null,
-            GroupId = testGroup.GroupId,
-            Messages = new()
-        };
+        ConversationDocument conversationDocument = new(
+            Id: "convoId",
+            ConnectionId: null,
+            GroupId: testGroup.GroupId,
+            Messages: new()
+        );
 
         _conversationCollectionMock
             .Setup(collection => collection.Insert(It.Is<ConversationDocument>(doc => doc.GroupId == testGroup.GroupId && doc.ConnectionId == null)))
             .Returns(conversationDocument);
 
-        GroupConversation mappedConversation = new(testGroup, conversationDocument.Id, new List<Message>());
+        GroupConversation mappedConversation = new(testGroup, conversationDocument.Id!, new List<Message>());
 
         _conversationDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConversationFromDocument(conversationDocument, null, testGroup, It.IsAny<List<Message>>()))
@@ -210,14 +207,13 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
-        ConnectionDocument connectionDoc = new()
-        {
-            Id = "ConnId",
-            AccountId1 = user1.Id,
-            AccountId2 = user2.Id,
-            ConnectionStatus = "Pending"
-        };
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
+        ConnectionDocument connectionDoc = new(
+            Id: "ConnId",
+            AccountId1: user1.Id,
+            AccountId2: user2.Id,
+            ConnectionStatus: "Pending"
+        );
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
             .Returns(connectionDoc);
@@ -269,14 +265,14 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
-        ConnectionDocument connectionDoc = new()
-        {
-            Id = "ConnId",
-            AccountId1 = user1.Id,
-            AccountId2 = user2.Id,
-            ConnectionStatus = "Pending"
-        };
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
+        ConnectionDocument connectionDoc = new(
+            Id: "ConnId",
+            AccountId1: user1.Id,
+            AccountId2: user2.Id,
+            ConnectionStatus: "Pending"
+        );
+
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
             .Returns(connectionDoc);
@@ -320,7 +316,7 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
             .Returns((ConnectionDocument?)null);
@@ -362,14 +358,13 @@ public partial class ConversationPersistenceRepositoryTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
 
-        Connection testConnection = new(user1, user2, ConnectionStatus.Pending);
-        ConnectionDocument connectionDoc = new()
-        {
-            Id = "ConnId",
-            AccountId1 = user1.Id,
-            AccountId2 = user2.Id,
-            ConnectionStatus = "Pending"
-        };
+        Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
+        ConnectionDocument connectionDoc = new(
+            Id: "ConnId",
+            AccountId1: user1.Id,
+            AccountId2: user2.Id,
+            ConnectionStatus: "Pending"
+        );
         _connectionCollectionMock
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
             .Returns(connectionDoc);

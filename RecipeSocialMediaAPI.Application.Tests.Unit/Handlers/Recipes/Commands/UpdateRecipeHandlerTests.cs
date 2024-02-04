@@ -7,7 +7,6 @@ using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
-using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -48,16 +47,15 @@ public class UpdateRecipeHandlerTests
     public async Task Handle_WhenRecipeDoesNotExist_ThrowRecipeNotFoundException()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",            
-            Tags = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-            ThumbnailId = "img_id_1"
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",            
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ThumbnailId: "img_id_1"
+        );
 
         // When
         var action = async () => await _updateRecipeHandlerSUT.Handle(new UpdateRecipeCommand(testContract), CancellationToken.None);
@@ -65,7 +63,7 @@ public class UpdateRecipeHandlerTests
         // Then
         await action.Should()
             .ThrowAsync<RecipeNotFoundException>()
-            .WithMessage("The recipe with the id 1 was not found.");
+            .WithMessage("The recipe with the id 1 was not found");
 
         _recipePersistenceRepositoryMock
             .Verify(mapper => mapper.UpdateRecipe(It.IsAny<RecipeAggregate>()), Times.Never);
@@ -74,19 +72,18 @@ public class UpdateRecipeHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenRecipeExistsButUpdateFails_ThrowNewGeneralException()
+    public async Task Handle_WhenRecipeExistsButUpdateFails_ThrowRecipeUpdateException()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",
-            Tags = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-            ThumbnailId = "img_id_1"
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ThumbnailId: "img_id_1"
+        );
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
@@ -117,26 +114,25 @@ public class UpdateRecipeHandlerTests
 
         // Then
         await action.Should()
-            .ThrowAsync<Exception>()
+            .ThrowAsync<RecipeUpdateException>()
             .WithMessage("Could not update recipe with id 1");
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenRecipeExistsAndUpdateSucceeds_ReturnsCompletedTask()
+    public async Task Handle_WhenRecipeExistsAndUpdateSucceeds_DoesNotThrow()
     {
         // Given
-        UpdateRecipeContract testContract = new()
-        {
-            Id = "1",
-            Title = "Test",
-            Description = "Test",
-            Tags = new HashSet<string>(),
-            Ingredients = new List<IngredientDTO>(),
-            RecipeSteps = new Stack<RecipeStepDTO>(),
-            ThumbnailId = "img_id_1"
-        };
+        UpdateRecipeContract testContract = new(
+            Id: "1",
+            Title: "Test",
+            Description: "Test",
+            Tags: new HashSet<string>(),
+            Ingredients: new List<IngredientDTO>(),
+            RecipeSteps: new Stack<RecipeStepDTO>(),
+            ThumbnailId: "img_id_1"
+        );
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeById(It.IsAny<string>()))
@@ -170,6 +166,6 @@ public class UpdateRecipeHandlerTests
             .NotThrowAsync<RecipeNotFoundException>();
 
         await action.Should()
-            .NotThrowAsync<Exception>();
+            .NotThrowAsync<RecipeUpdateException>();
     }
 }

@@ -6,6 +6,7 @@ namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 public class ConnectionConversation : Conversation
 {
     private readonly IConnection _connection;
+    public IConnection Connection => _connection;
 
     public ConnectionConversation(IConnection connection, string conversationId, IEnumerable<Message>? messages = null)
         : base(conversationId, messages)

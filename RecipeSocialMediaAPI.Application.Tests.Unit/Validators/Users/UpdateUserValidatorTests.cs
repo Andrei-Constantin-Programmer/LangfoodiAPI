@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Moq;
+using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -24,15 +25,7 @@ public class UpdateUserValidatorTests
     public void UpdateUserValidation_WhenValidUser_DontThrow()
     {
         // Given
-        UpdateUserCommand testCommand = new(
-            new()
-            {
-                Id = "testId",
-                UserName = "TestUser",
-                Email = "test@mail.com",
-                Password = "Test@123"
-            }
-        );
+        UpdateUserCommand testCommand = new(new UpdateUserContract("testId", "TestUser", "test@mail.com", "Test@123"));
 
         _userValidationServiceMock
             .Setup(service => service.ValidUserName(It.IsAny<string>()))
@@ -60,15 +53,7 @@ public class UpdateUserValidatorTests
     public void UpdateUserValidation_WhenInvalidUser_ThrowsValidationException()
     {
         // Given
-        UpdateUserCommand testCommand = new(
-            new()
-            {
-                Id = "TestId",
-                UserName = string.Empty,
-                Email = "test.com",
-                Password = "test"
-            }
-        );
+        UpdateUserCommand testCommand = new(new UpdateUserContract("TestId", string.Empty, "test.com", "test"));
 
         _userValidationServiceMock
             .Setup(service => service.ValidUserName(It.IsAny<string>()))
@@ -87,8 +72,8 @@ public class UpdateUserValidatorTests
         var validationResult = _updateUserValidatorSUT.TestValidate(testCommand);
 
         // Then
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateUserContract.UserName);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateUserContract.Email);
-        validationResult.ShouldHaveValidationErrorFor(command => command.UpdateUserContract.Password);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.UserName);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Email);
+        validationResult.ShouldHaveValidationErrorFor(command => command.Contract.Password);
     }
 }

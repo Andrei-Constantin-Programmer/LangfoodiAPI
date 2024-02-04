@@ -7,11 +7,13 @@ namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class AuthenticationEndpoints
 {
-    public static void MapAuthenticationEndpoints(this WebApplication app)
+    public static WebApplication MapAuthenticationEndpoints(this WebApplication app)
     {
         app.MapGroup("/auth")
             .AddAuthenticationEndpoints()
             .WithTags("Authentication");
+
+        return app;
     }
 
     private static RouteGroupBuilder AddAuthenticationEndpoints(this RouteGroupBuilder group)

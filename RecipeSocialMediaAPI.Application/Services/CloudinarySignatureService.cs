@@ -13,7 +13,7 @@ public class CloudinarySignatureService : ICloudinarySignatureService
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public CloudinarySignatureDTO? GenerateSignature(Cloudinary cloudinaryConnection, string? publicId = null)
+    public CloudinarySignatureDTO GenerateSignature(Cloudinary cloudinaryConnection, string? publicId = null)
     {
         Dictionary<string, object> signingParameters = new();
 
@@ -26,6 +26,7 @@ public class CloudinarySignatureService : ICloudinarySignatureService
         signingParameters.Add("timestamp", timestamp);
 
         string signature = cloudinaryConnection.Api.SignParameters(signingParameters);
-        return new() { Signature = signature, TimeStamp = timestamp };
+
+        return new(signature, timestamp);
     }
 }

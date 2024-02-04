@@ -13,7 +13,7 @@ internal class DoesNotHaveNestedInheritanceRule : ICustomRule
             || baseType is null
             || TypeIsBaseClass(baseType.BaseType?.Resolve());
 
-        bool TypeIsBaseClass(TypeDefinition? typeDefinition) =>
+        static bool TypeIsBaseClass(TypeDefinition? typeDefinition) =>
             typeDefinition is null ||
             typeDefinition.Name is "Enum" or "Object";
     }

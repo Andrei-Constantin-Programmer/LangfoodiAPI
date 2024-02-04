@@ -63,23 +63,22 @@ public class RecipePersistenceRepositoryTests
             "thumbnail_id_1"
         );
 
-        RecipeDocument newRecipeDocument = new()
-        {
-            Id = expectedResult.Id,
-            Title = expectedResult.Title,
-            Ingredients = new List<(string, double, string)>(),
-            Steps = new List<(string, string?)>(),
-            Description = expectedResult.Description,
-            ChefId = testChef.Id,
-            CreationDate = expectedResult.CreationDate,
-            LastUpdatedDate = expectedResult.LastUpdatedDate,
-            Tags = new List<string>() { testTag },
-            ThumbnailId = expectedResult.ThumbnailId,
-            CookingTimeInSeconds = expectedResult.Recipe.CookingTimeInSeconds,
-            KiloCalories = expectedResult.Recipe.KiloCalories,
-            NumberOfServings = expectedResult.Recipe.NumberOfServings,
-            ServingSize = (expectedResult.Recipe.ServingSize!.Quantity, expectedResult.Recipe.ServingSize!.UnitOfMeasurement)
-        };
+        RecipeDocument newRecipeDocument = new(
+            Id: expectedResult.Id,
+            Title: expectedResult.Title,
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: expectedResult.Description,
+            ChefId: testChef.Id,
+            CreationDate: expectedResult.CreationDate,
+            LastUpdatedDate: expectedResult.LastUpdatedDate,
+            Tags: new List<string>() { testTag },
+            ThumbnailId: expectedResult.ThumbnailId,
+            CookingTimeInSeconds: expectedResult.Recipe.CookingTimeInSeconds,
+            KiloCalories: expectedResult.Recipe.KiloCalories,
+            NumberOfServings: expectedResult.Recipe.NumberOfServings,
+            ServingSize: (expectedResult.Recipe.ServingSize!.Quantity, expectedResult.Recipe.ServingSize!.UnitOfMeasurement)
+        );
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Insert(It.IsAny<RecipeDocument>()))

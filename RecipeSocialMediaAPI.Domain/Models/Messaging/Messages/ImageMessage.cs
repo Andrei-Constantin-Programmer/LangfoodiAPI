@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
-public record ImageMessage : Message
+public class ImageMessage : Message
 {
     private readonly IDateTimeProvider _dateTimeProvider;
 

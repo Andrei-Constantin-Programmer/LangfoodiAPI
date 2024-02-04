@@ -25,7 +25,7 @@ public class UpdateUserHandlerTests
 
     public UpdateUserHandlerTests()
     {
-        _cryptoServiceFake = new CryptoServiceFake();
+        _cryptoServiceFake = new FakeCryptoService();
         _userFactoryMock = new Mock<IUserFactory>(); 
         _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
@@ -39,13 +39,12 @@ public class UpdateUserHandlerTests
     public async Task Handle_WhenUserIsNotFound_DoNotUpdateAndThrowUserNotFoundException()
     {
         // Given
-        UpdateUserContract contract = new()
-        {
-            Id = "TestId",
-            UserName = "TestUser",
-            Email = "TestEmail",
-            Password = "TestPass"
-        };
+        UpdateUserContract contract = new(
+            Id: "TestId",
+            UserName: "TestUser",
+            Email: "TestEmail",
+            Password: "TestPass"
+        );
 
         IUserCredentials? nullUser = null;
         _userQueryRepositoryMock
@@ -71,13 +70,12 @@ public class UpdateUserHandlerTests
     public async Task Handle_WhenUpdateContractIsValid_UpdateAndNotThrow()
     {
         // Given
-        UpdateUserContract contract = new()
-        {
-            Id = "TestId",
-            UserName = "TestUser",
-            Email = "TestEmail",
-            Password = "TestPass"
-        };
+        UpdateUserContract contract = new(
+            Id: "TestId",
+            UserName: "TestUser",
+            Email: "TestEmail",
+            Password: "TestPass"
+        );
 
         const string existingHandler = "ExistingHandler";
         DateTimeOffset creationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero);
@@ -138,16 +136,15 @@ public class UpdateUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenUpdateContractIsValidButOperationUnsuccessful_ThrowException()
+    public async Task Handle_WhenUpdateContractIsValidButOperationUnsuccessful_ThrowUserUpdateException()
     {
         // Given
-        UpdateUserContract contract = new()
-        {
-            Id = "TestId",
-            UserName = "TestUser",
-            Email = "TestEmail",
-            Password = "TestPass"
-        };
+        UpdateUserContract contract = new(
+            Id: "TestId",
+            UserName: "TestUser",
+            Email: "TestEmail",
+            Password: "TestPass"
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(It.IsAny<string>()))
@@ -173,6 +170,6 @@ public class UpdateUserHandlerTests
         var action = async () => await _updateUserHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<Exception>();
+        await action.Should().ThrowAsync<UserUpdateException>();
     }
 }

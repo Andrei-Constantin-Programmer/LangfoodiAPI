@@ -3,12 +3,11 @@ using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
-using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record UpdateMessageCommand(UpdateMessageContract UpdateMessageContract) : IValidatableRequest;
+public record UpdateMessageCommand(UpdateMessageContract Contract) : IRequest;
 
 internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
 {
@@ -26,19 +25,19 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
     public Task Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
     {
         Message message =
-            _messageQueryRepository.GetMessage(request.UpdateMessageContract.Id)
-            ?? throw new MessageNotFoundException(request.UpdateMessageContract.Id);
+            _messageQueryRepository.GetMessage(request.Contract.Id)
+            ?? throw new MessageNotFoundException(request.Contract.Id);
 
         switch (message)
         {
             case TextMessage textMessage:
-                AttemptUpdatingTextMessage(request.UpdateMessageContract, textMessage);
+                AttemptUpdatingTextMessage(request.Contract, textMessage);
                 break;
             case ImageMessage imageMessage:
-                AttemptUpdatingImageMessage(request.UpdateMessageContract, imageMessage);
+                AttemptUpdatingImageMessage(request.Contract, imageMessage);
                 break;
             case RecipeMessage recipeMessage:
-                AttemptUpdatingRecipeMessage(request.UpdateMessageContract, recipeMessage);
+                AttemptUpdatingRecipeMessage(request.Contract, recipeMessage);
                 break;
             default:
                 throw new CorruptedMessageException($"Message with id {message.Id} could not be updated, as it is corrupted");

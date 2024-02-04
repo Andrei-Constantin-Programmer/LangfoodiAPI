@@ -38,21 +38,20 @@ public class UserPersistenceRepositoryTests
     public void CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateException()
     {
         // Given
-        UserDocument testDocument = new() 
-        { 
-            Handler = "TestHandler", 
-            UserName = "TestName", 
-            Email = "TestEmail", 
-            Password = "TestPassword", 
-            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero) 
-        };
+        UserDocument testDocument = new( 
+            Handler: "TestHandler", 
+            UserName: "TestName", 
+            Email: "TestEmail", 
+            Password: "TestPassword", 
+            AccountCreationDate: new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero) 
+        );
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument)))
             .Throws(new DocumentAlreadyExistsException<UserDocument>(testDocument));
 
         // When
-        var action = () => _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate);
+        var action = () => _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
 
         // Then
         action.Should().Throw<DocumentAlreadyExistsException<UserDocument>>();
@@ -64,14 +63,13 @@ public class UserPersistenceRepositoryTests
     public void CreateUser_CreatesUserAndReturnsNewlyCreatedUser()
     {
         // Given
-        UserDocument testDocument = new()
-        {
-            Handler = "TestHandler",
-            UserName = "TestName",
-            Email = "TestEmail",
-            Password = "TestPassword",
-            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
-        };
+        UserDocument testDocument = new(
+            Handler: "TestHandler",
+            UserName: "TestName",
+            Email: "TestEmail",
+            Password: "TestPassword",
+            AccountCreationDate: new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        );
 
         IUserCredentials testUser = new TestUserCredentials()
         {
@@ -80,7 +78,7 @@ public class UserPersistenceRepositoryTests
                 Id = testDocument.Id!, 
                 Handler = testDocument.Handler, 
                 UserName = testDocument.UserName, 
-                AccountCreationDate = testDocument.AccountCreationDate
+                AccountCreationDate = testDocument.AccountCreationDate!.Value
             },
             Email = testDocument.Email,
             Password = testDocument.Password
@@ -94,7 +92,7 @@ public class UserPersistenceRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate);
+        var result = _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
 
         // Then
         result.Should().Be(testUser);
@@ -108,7 +106,8 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
-        UserDocument testDocument = new() { Handler = "Handler", UserName = "Initial Name", Email = "Initial Email", Password = "Initial Password", AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero) };
+        UserDocument testDocument = new("Handler", "Initial Name", "Initial Email", "Initial Password", new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero));
+
         IUserCredentials updatedUser = new TestUserCredentials
         {
             Account = new TestUserAccount()
@@ -116,7 +115,7 @@ public class UserPersistenceRepositoryTests
                 Id = testDocument.Id!,
                 Handler = "New Handler",
                 UserName = "New Name",
-                AccountCreationDate = testDocument.AccountCreationDate.AddDays(5)
+                AccountCreationDate = testDocument.AccountCreationDate!.Value.AddDays(5)
             },
             Email = "New Email",
             Password = "New Password"
@@ -143,7 +142,6 @@ public class UserPersistenceRepositoryTests
                         doc => doc.Id == testDocument.Id
                         && doc.Handler == testDocument.Handler
                         && doc.AccountCreationDate == testDocument.AccountCreationDate
-
                         && doc.UserName == updatedUser.Account.UserName
                         && doc.Email == updatedUser.Email
                         && doc.Password == updatedUser.Password),
@@ -157,7 +155,8 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
-        UserDocument testDocument = new() { Handler = "Initial Handler", UserName = "Initial Name", Email = "Initial Email", Password = "Initial Password" };
+        UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password");
+
         IUserCredentials updatedUser = new TestUserCredentials
         {
             Account = new TestUserAccount()
@@ -189,7 +188,7 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenCollectionCantUpdate_ReturnFalse()
     {
         // Given
-        UserDocument testDocument = new() { Handler = "Initial Handler", UserName = "Initial Name", Email = "Initial Email", Password = "Initial Password" };
+        UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password");
         IUserCredentials updatedUser = new TestUserCredentials
         {
             Account = new TestUserAccount()
@@ -223,7 +222,7 @@ public class UserPersistenceRepositoryTests
     public void DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
     {
         // Given
-        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
@@ -244,7 +243,7 @@ public class UserPersistenceRepositoryTests
     public void DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
     {
         // Given
-        UserDocument testDocument = new() { Handler = "TestHandler", UserName = "TestName", Email = "TestEmail", Password = "TestPassword" };
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
@@ -257,7 +256,7 @@ public class UserPersistenceRepositoryTests
                 Id = testDocument.Id!,
                 Handler = testDocument.Handler,
                 UserName = testDocument.UserName,
-                AccountCreationDate = testDocument.AccountCreationDate
+                AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
             },
             Email = testDocument.Email,
             Password = testDocument.Password

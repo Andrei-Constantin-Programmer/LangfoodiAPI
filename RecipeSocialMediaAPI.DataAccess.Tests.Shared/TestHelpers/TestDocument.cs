@@ -4,7 +4,4 @@ using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 namespace RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 
 [MongoCollection("TestDocument")]
-public record TestDocument : MongoDocument
-{
-    public string? TestProperty { get; set; }
-}
+public record TestDocument(string? TestProperty, string? Id = null) : MongoDocument(Id);

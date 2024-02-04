@@ -1,13 +1,15 @@
-﻿namespace RecipeSocialMediaAPI.Application.DTO.Message;
+﻿using RecipeSocialMediaAPI.Application.DTO.Recipes;
 
-public record MessageDTO
-{
-    required public string Id { get; set; }
-    required public string SenderId { get; set; }
-    public DateTimeOffset? SentDate { get; set; }
-    public DateTimeOffset? UpdatedDate { get; set; }
-    public string? RepliedToMessageId { get; set; }
-    public string? TextContent { get; set; }
-    public List<string>? ImageURLs { get; set; }
-    public List<string>? RecipeIds { get; set; }
-}
+namespace RecipeSocialMediaAPI.Application.DTO.Message;
+
+public record MessageDTO(
+    string Id,
+    string SenderId,
+    string SenderName,
+    DateTimeOffset? SentDate = null,
+    DateTimeOffset? UpdatedDate = null,
+    string? RepliedToMessageId = null,
+    string? TextContent = null,
+    List<string>? ImageURLs = null,
+    List<RecipePreviewDTO>? Recipes = null
+);

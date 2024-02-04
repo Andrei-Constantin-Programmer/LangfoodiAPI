@@ -3,10 +3,4 @@
 namespace RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 
 [MongoCollection("Conversation")]
-public record ConversationDocument : MongoDocument
-{
-    public string? ConnectionId { get; set; }
-    public string? GroupId { get; set; }
-    required public List<string> Messages { get; set; }
-}
-
+public record ConversationDocument(List<string> Messages, string? ConnectionId = null, string? GroupId = null, string? Id = null) : MongoDocument(Id);
