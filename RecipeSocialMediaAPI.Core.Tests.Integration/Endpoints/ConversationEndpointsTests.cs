@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net.Http.Json;
@@ -293,6 +295,53 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // When
         var result = await _client.PostAsJsonAsync("/conversation/create-by-connection", newConversation);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
+
+
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateGroupConversation_WhenGroupIsValid_ReturnCreatedGroupConversation()
+    {
+        // Given        
+        _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        Group newGroup = _fakeGroupRepository.CreateGroup("testGroup","This is a test group.",new List<IUserAccount> {_testUser1.Account,_testUser2.Account});
+
+        NewConversationContract newConversation = new(newGroup.GroupId);
+
+        // When
+        var result = await _client.PostAsJsonAsync("/conversation/create-by-group", newConversation);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+
+        var data = await result.Content.ReadFromJsonAsync<GroupConversationDTO>();
+
+        data.Should().NotBeNull();
+        data!.GroupId.Should().Be(newConversation.GroupOrConnectionId);
+        data.ConversationId.Should().Be("0");
+        data.LastMessage.Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
+    {
+        // Given
+        NewConversationContract newConversation = new("0");
+
+        // When
+        var result = await _client.PostAsJsonAsync("/conversation/create-by-group", newConversation);
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
