@@ -2,6 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
@@ -115,7 +116,6 @@ public class SendMessageHandlerTests
                     _testDate,
                     null))
             .Returns(createdMessage);
-
         MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
@@ -183,7 +183,7 @@ public class SendMessageHandlerTests
                     null))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs[0], contract.ImageURLs[1] });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -260,7 +260,7 @@ public class SendMessageHandlerTests
                     null))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -270,5 +270,318 @@ public class SendMessageHandlerTests
 
         // Then
         result.Should().Be(messageDto);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async void Handle_WhenRecipeMessageIsCreatedWithNonexistentRecipes_ThrowsRecipeNotFoundException()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "u2@mail.com",
+            Password = "Test@321"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+
+        Conversation conversation = new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns(conversation);
+
+        RecipeAggregate existingRecipe1 = new("R1", "Recipe 1", new(new() { new("Apples", 500, "grams") }, new()), "Recipe Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
+        RecipeAggregate existingRecipe2 = new("R2", "Recipe 2", new(new() { new("Pears", 300, "grams") }, new()), "Recipe 2 Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
+
+        _recipeQueryRepositoryMock
+            .Setup(repo => repo.GetRecipeById(existingRecipe1.Id))
+            .Returns(existingRecipe1);
+        _recipeQueryRepositoryMock
+            .Setup(repo => repo.GetRecipeById(existingRecipe2.Id))
+            .Returns((RecipeAggregate?)null);
+
+        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
+
+        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2 }, contract.Text, _dateTimeProviderMock.Object.Now);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.CreateMessage(user1.Account,
+                    contract.Text,
+                    It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds)),
+                    It.Is<List<string>>(imageUrls => !imageUrls.Any()),
+                    _testDate,
+                    null))
+            .Returns(createdMessage);
+
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
+            .Returns(messageDto);
+
+        // When
+        var testAction = async() => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<RecipeNotFoundException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async void Handle_WhenUserIsNotFound_ThrowsUserNotFoundException()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "u2@mail.com",
+            Password = "Test@321"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns((UserCredentials?)null);
+
+        Conversation conversation = new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns(conversation);
+
+        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+
+        // When
+        var testAction = async () => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<UserNotFoundException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async void Handle_WhenConversationIsNotFound_ThrowsConversationNotFoundException()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "u2@mail.com",
+            Password = "Test@321"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+
+        Conversation conversation = new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns((Conversation?)null);
+
+        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+
+        // When
+        var testAction = async () => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<ConversationNotFoundException>();
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async void Handle_WhenMessageIsReply_ReturnsMappedMessage(bool withGroupConversation)
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "u2@mail.com",
+            Password = "Test@321"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+
+        Conversation conversation = withGroupConversation
+            ? new GroupConversation(new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1.Account, user2.Account }), "convo1")
+            : new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns(conversation);
+
+        Message repliedToMessage = _messageFactory.CreateTextMessage("m1", user2.Account, "I am being replied to", _dateTimeProviderMock.Object.Now);
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(repliedToMessage.Id))
+            .Returns(repliedToMessage);
+
+        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
+
+        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text, _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.CreateMessage(user1.Account,
+                    contract.Text,
+                    It.Is<List<string>>(recipeIds => !recipeIds.Any()),
+                    It.Is<List<string>>(imageUrls => !imageUrls.Any()),
+                    _testDate,
+                    repliedToMessage))
+            .Returns(createdMessage);
+
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
+            .Returns(messageDto);
+
+        // When
+        var result = await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+
+        // Then
+        result.Should().Be(messageDto);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async void Handle_WhenMessageIsReplyButMessageNotFound_ThrowsMessageNotFound(bool withGroupConversation)
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "u2@mail.com",
+            Password = "Test@321"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+
+        Conversation conversation = withGroupConversation
+            ? new GroupConversation(new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1.Account, user2.Account }), "convo1")
+            : new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns(conversation);
+
+        Message repliedToMessage = _messageFactory.CreateTextMessage("m1", user2.Account, "I am being replied to", _dateTimeProviderMock.Object.Now);
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(repliedToMessage.Id))
+            .Returns((Message?)null);
+
+        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
+
+        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text, _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.CreateMessage(user1.Account,
+                    contract.Text,
+                    It.Is<List<string>>(recipeIds => !recipeIds.Any()),
+                    It.Is<List<string>>(imageUrls => !imageUrls.Any()),
+                    _testDate,
+                    repliedToMessage))
+            .Returns(createdMessage);
+
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
+            .Returns(messageDto);
+
+        // When
+        var testAction = async() => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<MessageNotFoundException>();
     }
 }
