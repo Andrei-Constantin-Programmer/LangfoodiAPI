@@ -33,7 +33,7 @@ public static class ConversationEndpoints
             return Results.Ok(await sender.Send(new GetConversationByGroupQuery(groupId)));
         });
 
-        group.MapPost("/create-by-conversation", async (
+        group.MapPost("/create-by-connection", async (
         [FromBody] NewConversationContract newConversationContract,
         [FromServices] ISender sender) =>
         {
