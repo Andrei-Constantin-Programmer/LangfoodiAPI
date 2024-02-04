@@ -260,14 +260,14 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void CreateConnectionConversation_WhenConnectionIsValid_ReturnCreatedConnectionConversation()
     {
-        // Given        
-        _fakeUserRepository
+        // Given
+        var user1 = _fakeUserRepository
             .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         
-        _fakeUserRepository
+        var user2= _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        IConnection newConnection = _fakeConnectionRepository.CreateConnection(_testUser1.Account, _testUser2.Account, Domain.Models.Messaging.Connections.ConnectionStatus.Connected);
+        IConnection newConnection = _fakeConnectionRepository.CreateConnection(user1.Account, user2.Account, Domain.Models.Messaging.Connections.ConnectionStatus.Connected);
 
         NewConversationContract newConversation = new(newConnection.ConnectionId);
 
@@ -308,13 +308,13 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void CreateGroupConversation_WhenGroupIsValid_ReturnCreatedGroupConversation()
     {
         // Given        
-        _fakeUserRepository
+        var user1 = _fakeUserRepository
             .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        _fakeUserRepository
+        var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        Group newGroup = _fakeGroupRepository.CreateGroup("testGroup","This is a test group.",new List<IUserAccount> {_testUser1.Account,_testUser2.Account});
+        Group newGroup = _fakeGroupRepository.CreateGroup("testGroup","This is a test group.",new List<IUserAccount> { user1.Account, user2.Account});
 
         NewConversationContract newConversation = new(newGroup.GroupId);
 
