@@ -19,29 +19,29 @@ public record SendMessageCommand(NewMessageContract Contract) : IValidatableRequ
 internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageDTO>
 {
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
-    private readonly IUserQueryRepository _userQueryRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
-    private readonly IRecipeQueryRepository _recipeQueryRepository;
-    private readonly IConversationQueryRepository _conversationQueryRepository;
     private readonly IMessageMapper _messageMapper;
+    private readonly IUserQueryRepository _userQueryRepository;
+    private readonly IConversationQueryRepository _conversationQueryRepository;
+    private readonly IRecipeQueryRepository _recipeQueryRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
 
     public SendMessageHandler(
         IMessagePersistenceRepository messagePersistenceRepository,
-        IUserQueryRepository userQueryRepository,
         IMessageQueryRepository messageQueryRepository,
-        IRecipeQueryRepository recipeQueryRepository,
-        IConversationQueryRepository conversationQueryRepository,
         IMessageMapper messageMapper,
+        IUserQueryRepository userQueryRepository,
+        IConversationQueryRepository conversationQueryRepository,
+        IRecipeQueryRepository recipeQueryRepository,
         IDateTimeProvider dateTimeProvider)
     {
         _messagePersistenceRepository = messagePersistenceRepository;
-        _userQueryRepository = userQueryRepository;
         _messageQueryRepository = messageQueryRepository;
-        _recipeQueryRepository = recipeQueryRepository;
-        _conversationQueryRepository = conversationQueryRepository;
-        _dateTimeProvider = dateTimeProvider;
         _messageMapper = messageMapper;
+        _userQueryRepository = userQueryRepository;
+        _conversationQueryRepository = conversationQueryRepository;
+        _recipeQueryRepository = recipeQueryRepository;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<MessageDTO> Handle(SendMessageCommand request, CancellationToken cancellationToken)
@@ -56,7 +56,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
 
         foreach (var recipeId in request.Contract.RecipeIds)
         {
-            if(_recipeQueryRepository.GetRecipeById(recipeId) is null)
+            if (_recipeQueryRepository.GetRecipeById(recipeId) is null)
             {
                 throw new RecipeNotFoundException(recipeId);
             }
