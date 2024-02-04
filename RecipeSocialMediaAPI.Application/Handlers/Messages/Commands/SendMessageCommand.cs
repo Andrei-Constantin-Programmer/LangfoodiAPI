@@ -69,7 +69,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
 
         Message createdMessage = _messagePersistenceRepository.CreateMessage(
             sender: sender,
-            text: request.Contract.Text.Trim(),
+            text: request.Contract.Text?.Trim(),
             recipeIds: request.Contract.RecipeIds,
             imageURLs: request.Contract.ImageURLs,
             sentDate: _dateTimeProvider.Now,
@@ -84,12 +84,12 @@ public class SendMessageCommandValidator : AbstractValidator<SendMessageCommand>
 {
     public SendMessageCommandValidator()
     {
-        RuleFor(x => x.Contract.Text)
-            .Must((command, text) => !string.IsNullOrWhiteSpace(text) || command.Contract.ImageURLs.Any() || command.Contract.RecipeIds.Any())
+        RuleFor(x => x.Contract)
+            .Must((_, contract) => !string.IsNullOrWhiteSpace(contract.Text) || contract.ImageURLs.Any() || contract.RecipeIds.Any())
             .WithMessage("Message content must not be empty");
 
         RuleFor(x => x.Contract)
-            .Must((_, contract) => contract.ImageURLs.Count > 0 && contract.RecipeIds.Count > 0)
+            .Must((_, contract) => !(contract.ImageURLs.Count > 0 && contract.RecipeIds.Count > 0))
             .WithMessage("A message cannot contain both images and recipes");
     }
 }

@@ -3,7 +3,7 @@
 public record NewMessageContract(
     string ConversationId,
     string SenderId,
-    string Text,
+    string? Text,
     List<string> RecipeIds,
     List<string> ImageURLs,
     string? MessageRepliedToId
