@@ -107,7 +107,7 @@ public class SendMessageHandlerTests
         
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
-        Message createdMessage = _messageFactory.CreateTextMessage("m1", user1.Account, contract.Text, _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateTextMessage("m1", user1.Account, contract.Text!, _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
@@ -491,7 +491,7 @@ public class SendMessageHandlerTests
 
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
 
-        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text, _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
+        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text!, _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
@@ -563,7 +563,7 @@ public class SendMessageHandlerTests
 
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
 
-        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text, _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
+        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text!, _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
