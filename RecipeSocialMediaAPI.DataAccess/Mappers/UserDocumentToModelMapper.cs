@@ -21,6 +21,10 @@ public class UserDocumentToModelMapper : IUserDocumentToModelMapper
             throw new ArgumentException("Cannot map User Document with null ID to User");
         }
 
-        return _userFactory.CreateUserCredentials(userDocument.Id, userDocument.Handler, userDocument.UserName, userDocument.Email, userDocument.Password, userDocument.AccountCreationDate);
+        return _userFactory.CreateUserCredentials(
+            userDocument.Id, userDocument.Handler, userDocument.UserName, 
+            userDocument.Email, userDocument.Password, userDocument.ProfileImageId,
+            userDocument.AccountCreationDate
+        );
     }
 }

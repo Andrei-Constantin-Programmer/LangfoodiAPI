@@ -44,6 +44,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             request.Contract.UserName ?? existingUser.Account.UserName,
             request.Contract.Email ?? existingUser.Email,
             newPassword,
+            request.Contract.ProfileImageId,
             existingUser.Account.AccountCreationDate
         );
 

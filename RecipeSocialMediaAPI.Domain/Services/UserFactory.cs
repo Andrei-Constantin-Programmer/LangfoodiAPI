@@ -13,9 +13,9 @@ public class UserFactory : IUserFactory
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public IUserAccount CreateUserAccount(string id, string handler, string username, DateTimeOffset? accountCreationDate = null)
+    public IUserAccount CreateUserAccount(string id, string handler, string username, string? profileImageId = null, DateTimeOffset ? accountCreationDate = null)
     {
-        return new UserAccount(id, handler, username, accountCreationDate ?? _dateTimeProvider.Now);
+        return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now);
     }
 
     public IUserCredentials CreateUserCredentials(IUserAccount userAccount, string email, string password)
@@ -23,8 +23,8 @@ public class UserFactory : IUserFactory
         return new UserCredentials(userAccount, email, password);
     }
 
-    public IUserCredentials CreateUserCredentials(string id, string handler, string username, string email, string password, DateTimeOffset? accountCreationDate = null)
+    public IUserCredentials CreateUserCredentials(string id, string handler, string username, string email, string password, string? profileImageId = null, DateTimeOffset ? accountCreationDate = null)
     {
-        return new UserCredentials(CreateUserAccount(id, handler, username, accountCreationDate), email, password);
+        return new UserCredentials(CreateUserAccount(id, handler, username, profileImageId, accountCreationDate), email, password);
     }
 }
