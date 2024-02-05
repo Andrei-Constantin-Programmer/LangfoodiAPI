@@ -2,7 +2,7 @@
 
 public record UpdateUserContract(
     string Id,
-    string UserName,
-    string Email,
-    string Password
+    string? UserName,
+    string? Email,
+    string? Password
 );

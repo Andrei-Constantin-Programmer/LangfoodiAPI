@@ -34,13 +34,16 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             _userQueryRepository.GetUserById(request.Contract.Id)
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.Id}");
 
-        var encryptedPassword = _cryptoService.Encrypt(request.Contract.Password);
+        var newPassword = request.Contract.Password != null
+            ? _cryptoService.Encrypt(request.Contract.Password)
+            : existingUser.Password;
+
         IUserCredentials updatedUser = _userFactory.CreateUserCredentials(
             request.Contract.Id,
             existingUser.Account.Handler,
-            request.Contract.UserName,
-            request.Contract.Email,
-            encryptedPassword,
+            request.Contract.UserName ?? existingUser.Account.UserName,
+            request.Contract.Email ?? existingUser.Email,
+            newPassword,
             existingUser.Account.AccountCreationDate
         );
 
