@@ -10,6 +10,7 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 public class MessageEndpointsTests : EndpointTestBase
@@ -191,6 +192,151 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
+    {
+        // Given
+        var user = _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = _fakeConversationRepository
+            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+
+        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new(), null);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+        
+        data.Should().NotBeNull();
+        data!.Id.Should().Be("0");
+        data.SenderId.Should().Be(user.Account.Id);
+        data.SenderName.Should().Be(user.Account.UserName);
+        data.SentDate.Should().BeCloseTo(_dateTimeProvider.Now, TimeSpan.FromSeconds(5));
+        data.UpdatedDate.Should().BeNull();
+        data.RepliedToMessageId.Should().BeNull();
+        data.TextContent.Should().Be(newMessageContract.Text);
+        data.ImageURLs.Should().BeNull();
+        data.Recipes.Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateMessage_WhenContractIsValidForImageMessage_ReturnCreatedMessage()
+    {
+        // Given
+        var user = _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = _fakeConversationRepository
+            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+
+        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+
+        data.Should().NotBeNull();
+        data!.Id.Should().Be("0");
+        data.SenderId.Should().Be(user.Account.Id);
+        data.SenderName.Should().Be(user.Account.UserName);
+        data.SentDate.Should().BeCloseTo(_dateTimeProvider.Now, TimeSpan.FromSeconds(5));
+        data.UpdatedDate.Should().BeNull();
+        data.RepliedToMessageId.Should().BeNull();
+        data.TextContent.Should().Be(newMessageContract.Text);
+        data.ImageURLs.Should().BeEquivalentTo(newMessageContract.ImageURLs);
+        data.Recipes.Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateMessage_WhenContractIsValidForRecipeMessage_ReturnCreatedMessage()
+    {
+        // Given
+        var user = _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = _fakeConversationRepository
+            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+
+        var recipe1 = _fakeRecipeRepository
+           .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+        var recipe2 = _fakeRecipeRepository
+           .CreateRecipe(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
+
+        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new() { recipe1.Id, recipe2.Id }, new(), null);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+
+        data.Should().NotBeNull();
+        data!.Id.Should().Be("0");
+        data.SenderId.Should().Be(user.Account.Id);
+        data.SenderName.Should().Be(user.Account.UserName);
+        data.SentDate.Should().BeCloseTo(_dateTimeProvider.Now, TimeSpan.FromSeconds(5));
+        data.UpdatedDate.Should().BeNull();
+        data.RepliedToMessageId.Should().BeNull();
+        data.TextContent.Should().Be(newMessageContract.Text);
+        data.ImageURLs.Should().BeNull();
+        data.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDTO>()
+        {
+            new(recipe1.Id, recipe1.Title, recipe1.ThumbnailId),
+            new(recipe2.Id, recipe2.Title, recipe2.ThumbnailId),
+        });
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateMessage_WhenContractContainsNoMessageContent_ReturnBadRequest()
+    {
+        // Given
+        var user = _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = _fakeConversationRepository
+            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+
+        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, null, new(), new(), null);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateMessage_WhenContractIsInvalid_ReturnBadRequest()
+    {
+        // Given
+        var user = _fakeUserRepository
+          .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = _fakeConversationRepository
+            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+
+        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, null, new() { "recipe1", "recipe2" }, new() { "Image1", "Image2" }, null);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]
