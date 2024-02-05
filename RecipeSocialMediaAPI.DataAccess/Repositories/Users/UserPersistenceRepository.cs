@@ -19,7 +19,7 @@ public class UserPersistenceRepository : IUserPersistenceRepository
 
     public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate)
     {
-        UserDocument newUserDocument = new(handler, username, email, password, accountCreationDate);
+        UserDocument newUserDocument = new(handler, username, email, password, null, accountCreationDate);
         
         newUserDocument = _userCollection.Insert(newUserDocument);
 
