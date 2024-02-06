@@ -34,13 +34,17 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             _userQueryRepository.GetUserById(request.Contract.Id)
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.Id}");
 
-        var encryptedPassword = _cryptoService.Encrypt(request.Contract.Password);
+        var newPassword = request.Contract.Password is not null
+            ? _cryptoService.Encrypt(request.Contract.Password)
+            : existingUser.Password;
+
         IUserCredentials updatedUser = _userFactory.CreateUserCredentials(
             request.Contract.Id,
             existingUser.Account.Handler,
-            request.Contract.UserName,
-            request.Contract.Email,
-            encryptedPassword,
+            request.Contract.UserName ?? existingUser.Account.UserName,
+            request.Contract.Email ?? existingUser.Email,
+            newPassword,
+            request.Contract.ProfileImageId,
             existingUser.Account.AccountCreationDate
         );
 
@@ -61,15 +65,15 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
         _userValidationService = userValidationService;
 
         RuleFor(x => x.Contract.UserName)
-            .NotEmpty()
-            .Must(_userValidationService.ValidUserName);
+            .Must(_userValidationService.ValidUserName)
+            .When(x => x.Contract.UserName is not null);
 
         RuleFor(x => x.Contract.Email)
-            .NotEmpty()
-            .Must(_userValidationService.ValidEmail);
+            .Must(_userValidationService.ValidEmail)
+            .When(x => x.Contract.Email is not null);
 
         RuleFor(x => x.Contract.Password)
-            .NotEmpty()
-            .Must(_userValidationService.ValidPassword);
+            .Must(_userValidationService.ValidPassword)
+            .When(x => x.Contract.Password is not null);
     }
 }

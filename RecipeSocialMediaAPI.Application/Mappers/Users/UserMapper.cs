@@ -22,7 +22,8 @@ public class UserMapper : IUserMapper
             UserName: userCredentials.Account.UserName,
             AccountCreationDate: userCredentials.Account.AccountCreationDate,
             Email: userCredentials.Email,
-            Password: userCredentials.Password
+            Password: userCredentials.Password,
+            ProfileImageId: userCredentials.Account.ProfileImageId
         );
     }
 
@@ -33,7 +34,8 @@ public class UserMapper : IUserMapper
             userDto.Handler, 
             userDto.UserName, 
             userDto.Email, 
-            userDto.Password, 
+            userDto.Password,
+            userDto.ProfileImageId,
             userDto.AccountCreationDate);
     }
 
@@ -43,6 +45,7 @@ public class UserMapper : IUserMapper
             Id: userAccount.Id,
             Handler: userAccount.Handler,
             UserName: userAccount.UserName,
+            ProfileImageId: userAccount.ProfileImageId,
             AccountCreationDate: userAccount.AccountCreationDate
         );
     }
@@ -53,6 +56,7 @@ public class UserMapper : IUserMapper
             userAccountDto.Id,
             userAccountDto.Handler,
             userAccountDto.UserName,
+            userAccountDto.ProfileImageId,
             userAccountDto.AccountCreationDate);
     }
 }

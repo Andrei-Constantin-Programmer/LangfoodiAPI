@@ -43,7 +43,8 @@ public class UpdateUserHandlerTests
             Id: "TestId",
             UserName: "TestUser",
             Email: "TestEmail",
-            Password: "TestPass"
+            Password: "TestPass",
+            ProfileImageId: "TestImageId"
         );
 
         IUserCredentials? nullUser = null;
@@ -74,7 +75,8 @@ public class UpdateUserHandlerTests
             Id: "TestId",
             UserName: "TestUser",
             Email: "TestEmail",
-            Password: "TestPass"
+            Password: "TestPass",
+            ProfileImageId: "TestImageId"
         );
 
         const string existingHandler = "ExistingHandler";
@@ -102,7 +104,15 @@ public class UpdateUserHandlerTests
         var encryptedPassword = _cryptoServiceFake.Encrypt(contract.Password);
         _userFactoryMock
             .Setup(factory => factory
-                .CreateUserCredentials(contract.Id, existingHandler, contract.UserName, contract.Email, encryptedPassword, creationDate))
+                .CreateUserCredentials(
+                    contract.Id, 
+                    existingHandler, 
+                    contract.UserName, 
+                    contract.Email, 
+                    encryptedPassword,
+                    contract.ProfileImageId,
+                    creationDate
+            ))
             .Returns(new TestUserCredentials
             {
                 Account = new TestUserAccount
@@ -143,7 +153,8 @@ public class UpdateUserHandlerTests
             Id: "TestId",
             UserName: "TestUser",
             Email: "TestEmail",
-            Password: "TestPass"
+            Password: "TestPass",
+            ProfileImageId: "TestImageId"
         );
 
         _userQueryRepositoryMock

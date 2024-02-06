@@ -32,9 +32,10 @@ public class UserFactoryTests
         string handler = "TestHandler";
         string username = "TestUsername";
         DateTimeOffset creationDate = new(2023, 10, 10, 12, 30, 0, TimeSpan.Zero);
+        string profileImageId = "TestImageId";
 
         // When
-        var account = _userFactorySUT.CreateUserAccount(id, handler, username, creationDate);
+        var account = _userFactorySUT.CreateUserAccount(id, handler, username, profileImageId, creationDate);
 
         // Then
         account.Id.Should().Be(id);
@@ -103,9 +104,10 @@ public class UserFactoryTests
 
         string email = "TestEmail";
         string password = "TestPassword";
+        string profileImageId = "TestImageId";
 
         // When
-        var account = _userFactorySUT.CreateUserCredentials(id, handler, username, email, password, creationDate);
+        var account = _userFactorySUT.CreateUserCredentials(id, handler, username, email, password, profileImageId, creationDate);
 
         // Then
         account.Account.Id.Should().Be(id);

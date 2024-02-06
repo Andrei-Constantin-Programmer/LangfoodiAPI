@@ -8,6 +8,7 @@ public record UserDocument(
     string UserName,
     string Email,
     string Password,
+    string? ProfileImageId = null,
     DateTimeOffset? AccountCreationDate = null,
     string? Id = null
 ) : MongoDocument(Id);

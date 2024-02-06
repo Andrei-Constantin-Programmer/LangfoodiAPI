@@ -2,7 +2,8 @@
 
 public record UpdateUserContract(
     string Id,
-    string UserName,
-    string Email,
-    string Password
+    string? ProfileImageId,
+    string? UserName,
+    string? Email,
+    string? Password
 );

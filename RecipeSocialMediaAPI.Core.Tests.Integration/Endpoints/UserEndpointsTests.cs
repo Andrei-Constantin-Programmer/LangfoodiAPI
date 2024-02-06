@@ -142,7 +142,7 @@ public class UserEndpointsTests : EndpointTestBase
            .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var oldUsername = user.Account.UserName;
 
-        UpdateUserContract updateContract = new(user.Account.Id, "NewUsername", user.Email, user.Password);
+        UpdateUserContract updateContract = new(user.Account.Id, "TestImageId", "NewUsername", user.Email, user.Password);
 
         // When
         var result = await _client.PutAsJsonAsync("user/update", updateContract);
@@ -163,7 +163,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
     {
         // Given
-        UpdateUserContract updateContract = new("TestId", "TestUsername", "test@mail.com", "Test@123");
+        UpdateUserContract updateContract = new("TestId", "TestImageId", "TestUsername", "test@mail.com", "Test@123");
 
         // When
         var result = await _client.PutAsJsonAsync("user/update", updateContract);
