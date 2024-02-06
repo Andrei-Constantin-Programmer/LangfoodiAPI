@@ -106,7 +106,7 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
-        UserDocument testDocument = new("Handler", "Initial Name", "Initial Email", "Initial Password", new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero));
+        UserDocument testDocument = new("Handler", "Initial Name", "Initial Email", "Initial Password", "ProfileImageId", new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero));
 
         IUserCredentials updatedUser = new TestUserCredentials
         {
@@ -115,7 +115,8 @@ public class UserPersistenceRepositoryTests
                 Id = testDocument.Id!,
                 Handler = "New Handler",
                 UserName = "New Name",
-                AccountCreationDate = testDocument.AccountCreationDate!.Value.AddDays(5)
+                AccountCreationDate = testDocument.AccountCreationDate!.Value.AddDays(5),
+                ProfileImageId = "NewImageId"
             },
             Email = "New Email",
             Password = "New Password"
@@ -144,7 +145,8 @@ public class UserPersistenceRepositoryTests
                         && doc.AccountCreationDate == testDocument.AccountCreationDate
                         && doc.UserName == updatedUser.Account.UserName
                         && doc.Email == updatedUser.Email
-                        && doc.Password == updatedUser.Password),
+                        && doc.Password == updatedUser.Password
+                        && doc.ProfileImageId == updatedUser.Account.ProfileImageId),
                     It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression))),
                 Times.Once);
     }

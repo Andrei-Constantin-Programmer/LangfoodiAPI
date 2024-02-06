@@ -45,7 +45,15 @@ public class UserMapperTests
 
         _userFactoryMock
             .Setup(factory => factory
-                .CreateUserCredentials(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>()))
+                .CreateUserCredentials(
+                    It.IsAny<string>(), 
+                    It.IsAny<string>(), 
+                    It.IsAny<string>(), 
+                    It.IsAny<string>(), 
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<DateTimeOffset?>()
+                ))
             .Returns(expectedResult);
 
         // When

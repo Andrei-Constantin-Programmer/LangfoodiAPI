@@ -33,6 +33,13 @@ public static class MessageEndpoints
             return Results.Ok(await sender.Send(new GetMessageDetailedByIdQuery(id)));
         });
 
+        group.MapPost("/send", async (
+            [FromBody] NewMessageContract newMessageContract,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new SendMessageCommand(newMessageContract)));
+        });
+
         group.MapPut("/update", async (
             [FromBody] UpdateMessageContract updateMessageContract,
             [FromServices] ISender sender) =>

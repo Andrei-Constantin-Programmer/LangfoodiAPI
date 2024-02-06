@@ -229,7 +229,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
-    public async void CreateConnection_WhenUsersDoNotExist_ReturnNewConnection(bool user1Exists, bool user2Exists)
+    public async void CreateConnection_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
     {
         // Given
         var user1 = user1Exists 
