@@ -34,7 +34,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             _userQueryRepository.GetUserById(request.Contract.Id)
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.Id}");
 
-        var newPassword = request.Contract.Password != null
+        var newPassword = request.Contract.Password is not null
             ? _cryptoService.Encrypt(request.Contract.Password)
             : existingUser.Password;
 

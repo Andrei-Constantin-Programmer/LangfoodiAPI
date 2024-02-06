@@ -22,8 +22,12 @@ public class UserDocumentToModelMapper : IUserDocumentToModelMapper
         }
 
         return _userFactory.CreateUserCredentials(
-            userDocument.Id, userDocument.Handler, userDocument.UserName, 
-            userDocument.Email, userDocument.Password, userDocument.ProfileImageId,
+            userDocument.Id, 
+            userDocument.Handler, 
+            userDocument.UserName, 
+            userDocument.Email, 
+            userDocument.Password, 
+            userDocument.ProfileImageId,
             userDocument.AccountCreationDate
         );
     }
