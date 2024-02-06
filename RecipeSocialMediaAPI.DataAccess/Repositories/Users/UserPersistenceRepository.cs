@@ -44,6 +44,7 @@ public class UserPersistenceRepository : IUserPersistenceRepository
             UserName = user.Account.UserName,
             Email = user.Email,
             Password = user.Password,
+            ProfileImageId = user.Account.ProfileImageId
         };
 
         return _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id);

@@ -48,6 +48,7 @@ public class UserDocumentToModelMapperTests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
+                It.IsAny<string>(),
                 It.IsAny<DateTimeOffset>()),
             Times.Never);
     }
@@ -64,7 +65,8 @@ public class UserDocumentToModelMapperTests
             UserName: "TestUser",
             Email: "TestMail",
             Password: "TestPassword",
-            AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+            AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            ProfileImageId: "TestImageId"
         );
 
         TestUserCredentials testUser = new()
@@ -74,7 +76,8 @@ public class UserDocumentToModelMapperTests
                 Id = testDocument.Id!,
                 Handler = testDocument.Handler,
                 UserName = testDocument.UserName,
-                AccountCreationDate = testDocument.AccountCreationDate!.Value
+                AccountCreationDate = testDocument.AccountCreationDate!.Value,
+                ProfileImageId = testDocument.ProfileImageId
             },
             Email = testDocument.Email,
             Password = testDocument.Password
@@ -87,6 +90,7 @@ public class UserDocumentToModelMapperTests
                 testDocument.UserName,
                 testDocument.Email,
                 testDocument.Password,
+                testDocument.ProfileImageId,
                 testDocument.AccountCreationDate))
             .Returns(testUser);
 
