@@ -321,7 +321,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDeailed_WhenTextMessageFound_ReturnMessage()
+    public async void GetMessageDetailed_WhenTextMessageFound_ReturnMessage()
     {
         // Given
         _ = _fakeUserRepository
