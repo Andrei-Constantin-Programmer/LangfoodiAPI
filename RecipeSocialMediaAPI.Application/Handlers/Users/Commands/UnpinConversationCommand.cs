@@ -4,11 +4,6 @@ using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 public record UnpinConversationCommand(string UserId, string ConversationId) : IRequest;
@@ -33,8 +28,11 @@ internal class UnpinConversationHandler : IRequestHandler<UnpinConversationComma
         Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId)
             ?? throw new ConversationNotFoundException($"Conversation with id {request.ConversationId} does not exist");
 
-        return user.Account.RemovePin(conversation.ConversationId)
-            ? Task.FromResult(_userPersistenceRepository.UpdateUser(user))
-            : Task.CompletedTask;
+        if (user.Account.RemovePin(conversation.ConversationId))
+        {
+            _userPersistenceRepository.UpdateUser(user);
+        }
+
+        return Task.CompletedTask;
     }
 }

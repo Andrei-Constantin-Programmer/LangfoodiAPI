@@ -29,8 +29,11 @@ internal class PinConversationHandler : IRequestHandler<PinConversationCommand>
         Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId)
             ?? throw new ConversationNotFoundException($"Conversation with id {request.ConversationId} does not exist");
 
-        return user.Account.AddPin(conversation.ConversationId)
-        ? Task.FromResult(_userPersistenceRepository.UpdateUser(user))
-        : Task.CompletedTask;
+        if (user.Account.AddPin(conversation.ConversationId))
+        {
+            _userPersistenceRepository.UpdateUser(user);
+        }
+
+        return Task.CompletedTask;
     }
 }
