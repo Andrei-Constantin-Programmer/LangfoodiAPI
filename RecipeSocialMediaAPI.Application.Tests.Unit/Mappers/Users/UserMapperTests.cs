@@ -2,6 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Users;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -28,7 +29,7 @@ public class UserMapperTests
     public void MapUserDtoToUser_GivenUserDto_ReturnUser()
     {
         // Given
-        UserDTO testUser = new("1", "handler", "user", "mail", "password");
+        UserDTO testUser = new("1", "handler", "user", "mail", "password", new());
 
         IUserCredentials expectedResult = new TestUserCredentials
         {
@@ -52,7 +53,8 @@ public class UserMapperTests
                     It.IsAny<string>(), 
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    It.IsAny<DateTimeOffset?>()
+                    It.IsAny<DateTimeOffset?>(),
+                    It.IsAny<List<string>>()
                 ))
             .Returns(expectedResult);
 
@@ -88,13 +90,20 @@ public class UserMapperTests
             UserName: testUser.Account.UserName,
             Email: testUser.Email,
             Password: testUser.Password,
-            AccountCreationDate: testUser.Account.AccountCreationDate
+            AccountCreationDate: testUser.Account.AccountCreationDate,
+            PinnedConversationIds: testUser.Account.PinnedConversationIds.ToList()
         );
 
         // When
         var result = _userMapperSUT.MapUserToUserDto(testUser);
 
         // Then
-        result.Should().Be(expectedResult);
+        result.Id.Should().Be(expectedResult.Id);
+        result.Handler.Should().Be(expectedResult.Handler);
+        result.UserName.Should().Be(expectedResult.UserName);
+        result.Email.Should().Be(expectedResult.Email);
+        result.Password.Should().Be(expectedResult.Password);
+        result.AccountCreationDate.Should().Be(expectedResult.AccountCreationDate);
+        result.PinnedConversationIds.Should().BeEquivalentTo(expectedResult.PinnedConversationIds);
     }
 }

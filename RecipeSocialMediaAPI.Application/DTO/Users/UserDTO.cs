@@ -6,6 +6,7 @@ public record UserDTO(
     string UserName, 
     string Email, 
     string Password, 
+    List<string> PinnedConversationIds,
     string? ProfileImageId = null,
     DateTimeOffset? AccountCreationDate = null
 );

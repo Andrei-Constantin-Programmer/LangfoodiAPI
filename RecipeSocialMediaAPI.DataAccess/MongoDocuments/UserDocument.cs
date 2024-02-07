@@ -10,5 +10,6 @@ public record UserDocument(
     string Password,
     string? ProfileImageId = null,
     DateTimeOffset? AccountCreationDate = null,
-    string? Id = null
+    string? Id = null,
+    List<string>? PinnedConversationIds = null
 ) : MongoDocument(Id);

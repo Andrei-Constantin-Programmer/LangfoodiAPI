@@ -2,6 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -49,7 +50,8 @@ public class UserDocumentToModelMapperTests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
-                It.IsAny<DateTimeOffset>()),
+                It.IsAny<DateTimeOffset>(),
+                It.IsAny<List<string>>()),
             Times.Never);
     }
 
@@ -91,7 +93,8 @@ public class UserDocumentToModelMapperTests
                 testDocument.Email,
                 testDocument.Password,
                 testDocument.ProfileImageId,
-                testDocument.AccountCreationDate))
+                testDocument.AccountCreationDate,
+                It.IsAny<List<string>>()))
             .Returns(testUser);
 
         // When

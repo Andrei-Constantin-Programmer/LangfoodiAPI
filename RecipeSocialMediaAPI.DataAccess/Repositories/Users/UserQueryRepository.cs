@@ -28,6 +28,7 @@ public class UserQueryRepository : IUserQueryRepository
     public IUserCredentials? GetUserById(string id)
     {
         UserDocument? userDocument;
+
         try
         {
             userDocument = _userCollection

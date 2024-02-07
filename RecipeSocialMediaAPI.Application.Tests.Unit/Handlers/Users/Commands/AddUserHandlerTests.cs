@@ -185,7 +185,8 @@ public class AddUserHandlerTests
                 UserName: user.Account.UserName,
                 AccountCreationDate: user.Account.AccountCreationDate,
                 Email: user.Email, 
-                Password: user.Password
+                Password: user.Password,
+                PinnedConversationIds: new()
             ));
 
         // When

@@ -1,4 +1,6 @@
-﻿namespace RecipeSocialMediaAPI.Domain.Models.Users;
+﻿using System.Collections.Immutable;
+
+namespace RecipeSocialMediaAPI.Domain.Models.Users;
 
 public interface IUserAccount
 {
@@ -7,4 +9,8 @@ public interface IUserAccount
     string UserName { get; set; }
     string? ProfileImageId { get; set; }
     DateTimeOffset AccountCreationDate { get; }
+    ImmutableList<string> PinnedConversationIds { get; }
+
+    public bool RemovePin(string pinnedConversationId);
+    public bool AddPin(string pinnedConversationId);
 }

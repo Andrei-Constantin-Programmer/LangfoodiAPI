@@ -58,6 +58,30 @@ public static class UserEndpoints
             return Results.Ok(await sender.Send(new CheckEmailExistsQuery(email)));
         });
 
+        group.MapPost("/pin", (
+            [FromQuery] string userId,
+            [FromQuery] string conversationId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(sender.Send(new PinConversationCommand(userId, conversationId)));
+        });
+
+        group.MapPost("/unpin", (
+            [FromQuery] string userId,
+            [FromQuery] string conversationId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(sender.Send(new UnpinConversationCommand(userId, conversationId)));
+        });
+
+        group.MapPost("/pins/get", async (
+            [FromQuery] string userId,
+            [FromQuery] string conversationId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetPinnedConversationsQuery(userId)));
+        });
+
         return group;
     }
 }

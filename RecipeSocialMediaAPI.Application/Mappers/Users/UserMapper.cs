@@ -23,7 +23,8 @@ public class UserMapper : IUserMapper
             AccountCreationDate: userCredentials.Account.AccountCreationDate,
             Email: userCredentials.Email,
             Password: userCredentials.Password,
-            ProfileImageId: userCredentials.Account.ProfileImageId
+            ProfileImageId: userCredentials.Account.ProfileImageId,
+            PinnedConversationIds: userCredentials.Account.PinnedConversationIds.ToList()
         );
     }
 
@@ -46,7 +47,8 @@ public class UserMapper : IUserMapper
             Handler: userAccount.Handler,
             UserName: userAccount.UserName,
             ProfileImageId: userAccount.ProfileImageId,
-            AccountCreationDate: userAccount.AccountCreationDate
+            AccountCreationDate: userAccount.AccountCreationDate,
+            PinnedConversationIds: userAccount.PinnedConversationIds.ToList()
         );
     }
 
