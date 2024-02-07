@@ -65,17 +65,11 @@ public class CreateGroupHandlerTests
             .Setup(repo => repo.GetUserById(userAccount3.Id))
             .Returns(new TestUserCredentials() { Account = userAccount3, Email = "test3@mail.com", Password = "TestPass" });
 
-        List<string> userIds = new List<string>();
-        userIds.Add(userAccount1.Id);
-        userIds.Add(userAccount2.Id);
-        userIds.Add(userAccount3.Id);
 
-        List<IUserAccount> users = new List<IUserAccount>();
-        users.Add(userAccount1);
-        users.Add(userAccount2);
-        users.Add(userAccount3);
+        List<string> userIds = new() { userAccount1.Id, userAccount2.Id, userAccount3.Id };
+        List<IUserAccount> users = new() { userAccount1, userAccount2, userAccount3 };
 
-        NewGroupContract testContract = new("1", "name", "description", userIds);
+        NewGroupContract testContract = new("name", "description", userIds);
         Group testGroup = new("1","name","description", users);
 
         _groupPersistenceRepositoryMock
@@ -147,17 +141,10 @@ public class CreateGroupHandlerTests
                 .Returns(new TestUserCredentials() { Account = userAccount3, Email = "test3@mail.com", Password = "TestPass" });
         }
 
-        List<string> userIds = new List<string>();
-        userIds.Add(userAccount1.Id);
-        userIds.Add(userAccount2.Id);
-        userIds.Add(userAccount3.Id);
+        List<string> userIds = new() { userAccount1.Id, userAccount2.Id, userAccount3.Id };
+        List<IUserAccount> users = new() { userAccount1, userAccount2, userAccount3 };
 
-        List<IUserAccount> users = new List<IUserAccount>();
-        users.Add(userAccount1);
-        users.Add(userAccount2);
-        users.Add(userAccount3);
-
-        NewGroupContract testContract = new("1", "name", "description", userIds);
+        NewGroupContract testContract = new("name", "description", userIds);
         Group testGroup = new("1", "name", "description", users);
 
         _groupPersistenceRepositoryMock
