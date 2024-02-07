@@ -205,7 +205,8 @@ public class RecipeMapperTests
                 Id: user.Id,
                 Handler: user.Handler,
                 UserName: user.UserName,
-                AccountCreationDate: user.AccountCreationDate
+                AccountCreationDate: user.AccountCreationDate,
+                PinnedConversationIds: new()
             ));
 
         // When
