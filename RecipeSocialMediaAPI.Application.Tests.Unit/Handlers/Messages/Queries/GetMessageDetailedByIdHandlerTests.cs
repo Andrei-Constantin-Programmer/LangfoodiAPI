@@ -63,14 +63,14 @@ public class GetMessageDetailedByIdHandlerTests
         TestMessage repliedToMessage = new("RepliedToId", testSender, new(2023, 10, 18, 0, 0, 0, TimeSpan.Zero), null, null);
         TestMessage testMessage = new("TestId", testSender, new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero), new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero), repliedToMessage);
 
-        MessageDetailedDTO mappedMessage = new()
-        {
-            Id = testMessage.Id,
-            SenderId = testSender.Id,
-            SenderName = testSender.UserName,
-            SentDate = testMessage.SentDate,
-            UpdatedDate = testMessage.UpdatedDate,
-        };
+        MessageDetailedDTO mappedMessage = new(
+        
+            Id: testMessage.Id,
+            SenderId: testSender.Id,
+            SenderName: testSender.UserName,    
+            SentDate: testMessage.SentDate,
+            UpdatedDate: testMessage.UpdatedDate
+        );
 
         _messageQueryRepository
             .Setup(repo => repo.GetMessage(testMessage.Id))
