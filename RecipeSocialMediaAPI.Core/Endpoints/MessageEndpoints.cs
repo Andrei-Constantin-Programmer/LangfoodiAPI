@@ -56,6 +56,15 @@ public static class MessageEndpoints
             return Results.Ok();
         });
 
+        group.MapPut("/mark-as-read", async (
+            [FromQuery] string userId,
+            [FromQuery] string messageId,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new MarkMessageAsReadCommand(userId, messageId));
+            return Results.Ok();
+        });
+
         return group;
     }
 
