@@ -95,4 +95,80 @@ public class CreateGroupHandlerTests
         result.Description.Should().Be(testContract.Description);
         result.Name.Should().Be(testContract.Name);
     }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(false, true, true)]
+    [InlineData(true, false, true)]
+    [InlineData(true, true, false)]
+    public async Task Handle_WhenUserDoesNotExist_ThrowsUserNotFoundException(bool user1Exists, bool user2Exists, bool user3Exists)
+    {
+        // Given
+        TestUserAccount userAccount1 = new()
+        {
+            Id = "user1",
+            Handler = "user1",
+            UserName = "UserName 1",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount userAccount2 = new()
+        {
+            Id = "user2",
+            Handler = "user2",
+            UserName = "UserName 2",
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+        };
+        TestUserAccount userAccount3 = new()
+        {
+            Id = "user3",
+            Handler = "user3",
+            UserName = "UserName 3",
+            AccountCreationDate = new(2023, 3, 3, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        if (user1Exists)
+        {
+            _userQueryRepositoryMock
+                .Setup(repo => repo.GetUserById(userAccount1.Id))
+                .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test1@mail.com", Password = "TestPass" });
+        }
+
+        if (user2Exists) 
+        {
+            _userQueryRepositoryMock
+                .Setup(repo => repo.GetUserById(userAccount2.Id))
+                .Returns(new TestUserCredentials() { Account = userAccount2, Email = "test2@mail.com", Password = "TestPass" });
+        }
+        if (user3Exists)
+        {
+            _userQueryRepositoryMock
+                .Setup(repo => repo.GetUserById(userAccount3.Id))
+                .Returns(new TestUserCredentials() { Account = userAccount3, Email = "test3@mail.com", Password = "TestPass" });
+        }
+
+        List<string> userIds = new List<string>();
+        userIds.Add(userAccount1.Id);
+        userIds.Add(userAccount2.Id);
+        userIds.Add(userAccount3.Id);
+
+        List<IUserAccount> users = new List<IUserAccount>();
+        users.Add(userAccount1);
+        users.Add(userAccount2);
+        users.Add(userAccount3);
+
+        NewGroupContract testContract = new("1", "name", "description", userIds);
+        Group testGroup = new("1", "name", "description", users);
+
+        _groupPersistenceRepositoryMock
+            .Setup(repo => repo.CreateGroup("name", "description", users))
+            .Returns(testGroup);
+
+        // When
+        var testAction = async () => await _groupHandlerSUT.Handle(new CreateGroupCommand(testContract), CancellationToken.None);
+
+        // Then
+        await testAction.Should()
+           .ThrowAsync<UserNotFoundException>();
+    }
 }
