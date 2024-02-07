@@ -48,6 +48,12 @@ public static class GroupEndpoints
             await sender.Send(new RemoveGroupCommand(groupId));
             return Results.Ok();
         });
+        group.MapPost("/create", async (
+            [FromBody] NewGroupContract newGroupContract,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new CreateGroupCommand(newGroupContract)));
+        });
 
         return group;
     }
