@@ -95,7 +95,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _ = _fakeUserRepository
           .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender,"hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender,"hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.PostAsync($"message/get/?id={message.Id}", null);
@@ -125,7 +125,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _fakeRecipeRepository
            .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id}, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id}, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.PostAsync($"message/get/?id={message.Id}", null);
@@ -159,7 +159,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _ = _fakeUserRepository
           .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1"}, _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1"}, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.PostAsync($"message/get/?id={message.Id}", null);
@@ -348,7 +348,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _ = _fakeUserRepository
           .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var existingMessage = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", null, null);
         var oldUpdatedDate = existingMessage.UpdatedDate;
@@ -379,7 +379,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var oldRecipe = _fakeRecipeRepository
            .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
         var existingMessage = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var newRecipe = _fakeRecipeRepository
            .CreateRecipe(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
@@ -411,7 +411,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _ = _fakeUserRepository
           .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var existingMessage = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", null, new() { "image 2" });
         var oldUpdatedDate = existingMessage.UpdatedDate;
@@ -472,7 +472,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _ = _fakeUserRepository
           .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.PostAsync($"message/get-detailed/?id={message.Id}", null);
@@ -503,7 +503,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _fakeRecipeRepository
            .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.PostAsync($"message/get-detailed/?id={message.Id}", null);
@@ -539,7 +539,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _ = _fakeUserRepository
           .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.DeleteAsync($"message/delete/?id={message.Id}");
@@ -557,7 +557,7 @@ public class MessageEndpointsTests : EndpointTestBase
         _ = _fakeUserRepository
           .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage);
+            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.PostAsync($"message/get-detailed/?id={message.Id}", null);

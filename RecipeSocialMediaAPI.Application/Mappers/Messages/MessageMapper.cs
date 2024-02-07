@@ -22,6 +22,7 @@ public class MessageMapper : IMessageMapper
             Id: message.Id,
             SenderId: message.Sender.Id,
             SenderName: message.Sender.UserName,
+            SeenByUserIds: message.SeenBy.Select(user => user.Id).ToList(),
             SentDate: message.SentDate,
             UpdatedDate: message.UpdatedDate,
             RepliedToMessageId: message.RepliedToMessage?.Id
@@ -36,6 +37,7 @@ public class MessageMapper : IMessageMapper
             Id: message.Id,
             SenderId: message.Sender.Id,
             SenderName: message.Sender.UserName,
+            SeenByUserIds: message.SeenBy.Select(user => user.Id).ToList(),
             SentDate: message.SentDate,
             UpdatedDate: message.UpdatedDate,
             RepliedToMessage:  message.RepliedToMessage is not null ? MapMessageToDetailedMessageDTO(message.RepliedToMessage) : null

@@ -95,7 +95,8 @@ public class MessagePersistenceRepositoryTests
             expectedMessage.Recipes.Select(r => r.Id).ToList(),
             expectedMessage.ImageURLs,
             expectedMessage.SentDate,
-            null);
+            null,
+            new());
 
         // Then
         _messageCollectionMock

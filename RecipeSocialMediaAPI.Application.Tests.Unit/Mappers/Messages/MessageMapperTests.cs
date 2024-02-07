@@ -70,7 +70,8 @@ public class MessageMapperTests
             TextContent: testMessage.TextContent,
             RepliedToMessageId: testMessage.RepliedToMessage!.Id,
             SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate
+            UpdatedDate: testMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         // When
@@ -116,7 +117,8 @@ public class MessageMapperTests
             TextContent: testMessage.TextContent,
             RepliedToMessageId: testMessage.RepliedToMessage!.Id,
             SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate
+            UpdatedDate: testMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         // When
@@ -170,7 +172,8 @@ public class MessageMapperTests
             TextContent: testMessage.TextContent,
             RepliedToMessageId: testMessage.RepliedToMessage!.Id,
             SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate
+            UpdatedDate: testMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         _recipeMapperMock
@@ -244,7 +247,8 @@ public class MessageMapperTests
             TextContent: repliedToMessage.TextContent,
             RepliedToMessage: null,
             SentDate: repliedToMessage.SentDate,
-            UpdatedDate: repliedToMessage.UpdatedDate
+            UpdatedDate: repliedToMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage(
@@ -264,7 +268,8 @@ public class MessageMapperTests
             TextContent: testMessage.TextContent,
             RepliedToMessage: repliedToMessageDTO,
             SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate
+            UpdatedDate: testMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         // When
@@ -309,7 +314,8 @@ public class MessageMapperTests
             TextContent: repliedToMessage.TextContent,
             RepliedToMessage: null,
             SentDate: repliedToMessage.SentDate,
-            UpdatedDate: repliedToMessage.UpdatedDate
+            UpdatedDate: repliedToMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         var testMessage = (ImageMessage)_messageFactory.CreateImageMessage(
@@ -331,7 +337,8 @@ public class MessageMapperTests
             TextContent: testMessage.TextContent,
             RepliedToMessage: repliedToMessageDTO,
             SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate
+            UpdatedDate: testMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         // When
@@ -375,7 +382,8 @@ public class MessageMapperTests
             TextContent: repliedToMessage.TextContent,
             RepliedToMessage: null,
             SentDate: repliedToMessage.SentDate,
-            UpdatedDate: repliedToMessage.UpdatedDate
+            UpdatedDate: repliedToMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         RecipeAggregate recipe1 = new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE);
@@ -421,7 +429,8 @@ public class MessageMapperTests
             TextContent: testMessage.TextContent,
             RepliedToMessage: repliedToMessageDTO,
             SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate
+            UpdatedDate: testMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         _recipeMapperMock

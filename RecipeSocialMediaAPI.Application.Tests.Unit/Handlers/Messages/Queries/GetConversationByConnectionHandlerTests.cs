@@ -85,7 +85,7 @@ public class GetConversationByConnectionHandlerTests
             UserName = "User 2"
         };
 
-        MessageDTO lastMessageDto = new("3", user2.Id, user1.UserName, new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
+        MessageDTO lastMessageDto = new("3", user2.Id, user1.UserName, new(), new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
 
         List<Message> messages = new()
         {

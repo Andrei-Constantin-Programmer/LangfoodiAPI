@@ -6,6 +6,7 @@ public record MessageDTO(
     string Id,
     string SenderId,
     string SenderName,
+    List<string> SeenByUserIds,
     DateTimeOffset? SentDate = null,
     DateTimeOffset? UpdatedDate = null,
     string? RepliedToMessageId = null,

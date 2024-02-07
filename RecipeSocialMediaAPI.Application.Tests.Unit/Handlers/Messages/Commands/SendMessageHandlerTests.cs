@@ -114,9 +114,10 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    null))
+                    null,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -180,10 +181,11 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
                     It.Is<List<string>>(imageUrls => imageUrls.SequenceEqual(contract.ImageURLs)),
                     _testDate,
-                    null))
+                    null,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs[0], contract.ImageURLs[1] });
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs[0], contract.ImageURLs[1] });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -257,10 +259,11 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds)),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    null))
+                    null,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -330,10 +333,11 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds)),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    null))
+                    null,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -498,10 +502,11 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    repliedToMessage))
+                    repliedToMessage,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -570,10 +575,11 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    repliedToMessage))
+                    repliedToMessage,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);

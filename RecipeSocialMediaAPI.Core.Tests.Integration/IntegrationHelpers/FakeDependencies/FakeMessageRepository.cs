@@ -24,7 +24,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
 
     public Message? GetMessage(string id) => _collection.FirstOrDefault(m => m.Id == id);
 
-    public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo)
+    public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
     {
         var id = _collection.Count.ToString();
         Message message;
