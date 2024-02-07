@@ -24,8 +24,8 @@ public class RecipeMessage : Message
     public ImmutableList<RecipeAggregate> Recipes => _recipes.ToImmutableList();
 
     public RecipeMessage(IDateTimeProvider dateTimeProvider, 
-        string id, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
-        : base(id, sender, sentDate, updatedDate, repliedToMessage)
+        string id, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null, List<IUserAccount>? seenBy = null) 
+        : base(id, sender, sentDate, updatedDate, repliedToMessage, seenBy)
     {
         _dateTimeProvider = dateTimeProvider;
 

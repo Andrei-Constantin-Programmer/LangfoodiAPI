@@ -36,15 +36,15 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
                 .ToList();
 
             message = _messageFactory
-                .CreateRecipeMessage(id, sender, recipes, text, sentDate, repliedToMessage: messageRepliedTo);
+                .CreateRecipeMessage(id, sender, recipes, text, new(), sentDate, repliedToMessage: messageRepliedTo);
         }
         else if (imageURLs.Count > 0)
         {
-            message = _messageFactory.CreateImageMessage(id, sender, imageURLs, text, sentDate, repliedToMessage: messageRepliedTo);
+            message = _messageFactory.CreateImageMessage(id, sender, imageURLs, text, new(), sentDate, repliedToMessage: messageRepliedTo);
         }
         else
         {
-            message = _messageFactory.CreateTextMessage(id, sender, text!, sentDate, repliedToMessage: messageRepliedTo);
+            message = _messageFactory.CreateTextMessage(id, sender, text!, new(), sentDate, repliedToMessage: messageRepliedTo);
         }
 
         _collection.Add(message);

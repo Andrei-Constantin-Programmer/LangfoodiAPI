@@ -77,6 +77,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new("Text"),
+            SeenByUserIds: new(),
             SenderId: "1",
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -131,6 +132,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new("Text"),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new (2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -193,6 +195,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(hasText ? "Text" : null, null, imageURLs),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -256,6 +259,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(hasText ? "Text" : null, recipeIds, null),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -339,6 +343,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(null, recipeIds, null),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -419,6 +424,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new("Text"),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -479,6 +485,7 @@ public class MessageQueryRepositoryTests
                     Id: newMessage.Id,
                     SenderId: newMessage.Sender.Id,
                     MessageContent: new(),
+                    SeenByUserIds: new(),
                     SentDate: newMessage.SentDate,
                     MessageRepliedToId: newMessage.RepliedToMessage?.Id
                 ));
@@ -506,6 +513,7 @@ public class MessageQueryRepositoryTests
                 isTextNull ? null : "Test Text",
                 isRecipeListNull ? null : new List<string>(),
                 isImageListNull ? null : new List<string>()),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );

@@ -26,6 +26,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         MessageDocument messageDocument = _messageCollection.Insert(new MessageDocument(
             SenderId: sender.Id,
             MessageContent: new(text, recipeIds, imageURLs),
+            SeenByUserIds: new(),
             SentDate: sentDate,
             MessageRepliedToId: messageRepliedTo?.Id
         ));
@@ -48,6 +49,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
 
                     _ => throw new Exception($"Unable to update message with id {message.Id}")
                 },
+                SeenByUserIds: new(),
                 SentDate: message.SentDate,
                 LastUpdatedDate: message.UpdatedDate,
                 MessageRepliedToId: message.RepliedToMessage?.Id

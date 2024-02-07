@@ -44,7 +44,7 @@ public class MessageFactoryTests
         Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
 
         // When
-        var result = (TextMessage)_messageFactorySUT.CreateTextMessage(testId, testSender, testText, testSentDate, testUpdateDate, testReplyMessage);
+        var result = (TextMessage)_messageFactorySUT.CreateTextMessage(testId, testSender, testText, new(), testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         result.Id.Should().Be(testId);
@@ -76,7 +76,7 @@ public class MessageFactoryTests
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
         // When
-        var testAction = () => _messageFactorySUT.CreateTextMessage(testId, testSender, textContent, testSentDate, testUpdateDate);
+        var testAction = () => _messageFactorySUT.CreateTextMessage(testId, testSender, textContent, new(), testSentDate, testUpdateDate);
 
         // Then
         testAction.Should().Throw<ArgumentException>();
@@ -107,7 +107,7 @@ public class MessageFactoryTests
         };
 
         // When
-        var result = (ImageMessage)_messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
+        var result = (ImageMessage)_messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, new(), testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         result.Id.Should().Be(testId);
@@ -141,7 +141,7 @@ public class MessageFactoryTests
         List<string> images = new();
 
         // When
-        var testAction = () => _messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
+        var testAction = () => _messageFactorySUT.CreateImageMessage(testId, testSender, images, testText, new(), testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         testAction.Should().Throw<ArgumentException>();
@@ -172,7 +172,7 @@ public class MessageFactoryTests
         };
 
         // When
-        var result = (RecipeMessage)_messageFactorySUT.CreateRecipeMessage(testId, testSender, recipes, testText, testSentDate, testUpdateDate, testReplyMessage);
+        var result = (RecipeMessage)_messageFactorySUT.CreateRecipeMessage(testId, testSender, recipes, testText, new(), testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         result.Id.Should().Be(testId);
@@ -206,7 +206,7 @@ public class MessageFactoryTests
         List<RecipeAggregate> images = new();
 
         // When
-        var testAction = () => _messageFactorySUT.CreateRecipeMessage(testId, testSender, images, testText, testSentDate, testUpdateDate, testReplyMessage);
+        var testAction = () => _messageFactorySUT.CreateRecipeMessage(testId, testSender, images, testText, new(), testSentDate, testUpdateDate, testReplyMessage);
 
         // Then
         testAction.Should().Throw<ArgumentException>();

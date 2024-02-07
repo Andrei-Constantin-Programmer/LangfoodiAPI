@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
@@ -21,14 +22,16 @@ public class MessageDocumentToModelMapperTests
     private readonly Mock<ILogger<MessageDocumentToModelMapper>> _loggerMock;
     private readonly Mock<IMessageFactory> _messageFactoryMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     public MessageDocumentToModelMapperTests()
     {
         _loggerMock = new Mock<ILogger<MessageDocumentToModelMapper>>();
         _messageFactoryMock = new Mock<IMessageFactory>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _messageDocumentToModelMapperSUT = new(_loggerMock.Object, _messageFactoryMock.Object, _recipeQueryRepositoryMock.Object);
+        _messageDocumentToModelMapperSUT = new(_loggerMock.Object, _messageFactoryMock.Object, _recipeQueryRepositoryMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -44,6 +47,7 @@ public class MessageDocumentToModelMapperTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new("Text"),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -68,6 +72,7 @@ public class MessageDocumentToModelMapperTests
                 textMessage.Id,
                 testSender,
                 textMessage.Text,
+                new(),
                 textMessage.SentDate,
                 textMessage.UpdatedDate,
                 textMessage.RepliedToMessage))
@@ -101,6 +106,7 @@ public class MessageDocumentToModelMapperTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(hasText ? "Text" : null, null, imageURLs),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -127,6 +133,7 @@ public class MessageDocumentToModelMapperTests
                 testSender,
                 imageMessage.ImageURLs,
                 imageMessage.Text,
+                new(),
                 imageMessage.SentDate,
                 imageMessage.UpdatedDate,
                 null))
@@ -160,6 +167,7 @@ public class MessageDocumentToModelMapperTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(hasText ? "Text" : null, recipeIds, null),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -209,6 +217,7 @@ public class MessageDocumentToModelMapperTests
                 testSender,
                 recipeMessage.Recipes,
                 recipeMessage.Text,
+                new(),
                 recipeMessage.SentDate,
                 recipeMessage.UpdatedDate,
                 null))
@@ -242,6 +251,7 @@ public class MessageDocumentToModelMapperTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(null, recipeIds, null),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -291,6 +301,7 @@ public class MessageDocumentToModelMapperTests
                 testSender,
                 recipeMessage.Recipes,
                 recipeMessage.Text,
+                new(),
                 recipeMessage.SentDate,
                 recipeMessage.UpdatedDate,
                 null))
@@ -330,6 +341,7 @@ public class MessageDocumentToModelMapperTests
                 isTextNull ? null : "Test Text",
                 isRecipeListNull ? null : new List<string>(),
                 isImageListNull ? null : new List<string>()),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );

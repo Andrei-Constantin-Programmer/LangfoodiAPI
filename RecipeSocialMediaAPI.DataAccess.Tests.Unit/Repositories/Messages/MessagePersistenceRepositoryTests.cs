@@ -125,7 +125,7 @@ public class MessagePersistenceRepositoryTests
         };
 
         var message = (TextMessage)_messageFactory
-            .CreateTextMessage("MessageId", testSender, "Test Text", _dateTimeProviderMock.Object.Now);
+            .CreateTextMessage("MessageId", testSender, "Test Text", new(), _dateTimeProviderMock.Object.Now);
 
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
@@ -174,7 +174,7 @@ public class MessagePersistenceRepositoryTests
         };
 
         var message = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, recipes, "Test Text", _dateTimeProviderMock.Object.Now);
+            .CreateRecipeMessage("MessageId", testSender, recipes, "Test Text", new(), _dateTimeProviderMock.Object.Now);
 
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
@@ -218,7 +218,7 @@ public class MessagePersistenceRepositoryTests
         List<string> imageURLs = new() { "Image1", "Image2", "Image3" };
 
         var message = (ImageMessage)_messageFactory
-            .CreateImageMessage("MessageId", testSender, imageURLs, "Test Text", _dateTimeProviderMock.Object.Now);
+            .CreateImageMessage("MessageId", testSender, imageURLs, "Test Text", new(), _dateTimeProviderMock.Object.Now);
 
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
@@ -295,7 +295,7 @@ public class MessagePersistenceRepositoryTests
         };
 
         var message = (TextMessage)_messageFactory
-            .CreateTextMessage("MessageId", testSender, "Test Text", _dateTimeProviderMock.Object.Now);
+            .CreateTextMessage("MessageId", testSender, "Test Text", new(), _dateTimeProviderMock.Object.Now);
 
         _messageCollectionMock
             .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))

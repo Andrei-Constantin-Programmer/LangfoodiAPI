@@ -57,9 +57,10 @@ public class MessageMapperTests
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage(
             "TestId", 
             testSender, 
-            "Test text content", 
+            "Test text content",
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero), 
-            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero), 
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
         MessageDTO expectedResult = new(
@@ -102,6 +103,7 @@ public class MessageMapperTests
             testSender,
             new List<string>() { "Image1", "Image2" },
             containsTextContent ? "Test text content" : null,
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
@@ -151,6 +153,7 @@ public class MessageMapperTests
                 new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE, thumbnailId: "ThumbnailId2")
             },
             containsTextContent ? "Test text content" : null,
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
@@ -172,7 +175,7 @@ public class MessageMapperTests
 
         _recipeMapperMock
             .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(testMessage.Recipes[0]))
-            .Returns(expectedResult.Recipes[0]);
+            .Returns(expectedResult.Recipes![0]);
 
 
         _recipeMapperMock
@@ -228,6 +231,7 @@ public class MessageMapperTests
             "TestId",
             testSender,
             "Test text content",
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             null);
@@ -247,6 +251,7 @@ public class MessageMapperTests
             "TestId",
             testSender,
             "Test text content",
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
@@ -291,6 +296,7 @@ public class MessageMapperTests
             "TestId",
             testSender,
             "Test text content",
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             null);
@@ -311,6 +317,7 @@ public class MessageMapperTests
             testSender,
             new List<string>() { "Image1", "Image2" },
             containsTextContent ? "Test text content" : null,
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
@@ -355,6 +362,7 @@ public class MessageMapperTests
             "TestId",
             testSender,
             "Test text content",
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             null);
@@ -382,6 +390,7 @@ public class MessageMapperTests
                 recipe2
             },
             containsTextContent ? "Test text content" : null,
+            new(),
             new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
