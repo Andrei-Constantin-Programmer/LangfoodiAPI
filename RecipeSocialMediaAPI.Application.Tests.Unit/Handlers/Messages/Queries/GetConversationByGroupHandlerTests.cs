@@ -11,6 +11,8 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Queries;
 
@@ -18,6 +20,7 @@ public class GetConversationByGroupHandlerTests
 {
     private readonly Mock<IConversationQueryRepository> _conversationQueryRepositoryMock;
     private readonly Mock<IMessageMapper> _messageMapperMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly GetConversationByGroupHandler _getConversationByGroupHandlerSUT;
 
@@ -25,8 +28,9 @@ public class GetConversationByGroupHandlerTests
     {
         _conversationQueryRepositoryMock = new Mock<IConversationQueryRepository>();
         _messageMapperMock = new Mock<IMessageMapper>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _getConversationByGroupHandlerSUT = new(_conversationQueryRepositoryMock.Object, _messageMapperMock.Object);
+        _getConversationByGroupHandlerSUT = new(_conversationQueryRepositoryMock.Object, _messageMapperMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -48,6 +52,15 @@ public class GetConversationByGroupHandlerTests
             UserName = "User 2"
         };
 
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Id))
+            .Returns(new TestUserCredentials()
+            {
+                Account = user1,
+                Email = "user1@mail.com",
+                Password = "Test@123"
+            });
+
         Group group = new("group1", "Group 1", "Group Description", new List<IUserAccount>() { user1, user2 });
         GroupConversation conversation = new(group, "convo1", new List<Message>());
 
@@ -55,7 +68,7 @@ public class GetConversationByGroupHandlerTests
             .Setup(repo => repo.GetConversationByGroup(group.GroupId))
             .Returns(conversation);
 
-        GetConversationByGroupQuery query = new(group.GroupId);
+        GetConversationByGroupQuery query = new(user1.Id, group.GroupId);
 
         // When
         var result = await _getConversationByGroupHandlerSUT.Handle(query, CancellationToken.None);
@@ -86,6 +99,15 @@ public class GetConversationByGroupHandlerTests
             UserName = "User 2"
         };
 
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Id))
+            .Returns(new TestUserCredentials()
+            {
+                Account = user1,
+                Email = "user1@mail.com",
+                Password = "Test@123"
+            });
+
         MessageDTO lastMessageDto = new("3", user2.Id, user2.UserName, new(), new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
 
         List<Message> messages = new()
@@ -107,7 +129,7 @@ public class GetConversationByGroupHandlerTests
             .Setup(repo => repo.GetConversationByGroup(group.GroupId))
             .Returns(conversation);
 
-        GetConversationByGroupQuery query = new(group.GroupId);
+        GetConversationByGroupQuery query = new(user1.Id, group.GroupId);
 
         // When
         var result = await _getConversationByGroupHandlerSUT.Handle(query, CancellationToken.None);
@@ -125,12 +147,27 @@ public class GetConversationByGroupHandlerTests
     public async Task Handle_WhenThereIsNoConversationFound_ThrowConversationNotFoundException()
     {
         // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "u1",
+            Handler = "user1",
+            UserName = "User 1"
+        };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Id))
+            .Returns(new TestUserCredentials()
+            {
+                Account = user1,
+                Email = "user1@mail.com",
+                Password = "Test@123"
+            });
+
         string groupId = "group1";
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByGroup(groupId))
             .Returns((Conversation?)null);
 
-        GetConversationByGroupQuery query = new(groupId);
+        GetConversationByGroupQuery query = new(user1.Id, groupId);
 
         // When
         var testAction = async () => await _getConversationByGroupHandlerSUT.Handle(query, CancellationToken.None);
