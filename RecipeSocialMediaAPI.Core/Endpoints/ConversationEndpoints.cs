@@ -20,17 +20,19 @@ public static class ConversationEndpoints
     private static RouteGroupBuilder AddConversationEndpoints(this RouteGroupBuilder group)
     {
         group.MapPost("/get-by-connection", async (
+            [FromQuery] string userId,
             [FromQuery] string connectionId,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetConversationByConnectionQuery(connectionId)));
+            return Results.Ok(await sender.Send(new GetConversationByConnectionQuery(userId, connectionId)));
         });
 
         group.MapPost("/get-by-group", async (
+            [FromQuery] string userId,
             [FromQuery] string groupId,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetConversationByGroupQuery(groupId)));
+            return Results.Ok(await sender.Send(new GetConversationByGroupQuery(userId, groupId)));
         });
 
         group.MapPost("/create-by-connection", async (
