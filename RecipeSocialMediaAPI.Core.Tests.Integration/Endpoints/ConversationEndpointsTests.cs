@@ -91,11 +91,11 @@ public class ConversationEndpointsTests : EndpointTestBase
             .CreateConnectionConversation(connection);
 
         Message testMessage1 = _fakeMessageRepository
-            .CreateMessage(user1, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null);
+            .CreateMessage(user1, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage2 = _fakeMessageRepository
-            .CreateMessage(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null);
+            .CreateMessage(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage3 = _fakeMessageRepository
-            .CreateMessage(user1, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null);
+            .CreateMessage(user1, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
         
         conversation.SendMessage(testMessage1);
         conversation.SendMessage(testMessage3);
@@ -196,11 +196,11 @@ public class ConversationEndpointsTests : EndpointTestBase
             .CreateGroupConversation(group);
 
         Message testMessage1 = _fakeMessageRepository
-            .CreateMessage(user1, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null);
+            .CreateMessage(user1, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage2 = _fakeMessageRepository
-            .CreateMessage(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null);
+            .CreateMessage(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage3 = _fakeMessageRepository
-            .CreateMessage(user1, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null);
+            .CreateMessage(user1, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
 
         conversation.SendMessage(testMessage1);
         conversation.SendMessage(testMessage3);

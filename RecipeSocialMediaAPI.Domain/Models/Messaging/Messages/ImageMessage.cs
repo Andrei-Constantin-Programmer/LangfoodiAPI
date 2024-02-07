@@ -23,8 +23,8 @@ public class ImageMessage : Message
     public ImmutableList<string> ImageURLs => _imageURLs.ToImmutableList();
 
     public ImageMessage(IDateTimeProvider dateTimeProvider, 
-        string id, IUserAccount sender, IEnumerable<string> imageURLs, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null) 
-        : base(id, sender, sentDate, updatedDate, repliedToMessage)
+        string id, IUserAccount sender, IEnumerable<string> imageURLs, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null, List<IUserAccount>? seenBy = null)
+        : base(id, sender, sentDate, updatedDate, repliedToMessage, seenBy)
     {
         _dateTimeProvider = dateTimeProvider;
 

@@ -73,7 +73,8 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
             recipeIds: request.Contract.RecipeIds,
             imageURLs: request.Contract.ImageURLs,
             sentDate: _dateTimeProvider.Now,
-            messageRepliedTo: messageRepliedTo
+            messageRepliedTo: messageRepliedTo,
+            seenByUserIds: new() { sender.Id }
         );
 
         return await Task.FromResult(_messageMapper.MapMessageToMessageDTO(createdMessage));

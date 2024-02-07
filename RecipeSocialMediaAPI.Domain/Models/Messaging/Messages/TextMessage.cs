@@ -21,8 +21,8 @@ public class TextMessage : Message
     }
 
     internal TextMessage(IDateTimeProvider dateTimeProvider, 
-        string id, IUserAccount sender, string textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null)
-        : base(id, sender, sentDate, updatedDate, repliedToMessage)
+        string id, IUserAccount sender, string textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null, List<IUserAccount>? seenBy = null)
+        : base(id, sender, sentDate, updatedDate, repliedToMessage, seenBy)
     {
         _dateTimeProvider = dateTimeProvider;
 

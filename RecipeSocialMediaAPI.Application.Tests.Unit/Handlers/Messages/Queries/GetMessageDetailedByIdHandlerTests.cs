@@ -69,7 +69,8 @@ public class GetMessageDetailedByIdHandlerTests
             SenderId: testSender.Id,
             SenderName: testSender.UserName,    
             SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate
+            UpdatedDate: testMessage.UpdatedDate,
+            SeenByUserIds: new()
         );
 
         _messageQueryRepository

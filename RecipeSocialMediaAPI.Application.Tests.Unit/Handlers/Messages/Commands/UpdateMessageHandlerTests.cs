@@ -112,7 +112,7 @@ public class UpdateMessageHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -151,7 +151,7 @@ public class UpdateMessageHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -182,7 +182,7 @@ public class UpdateMessageHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -217,7 +217,7 @@ public class UpdateMessageHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -252,7 +252,7 @@ public class UpdateMessageHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, testCommand.Contract.Text!, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, testCommand.Contract.Text!, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -289,7 +289,7 @@ public class UpdateMessageHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -326,7 +326,7 @@ public class UpdateMessageHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        var testMessage = (ImageMessage)_messageFactory.CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        var testMessage = (ImageMessage)_messageFactory.CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -369,7 +369,7 @@ public class UpdateMessageHandlerTests
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         var testMessage = (ImageMessage)_messageFactory
-            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -413,7 +413,7 @@ public class UpdateMessageHandlerTests
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         var testMessage = (ImageMessage)_messageFactory
-            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -446,7 +446,7 @@ public class UpdateMessageHandlerTests
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         var testMessage = (ImageMessage)_messageFactory
-            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -483,7 +483,7 @@ public class UpdateMessageHandlerTests
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         var testMessage = (ImageMessage)_messageFactory
-            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -530,7 +530,7 @@ public class UpdateMessageHandlerTests
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newTextContent, new(), null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, "Original Text", new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -591,7 +591,7 @@ public class UpdateMessageHandlerTests
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { newRecipe.Id }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -647,7 +647,7 @@ public class UpdateMessageHandlerTests
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { "Inexistent Recipe" }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -704,7 +704,7 @@ public class UpdateMessageHandlerTests
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { newRecipe.Id }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -758,7 +758,7 @@ public class UpdateMessageHandlerTests
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new() { newRecipe.Id }, new() { "New Image" }));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -807,7 +807,7 @@ public class UpdateMessageHandlerTests
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new(), null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))

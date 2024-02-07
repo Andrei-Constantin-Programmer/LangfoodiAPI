@@ -24,7 +24,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
 
     public Message? GetMessage(string id) => _collection.FirstOrDefault(m => m.Id == id);
 
-    public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo)
+    public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
     {
         var id = _collection.Count.ToString();
         Message message;
@@ -36,15 +36,15 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
                 .ToList();
 
             message = _messageFactory
-                .CreateRecipeMessage(id, sender, recipes, text, sentDate, repliedToMessage: messageRepliedTo);
+                .CreateRecipeMessage(id, sender, recipes, text, new(), sentDate, repliedToMessage: messageRepliedTo);
         }
         else if (imageURLs.Count > 0)
         {
-            message = _messageFactory.CreateImageMessage(id, sender, imageURLs, text, sentDate, repliedToMessage: messageRepliedTo);
+            message = _messageFactory.CreateImageMessage(id, sender, imageURLs, text, new(), sentDate, repliedToMessage: messageRepliedTo);
         }
         else
         {
-            message = _messageFactory.CreateTextMessage(id, sender, text!, sentDate, repliedToMessage: messageRepliedTo);
+            message = _messageFactory.CreateTextMessage(id, sender, text!, new(), sentDate, repliedToMessage: messageRepliedTo);
         }
 
         _collection.Add(message);

@@ -107,16 +107,17 @@ public class SendMessageHandlerTests
         
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
-        Message createdMessage = _messageFactory.CreateTextMessage("m1", user1.Account, contract.Text!, _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateTextMessage("m1", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    null))
+                    null,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -173,17 +174,18 @@ public class SendMessageHandlerTests
 
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
 
-        Message createdMessage = _messageFactory.CreateImageMessage("m1", user1.Account, contract.ImageURLs, contract.Text, _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateImageMessage("m1", user1.Account, contract.ImageURLs, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
                     It.Is<List<string>>(imageUrls => imageUrls.SequenceEqual(contract.ImageURLs)),
                     _testDate,
-                    null))
+                    null,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs[0], contract.ImageURLs[1] });
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs[0], contract.ImageURLs[1] });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -250,17 +252,18 @@ public class SendMessageHandlerTests
 
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
-        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2}, contract.Text, _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2}, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
                     It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds)),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    null))
+                    null,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -323,17 +326,18 @@ public class SendMessageHandlerTests
 
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
-        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2 }, contract.Text, _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2 }, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
                     It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds)),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    null))
+                    null,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -484,24 +488,25 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetConversationById(conversation.ConversationId))
             .Returns(conversation);
 
-        Message repliedToMessage = _messageFactory.CreateTextMessage("m1", user2.Account, "I am being replied to", _dateTimeProviderMock.Object.Now);
+        Message repliedToMessage = _messageFactory.CreateTextMessage("m1", user2.Account, "I am being replied to", new(), _dateTimeProviderMock.Object.Now);
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(repliedToMessage.Id))
             .Returns(repliedToMessage);
 
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
 
-        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text!, _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
+        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    repliedToMessage))
+                    repliedToMessage,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -556,24 +561,25 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetConversationById(conversation.ConversationId))
             .Returns(conversation);
 
-        Message repliedToMessage = _messageFactory.CreateTextMessage("m1", user2.Account, "I am being replied to", _dateTimeProviderMock.Object.Now);
+        Message repliedToMessage = _messageFactory.CreateTextMessage("m1", user2.Account, "I am being replied to", new(), _dateTimeProviderMock.Object.Now);
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(repliedToMessage.Id))
             .Returns((Message?)null);
 
         NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
 
-        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text!, _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
+        Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
-                    repliedToMessage))
+                    repliedToMessage,
+                    It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);

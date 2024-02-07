@@ -21,11 +21,12 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         _messageCollection = mongoCollectionFactory.CreateCollection<MessageDocument>();
     }
 
-    public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo)
+    public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
     {
         MessageDocument messageDocument = _messageCollection.Insert(new MessageDocument(
             SenderId: sender.Id,
             MessageContent: new(text, recipeIds, imageURLs),
+            SeenByUserIds: seenByUserIds,
             SentDate: sentDate,
             MessageRepliedToId: messageRepliedTo?.Id
         ));
@@ -48,6 +49,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
 
                     _ => throw new Exception($"Unable to update message with id {message.Id}")
                 },
+                SeenByUserIds: message.SeenBy.Select(user => user.Id).ToList(),
                 SentDate: message.SentDate,
                 LastUpdatedDate: message.UpdatedDate,
                 MessageRepliedToId: message.RepliedToMessage?.Id
