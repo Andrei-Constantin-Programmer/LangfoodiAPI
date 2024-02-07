@@ -51,7 +51,7 @@ public class UserDocumentToModelMapperTests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<DateTimeOffset>(),
-                It.IsAny<List<Conversation>>()),
+                It.IsAny<List<string>>()),
             Times.Never);
     }
 
@@ -94,7 +94,7 @@ public class UserDocumentToModelMapperTests
                 testDocument.Password,
                 testDocument.ProfileImageId,
                 testDocument.AccountCreationDate,
-                It.IsAny<List<Conversation>>()))
+                It.IsAny<List<string>>()))
             .Returns(testUser);
 
         // When

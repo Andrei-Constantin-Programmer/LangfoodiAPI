@@ -1,5 +1,4 @@
-﻿using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 
 namespace RecipeSocialMediaAPI.Domain.Models.Users;
 
@@ -11,20 +10,20 @@ public class UserAccount : IUserAccount
     public string? ProfileImageId { get; set; }
     public DateTimeOffset AccountCreationDate { get; }
 
-    private readonly HashSet<Conversation> _pinnedConversations;
-    public ImmutableList<Conversation> PinnedConversations => _pinnedConversations.ToImmutableList();
+    private readonly HashSet<string> _pinnedConversationIds;
+    public ImmutableList<string> PinnedConversationIds => _pinnedConversationIds.ToImmutableList();
 
-    internal UserAccount(string id, string handler, string username, string? profileImageId, DateTimeOffset accountCreationDate, List<Conversation>? pinnedConversations = null)
+    internal UserAccount(string id, string handler, string username, string? profileImageId, DateTimeOffset accountCreationDate, List<string>? pinnedConversationIds = null)
     {
         Id = id;
         Handler = handler;
         UserName = username;
         ProfileImageId = profileImageId;
         AccountCreationDate = accountCreationDate;
-        _pinnedConversations = pinnedConversations?.ToHashSet() ?? new();
+        _pinnedConversationIds = pinnedConversationIds?.ToHashSet() ?? new();
     }
 
-    public bool RemovePin(Conversation pinnedConversation) => _pinnedConversations.Remove(pinnedConversation);
+    public bool RemovePin(string pinnedConversationId) => _pinnedConversationIds.Remove(pinnedConversationId);
 
-    public bool AddPin(Conversation pinnedConversation) => _pinnedConversations.Add(pinnedConversation);
+    public bool AddPin(string pinnedConversationId) => _pinnedConversationIds.Add(pinnedConversationId);
 }

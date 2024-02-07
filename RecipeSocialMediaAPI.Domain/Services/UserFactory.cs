@@ -1,5 +1,4 @@
-﻿using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
-using RecipeSocialMediaAPI.Domain.Models.Users;
+﻿using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Utilities;
 
@@ -14,9 +13,9 @@ public class UserFactory : IUserFactory
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public IUserAccount CreateUserAccount(string id, string handler, string username, string? profileImageId = null, DateTimeOffset? accountCreationDate = null, List<Conversation>? pinnedConversations = null)
+    public IUserAccount CreateUserAccount(string id, string handler, string username, string? profileImageId = null, DateTimeOffset? accountCreationDate = null, List<string>? pinnedConversationIds = null)
     {
-        return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now, pinnedConversations);
+        return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now, pinnedConversationIds);
     }
 
     public IUserCredentials CreateUserCredentials(IUserAccount userAccount, string email, string password)
@@ -24,8 +23,8 @@ public class UserFactory : IUserFactory
         return new UserCredentials(userAccount, email, password);
     }
 
-    public IUserCredentials CreateUserCredentials(string id, string handler, string username, string email, string password, string? profileImageId = null, DateTimeOffset? accountCreationDate = null, List<Conversation>? pinnedConversations = null)
+    public IUserCredentials CreateUserCredentials(string id, string handler, string username, string email, string password, string? profileImageId = null, DateTimeOffset? accountCreationDate = null, List<string>? pinnedConversationIds = null)
     {
-        return new UserCredentials(CreateUserAccount(id, handler, username, profileImageId, accountCreationDate, pinnedConversations), email, password);
+        return new UserCredentials(CreateUserAccount(id, handler, username, profileImageId, accountCreationDate, pinnedConversationIds), email, password);
     }
 }

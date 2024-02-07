@@ -54,7 +54,7 @@ public class UserMapperTests
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<DateTimeOffset?>(),
-                    It.IsAny<List<Conversation>>()
+                    It.IsAny<List<string>>()
                 ))
             .Returns(expectedResult);
 
