@@ -10,6 +10,7 @@ using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
@@ -90,28 +91,29 @@ public class UpdateUserHandlerTests
                 {
                     Id = contract.Id,
                     Handler = existingHandler,
-                    UserName = contract.UserName,
+                    UserName = contract.UserName!,
                     AccountCreationDate = creationDate
                 },
-                Email = contract.Email,
-                Password = contract.Password
+                Email = contract.Email!,
+                Password = contract.Password!
             });
 
         _userPersistenceRepositoryMock
             .Setup(repo => repo.UpdateUser(It.IsAny<IUserCredentials>()))
             .Returns(true);
 
-        var encryptedPassword = _cryptoServiceFake.Encrypt(contract.Password);
+        var encryptedPassword = _cryptoServiceFake.Encrypt(contract.Password!);
         _userFactoryMock
             .Setup(factory => factory
                 .CreateUserCredentials(
-                    contract.Id, 
-                    existingHandler, 
-                    contract.UserName, 
-                    contract.Email, 
+                    contract.Id,
+                    existingHandler,
+                    contract.UserName!,
+                    contract.Email!,
                     encryptedPassword,
                     contract.ProfileImageId,
-                    creationDate
+                    creationDate,
+                    It.IsAny<List<Conversation>>()
             ))
             .Returns(new TestUserCredentials
             {
@@ -119,10 +121,10 @@ public class UpdateUserHandlerTests
                 {
                     Id = contract.Id,
                     Handler = existingHandler,
-                    UserName = contract.UserName,
+                    UserName = contract.UserName!,
                     AccountCreationDate = creationDate
                 },
-                Email = contract.Email,
+                Email = contract.Email!,
                 Password = encryptedPassword
             });
 
@@ -140,7 +142,7 @@ public class UpdateUserHandlerTests
                 && user.Account.AccountCreationDate == creationDate
                 && user.Account.UserName == contract.UserName
                 && user.Email == contract.Email
-                && _cryptoServiceFake.ArePasswordsTheSame(contract.Password, user.Password))));
+                && _cryptoServiceFake.ArePasswordsTheSame(contract.Password!, user.Password))));
     }
 
     [Fact]
@@ -165,11 +167,11 @@ public class UpdateUserHandlerTests
                 {
                     Id = contract.Id,
                     Handler = "ExistingHandler",
-                    UserName = contract.UserName,
+                    UserName = contract.UserName!,
                     AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
                 },
-                Email = contract.Email,
-                Password = contract.Password
+                Email = contract.Email!,
+                Password = contract.Password!
             });
         _userPersistenceRepositoryMock
             .Setup(repo => repo.UpdateUser(It.IsAny<IUserCredentials>()))

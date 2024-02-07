@@ -2,6 +2,7 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Users;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -52,7 +53,8 @@ public class UserMapperTests
                     It.IsAny<string>(), 
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    It.IsAny<DateTimeOffset?>()
+                    It.IsAny<DateTimeOffset?>(),
+                    It.IsAny<List<Conversation>>()
                 ))
             .Returns(expectedResult);
 
