@@ -77,7 +77,7 @@ public class CreateConnectionConversationHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.ConversationId.Should().Be(expectedConversation.ConversationId);
+        result.Id.Should().Be(expectedConversation.ConversationId);
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.IsGroup.Should().BeFalse();
         result.ThumbnailId.Should().Be(userAccount2.ProfileImageId);

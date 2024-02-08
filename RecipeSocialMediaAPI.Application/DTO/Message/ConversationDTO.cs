@@ -1,10 +1,10 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Message;
 
 public record ConversationDTO(
-    string ConversationId,
+    string Id,
     string ConnectionOrGroupId,
     bool IsGroup,
-    string ConversationName,
+    string Name,
     string? ThumbnailId,
     MessageDTO? LastMessage,
     int MessagesUnseen = 0

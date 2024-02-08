@@ -83,7 +83,7 @@ public class GetConversationByGroupHandlerTests
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.IsGroup.Should().BeTrue();
         result.ThumbnailId.Should().BeNull();
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().BeNull();
     }
 
@@ -146,7 +146,7 @@ public class GetConversationByGroupHandlerTests
         // Then
         result.Should().NotBeNull();
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().Be(lastMessageDto);
     }
 

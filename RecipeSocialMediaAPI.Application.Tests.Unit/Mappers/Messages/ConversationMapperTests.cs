@@ -52,7 +52,7 @@ public class ConversationMapperTests
         var result = _conversationMapperSUT.MapConversationToConnectionConversationDTO(user1, conversation);
 
         // Then
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().BeNull();
         result.MessagesUnseen.Should().Be(0);
@@ -106,7 +106,7 @@ public class ConversationMapperTests
         var result = _conversationMapperSUT.MapConversationToConnectionConversationDTO(user1, conversation);
 
         // Then
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(0);
@@ -159,7 +159,7 @@ public class ConversationMapperTests
         var result = _conversationMapperSUT.MapConversationToConnectionConversationDTO(user1, conversation);
 
         // Then
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(2);
@@ -191,7 +191,7 @@ public class ConversationMapperTests
         var result = _conversationMapperSUT.MapConversationToGroupConversationDTO(user1, conversation);
 
         // Then
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().BeNull();
         result.MessagesUnseen.Should().Be(0);
@@ -244,7 +244,7 @@ public class ConversationMapperTests
         var result = _conversationMapperSUT.MapConversationToGroupConversationDTO(user1, conversation);
 
         // Then
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(0);
@@ -297,7 +297,7 @@ public class ConversationMapperTests
         var result = _conversationMapperSUT.MapConversationToGroupConversationDTO(user1, conversation);
 
         // Then
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(2);

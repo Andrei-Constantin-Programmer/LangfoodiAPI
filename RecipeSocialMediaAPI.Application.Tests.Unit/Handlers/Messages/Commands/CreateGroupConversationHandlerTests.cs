@@ -66,10 +66,10 @@ public class CreateGroupConversationHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.ConversationId.Should().Be(expectedGroup.ConversationId);
+        result.Id.Should().Be(expectedGroup.ConversationId);
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.IsGroup.Should().BeTrue();
-        result.ConversationName.Should().Be(group.GroupName);
+        result.Name.Should().Be(group.GroupName);
         result.ThumbnailId.Should().BeNull();
         result.LastMessage.Should().BeNull();
     }

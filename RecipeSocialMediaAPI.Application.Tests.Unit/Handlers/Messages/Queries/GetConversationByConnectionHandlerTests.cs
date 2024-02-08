@@ -82,7 +82,7 @@ public class GetConversationByConnectionHandlerTests
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.IsGroup.Should().BeFalse();
         result.ThumbnailId.Should().Be(user2.ProfileImageId);
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().BeNull();
     }
 
@@ -145,7 +145,7 @@ public class GetConversationByConnectionHandlerTests
         // Then
         result.Should().NotBeNull();
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
-        result.ConversationId.Should().Be(conversation.ConversationId);
+        result.Id.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().Be(lastMessageDto);
     }
 

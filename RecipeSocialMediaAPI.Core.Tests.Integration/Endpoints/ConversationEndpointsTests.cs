@@ -67,7 +67,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
-        data!.ConversationId.Should().Be(conversation.ConversationId);
+        data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().BeNull();
     }
@@ -106,7 +106,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
-        data!.ConversationId.Should().Be(conversation.ConversationId);
+        data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().NotBeNull();
         data.LastMessage!.Id.Should().Be(testMessage3.Id);
@@ -174,7 +174,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
-        data!.ConversationId.Should().Be(conversation.ConversationId);
+        data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().BeNull();
     }
@@ -213,7 +213,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
-        data!.ConversationId.Should().Be(conversation.ConversationId);
+        data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().NotBeNull();
         data.LastMessage!.Id.Should().Be(testMessage3.Id);
@@ -282,7 +282,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.ConnectionOrGroupId.Should().Be(newConnection.ConnectionId);
-        data.ConversationId.Should().Be("0");
+        data.Id.Should().Be("0");
         data.LastMessage.Should().BeNull();
     }
 
@@ -328,7 +328,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.ConnectionOrGroupId.Should().Be(newGroup.GroupId);
-        data.ConversationId.Should().Be("0");
+        data.Id.Should().Be("0");
         data.LastMessage.Should().BeNull();
     }
 
@@ -338,7 +338,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
+        _ = _fakeUserRepository
             .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
