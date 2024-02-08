@@ -105,7 +105,7 @@ public class GroupEndpointsTests : EndpointTestBase
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero))
             : null;
 
-        List<string> userIds = new() { user1?.Account.Id ?? "1", user2?.Account.Id ?? "2", user3?.Account.Id ?? "3" };
+        List<string> userIds = new() { user1?.Account.Id ?? "u1", user2?.Account.Id ?? "u2", user3?.Account.Id ?? "u3" };
         NewGroupContract group = new("name", "Desciption", userIds);
 
         // When
