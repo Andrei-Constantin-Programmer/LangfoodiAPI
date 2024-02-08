@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using System.Net;
 using System.Net.Http.Json;
 using System.Runtime.Intrinsics.X86;
 
@@ -53,6 +54,65 @@ public class GroupEndpointsTests : EndpointTestBase
             Email = "test3@mail.com",
             Password = "Test@121"
         };
+    }
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateGroup_WhenUsersExist_ReturnNewGroup()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user3 = _fakeUserRepository
+            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        
+        List<string> userIds = new() { user1.Account.Id, user2.Account.Id, user3.Account.Id};
+        NewGroupContract group = new("name", "Desciption", userIds);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"group/create", group);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<GroupDTO>();
+        data.Should().NotBeNull();
+        data!.Name.Should().Be(group.Name);
+        data.Description.Should().Be(group.Description);
+        data.UserIds.Should().BeEquivalentTo(new List<string> { user1.Account.Id, user2.Account.Id, user3.Account.Id });
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [InlineData(true, false, true)]
+    [InlineData(false, true, true)]
+    [InlineData(true, true, false)]
+    public async void CreateGroup_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists, bool user3Exists)
+    {
+        // Given
+        var user1 = user1Exists
+            ? _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
+            : null;
+        var user2 = user2Exists
+            ? _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
+            : null;
+        var user3 = user3Exists
+            ? _fakeUserRepository
+            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero))
+            : null;
+
+        List<string> userIds = new() { user1?.Account.Id ?? "u1", user2?.Account.Id ?? "u2", user3?.Account.Id ?? "u3" };
+        NewGroupContract group = new("name", "Desciption", userIds);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"group/create", group);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
