@@ -6,6 +6,6 @@ namespace RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 
 public interface IConversationMapper
 {
-    ConnectionConversationDTO MapConversationToConnectionConversationDTO(IUserAccount user, ConnectionConversation conversation);
-    GroupConversationDTO MapConversationToGroupConversationDTO(IUserAccount user, GroupConversation conversation);
+    ConversationDTO MapConversationToConnectionConversationDTO(IUserAccount user, ConnectionConversation conversation);
+    ConversationDTO MapConversationToGroupConversationDTO(IUserAccount user, GroupConversation conversation);
 }

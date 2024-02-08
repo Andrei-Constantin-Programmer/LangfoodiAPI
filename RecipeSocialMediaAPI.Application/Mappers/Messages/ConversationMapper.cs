@@ -14,20 +14,34 @@ public class ConversationMapper : IConversationMapper
         _messageMapper = messageMapper;
     }
 
-    public ConnectionConversationDTO MapConversationToConnectionConversationDTO(IUserAccount user, ConnectionConversation conversation)
+    public ConversationDTO MapConversationToConnectionConversationDTO(IUserAccount user, ConnectionConversation conversation)
     {
         var lastMessageDto = GetLastMessage(conversation);
         var unreadCount = GetUnreadCount(user, conversation);
 
-        return new ConnectionConversationDTO(conversation.ConversationId, conversation.Connection.ConnectionId, lastMessageDto, unreadCount);
+        return new ConversationDTO(
+            conversation.ConversationId,
+            conversation.Connection.ConnectionId,
+            false,
+            conversation.Connection.Account1.Id == user.Id ? conversation.Connection.Account2.UserName : user.UserName,
+            conversation.Connection.Account1.Id == user.Id ? conversation.Connection.Account2.ProfileImageId : user.ProfileImageId,
+            lastMessageDto,
+            unreadCount);
     }
 
-    public GroupConversationDTO MapConversationToGroupConversationDTO(IUserAccount user, GroupConversation conversation)
+    public ConversationDTO MapConversationToGroupConversationDTO(IUserAccount user, GroupConversation conversation)
     {
         var lastMessageDto = GetLastMessage(conversation);
         var unreadCount = GetUnreadCount(user, conversation);
 
-        return new GroupConversationDTO(conversation.ConversationId, conversation.Group.GroupId, lastMessageDto, unreadCount);
+        return new ConversationDTO(
+            conversation.ConversationId,
+            conversation.Group.GroupId,
+            true,
+            conversation.Group.GroupName,
+            null,
+            lastMessageDto,
+            unreadCount);
     }
 
     private MessageDTO? GetLastMessage(Conversation conversation)

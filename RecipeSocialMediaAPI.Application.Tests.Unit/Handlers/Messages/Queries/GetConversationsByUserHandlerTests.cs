@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.VisualBasic;
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
@@ -108,9 +109,9 @@ public class GetConversationsByUserHandlerTests
             new GroupConversation(group, "convo1"),
         };
 
-        ConnectionConversationDTO convo1Dto = new(conversations[0].ConversationId, connection.ConnectionId, null);
-        GroupConversationDTO convo2Dto = new(conversations[1].ConversationId, group.GroupId, null);
-
+        ConversationDTO convo1Dto = new(conversations[0].ConversationId, connection.ConnectionId, false, user2.Account.Id, user2.Account.ProfileImageId, null);
+        ConversationDTO convo2Dto = new(conversations[1].ConversationId, group.GroupId, true, group.GroupName, null, null);
+        
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1.Account, (ConnectionConversation)conversations[0]))
             .Returns(convo1Dto);

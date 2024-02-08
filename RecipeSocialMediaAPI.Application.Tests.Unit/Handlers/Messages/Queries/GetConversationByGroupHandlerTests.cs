@@ -12,6 +12,7 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Queries;
 
@@ -65,9 +66,9 @@ public class GetConversationByGroupHandlerTests
 
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByGroup(group.GroupId))
-            .Returns(conversation);
+        .Returns(conversation);
 
-        GroupConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, null);
+        ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, null);
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToGroupConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -79,7 +80,9 @@ public class GetConversationByGroupHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.GroupId.Should().Be(group.GroupId);
+        result.ConnectionOrGroupId.Should().Be(group.GroupId);
+        result.IsGroup.Should().BeTrue();
+        result.ThumbnailId.Should().BeNull();
         result.ConversationId.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().BeNull();
     }
@@ -126,7 +129,7 @@ public class GetConversationByGroupHandlerTests
         Group group = new("group1", "Group 1", "Group Description", new List<IUserAccount>() { user1, user2 });
         GroupConversation conversation = new(group, "convo1", messages);
 
-        GroupConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, lastMessageDto);
+        ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, lastMessageDto);
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToGroupConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -142,7 +145,7 @@ public class GetConversationByGroupHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.GroupId.Should().Be(group.GroupId);
+        result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.ConversationId.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().Be(lastMessageDto);
     }

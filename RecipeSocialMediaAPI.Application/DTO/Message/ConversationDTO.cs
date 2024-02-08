@@ -1,4 +1,11 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Message;
 
-public abstract record ConversationDTO(string ConversationId, MessageDTO? LastMessage, int MessagesUnseen = 0);
-
+public record ConversationDTO(
+    string ConversationId,
+    string ConnectionOrGroupId,
+    bool IsGroup,
+    string ConversationName,
+    string? ThumbnailId,
+    MessageDTO? LastMessage,
+    int MessagesUnseen = 0
+);

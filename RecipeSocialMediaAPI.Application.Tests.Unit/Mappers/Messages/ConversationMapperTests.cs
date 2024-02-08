@@ -53,7 +53,7 @@ public class ConversationMapperTests
 
         // Then
         result.ConversationId.Should().Be(conversation.ConversationId);
-        result.ConnectionId.Should().Be(connection.ConnectionId);
+        result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().BeNull();
         result.MessagesUnseen.Should().Be(0);
     }
@@ -107,7 +107,7 @@ public class ConversationMapperTests
 
         // Then
         result.ConversationId.Should().Be(conversation.ConversationId);
-        result.ConnectionId.Should().Be(connection.ConnectionId);
+        result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(0);
     }
@@ -160,7 +160,7 @@ public class ConversationMapperTests
 
         // Then
         result.ConversationId.Should().Be(conversation.ConversationId);
-        result.ConnectionId.Should().Be(connection.ConnectionId);
+        result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(2);
     }
@@ -192,7 +192,7 @@ public class ConversationMapperTests
 
         // Then
         result.ConversationId.Should().Be(conversation.ConversationId);
-        result.GroupId.Should().Be(group.GroupId);
+        result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().BeNull();
         result.MessagesUnseen.Should().Be(0);
     }
@@ -245,7 +245,7 @@ public class ConversationMapperTests
 
         // Then
         result.ConversationId.Should().Be(conversation.ConversationId);
-        result.GroupId.Should().Be(group.GroupId);
+        result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(0);
     }
@@ -298,7 +298,7 @@ public class ConversationMapperTests
 
         // Then
         result.ConversationId.Should().Be(conversation.ConversationId);
-        result.GroupId.Should().Be(group.GroupId);
+        result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(2);
     }

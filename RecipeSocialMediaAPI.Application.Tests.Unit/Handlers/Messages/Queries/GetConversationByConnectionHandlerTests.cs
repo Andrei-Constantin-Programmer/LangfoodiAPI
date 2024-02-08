@@ -47,7 +47,8 @@ public class GetConversationByConnectionHandlerTests
         {
             Id = "u2",
             Handler = "user2",
-            UserName = "User 2"
+            UserName = "User 2",
+            ProfileImageId = "img.png"
         };
 
         _userQueryRepositoryMock
@@ -66,7 +67,7 @@ public class GetConversationByConnectionHandlerTests
             .Setup(repo => repo.GetConversationByConnection(connection.ConnectionId))
             .Returns(conversation);
 
-        ConnectionConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, null);
+        ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, null);
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -78,7 +79,9 @@ public class GetConversationByConnectionHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.ConnectionId.Should().Be(connection.ConnectionId);
+        result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
+        result.IsGroup.Should().BeFalse();
+        result.ThumbnailId.Should().Be(user2.ProfileImageId);
         result.ConversationId.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().BeNull();
     }
@@ -125,7 +128,7 @@ public class GetConversationByConnectionHandlerTests
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", messages);
 
-        ConnectionConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, lastMessageDto);
+        ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, lastMessageDto);
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -141,7 +144,7 @@ public class GetConversationByConnectionHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.ConnectionId.Should().Be(connection.ConnectionId);
+        result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.ConversationId.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().Be(lastMessageDto);
     }

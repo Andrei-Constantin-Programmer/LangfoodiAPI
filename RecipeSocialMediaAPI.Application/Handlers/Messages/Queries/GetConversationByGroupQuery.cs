@@ -7,9 +7,9 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetConversationByGroupQuery(string UserId, string GroupId) : IRequest<GroupConversationDTO>;
+public record GetConversationByGroupQuery(string UserId, string GroupId) : IRequest<ConversationDTO>;
 
-internal class GetConversationByGroupHandler : IRequestHandler<GetConversationByGroupQuery, GroupConversationDTO>
+internal class GetConversationByGroupHandler : IRequestHandler<GetConversationByGroupQuery, ConversationDTO>
 {
     private readonly IConversationQueryRepository _conversationQueryRepository;
     private readonly IConversationMapper _conversationMapper;
@@ -22,7 +22,7 @@ internal class GetConversationByGroupHandler : IRequestHandler<GetConversationBy
         _userQueryRepository = userQueryRepository;
     }
 
-    public Task<GroupConversationDTO> Handle(GetConversationByGroupQuery request, CancellationToken cancellationToken)
+    public Task<ConversationDTO> Handle(GetConversationByGroupQuery request, CancellationToken cancellationToken)
     {
         var user = _userQueryRepository.GetUserById(request.UserId)?.Account
             ?? throw new UserNotFoundException($"No User found with id {request.UserId}");
