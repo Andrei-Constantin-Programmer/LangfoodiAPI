@@ -12,14 +12,13 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
-using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Queries;
 
 public class GetConversationByGroupHandlerTests
 {
     private readonly Mock<IConversationQueryRepository> _conversationQueryRepositoryMock;
-    private readonly Mock<IMessageMapper> _messageMapperMock;
+    private readonly Mock<IConversationMapper> _conversationMapperMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly GetConversationByGroupHandler _getConversationByGroupHandlerSUT;
@@ -27,10 +26,10 @@ public class GetConversationByGroupHandlerTests
     public GetConversationByGroupHandlerTests()
     {
         _conversationQueryRepositoryMock = new Mock<IConversationQueryRepository>();
-        _messageMapperMock = new Mock<IMessageMapper>();
+        _conversationMapperMock = new Mock<IConversationMapper>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _getConversationByGroupHandlerSUT = new(_conversationQueryRepositoryMock.Object, _messageMapperMock.Object, _userQueryRepositoryMock.Object);
+        _getConversationByGroupHandlerSUT = new(_conversationQueryRepositoryMock.Object, _conversationMapperMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -67,6 +66,11 @@ public class GetConversationByGroupHandlerTests
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByGroup(group.GroupId))
             .Returns(conversation);
+
+        GroupConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, null);
+        _conversationMapperMock
+            .Setup(mapper => mapper.MapConversationToGroupConversationDTO(user1, conversation))
+            .Returns(conversationDto);
 
         GetConversationByGroupQuery query = new(user1.Id, group.GroupId);
 
@@ -118,12 +122,14 @@ public class GetConversationByGroupHandlerTests
             new TestMessage("4", user1, new(2023, 1, 1, 14, 10, 0, TimeSpan.Zero), null),
             new TestMessage("5", user1, new(2023, 1, 1, 14, 15, 0, TimeSpan.Zero), null),
         };
-        _messageMapperMock
-            .Setup(mapper => mapper.MapMessageToMessageDTO(messages[2]))
-            .Returns(lastMessageDto);
 
         Group group = new("group1", "Group 1", "Group Description", new List<IUserAccount>() { user1, user2 });
         GroupConversation conversation = new(group, "convo1", messages);
+
+        GroupConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, lastMessageDto);
+        _conversationMapperMock
+            .Setup(mapper => mapper.MapConversationToGroupConversationDTO(user1, conversation))
+            .Returns(conversationDto);
 
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByGroup(group.GroupId))
@@ -165,7 +171,7 @@ public class GetConversationByGroupHandlerTests
         string groupId = "group1";
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByGroup(groupId))
-            .Returns((Conversation?)null);
+            .Returns((GroupConversation?)null);
 
         GetConversationByGroupQuery query = new(user1.Id, groupId);
 

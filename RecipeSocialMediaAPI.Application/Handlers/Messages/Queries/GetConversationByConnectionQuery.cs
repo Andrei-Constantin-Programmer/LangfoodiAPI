@@ -12,31 +12,24 @@ public record GetConversationByConnectionQuery(string UserId, string ConnectionI
 internal class GetConversationByConnectionHandler : IRequestHandler<GetConversationByConnectionQuery, ConnectionConversationDTO>
 {
     private readonly IConversationQueryRepository _conversationQueryRepository;
-    private readonly IMessageMapper _messageMapper;
+    private readonly IConversationMapper _conversationMapper;
     private readonly IUserQueryRepository _userQueryRepository;
 
-    public GetConversationByConnectionHandler(IConversationQueryRepository conversationQueryRepository, IMessageMapper messageMapper, IUserQueryRepository userQueryRepository)
+    public GetConversationByConnectionHandler(IConversationQueryRepository conversationQueryRepository, IConversationMapper conversationMapper, IUserQueryRepository userQueryRepository)
     {
         _conversationQueryRepository = conversationQueryRepository;
-        _messageMapper = messageMapper;
+        _conversationMapper = conversationMapper;
         _userQueryRepository = userQueryRepository;
     }
 
     public Task<ConnectionConversationDTO> Handle(GetConversationByConnectionQuery request, CancellationToken cancellationToken)
     {
-        var user = _userQueryRepository.GetUserById(request.UserId)
+        var user = _userQueryRepository.GetUserById(request.UserId)?.Account
             ?? throw new UserNotFoundException($"No User found with id {request.UserId}");
 
         var conversation = _conversationQueryRepository.GetConversationByConnection(request.ConnectionId)
             ?? throw new ConversationNotFoundException($"No Conversation found for Connection with id {request.ConnectionId}");
 
-        var lastMessage = conversation.Messages
-            .MaxBy(message => message.SentDate);
-
-        var lastMessageDto = lastMessage is null ? null : _messageMapper.MapMessageToMessageDTO(lastMessage);
-        var unreadCount = conversation.Messages
-            .Count(message => message.SeenBy.Any(u => u.Id == user.Account.Id));
-
-        return Task.FromResult(new ConnectionConversationDTO(conversation.ConversationId, request.ConnectionId, lastMessageDto, unreadCount));
+        return Task.FromResult(_conversationMapper.MapConversationToConnectionConversationDTO(user, conversation));
     }
 }

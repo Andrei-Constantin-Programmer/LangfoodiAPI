@@ -11,14 +11,13 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Queries;
 
 public class GetConversationByConnectionHandlerTests
 {
     private readonly Mock<IConversationQueryRepository> _conversationQueryRepositoryMock;
-    private readonly Mock<IMessageMapper> _messageMapperMock;
+    private readonly Mock<IConversationMapper> _conversationMapperMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly GetConversationByConnectionHandler _getConversationByConnectionHandlerSUT;
@@ -26,10 +25,10 @@ public class GetConversationByConnectionHandlerTests
     public GetConversationByConnectionHandlerTests()
     {
         _conversationQueryRepositoryMock = new Mock<IConversationQueryRepository>();
-        _messageMapperMock = new Mock<IMessageMapper>();
+        _conversationMapperMock = new Mock<IConversationMapper>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _getConversationByConnectionHandlerSUT = new(_conversationQueryRepositoryMock.Object, _messageMapperMock.Object, _userQueryRepositoryMock.Object);
+        _getConversationByConnectionHandlerSUT = new(_conversationQueryRepositoryMock.Object, _conversationMapperMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -66,6 +65,11 @@ public class GetConversationByConnectionHandlerTests
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByConnection(connection.ConnectionId))
             .Returns(conversation);
+
+        ConnectionConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, null);
+        _conversationMapperMock
+            .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1, conversation))
+            .Returns(conversationDto);
 
         GetConversationByConnectionQuery query = new(user1.Id, connection.ConnectionId);
 
@@ -117,12 +121,14 @@ public class GetConversationByConnectionHandlerTests
             new TestMessage("4", user1, new(2023, 1, 1, 14, 10, 0, TimeSpan.Zero), null),
             new TestMessage("5", user1, new(2023, 1, 1, 14, 15, 0, TimeSpan.Zero), null),
         };
-        _messageMapperMock
-            .Setup(mapper => mapper.MapMessageToMessageDTO(messages[2]))
-            .Returns(lastMessageDto);
 
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", messages);
+
+        ConnectionConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, lastMessageDto);
+        _conversationMapperMock
+            .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1, conversation))
+            .Returns(conversationDto);
 
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByConnection(connection.ConnectionId))
@@ -164,7 +170,7 @@ public class GetConversationByConnectionHandlerTests
         string connectionId = "conn1";
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByConnection(connectionId))
-            .Returns((Conversation?)null);
+            .Returns((ConnectionConversation?)null);
 
         GetConversationByConnectionQuery query = new(user1.Id, connectionId);
 

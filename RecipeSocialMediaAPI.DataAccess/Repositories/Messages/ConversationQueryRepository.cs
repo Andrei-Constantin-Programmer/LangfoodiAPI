@@ -55,7 +55,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         return _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages);
     }
 
-    public Conversation? GetConversationByConnection(string connectionId)
+    public ConnectionConversation? GetConversationByConnection(string connectionId)
     {
         ConversationDocument? conversationDocument;
         try
@@ -77,11 +77,11 @@ public class ConversationQueryRepository : IConversationQueryRepository
         List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, connection, null, messages)
+            ? (ConnectionConversation)_mapper.MapConversationFromDocument(conversationDocument, connection, null, messages)
             : null;
     }
 
-    public Conversation? GetConversationByGroup(string groupId)
+    public GroupConversation? GetConversationByGroup(string groupId)
     {
         ConversationDocument? conversationDocument;
         try
@@ -103,7 +103,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, null, group, messages)
+            ? (GroupConversation)_mapper.MapConversationFromDocument(conversationDocument, null, group, messages)
             : null;
     }
 
