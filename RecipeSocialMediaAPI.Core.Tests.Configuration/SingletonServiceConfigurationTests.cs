@@ -94,4 +94,16 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
         // Then
         messageMapper.Should().NotBeNull();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ConversationMapper_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        var conversationMapper = _serviceProvider.GetService(typeof(IConversationMapper)) as ConversationMapper;
+
+        // Then
+        conversationMapper.Should().NotBeNull();
+    }
 }

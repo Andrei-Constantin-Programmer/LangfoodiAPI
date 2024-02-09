@@ -19,6 +19,13 @@ public static class ConversationEndpoints
 
     private static RouteGroupBuilder AddConversationEndpoints(this RouteGroupBuilder group)
     {
+        group.MapPost("/get-by-user", async (
+            [FromQuery] string userId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetConversationsByUserQuery(userId)));
+        });
+
         group.MapPost("/get-by-connection", async (
             [FromQuery] string userId,
             [FromQuery] string connectionId,
@@ -36,17 +43,19 @@ public static class ConversationEndpoints
         });
 
         group.MapPost("/create-by-connection", async (
-        [FromBody] NewConversationContract newConversationContract,
+        [FromQuery] string userId,
+        [FromQuery] string connectionId,
         [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new CreateConnectionConversationCommand(newConversationContract)));
+            return Results.Ok(await sender.Send(new CreateConnectionConversationCommand(userId, connectionId)));
         });
 
         group.MapPost("/create-by-group", async (
-        [FromBody] NewConversationContract newConversationContract,
+        [FromQuery] string userId,
+        [FromQuery] string groupId,
         [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new CreateGroupConversationCommand(newConversationContract)));
+            return Results.Ok(await sender.Send(new CreateGroupConversationCommand(userId, groupId)));
         });
 
         return group;

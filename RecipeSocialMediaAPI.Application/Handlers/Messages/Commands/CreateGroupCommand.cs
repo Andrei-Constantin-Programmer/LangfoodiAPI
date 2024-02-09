@@ -26,16 +26,16 @@ internal class CreateGroupHandler : IRequestHandler<CreateGroupCommand, GroupDTO
     {
         string groupName = request.Contract.Name;
         string groupDesciption = request.Contract.Description;
-        List<IUserAccount> userAccounts = new List<IUserAccount>();
-        List <string> userIds = request.Contract.UserIds;
+
+        List<IUserAccount> userAccounts = new();
+        List<string> userIds = request.Contract.UserIds;
+
         foreach (string userid in userIds)
         { 
-            userAccounts.Add( _userQueryRepository
-            .GetUserById(userid)?.Account
-            ?? throw new UserNotFoundException($"No user found with id {userid}"));
+            userAccounts.Add(_userQueryRepository
+                .GetUserById(userid)?.Account
+                ?? throw new UserNotFoundException($"No user found with id {userid}"));
         }
-
-
 
         Group createdGroup = _groupPersistenceRepository
             .CreateGroup(groupName, groupDesciption, userAccounts);

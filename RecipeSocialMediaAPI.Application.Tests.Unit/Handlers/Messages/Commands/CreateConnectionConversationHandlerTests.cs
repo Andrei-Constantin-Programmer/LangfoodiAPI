@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
-using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -16,6 +16,7 @@ public class CreateConnectionConversationHandlerTests
 {
     private readonly Mock<IConversationPersistenceRepository> _conversationPersistenceRepositoryMock;
     private readonly Mock<IConnectionQueryRepository> _connectionQueryRepositoryMock;
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
     private readonly CreateConnectionConversationHandler _connectionConversationHandlerSUT;
 
@@ -23,8 +24,9 @@ public class CreateConnectionConversationHandlerTests
     {
         _conversationPersistenceRepositoryMock = new Mock<IConversationPersistenceRepository>();
         _connectionQueryRepositoryMock = new Mock<IConnectionQueryRepository>();
+        _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _connectionConversationHandlerSUT = new(_conversationPersistenceRepositoryMock.Object, _connectionQueryRepositoryMock.Object);
+        _connectionConversationHandlerSUT = new(_conversationPersistenceRepositoryMock.Object, _connectionQueryRepositoryMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -45,8 +47,13 @@ public class CreateConnectionConversationHandlerTests
             Id = "user2",
             Handler = "user2",
             UserName = "UserName 2",
-            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
+            AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero),
+            ProfileImageId = "img.png"
         };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(userAccount1.Id))
+            .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
 
         Connection connection = new(
             connectionId: "connection1",
@@ -65,16 +72,15 @@ public class CreateConnectionConversationHandlerTests
             .Setup(repo => repo.CreateConnectionConversation(connection))
             .Returns(expectedConversation);
 
-        NewConversationContract testContract = new(connection.ConnectionId);
-
-
         // When
-        var result = await _connectionConversationHandlerSUT.Handle(new CreateConnectionConversationCommand(testContract), CancellationToken.None);
+        var result = await _connectionConversationHandlerSUT.Handle(new CreateConnectionConversationCommand(userAccount1.Id, connection.ConnectionId), CancellationToken.None);
 
         // Then
         result.Should().NotBeNull();
-        result.ConversationId.Should().Be(expectedConversation.ConversationId);
-        result.ConnectionId.Should().Be(connection.ConnectionId);
+        result.Id.Should().Be(expectedConversation.ConversationId);
+        result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
+        result.IsGroup.Should().BeFalse();
+        result.ThumbnailId.Should().Be(userAccount2.ProfileImageId);
         result.LastMessage.Should().BeNull();
     }
 
@@ -98,6 +104,9 @@ public class CreateConnectionConversationHandlerTests
             UserName = "UserName 2",
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(userAccount1.Id))
+            .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
 
         Connection connection = new(
             connectionId: "connection1",
@@ -116,10 +125,8 @@ public class CreateConnectionConversationHandlerTests
             .Setup(repo => repo.CreateConnectionConversation(connection))
             .Returns(expectedConversation);
 
-        NewConversationContract testContract = new("invalidId");
-
         // When
-        var testAction = async() => await _connectionConversationHandlerSUT.Handle(new CreateConnectionConversationCommand(testContract), CancellationToken.None);
+        var testAction = async() => await _connectionConversationHandlerSUT.Handle(new CreateConnectionConversationCommand(userAccount1.Id, "invalidId"), CancellationToken.None);
 
         // Then
         await testAction

@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
@@ -10,7 +9,6 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net.Http.Json;
-using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
@@ -68,9 +66,9 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConnectionConversationDTO>();
-        data!.ConversationId.Should().Be(conversation.ConversationId);
-        data.ConnectionId.Should().Be(connection.ConnectionId);
+        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        data!.Id.Should().Be(conversation.ConversationId);
+        data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().BeNull();
     }
 
@@ -107,9 +105,9 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConnectionConversationDTO>();
-        data!.ConversationId.Should().Be(conversation.ConversationId);
-        data.ConnectionId.Should().Be(connection.ConnectionId);
+        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        data!.Id.Should().Be(conversation.ConversationId);
+        data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().NotBeNull();
         data.LastMessage!.Id.Should().Be(testMessage3.Id);
         data.LastMessage.SenderName.Should().Be(testMessage3.Sender.UserName);
@@ -175,9 +173,9 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<GroupConversationDTO>();
-        data!.ConversationId.Should().Be(conversation.ConversationId);
-        data.GroupId.Should().Be(group.GroupId);
+        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        data!.Id.Should().Be(conversation.ConversationId);
+        data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().BeNull();
     }
 
@@ -214,9 +212,9 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<GroupConversationDTO>();
-        data!.ConversationId.Should().Be(conversation.ConversationId);
-        data.GroupId.Should().Be(group.GroupId);
+        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        data!.Id.Should().Be(conversation.ConversationId);
+        data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().NotBeNull();
         data.LastMessage!.Id.Should().Be(testMessage3.Id);
         data.LastMessage.SenderName.Should().Be(testMessage3.Sender.UserName);
@@ -272,21 +270,19 @@ public class ConversationEndpointsTests : EndpointTestBase
         var user2= _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        IConnection newConnection = _fakeConnectionRepository.CreateConnection(user1.Account, user2.Account, Domain.Models.Messaging.Connections.ConnectionStatus.Connected);
-
-        NewConversationContract newConversation = new(newConnection.ConnectionId);
+        IConnection newConnection = _fakeConnectionRepository.CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         // When
-        var result = await _client.PostAsJsonAsync("/conversation/create-by-connection", newConversation);
+        var result = await _client.PostAsync($"/conversation/create-by-connection/?userId={user1.Account.Id}&connectionId={newConnection.ConnectionId}", null);
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-        var data = await result.Content.ReadFromJsonAsync<ConnectionConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
 
         data.Should().NotBeNull();
-        data!.ConnectionId.Should().Be(newConversation.GroupOrConnectionId);
-        data.ConversationId.Should().Be("0");
+        data!.ConnectionOrGroupId.Should().Be(newConnection.ConnectionId);
+        data.Id.Should().Be("0");
         data.LastMessage.Should().BeNull();
     }
 
@@ -296,10 +292,11 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void CreateConnectionConversation_WhenConnectionIsNotFound_ReturnNotFound()
     {
         // Given
-        NewConversationContract newConversation = new("0");
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsJsonAsync("/conversation/create-by-connection", newConversation);
+        var result = await _client.PostAsync($"/conversation/create-by-connection/?userId={user1.Account.Id}&connectionId=0", null);
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
@@ -321,19 +318,17 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         Group newGroup = _fakeGroupRepository.CreateGroup("testGroup","This is a test group.",new List<IUserAccount> { user1.Account, user2.Account});
 
-        NewConversationContract newConversation = new(newGroup.GroupId);
-
         // When
-        var result = await _client.PostAsJsonAsync("/conversation/create-by-group", newConversation);
+        var result = await _client.PostAsync($"/conversation/create-by-group/?userId={user1.Account.Id}&groupId={newGroup.GroupId}", null);
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-        var data = await result.Content.ReadFromJsonAsync<GroupConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
 
         data.Should().NotBeNull();
-        data!.GroupId.Should().Be(newConversation.GroupOrConnectionId);
-        data.ConversationId.Should().Be("0");
+        data!.ConnectionOrGroupId.Should().Be(newGroup.GroupId);
+        data.Id.Should().Be("0");
         data.LastMessage.Should().BeNull();
     }
 
@@ -343,10 +338,11 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
     {
         // Given
-        NewConversationContract newConversation = new("0");
+        _ = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsJsonAsync("/conversation/create-by-group", newConversation);
+        var result = await _client.PostAsync("/conversation/create-by-group/?userId={user1.Account.Id}&groupId={newGroup.GroupId}", null);
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
