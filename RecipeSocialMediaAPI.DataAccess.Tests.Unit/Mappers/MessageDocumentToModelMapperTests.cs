@@ -8,6 +8,7 @@ using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -47,7 +48,7 @@ public class MessageDocumentToModelMapperTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new("Text"),
-            SeenByUserIds: new(),
+            SeenByUserIds: new() { senderId },
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -59,20 +60,25 @@ public class MessageDocumentToModelMapperTests
             UserName = "Test Username",
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(testSender.Id))
+            .Returns(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         TestTextMessage textMessage = new(
             testDocument.Id!,
             testSender,
             testDocument.MessageContent.Text!,
             testDocument.SentDate,
-            null);
+            null,
+            null,
+            new() { testSender });
 
         _messageFactoryMock
             .Setup(factory => factory.CreateTextMessage(
                 textMessage.Id,
                 testSender,
                 textMessage.Text,
-                new(),
+                It.Is<List<IUserAccount>>(list => list.Contains(testSender)),
                 textMessage.SentDate,
                 textMessage.UpdatedDate,
                 textMessage.RepliedToMessage))
@@ -106,7 +112,7 @@ public class MessageDocumentToModelMapperTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(hasText ? "Text" : null, null, imageURLs),
-            SeenByUserIds: new(),
+            SeenByUserIds: new() { senderId },
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -118,6 +124,9 @@ public class MessageDocumentToModelMapperTests
             UserName = "Test Username",
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(testSender.Id))
+            .Returns(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         TestImageMessage imageMessage = new(
             testDocument.Id!,
@@ -125,7 +134,9 @@ public class MessageDocumentToModelMapperTests
             testDocument.MessageContent.Text!,
             testDocument.MessageContent.ImageURLs!,
             testDocument.SentDate,
-            null);
+            null,
+            null,
+            new() { testSender } );
 
         _messageFactoryMock
             .Setup(factory => factory.CreateImageMessage(
@@ -133,7 +144,7 @@ public class MessageDocumentToModelMapperTests
                 testSender,
                 imageMessage.ImageURLs,
                 imageMessage.Text,
-                new(),
+                It.Is<List<IUserAccount>>(list => list.Contains(testSender)),
                 imageMessage.SentDate,
                 imageMessage.UpdatedDate,
                 null))
@@ -167,7 +178,7 @@ public class MessageDocumentToModelMapperTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(hasText ? "Text" : null, recipeIds, null),
-            SeenByUserIds: new(),
+            SeenByUserIds: new() { senderId },
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -179,6 +190,9 @@ public class MessageDocumentToModelMapperTests
             UserName = "Test Username",
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(testSender.Id))
+            .Returns(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         List<RecipeAggregate> recipes = new()
         {
@@ -206,7 +220,9 @@ public class MessageDocumentToModelMapperTests
             testDocument.MessageContent.Text!,
             recipes,
             testDocument.SentDate,
-            null);
+            null,
+            null,
+            new() { testSender });
 
         _recipeQueryRepositoryMock
             .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
@@ -217,7 +233,7 @@ public class MessageDocumentToModelMapperTests
                 testSender,
                 recipeMessage.Recipes,
                 recipeMessage.Text,
-                new(),
+                It.Is<List<IUserAccount>>(list => list.Contains(testSender)),
                 recipeMessage.SentDate,
                 recipeMessage.UpdatedDate,
                 null))
