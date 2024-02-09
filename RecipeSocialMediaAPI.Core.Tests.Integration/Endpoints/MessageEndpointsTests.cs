@@ -262,6 +262,20 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetMessagesByConversation_WhenConversationDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        
+        // When
+        var result = await _client.PostAsync("message/get-by-conversation/?conversationId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void CreateMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
     {
         // Given
