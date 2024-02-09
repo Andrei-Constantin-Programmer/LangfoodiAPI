@@ -10,8 +10,8 @@ internal class TestRecipeMessage : TestMessage
     public string Text { get; set; }
     public List<RecipeAggregate> Recipes { get; set; }
 
-    public TestRecipeMessage(string id, IUserAccount sender, string text, IEnumerable<RecipeAggregate> recipes, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null)
-        : base(id, sender, sentDate, updatedDate, repliedToMessage)
+    public TestRecipeMessage(string id, IUserAccount sender, string text, IEnumerable<RecipeAggregate> recipes, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null, List<IUserAccount>? seenBy = null)
+        : base(id, sender, sentDate, updatedDate, repliedToMessage, seenBy)
     {
         Text = text;
         Recipes = recipes.ToList();
