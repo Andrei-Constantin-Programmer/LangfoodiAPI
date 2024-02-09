@@ -1,10 +1,13 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
@@ -144,5 +147,107 @@ public class MarkConversationAsReadHandlerTests
                     message.Id == messages[4].Id &&
                     message.SeenBy.Contains(user1.Account))),
                 Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenUserDoesNotExist_ThrowUserNotFoundException()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "user1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "user2@mail.com",
+            Password = "Test@123"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(It.IsAny<string>()))
+            .Returns((IUserCredentials?)null);
+
+        Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Pending);
+        ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns(conversation);
+
+        MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
+
+        // When
+        var testAction = async() => await _markConversationAsReadHandlerSUT.Handle(command, CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<UserNotFoundException>();
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenConversationDoesNotExist_ThrowConversationNotFoundException()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "user1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "user2@mail.com",
+            Password = "Test@123"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+
+        Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Pending);
+        ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns((Conversation?)null);
+
+        MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
+
+        // When
+        var testAction = async() => await _markConversationAsReadHandlerSUT.Handle(command, CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<ConversationNotFoundException>();
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
 }

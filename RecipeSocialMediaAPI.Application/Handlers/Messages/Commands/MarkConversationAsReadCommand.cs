@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
@@ -23,8 +24,11 @@ internal class MarkConversationAsReadHandler : IRequestHandler<MarkConversationA
 
     public Task Handle(MarkConversationAsReadCommand request, CancellationToken cancellationToken)
     {
-        IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account;
-        Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId);
+        IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
+            ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
+
+        Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId)
+            ?? throw new ConversationNotFoundException($"No conversation found with id {request.ConversationId}");
 
         var unseenMessages = conversation.Messages
             .Where(message => !message.SeenBy.Any(u => u.Id == user.Id))
