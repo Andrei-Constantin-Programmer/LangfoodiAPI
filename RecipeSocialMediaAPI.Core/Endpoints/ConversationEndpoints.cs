@@ -43,19 +43,28 @@ public static class ConversationEndpoints
         });
 
         group.MapPost("/create-by-connection", async (
-        [FromQuery] string userId,
-        [FromQuery] string connectionId,
-        [FromServices] ISender sender) =>
+            [FromQuery] string userId,
+            [FromQuery] string connectionId,
+            [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new CreateConnectionConversationCommand(userId, connectionId)));
         });
 
         group.MapPost("/create-by-group", async (
-        [FromQuery] string userId,
-        [FromQuery] string groupId,
-        [FromServices] ISender sender) =>
+            [FromQuery] string userId,
+            [FromQuery] string groupId,
+            [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new CreateGroupConversationCommand(userId, groupId)));
+        });
+
+        group.MapPut("/mark-as-read", async (
+            [FromQuery] string userId,
+            [FromQuery] string conversationId,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new MarkConversationAsReadCommand(userId, conversationId));
+            return Results.Ok();
         });
 
         return group;

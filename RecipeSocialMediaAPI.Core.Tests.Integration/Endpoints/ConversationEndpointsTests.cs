@@ -338,13 +338,51 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
     {
         // Given
-        _ = _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsync("/conversation/create-by-group/?userId={user1.Account.Id}&groupId={newGroup.GroupId}", null);
+        var result = await _client.PostAsync($"/conversation/create-by-group/?userId={user.Account.Id}&groupId=0", null);
 
         // Then
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void MarkConversationAsRead_WhenConversationExists_MarkAllConversationsAsRead()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var connection = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = _fakeConversationRepository
+            .CreateConnectionConversation(connection);
+
+        var message1 = _fakeMessageRepository
+            .CreateMessage(user1.Account, "Sent by user", new(), new(), new(2024, 2, 2, 12, 0, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
+        var message2 = _fakeMessageRepository
+            .CreateMessage(user2.Account, "Seen by user", new(), new(), new(2024, 2, 2, 12, 30, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
+        var message3 = _fakeMessageRepository
+            .CreateMessage(user1.Account, "Not seen 1", new(), new(), new(2024, 2, 2, 13, 1, 20, TimeSpan.Zero), null, new() { user2.Account.Id });
+        var message4 = _fakeMessageRepository
+            .CreateMessage(user1.Account, "Not seen 2", new(), new(), new(2024, 2, 2, 13, 2, 34, TimeSpan.Zero), null, new() { user2.Account.Id });
+
+        conversation.SendMessage(message1);
+        conversation.SendMessage(message2);
+        conversation.SendMessage(message3);
+        conversation.SendMessage(message4);
+
+        // When
+        var result = await _client.PutAsync($"/conversation/mark-as-read/?userId={user1.Account.Id}&conversationId={conversation.ConversationId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        message3.SeenBy.Should().Contain(user1.Account);
+        message4.SeenBy.Should().Contain(user1.Account);
     }
 }
