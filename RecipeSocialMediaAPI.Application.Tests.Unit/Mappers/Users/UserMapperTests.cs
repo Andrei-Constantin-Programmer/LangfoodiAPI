@@ -1,10 +1,7 @@
 ﻿using FluentAssertions;
-using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Users;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
@@ -14,55 +11,9 @@ public class UserMapperTests
 {
     private readonly UserMapper _userMapperSUT;
 
-    private readonly Mock<IUserFactory> _userFactoryMock;
-
     public UserMapperTests()
     {
-        _userFactoryMock = new Mock<IUserFactory>();
-
-        _userMapperSUT = new UserMapper(_userFactoryMock.Object);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void MapUserDtoToUser_GivenUserDto_ReturnUser()
-    {
-        // Given
-        UserDTO testUser = new("1", "handler", "user", "mail", "password", new());
-
-        IUserCredentials expectedResult = new TestUserCredentials
-        {
-            Account = new TestUserAccount
-            {
-                Id = "1",
-                Handler = "handler",
-                UserName = "user",
-                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
-            },
-            Email = "mail",
-            Password = "password"
-        };
-
-        _userFactoryMock
-            .Setup(factory => factory
-                .CreateUserCredentials(
-                    It.IsAny<string>(), 
-                    It.IsAny<string>(), 
-                    It.IsAny<string>(), 
-                    It.IsAny<string>(), 
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<DateTimeOffset?>(),
-                    It.IsAny<List<string>>()
-                ))
-            .Returns(expectedResult);
-
-        // When
-        var result = _userMapperSUT.MapUserDtoToUser(testUser);
-
-        // Then
-        result.Should().Be(expectedResult);
+        _userMapperSUT = new UserMapper();
     }
 
     [Fact]
