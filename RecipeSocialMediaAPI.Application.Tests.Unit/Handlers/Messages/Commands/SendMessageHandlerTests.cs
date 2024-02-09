@@ -8,6 +8,7 @@ using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -28,6 +29,7 @@ public class SendMessageHandlerTests
     private readonly Mock<IMessageMapper> _messageMapperMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
     private readonly Mock<IConversationQueryRepository> _conversationQueryRepositoryMock;
+    private readonly Mock<IConversationPersistenceRepository> _conversationPersistenceRepositoryMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
 
@@ -44,6 +46,7 @@ public class SendMessageHandlerTests
         _messageMapperMock = new Mock<IMessageMapper>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _conversationQueryRepositoryMock = new Mock<IConversationQueryRepository>();
+        _conversationPersistenceRepositoryMock = new Mock<IConversationPersistenceRepository>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
         _dateTimeProviderMock
@@ -58,6 +61,7 @@ public class SendMessageHandlerTests
             _messageMapperMock.Object,
             _userQueryRepositoryMock.Object,
             _conversationQueryRepositoryMock.Object,
+            _conversationPersistenceRepositoryMock.Object,
             _recipeQueryRepositoryMock.Object,
             _dateTimeProviderMock.Object);
     }
@@ -127,6 +131,8 @@ public class SendMessageHandlerTests
 
         // Then
         result.Should().Be(messageDto);
+        _conversationPersistenceRepositoryMock
+            .Verify(repo => repo.UpdateConversation(conversation, It.IsAny<Connection>(), It.IsAny<Group>()), Times.Once);
     }
 
     [Theory]

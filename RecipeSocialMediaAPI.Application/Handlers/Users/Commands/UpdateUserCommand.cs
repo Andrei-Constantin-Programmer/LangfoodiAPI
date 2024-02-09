@@ -65,15 +65,15 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
         _userValidationService = userValidationService;
 
         RuleFor(x => x.Contract.UserName)
-            .Must(_userValidationService.ValidUserName)
+            .Must(_userValidationService.ValidUserName!)
             .When(x => x.Contract.UserName is not null);
 
         RuleFor(x => x.Contract.Email)
-            .Must(_userValidationService.ValidEmail)
+            .Must(_userValidationService.ValidEmail!)
             .When(x => x.Contract.Email is not null);
 
         RuleFor(x => x.Contract.Password)
-            .Must(_userValidationService.ValidPassword)
+            .Must(_userValidationService.ValidPassword!)
             .When(x => x.Contract.Password is not null);
     }
 }
