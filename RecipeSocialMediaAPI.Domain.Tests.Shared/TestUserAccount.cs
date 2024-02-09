@@ -11,8 +11,12 @@ public class TestUserAccount : IUserAccount
     public string? ProfileImageId { get; set; }
     public DateTimeOffset AccountCreationDate { get; set; }
 
-    private readonly HashSet<string> _pinnedConversationIds = new();
-    public ImmutableList<string> PinnedConversationIds => _pinnedConversationIds.ToImmutableList();
+    private HashSet<string> _pinnedConversationIds = new();
+    public ImmutableList<string> PinnedConversationIds 
+    { 
+        get => _pinnedConversationIds.ToImmutableList(); 
+        set => _pinnedConversationIds = value.ToHashSet(); 
+    }
 
     public bool AddPin(string pinnedConversationId) => _pinnedConversationIds.Add(pinnedConversationId);
     public bool RemovePin(string pinnedConversationId) => _pinnedConversationIds.Remove(pinnedConversationId);
