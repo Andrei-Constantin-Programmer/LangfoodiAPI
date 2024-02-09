@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
@@ -21,7 +22,8 @@ internal class GetMessagesByConversationHandler : IRequestHandler<GetMessagesByC
 
     public Task<List<MessageDTO>> Handle(GetMessagesByConversationQuery request, CancellationToken cancellationToken)
     {
-        Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId);
+        Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId)
+            ?? throw new ConversationNotFoundException($"No conversation found with id {request.ConversationId}");
 
         return Task.FromResult(conversation.Messages
             .Select(_messageMapper.MapMessageToMessageDTO)
