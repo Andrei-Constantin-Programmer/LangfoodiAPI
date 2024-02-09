@@ -8,6 +8,8 @@ using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Validation;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Utilities;
@@ -23,6 +25,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
     private readonly IMessageMapper _messageMapper;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IConversationQueryRepository _conversationQueryRepository;
+    private readonly IConversationPersistenceRepository _conversationPersistenceRepository;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
 
@@ -32,6 +35,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         IMessageMapper messageMapper,
         IUserQueryRepository userQueryRepository,
         IConversationQueryRepository conversationQueryRepository,
+        IConversationPersistenceRepository conversationPersistenceRepository,
         IRecipeQueryRepository recipeQueryRepository,
         IDateTimeProvider dateTimeProvider)
     {
@@ -40,6 +44,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         _messageMapper = messageMapper;
         _userQueryRepository = userQueryRepository;
         _conversationQueryRepository = conversationQueryRepository;
+        _conversationPersistenceRepository = conversationPersistenceRepository;
         _recipeQueryRepository = recipeQueryRepository;
         _dateTimeProvider = dateTimeProvider;
     }
@@ -49,11 +54,9 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         IUserAccount sender = _userQueryRepository.GetUserById(request.Contract.SenderId)?.Account
             ?? throw new UserNotFoundException($"User with id {request.Contract.SenderId} not found");
 
-        if (_conversationQueryRepository.GetConversationById(request.Contract.ConversationId) is null)
-        {
-            throw new ConversationNotFoundException($"Conversation with id {request.Contract.ConversationId} was not found");
-        }
-
+        Conversation conversation = _conversationQueryRepository.GetConversationById(request.Contract.ConversationId)
+            ?? throw new ConversationNotFoundException($"Conversation with id {request.Contract.ConversationId} was not found");
+        
         foreach (var recipeId in request.Contract.RecipeIds)
         {
             if (_recipeQueryRepository.GetRecipeById(recipeId) is null)
@@ -76,6 +79,18 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
             messageRepliedTo: messageRepliedTo,
             seenByUserIds: new() { sender.Id }
         );
+
+        conversation.SendMessage(createdMessage);
+
+        var (connection, group) = conversation switch
+        {
+            ConnectionConversation connConvo => (connConvo.Connection, (Group?)null),
+            GroupConversation groupConvo => (null, groupConvo.Group),
+
+            _ => throw new UnsupportedConversationException(conversation)
+        };
+
+        _conversationPersistenceRepository.UpdateConversation(conversation, connection, group);
 
         return await Task.FromResult(_messageMapper.MapMessageToMessageDTO(createdMessage));
     }
