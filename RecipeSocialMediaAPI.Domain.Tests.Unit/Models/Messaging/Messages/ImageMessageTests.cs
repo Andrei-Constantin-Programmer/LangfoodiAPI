@@ -74,4 +74,47 @@ public class ImageMessageTests
         _imageMessageSUT.ImageURLs.Should().Contain(newImage);
         _imageMessageSUT.UpdatedDate.Should().Be(testNow);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void MarkAsSeenBy_IfUserHasNotYetSeenTheMessage_AddUserToSeenByListAndReturnTrue()
+    {
+        // Given
+        TestUserAccount newUser = new()
+        {
+            Id = "u1",
+            Handler = "user_1",
+            UserName = "User 1"
+        };
+
+        // When
+        var result = _imageMessageSUT.MarkAsSeenBy(newUser);
+
+        // Then
+        result.Should().BeTrue();
+        _imageMessageSUT.SeenBy.Should().Contain(newUser);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void MarkAsSeenBy_IfUserHasAlreadySeenTheMessage_DoNotAddUserToSeenByListAndReturnFalse()
+    {
+        // Given
+        TestUserAccount existingUser = new()
+        {
+            Id = "u1",
+            Handler = "user_1",
+            UserName = "User 1"
+        };
+        _imageMessageSUT.MarkAsSeenBy(existingUser);
+
+        // When
+        var result = _imageMessageSUT.MarkAsSeenBy(existingUser);
+
+        // Then
+        result.Should().BeFalse();
+        _imageMessageSUT.SeenBy.Should().OnlyHaveUniqueItems().And.Contain(existingUser);
+    }
 }
