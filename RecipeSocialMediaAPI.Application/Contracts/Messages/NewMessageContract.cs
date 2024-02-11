@@ -4,7 +4,7 @@ public record NewMessageContract(
     string ConversationId,
     string SenderId,
     string? Text,
-    List<string> RecipeIds,
-    List<string> ImageURLs,
+    List<string>? RecipeIds,
+    List<string>? ImageURLs,
     string? MessageRepliedToId
 );
