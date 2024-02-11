@@ -21,7 +21,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         _messageCollection = mongoCollectionFactory.CreateCollection<MessageDocument>();
     }
 
-    public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
+    public Message CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
     {
         MessageDocument messageDocument = _messageCollection.Insert(new MessageDocument(
             SenderId: sender.Id,

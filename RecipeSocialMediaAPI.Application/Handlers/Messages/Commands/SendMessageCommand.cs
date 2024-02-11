@@ -57,7 +57,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         Conversation conversation = _conversationQueryRepository.GetConversationById(request.Contract.ConversationId)
             ?? throw new ConversationNotFoundException($"Conversation with id {request.Contract.ConversationId} was not found");
         
-        foreach (var recipeId in request.Contract.RecipeIds)
+        foreach (var recipeId in request.Contract.RecipeIds ?? new List<string>())
         {
             if (_recipeQueryRepository.GetRecipeById(recipeId) is null)
             {
@@ -101,11 +101,11 @@ public class SendMessageCommandValidator : AbstractValidator<SendMessageCommand>
     public SendMessageCommandValidator()
     {
         RuleFor(x => x.Contract)
-            .Must((_, contract) => !string.IsNullOrWhiteSpace(contract.Text) || contract.ImageURLs.Any() || contract.RecipeIds.Any())
+            .Must((_, contract) => !string.IsNullOrWhiteSpace(contract.Text) || (contract.ImageURLs?.Any() ?? false) || (contract.RecipeIds?.Any() ?? false))
             .WithMessage("Message content must not be empty");
 
         RuleFor(x => x.Contract)
-            .Must((_, contract) => !(contract.ImageURLs.Count > 0 && contract.RecipeIds.Count > 0))
+            .Must((_, contract) => !(contract.ImageURLs?.Count > 0 && contract.RecipeIds?.Count > 0))
             .WithMessage("A message cannot contain both images and recipes");
     }
 }
