@@ -1,28 +1,32 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record UpdateMessageCommand(UpdateMessageContract Contract) : IRequest;
+public record UpdateMessageCommand(UpdateMessageContract Contract) : IRequest<MessageDTO>;
 
-internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
+internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand, MessageDTO>
 {
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
+    private readonly IMessageMapper _messageMapper;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
 
-    public UpdateMessageHandler(IMessagePersistenceRepository messagePersistenceRepository, IMessageQueryRepository messageQueryRepository, IRecipeQueryRepository recipeQueryRepository)
+    public UpdateMessageHandler(IMessagePersistenceRepository messagePersistenceRepository, IMessageQueryRepository messageQueryRepository, IMessageMapper messageMapper, IRecipeQueryRepository recipeQueryRepository)
     {
         _messagePersistenceRepository = messagePersistenceRepository;
         _messageQueryRepository = messageQueryRepository;
+        _messageMapper = messageMapper;
         _recipeQueryRepository = recipeQueryRepository;
     }
 
-    public Task Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
+    public async Task<MessageDTO> Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
     {
         Message message =
             _messageQueryRepository.GetMessage(request.Contract.Id)
@@ -46,7 +50,8 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
         bool isSuccessful = _messagePersistenceRepository.UpdateMessage(message);
 
         return isSuccessful
-            ? Task.CompletedTask
+            ? await Task.FromResult(_messageMapper.MapMessageToMessageDTO(message)
+                ?? throw new MessageNotFoundException(message.Id))
             : throw new MessageUpdateException($"Could not update message with id {message.Id}");
     }
 

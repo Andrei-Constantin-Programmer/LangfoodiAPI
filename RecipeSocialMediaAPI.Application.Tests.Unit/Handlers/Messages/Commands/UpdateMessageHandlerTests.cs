@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
+using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -21,6 +23,7 @@ public class UpdateMessageHandlerTests
 
     private readonly Mock<IMessagePersistenceRepository> _messagePersistenceRepositoryMock;
     private readonly Mock<IMessageQueryRepository> _messageQueryRepositoryMock;
+    private readonly Mock<IMessageMapper> _messageMapperMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
 
@@ -32,6 +35,7 @@ public class UpdateMessageHandlerTests
     {
         _messagePersistenceRepositoryMock = new Mock<IMessagePersistenceRepository>();
         _messageQueryRepositoryMock = new Mock<IMessageQueryRepository>();
+        _messageMapperMock = new Mock<IMessageMapper>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
 
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
@@ -40,7 +44,7 @@ public class UpdateMessageHandlerTests
             .Returns(TEST_DATE);
         _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
 
-        _updateMessageHandlerSUT = new(_messagePersistenceRepositoryMock.Object, _messageQueryRepositoryMock.Object, _recipeQueryRepositoryMock.Object);
+        _updateMessageHandlerSUT = new(_messagePersistenceRepositoryMock.Object, _messageQueryRepositoryMock.Object, _messageMapperMock.Object, _recipeQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -825,5 +829,52 @@ public class UpdateMessageHandlerTests
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenMessageUpdatedSuccessfully_ReturnMappedUpdatedMessage()
+    {
+        // Given
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
+
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
+            .Returns(testMessage);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.UpdateMessage(testMessage))
+            .Returns(true);
+
+        MessageDTO messageDto = new(
+            testMessage.Id,
+            testMessage.Sender.Id,
+            testMessage.Sender.UserName,
+            new(),
+            testMessage.SentDate,
+            testMessage.UpdatedDate,
+            null,
+            testCommand.Contract.Text,
+            null,
+            null
+        );
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Returns(messageDto);
+
+        // When
+        var result = await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+
+        // Then
+        result.Should().Be(messageDto);
     }
 }

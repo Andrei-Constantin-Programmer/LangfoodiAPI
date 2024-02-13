@@ -2,7 +2,6 @@
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;
@@ -24,12 +23,12 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
 
     public Message? GetMessage(string id) => _collection.FirstOrDefault(m => m.Id == id);
 
-    public Message CreateMessage(IUserAccount sender, string? text, List<string> recipeIds, List<string> imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
+    public Message CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
     {
         var id = _collection.Count.ToString();
         Message message;
 
-        if (recipeIds.Count > 0)
+        if (recipeIds?.Count > 0)
         {
             var recipes = recipeIds
                 .Select(id => _recipeQueryRepository.GetRecipeById(id)!)
@@ -38,7 +37,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
             message = _messageFactory
                 .CreateRecipeMessage(id, sender, recipes, text, new(), sentDate, repliedToMessage: messageRepliedTo);
         }
-        else if (imageURLs.Count > 0)
+        else if (imageURLs?.Count > 0)
         {
             message = _messageFactory.CreateImageMessage(id, sender, imageURLs, text, new(), sentDate, repliedToMessage: messageRepliedTo);
         }

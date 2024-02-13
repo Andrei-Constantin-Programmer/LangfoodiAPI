@@ -23,9 +23,9 @@ public class MessagingHub : Hub<IMessagingClient>
 
     public async Task UpdateMessage(UpdateMessageContract contract)
     {
-        await _sender.Send(new UpdateMessageCommand(contract));
+        var updatedMessage = await _sender.Send(new UpdateMessageCommand(contract));
 
-        await Clients.All.ReceiveMessageUpdate(contract.Id);
+        await Clients.All.ReceiveMessageUpdate(updatedMessage);
     }
 
     public async Task DeleteMessage(string messageId)
