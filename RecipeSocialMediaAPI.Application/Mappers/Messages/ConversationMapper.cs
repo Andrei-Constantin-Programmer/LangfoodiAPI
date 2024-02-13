@@ -23,8 +23,8 @@ public class ConversationMapper : IConversationMapper
             conversation.ConversationId,
             conversation.Connection.ConnectionId,
             false,
-            conversation.Connection.Account1.Id == user.Id ? conversation.Connection.Account2.UserName : user.UserName,
-            conversation.Connection.Account1.Id == user.Id ? conversation.Connection.Account2.ProfileImageId : user.ProfileImageId,
+            conversation.Connection.Account1.Id == user.Id ? conversation.Connection.Account2.UserName : conversation.Connection.Account1.UserName,
+            conversation.Connection.Account1.Id == user.Id ? conversation.Connection.Account2.ProfileImageId : conversation.Connection.Account1.ProfileImageId,
             lastMessageDto,
             unreadCount);
     }
