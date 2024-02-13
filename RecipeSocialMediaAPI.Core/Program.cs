@@ -1,6 +1,7 @@
 using RecipeSocialMediaAPI.Core.Utilities;
 using RecipeSocialMediaAPI.Core.Configuration;
 using RecipeSocialMediaAPI.Core.Middleware;
+using RecipeSocialMediaAPI.Core.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.ConfigureLogging();
@@ -24,6 +25,8 @@ app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionMappingMiddleware>();
 
+app.MapHub<MessagingHub>("/live/messaging");
+app.UseCors("AllowAll");
 app.MapEndpoints();
 app.Run();
 

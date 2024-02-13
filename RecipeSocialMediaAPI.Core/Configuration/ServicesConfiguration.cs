@@ -98,5 +98,16 @@ internal static class ServicesConfiguration
             config.RegisterServicesFromAssemblyContaining<Application.AssemblyReference>();
             config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>));
         });
+
+        // SignalR
+        builder.Services.AddSignalR();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+        });
     }
 }
