@@ -96,21 +96,32 @@ public class GetConversationsByUserHandlerTests
             Email = "test2@mail.com",
             Password = "Test@123"
         };
+        TestUserCredentials user3 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u3",
+                Handler = "user_3",
+                UserName = "User 3"
+            },
+            Email = "test3@mail.com",
+            Password = "Test@123"
+        };
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Account.Id))
             .Returns(user1);
 
         Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Connected);
-        Group group = new("group1", "Group", "Group Desc", new List<IUserAccount> { user1.Account, user2.Account });
+        Group group = new("group1", "Group", "Group Desc", new List<IUserAccount> { user1.Account, user2.Account, user3.Account });
         List<Conversation> conversations = new()
         {
             new ConnectionConversation(connection, "convo1"),
-            new GroupConversation(group, "convo1"),
+            new GroupConversation(group, "convo2"),
         };
 
-        ConversationDTO convo1Dto = new(conversations[0].ConversationId, connection.ConnectionId, false, user2.Account.Id, user2.Account.ProfileImageId, null);
-        ConversationDTO convo2Dto = new(conversations[1].ConversationId, group.GroupId, true, group.GroupName, null, null);
+        ConversationDTO convo1Dto = new(conversations[0].ConversationId, connection.ConnectionId, false, user2.Account.Id, user2.Account.ProfileImageId, null, new() { user1.Account.Id, user2.Account.Id });
+        ConversationDTO convo2Dto = new(conversations[1].ConversationId, group.GroupId, true, group.GroupName, null, null, new() { user1.Account.Id, user2.Account.Id, user3.Account.Id });
         
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1.Account, (ConnectionConversation)conversations[0]))

@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
+using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
+using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
@@ -15,6 +17,7 @@ namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands
 public class CreateConnectionConversationHandlerTests
 {
     private readonly Mock<IConversationPersistenceRepository> _conversationPersistenceRepositoryMock;
+    private readonly Mock<IConversationMapper> _conversationMapperMock;
     private readonly Mock<IConnectionQueryRepository> _connectionQueryRepositoryMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
 
@@ -23,10 +26,11 @@ public class CreateConnectionConversationHandlerTests
     public CreateConnectionConversationHandlerTests()
     {
         _conversationPersistenceRepositoryMock = new Mock<IConversationPersistenceRepository>();
+        _conversationMapperMock = new Mock<IConversationMapper>();
         _connectionQueryRepositoryMock = new Mock<IConnectionQueryRepository>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _connectionConversationHandlerSUT = new(_conversationPersistenceRepositoryMock.Object, _connectionQueryRepositoryMock.Object, _userQueryRepositoryMock.Object);
+        _connectionConversationHandlerSUT = new(_conversationPersistenceRepositoryMock.Object, _conversationMapperMock.Object, _connectionQueryRepositoryMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -72,6 +76,11 @@ public class CreateConnectionConversationHandlerTests
             .Setup(repo => repo.CreateConnectionConversation(connection))
             .Returns(expectedConversation);
 
+        ConversationDTO conversationDto = new(expectedConversation.ConversationId, connection.ConnectionId, false, userAccount2.UserName, userAccount2.ProfileImageId, null, new() { userAccount1.Id, userAccount2.Id });
+        _conversationMapperMock
+            .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(userAccount1, expectedConversation))
+            .Returns(conversationDto);
+
         // When
         var result = await _connectionConversationHandlerSUT.Handle(new CreateConnectionConversationCommand(userAccount1.Id, connection.ConnectionId), CancellationToken.None);
 
@@ -82,6 +91,8 @@ public class CreateConnectionConversationHandlerTests
         result.IsGroup.Should().BeFalse();
         result.ThumbnailId.Should().Be(userAccount2.ProfileImageId);
         result.LastMessage.Should().BeNull();
+        result.MessagesUnseen.Should().Be(0);
+        result.UserIds.Should().BeEquivalentTo(conversationDto.UserIds);
     }
 
     [Fact]

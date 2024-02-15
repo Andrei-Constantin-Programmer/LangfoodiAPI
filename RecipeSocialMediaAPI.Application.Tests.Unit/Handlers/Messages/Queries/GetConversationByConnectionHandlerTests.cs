@@ -67,7 +67,7 @@ public class GetConversationByConnectionHandlerTests
             .Setup(repo => repo.GetConversationByConnection(connection.ConnectionId))
             .Returns(conversation);
 
-        ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, null);
+        ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, null, new() { user1.Id, user2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -84,6 +84,7 @@ public class GetConversationByConnectionHandlerTests
         result.ThumbnailId.Should().Be(user2.ProfileImageId);
         result.Id.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().BeNull();
+        result.UserIds.Should().BeEquivalentTo(conversationDto.UserIds);
     }
 
     [Fact]
@@ -128,7 +129,7 @@ public class GetConversationByConnectionHandlerTests
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", messages);
 
-        ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, lastMessageDto);
+        ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, lastMessageDto, new() { user1.Id, user2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1, conversation))
             .Returns(conversationDto);

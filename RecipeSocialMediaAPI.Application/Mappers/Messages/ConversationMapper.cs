@@ -26,6 +26,7 @@ public class ConversationMapper : IConversationMapper
             conversation.Connection.Account1.Id == user.Id ? conversation.Connection.Account2.UserName : conversation.Connection.Account1.UserName,
             conversation.Connection.Account1.Id == user.Id ? conversation.Connection.Account2.ProfileImageId : conversation.Connection.Account1.ProfileImageId,
             lastMessageDto,
+            new() { conversation.Connection.Account1.Id, conversation.Connection.Account2.Id },
             unreadCount);
     }
 
@@ -41,6 +42,7 @@ public class ConversationMapper : IConversationMapper
             conversation.Group.GroupName,
             null,
             lastMessageDto,
+            conversation.Group.Users.Select(user => user.Id).ToList(),
             unreadCount);
     }
 

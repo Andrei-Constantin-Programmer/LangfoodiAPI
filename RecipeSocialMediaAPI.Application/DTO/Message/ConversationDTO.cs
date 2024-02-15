@@ -7,5 +7,6 @@ public record ConversationDTO(
     string Name,
     string? ThumbnailId,
     MessageDTO? LastMessage,
+    List<string> UserIds,
     int MessagesUnseen = 0
 );

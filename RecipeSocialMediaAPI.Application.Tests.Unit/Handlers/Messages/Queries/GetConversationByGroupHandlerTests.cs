@@ -68,7 +68,7 @@ public class GetConversationByGroupHandlerTests
             .Setup(repo => repo.GetConversationByGroup(group.GroupId))
         .Returns(conversation);
 
-        ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, null);
+        ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, null, new() { user1.Id, user2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToGroupConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -85,6 +85,7 @@ public class GetConversationByGroupHandlerTests
         result.ThumbnailId.Should().BeNull();
         result.Id.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().BeNull();
+        result.UserIds.Should().BeEquivalentTo(conversationDto.UserIds);
     }
 
     [Fact]
@@ -129,7 +130,7 @@ public class GetConversationByGroupHandlerTests
         Group group = new("group1", "Group 1", "Group Description", new List<IUserAccount>() { user1, user2 });
         GroupConversation conversation = new(group, "convo1", messages);
 
-        ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, lastMessageDto);
+        ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, lastMessageDto, new() { user1.Id, user2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToGroupConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -148,6 +149,7 @@ public class GetConversationByGroupHandlerTests
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.Id.Should().Be(conversation.ConversationId);
         result.LastMessage.Should().Be(lastMessageDto);
+        result.UserIds.Should().BeEquivalentTo(conversationDto.UserIds);
     }
 
     [Fact]
