@@ -25,7 +25,7 @@ app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionMappingMiddleware>();
 
-app.MapHub<MessagingHub>("/live/messaging");
+app.MapHub<MessagingHub>("messaging-hub");
 app.UseCors("AllowAll");
 app.MapEndpoints();
 app.Run();
