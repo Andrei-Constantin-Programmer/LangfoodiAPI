@@ -20,7 +20,7 @@ public class SendMessageValidatorTests
     public void SendMessageValidation_WhenValidTextMessage_DontThrow()
     {
         // Given
-        NewMessageContract testContract = new("convo1", "sender1", "Text", new(), new(), "repliedTo");
+        SendMessageContract testContract = new("convo1", "sender1", "Text", new(), new(), "repliedTo");
         SendMessageCommand testCommand = new(testContract);
 
         // When
@@ -38,7 +38,7 @@ public class SendMessageValidatorTests
     public void SendMessageValidation_WhenValidImageMessage_DontThrow(bool containsText)
     {
         // Given
-        NewMessageContract testContract = new("convo1", "sender1", containsText ? "Text" : null, new(), new() { "Image1", "Image2" }, "repliedTo");
+        SendMessageContract testContract = new("convo1", "sender1", containsText ? "Text" : null, new(), new() { "Image1", "Image2" }, "repliedTo");
         SendMessageCommand testCommand = new(testContract);
 
         // When
@@ -56,7 +56,7 @@ public class SendMessageValidatorTests
     public void SendMessageValidation_WhenValidRecipeMessage_DontThrow(bool containsText)
     {
         // Given
-        NewMessageContract testContract = new("convo1", "sender1", containsText ? "Text" : null, new() { "Recipe1", "Recipe2" }, new(), "repliedTo");
+        SendMessageContract testContract = new("convo1", "sender1", containsText ? "Text" : null, new() { "Recipe1", "Recipe2" }, new(), "repliedTo");
         SendMessageCommand testCommand = new(testContract);
 
         // When
@@ -72,7 +72,7 @@ public class SendMessageValidatorTests
     public void SendMessageValidation_WhenEmptyMessage_ThrowValidationException()
     {
         // Given
-        NewMessageContract testContract = new("convo1", "sender1", null, new(), new(), "repliedTo");
+        SendMessageContract testContract = new("convo1", "sender1", null, new(), new(), "repliedTo");
         SendMessageCommand testCommand = new(testContract);
 
         // When
@@ -88,7 +88,7 @@ public class SendMessageValidatorTests
     public void SendMessageValidation_WhenMessageContainsBothImagesAndRecipes_ThrowValidationException()
     {
         // Given
-        NewMessageContract testContract = new("convo1", "sender1", null, new() { "Recipe1", "Recipe2" }, new() { "Image1", "Image2" }, "repliedTo");
+        SendMessageContract testContract = new("convo1", "sender1", null, new() { "Recipe1", "Recipe2" }, new() { "Image1", "Image2" }, "repliedTo");
         SendMessageCommand testCommand = new(testContract);
 
         // When

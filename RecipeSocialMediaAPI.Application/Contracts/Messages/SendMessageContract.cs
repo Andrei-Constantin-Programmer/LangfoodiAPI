@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.Contracts.Messages;
 
-public record NewMessageContract(
+public record SendMessageContract(
     string ConversationId,
     string SenderId,
     string? Text,

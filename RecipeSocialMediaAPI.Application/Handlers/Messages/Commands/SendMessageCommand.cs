@@ -16,7 +16,7 @@ using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record SendMessageCommand(NewMessageContract Contract) : IValidatableRequest<MessageDTO>;
+public record SendMessageCommand(SendMessageContract Contract) : IValidatableRequest<MessageDTO>;
 
 internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageDTO>
 {

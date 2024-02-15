@@ -32,7 +32,7 @@ internal static class SwaggerConfiguration
                 { key, new List<string>() }
             };
             options.AddSecurityRequirement(requirement);
-
+            options.AddSignalRSwaggerGen();
         });
     }
 }

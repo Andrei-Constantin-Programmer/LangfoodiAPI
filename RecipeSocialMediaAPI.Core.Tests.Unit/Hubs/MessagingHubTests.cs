@@ -41,7 +41,7 @@ public class MessagingHubTests
         // Given
         MessageDTO newMessage = new("m1", "u1", "User 1", new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "Text");
 
-        NewMessageContract contract = new("convo1", newMessage.SenderId, newMessage.TextContent, new(), new(), null);
+        SendMessageContract contract = new("convo1", newMessage.SenderId, newMessage.TextContent, new(), new(), null);
         _senderMock
             .Setup(sender => sender.Send(It.Is<SendMessageCommand>(command => command.Contract == contract), CancellationToken.None))
             .ReturnsAsync(newMessage);

@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.SignalR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
+using SignalRSwaggerGen.Attributes;
 
 namespace RecipeSocialMediaAPI.Core.SignalR;
 
+[SignalRHub]
 public class MessagingHub : Hub<IMessagingClient>
 {
     private readonly ISender _sender;
@@ -15,32 +17,32 @@ public class MessagingHub : Hub<IMessagingClient>
         _sender = sender;
     }
 
-    public async Task<MessageDTO> SendMessage(NewMessageContract contract)
+    public async Task<MessageDTO> SendMessage(SendMessageContract SendMessageContract)
     {
-        var message = await _sender.Send(new SendMessageCommand(contract));
+        var message = await _sender.Send(new SendMessageCommand(SendMessageContract));
         await Clients.All.ReceiveMessage(message);
 
         return message;
     }
 
-    public async Task UpdateMessage(UpdateMessageContract contract)
+    public async Task UpdateMessage(UpdateMessageContract UpdateMessageContract)
     {
-        var updatedMessage = await _sender.Send(new UpdateMessageCommand(contract));
+        var updatedMessage = await _sender.Send(new UpdateMessageCommand(UpdateMessageContract));
 
         await Clients.All.ReceiveMessageUpdate(updatedMessage);
     }
 
-    public async Task DeleteMessage(string messageId)
+    public async Task DeleteMessage(string MessageId)
     {
-        await _sender.Send(new RemoveMessageCommand(messageId));
+        await _sender.Send(new RemoveMessageCommand(MessageId));
 
-        await Clients.All.ReceiveMessageDeletion(messageId);
+        await Clients.All.ReceiveMessageDeletion(MessageId);
     }
 
-    public async Task MarkMessageAsRead(string userId, string messageId)
+    public async Task MarkMessageAsRead(string UserId, string MessageId)
     {
-        await _sender.Send(new MarkMessageAsReadCommand(userId, messageId));
+        await _sender.Send(new MarkMessageAsReadCommand(UserId, MessageId));
 
-        await Clients.All.ReceiveMarkAsRead(userId, messageId);
+        await Clients.All.ReceiveMarkAsRead(UserId, MessageId);
     }
 }

@@ -41,7 +41,7 @@ public static class MessageEndpoints
         });
 
         group.MapPost("/send", async (
-            [FromBody] NewMessageContract newMessageContract,
+            [FromBody] SendMessageContract newMessageContract,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new SendMessageCommand(newMessageContract)));

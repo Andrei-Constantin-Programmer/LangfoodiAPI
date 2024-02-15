@@ -109,7 +109,7 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetConversationById(conversation.ConversationId))
             .Returns(conversation);
         
-        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
         Message createdMessage = _messageFactory.CreateTextMessage("m1", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
@@ -178,7 +178,7 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetConversationById(conversation.ConversationId))
             .Returns(conversation);
 
-        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
 
         Message createdMessage = _messageFactory.CreateImageMessage("m1", user1.Account, contract.ImageURLs, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
@@ -256,7 +256,7 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetRecipeById(existingRecipe2.Id))
             .Returns(existingRecipe2);
 
-        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
         Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2}, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
@@ -330,7 +330,7 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetRecipeById(existingRecipe2.Id))
             .Returns((RecipeAggregate?)null);
 
-        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
         Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2 }, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
@@ -394,7 +394,7 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetConversationById(conversation.ConversationId))
             .Returns(conversation);
 
-        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
         // When
         var testAction = async () => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
@@ -442,7 +442,7 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetConversationById(conversation.ConversationId))
             .Returns((Conversation?)null);
 
-        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
         // When
         var testAction = async () => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
@@ -499,7 +499,7 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetMessage(repliedToMessage.Id))
             .Returns(repliedToMessage);
 
-        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
 
         Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
         _messagePersistenceRepositoryMock
@@ -572,7 +572,7 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetMessage(repliedToMessage.Id))
             .Returns((Message?)null);
 
-        NewMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
 
         Message createdMessage = _messageFactory.CreateTextMessage("m2", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now, repliedToMessage: repliedToMessage);
         _messagePersistenceRepositoryMock
