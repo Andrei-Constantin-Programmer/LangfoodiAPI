@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
@@ -14,19 +15,25 @@ public record CreateGroupConversationCommand(string UserId, string GroupId) : IR
 internal class CreateGroupConversationHandler : IRequestHandler<CreateGroupConversationCommand, ConversationDTO>
 {
     private readonly IConversationPersistenceRepository _conversationPersistenceRepository;
+    private readonly IConversationMapper _conversationMapper;
     private readonly IGroupQueryRepository _groupQueryRepository;
     private readonly IUserQueryRepository _userQueryRepository;
 
-    public CreateGroupConversationHandler(IConversationPersistenceRepository conversationPersistenceRepository, IGroupQueryRepository groupQueryRepository, IUserQueryRepository userQueryRepository)
+    public CreateGroupConversationHandler(
+        IConversationPersistenceRepository conversationPersistenceRepository,
+        IConversationMapper conversationMapper,
+        IGroupQueryRepository groupQueryRepository,
+        IUserQueryRepository userQueryRepository)
     {
         _conversationPersistenceRepository = conversationPersistenceRepository;
+        _conversationMapper = conversationMapper;
         _groupQueryRepository = groupQueryRepository;
         _userQueryRepository = userQueryRepository;
     }
 
     public async Task<ConversationDTO> Handle(CreateGroupConversationCommand request, CancellationToken cancellationToken)
     {
-        _ = _userQueryRepository.GetUserById(request.UserId)?.Account
+        IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
         Group group = _groupQueryRepository.GetGroupById(request.GroupId)
@@ -34,13 +41,6 @@ internal class CreateGroupConversationHandler : IRequestHandler<CreateGroupConve
 
         Conversation newConversation = _conversationPersistenceRepository.CreateGroupConversation(group);
 
-        return await Task.FromResult(new ConversationDTO(
-            newConversation.ConversationId,
-            request.GroupId,
-            true,
-            group.GroupName,
-            null,
-            null
-        ));
+        return await Task.FromResult(_conversationMapper.MapConversationToGroupConversationDTO(user, (GroupConversation)newConversation));
     }
 }

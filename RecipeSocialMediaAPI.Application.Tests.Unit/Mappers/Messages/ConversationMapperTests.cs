@@ -36,13 +36,15 @@ public class ConversationMapperTests
         {
             Id = "u1",
             Handler = "user_1",
-            UserName = "User 1"
+            UserName = "User 1",
+            ProfileImageId = "img1.png"
         };
         TestUserAccount user2 = new()
         {
             Id = "u2",
             Handler = "user_2",
-            UserName = "User 2"
+            UserName = "User 2",
+            ProfileImageId = "img2.png"
         };
 
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Connected);
@@ -56,6 +58,9 @@ public class ConversationMapperTests
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().BeNull();
         result.MessagesUnseen.Should().Be(0);
+        result.ThumbnailId.Should().Be(user2.ProfileImageId);
+        result.IsGroup.Should().BeFalse();
+        result.UserIds.Should().BeEquivalentTo(new List<string>{ user1.Id, user2.Id });
     }
 
     [Fact]
@@ -68,7 +73,8 @@ public class ConversationMapperTests
         {
             Id = "u1",
             Handler = "user_1",
-            UserName = "User 1"
+            UserName = "User 1",
+            ProfileImageId = "img1.png"
         };
         TestUserAccount user2 = new()
         {
@@ -110,6 +116,9 @@ public class ConversationMapperTests
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(0);
+        result.ThumbnailId.Should().Be(user2.ProfileImageId);
+        result.IsGroup.Should().BeFalse();
+        result.UserIds.Should().BeEquivalentTo(new List<string> { user1.Id, user2.Id });
     }
 
     [Fact]
@@ -128,7 +137,8 @@ public class ConversationMapperTests
         {
             Id = "u2",
             Handler = "user_2",
-            UserName = "User 2"
+            UserName = "User 2",
+            ProfileImageId = "img2.png"
         };
 
         TestMessage lastMessage = new("last", user2, new(2024, 1, 1, 1, 0, 26, TimeSpan.Zero), null, seenBy: new() { user2 });
@@ -163,6 +173,9 @@ public class ConversationMapperTests
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(2);
+        result.ThumbnailId.Should().Be(user2.ProfileImageId);
+        result.IsGroup.Should().BeFalse();
+        result.UserIds.Should().BeEquivalentTo(new List<string> { user1.Id, user2.Id });
     }
 
     [Fact]
@@ -183,8 +196,14 @@ public class ConversationMapperTests
             Handler = "user_2",
             UserName = "User 2"
         };
+        TestUserAccount user3 = new()
+        {
+            Id = "u3",
+            Handler = "user_3",
+            UserName = "User 3"
+        };
 
-        Group group = new("group1", "Group", "Group Desc", new List<IUserAccount> { user1, user2 });
+        Group group = new("group1", "Group", "Group Desc", new List<IUserAccount> { user1, user2, user3 });
         GroupConversation conversation = new(group, "convo1", new List<Message>());
 
         // When
@@ -195,6 +214,9 @@ public class ConversationMapperTests
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().BeNull();
         result.MessagesUnseen.Should().Be(0);
+        result.ThumbnailId.Should().Be(user2.ProfileImageId);
+        result.IsGroup.Should().BeTrue();
+        result.UserIds.Should().BeEquivalentTo(new List<string> { user1.Id, user2.Id, user3.Id });
     }
 
     [Fact]
@@ -248,6 +270,9 @@ public class ConversationMapperTests
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(0);
+        result.ThumbnailId.Should().Be(user2.ProfileImageId);
+        result.IsGroup.Should().BeTrue();
+        result.UserIds.Should().BeEquivalentTo(new List<string> { user1.Id, user2.Id });
     }
 
     [Fact]
@@ -301,5 +326,8 @@ public class ConversationMapperTests
         result.ConnectionOrGroupId.Should().Be(group.GroupId);
         result.LastMessage.Should().Be(lastMessageDTO);
         result.MessagesUnseen.Should().Be(2);
+        result.ThumbnailId.Should().Be(user2.ProfileImageId);
+        result.IsGroup.Should().BeTrue();
+        result.UserIds.Should().BeEquivalentTo(new List<string> { user1.Id, user2.Id });
     }
 }
