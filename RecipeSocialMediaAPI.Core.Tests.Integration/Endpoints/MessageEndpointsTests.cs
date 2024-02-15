@@ -14,6 +14,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
+
 public class MessageEndpointsTests : EndpointTestBase
 {
     private readonly TestMessage _testMessage1;

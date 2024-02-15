@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
 namespace RecipeSocialMediaAPI.Core.SignalR;
@@ -14,11 +15,12 @@ public class MessagingHub : Hub<IMessagingClient>
         _sender = sender;
     }
 
-    public async Task SendMessage(NewMessageContract contract)
+    public async Task<MessageDTO> SendMessage(NewMessageContract contract)
     {
         var message = await _sender.Send(new SendMessageCommand(contract));
-
         await Clients.All.ReceiveMessage(message);
+
+        return message;
     }
 
     public async Task UpdateMessage(UpdateMessageContract contract)
