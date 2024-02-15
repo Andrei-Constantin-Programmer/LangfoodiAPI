@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
+using RecipeSocialMediaAPI.Core.SignalR;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
 
@@ -42,33 +44,46 @@ public static class MessageEndpoints
 
         group.MapPost("/send", async (
             [FromBody] SendMessageContract newMessageContract,
-            [FromServices] ISender sender) =>
+            [FromServices] ISender sender,
+            [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
-            return Results.Ok(await sender.Send(new SendMessageCommand(newMessageContract)));
+            var sentMessageDto = await sender.Send(new SendMessageCommand(newMessageContract));
+            await context.Clients.All.ReceiveMessage(sentMessageDto);
+
+            return Results.Ok(sentMessageDto);
         });
 
         group.MapPut("/update", async (
             [FromBody] UpdateMessageContract updateMessageContract,
-            [FromServices] ISender sender) =>
+            [FromServices] ISender sender,
+            [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
-            await sender.Send(new UpdateMessageCommand(updateMessageContract));
+            var updatedMessage = await sender.Send(new UpdateMessageCommand(updateMessageContract));
+            await context.Clients.All.ReceiveMessageUpdate(updatedMessage);
+
             return Results.Ok();
         });
 
         group.MapDelete("/delete", async (
             [FromQuery] string id,
-            [FromServices] ISender sender) =>
+            [FromServices] ISender sender,
+            [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
             await sender.Send(new RemoveMessageCommand(id));
+            await context.Clients.All.ReceiveMessageDeletion(id);
+
             return Results.Ok();
         });
 
         group.MapPut("/mark-as-read", async (
             [FromQuery] string userId,
             [FromQuery] string messageId,
-            [FromServices] ISender sender) =>
+            [FromServices] ISender sender,
+            [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
             await sender.Send(new MarkMessageAsReadCommand(userId, messageId));
+            await context.Clients.All.ReceiveMarkAsRead(userId, messageId);
+
             return Results.Ok();
         });
 

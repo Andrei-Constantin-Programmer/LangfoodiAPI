@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.SignalR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
-using SignalRSwaggerGen.Attributes;
 
 namespace RecipeSocialMediaAPI.Core.SignalR;
 
-[SignalRHub]
 public class MessagingHub : Hub<IMessagingClient>
 {
     private readonly ISender _sender;
