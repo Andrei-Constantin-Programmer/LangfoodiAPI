@@ -4,5 +4,5 @@ namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 
 public interface IMessageNotificationService
 {
-    Task NotifyMessageCreated(MessageDTO messageDTO, string conversationId, CancellationToken cancellationToken);
+    Task NotifyMessageSent(MessageDTO sentMessage, string conversationId, CancellationToken cancellationToken);
 }

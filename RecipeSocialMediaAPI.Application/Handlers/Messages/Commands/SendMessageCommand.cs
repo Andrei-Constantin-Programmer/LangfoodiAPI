@@ -97,7 +97,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         _conversationPersistenceRepository.UpdateConversation(conversation, connection, group);
 
         var messageDto = _messageMapper.MapMessageToMessageDTO(createdMessage);
-        await _publisher.Publish(new MessageCreatedNotification(messageDto, conversation.ConversationId), cancellationToken);
+        await _publisher.Publish(new MessageSentNotification(messageDto, conversation.ConversationId), cancellationToken);
 
         return await Task.FromResult(messageDto);
     }

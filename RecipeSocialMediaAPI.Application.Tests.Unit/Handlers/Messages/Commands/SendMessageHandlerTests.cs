@@ -665,7 +665,7 @@ public class SendMessageHandlerTests
         // Then
         _publisherMock
             .Verify(publisher => publisher.Publish(
-                    It.Is<MessageCreatedNotification>(notification
+                    It.Is<MessageSentNotification>(notification
                         => notification.Message == messageDto
                         && notification.ConversationId == conversation.ConversationId), 
                     It.IsAny<CancellationToken>()),

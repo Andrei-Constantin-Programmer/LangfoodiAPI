@@ -15,15 +15,15 @@ public class MessageNotificationService : IMessageNotificationService
         _logger = logger;
     }
 
-    public async Task NotifyMessageCreated(MessageDTO messageDTO, string conversationId, CancellationToken cancellationToken)
+    public async Task NotifyMessageSent(MessageDTO sentMessage, string conversationId, CancellationToken cancellationToken)
     {
         try
         {
-            await _hubContext.Clients.All.ReceiveMessage(messageDTO, conversationId, cancellationToken);
+            await _hubContext.Clients.All.ReceiveMessage(sentMessage, conversationId, cancellationToken);
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "SignalR notification for Message Created has been cancelled for message with id {MessageId}", messageDTO.Id);
+            _logger.LogWarning(ex, "SignalR notification for Message Created has been cancelled for message with id {MessageId}", sentMessage.Id);
         }
     }
 }

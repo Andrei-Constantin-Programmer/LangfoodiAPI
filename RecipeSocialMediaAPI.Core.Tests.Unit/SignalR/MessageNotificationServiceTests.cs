@@ -41,7 +41,7 @@ public class MessageNotificationServiceTests
         MessageDTO message = new("m1", "u1", "User 1", new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageCreated(message, conversationId, CancellationToken.None);
+        await _messageNotificationServiceSUT.NotifyMessageSent(message, conversationId, CancellationToken.None);
 
         // Then
         _hubContextMock
@@ -62,7 +62,7 @@ public class MessageNotificationServiceTests
             .Throws(new OperationCanceledException());
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageCreated(message, conversationId, new CancellationToken(true));
+        await _messageNotificationServiceSUT.NotifyMessageSent(message, conversationId, new CancellationToken(true));
 
         // Then
         _loggerMock
