@@ -58,8 +58,7 @@ public static class MessageEndpoints
             [FromServices] ISender sender,
             [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
-            var updatedMessage = await sender.Send(new UpdateMessageCommand(updateMessageContract), cancellationToken);
-            await context.Clients.All.ReceiveMessageUpdate(updatedMessage, cancellationToken);
+            await sender.Send(new UpdateMessageCommand(updateMessageContract), cancellationToken);
 
             return Results.Ok();
         });

@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
+using MediatR;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
@@ -26,6 +28,7 @@ public class UpdateMessageHandlerTests
     private readonly Mock<IMessageMapper> _messageMapperMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+    private readonly Mock<IPublisher> _publisherMock;
 
     private readonly IMessageFactory _messageFactory;
 
@@ -37,6 +40,7 @@ public class UpdateMessageHandlerTests
         _messageQueryRepositoryMock = new Mock<IMessageQueryRepository>();
         _messageMapperMock = new Mock<IMessageMapper>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
+        _publisherMock = new Mock<IPublisher>();
 
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
         _dateTimeProviderMock
@@ -44,13 +48,18 @@ public class UpdateMessageHandlerTests
             .Returns(TEST_DATE);
         _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
 
-        _updateMessageHandlerSUT = new(_messagePersistenceRepositoryMock.Object, _messageQueryRepositoryMock.Object, _messageMapperMock.Object, _recipeQueryRepositoryMock.Object);
+        _updateMessageHandlerSUT = new(
+            _messagePersistenceRepositoryMock.Object,
+            _messageQueryRepositoryMock.Object,
+            _messageMapperMock.Object,
+            _recipeQueryRepositoryMock.Object,
+            _publisherMock.Object);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageDoesNotExist_ThrowMessageNotFoundExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageDoesNotExist_ThrowMessageNotFoundExceptionAndDontUpdate()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
@@ -63,7 +72,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().ThrowAsync<MessageNotFoundException>();
+        await testAction.Should().ThrowAsync<MessageNotFoundException>();
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
@@ -71,7 +80,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsCorrupted_ThrowCorruptedMessageExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageIsCorrupted_ThrowCorruptedMessageExceptionAndDontUpdate()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
@@ -96,7 +105,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().ThrowAsync<CorruptedMessageException>();
+        await testAction.Should().ThrowAsync<CorruptedMessageException>();
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
     }
@@ -104,7 +113,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsATextMessageAndItChangesTheTextAndUpdateIsSuccessful_UpdateAndDontThrow()
+    public async Task Handle_WhenTheMessageIsATextMessageAndItChangesTheTextAndUpdateIsSuccessful_UpdateAndDontThrow()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
@@ -125,11 +134,16 @@ public class UpdateMessageHandlerTests
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
+        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Returns(messageDto);
+
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().NotThrowAsync();
+        await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.Is<TextMessage>(message =>
                     message.Id == testMessage.Id
@@ -143,7 +157,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsATextMessageAndItChangesTheTextButUpdateIsUnsuccessful_ThrowMessageUpdateException()
+    public async Task Handle_WhenTheMessageIsATextMessageAndItChangesTheTextButUpdateIsUnsuccessful_ThrowMessageUpdateException()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
@@ -168,13 +182,13 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().ThrowAsync<MessageUpdateException>();
+        await testAction.Should().ThrowAsync<MessageUpdateException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsATextMessageButRequestAddsImages_ThrowTextMessageUpdateExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageIsATextMessageButRequestAddsImages_ThrowTextMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, new() { "Image" }));
@@ -199,7 +213,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to add images");
         _messagePersistenceRepositoryMock
@@ -209,7 +223,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsATextMessageButRequestAddsRecipes_ThrowTextMessageUpdateExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageIsATextMessageButRequestAddsRecipes_ThrowTextMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", new() { "Recipe" }, null));
@@ -234,7 +248,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to add recipes");
         _messagePersistenceRepositoryMock
@@ -244,7 +258,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsATextMessageButNoChangesWereMade_ThrowTextMessageUpdateExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageIsATextMessageButNoChangesWereMade_ThrowTextMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "Original Text", null, null));
@@ -269,7 +283,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
@@ -280,11 +294,12 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData("")]
+    [InlineData("  ")]
     [InlineData(null)]
-    public void Handle_WhenTheMessageIsATextMessageButRequestNullifiesTextContent_ThrowTextMessageUpdateExceptionAndDontUpdate(string? newText)
+    public async Task Handle_WhenTheMessageIsATextMessageButRequestNullifiesTextContent_ThrowTextMessageUpdateExceptionAndDontUpdate(string? newText)
     {
         // Given
-        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newText, new() { "Recipe" }, null));
+        UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newText, null, null));
 
         TestUserAccount testSender = new()
         {
@@ -306,7 +321,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to nullify text");
         _messagePersistenceRepositoryMock
@@ -318,7 +333,7 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData("New Text Content")]
     [InlineData(null)]
-    public void Handle_WhenTheMessageIsAnImageMessageAndItChangesTextAndUpdateIsSuccessful_UpdateAndDontThrow(string? newTextContent)
+    public async Task Handle_WhenTheMessageIsAnImageMessageAndItChangesTextAndUpdateIsSuccessful_UpdateAndDontThrow(string? newTextContent)
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newTextContent, null, new()));
@@ -339,11 +354,16 @@ public class UpdateMessageHandlerTests
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
+        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Returns(messageDto);
+
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().NotThrowAsync();
+        await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
                     message.Id == testMessage.Id
@@ -359,7 +379,7 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public void Handle_WhenTheMessageIsAnImageMessageAndItAddsImagesAndUpdateIsSuccessful_UpdateAndDontThrow(bool changeText)
+    public async Task Handle_WhenTheMessageIsAnImageMessageAndItAddsImagesAndUpdateIsSuccessful_UpdateAndDontThrow(bool changeText)
     {
         // Given
         string originalText = "Original Text";
@@ -382,11 +402,16 @@ public class UpdateMessageHandlerTests
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
+        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Returns(messageDto);
+
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().NotThrowAsync();
+        await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
                     message.Id == testMessage.Id
@@ -403,7 +428,7 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public void Handle_WhenTheMessageIsAnImageMessageAndItAddsImagesButUpdateIsUnsuccessful_ThrowMessageUpdateException(bool changeText)
+    public async Task Handle_WhenTheMessageIsAnImageMessageAndItAddsImagesButUpdateIsUnsuccessful_ThrowMessageUpdateException(bool changeText)
     {
         // Given
         string originalText = "Original Text";
@@ -430,13 +455,13 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().ThrowAsync<MessageUpdateException>();
+        await testAction.Should().ThrowAsync<MessageUpdateException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsAnImageMessageButRequestAddsRecipes_ThrowImageMessageUpdateExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageIsAnImageMessageButRequestAddsRecipes_ThrowImageMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         string originalText = "Original Text";
@@ -463,7 +488,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<ImageMessageUpdateException>()
             .WithMessage("*attempted to add recipes");
         _messagePersistenceRepositoryMock
@@ -473,7 +498,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsAnImageMessageButNoChangesWereMade_ThrowImageMessageUpdateExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageIsAnImageMessageButNoChangesWereMade_ThrowImageMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         string originalText = "Original Text";
@@ -500,7 +525,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<ImageMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
@@ -512,7 +537,7 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData("New Text Content")]
     [InlineData(null)]
-    public void Handle_WhenTheMessageIsARecipeMessageAndItChangesTextAndUpdateIsSuccessful_UpdateAndDontThrow(string? newTextContent)
+    public async Task Handle_WhenTheMessageIsARecipeMessageAndItChangesTextAndUpdateIsSuccessful_UpdateAndDontThrow(string? newTextContent)
     {
         // Given
         TestUserAccount testSender = new()
@@ -543,11 +568,16 @@ public class UpdateMessageHandlerTests
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
+        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Returns(messageDto);
+
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().NotThrowAsync();
+        await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.Is<RecipeMessage>(message =>
                     message.Id == testMessage.Id
@@ -563,7 +593,7 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public void Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesAndUpdateIsSuccessful_UpdateAndDontThrow(bool changeText)
+    public async Task Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesAndUpdateIsSuccessful_UpdateAndDontThrow(bool changeText)
     {
         // Given
         string originalText = "Original Text";
@@ -607,11 +637,16 @@ public class UpdateMessageHandlerTests
             .Setup(repo => repo.GetRecipeById(newRecipe.Id))
             .Returns(newRecipe);
 
+        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
+            .Returns(messageDto);
+
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().NotThrowAsync();
+        await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessage(It.Is<RecipeMessage>(message =>
                     message.Id == testMessage.Id
@@ -628,7 +663,7 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public void Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesThatDontExist_ThrowRecipeMessageUpdateException(bool changeText)
+    public async Task Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesThatDontExist_ThrowRecipeMessageUpdateException(bool changeText)
     {
         // Given
         string originalText = "Original Text";
@@ -664,7 +699,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*attempted to add inexistent recipe*");
         _messagePersistenceRepositoryMock
@@ -676,7 +711,7 @@ public class UpdateMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public void Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesButUpdateIsUnsuccessful_ThrowRecipeMessageUpdateException(bool changeText)
+    public async Task Handle_WhenTheMessageIsARecipeMessageAndItAddsRecipesButUpdateIsUnsuccessful_ThrowRecipeMessageUpdateException(bool changeText)
     {
         // Given
         string originalText = "Original Text";
@@ -724,13 +759,13 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should().ThrowAsync<MessageUpdateException>();
+        await testAction.Should().ThrowAsync<MessageUpdateException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsARecipeMessageButRequestAddsImages_ThrowRecipeMessageUpdateExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageIsARecipeMessageButRequestAddsImages_ThrowRecipeMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         string originalText = "Original Text";
@@ -778,7 +813,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*attempted to add images");
         _messagePersistenceRepositoryMock
@@ -788,7 +823,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void Handle_WhenTheMessageIsARecipeMessageButNoChangesWereMade_ThrowRecipeMessageUpdateExceptionAndDontUpdate()
+    public async Task Handle_WhenTheMessageIsARecipeMessageButNoChangesWereMade_ThrowRecipeMessageUpdateExceptionAndDontUpdate()
     {
         // Given
         string originalText = "Original Text";
@@ -824,7 +859,7 @@ public class UpdateMessageHandlerTests
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        testAction.Should()
+        await testAction.Should()
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
@@ -834,7 +869,7 @@ public class UpdateMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenMessageUpdatedSuccessfully_ReturnMappedUpdatedMessage()
+    public async Task Handle_WhenTheUpdateIsSuccessful_PublishMessageUpdatedNotification()
     {
         // Given
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
@@ -855,26 +890,20 @@ public class UpdateMessageHandlerTests
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
-        MessageDTO messageDto = new(
-            testMessage.Id,
-            testMessage.Sender.Id,
-            testMessage.Sender.UserName,
-            new(),
-            testMessage.SentDate,
-            testMessage.UpdatedDate,
-            null,
-            testCommand.Contract.Text,
-            null,
-            null
-        );
+        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
 
         // When
-        var result = await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
+        await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
 
         // Then
-        result.Should().Be(messageDto);
+        _publisherMock
+            .Verify(publisher => publisher.Publish(
+                    It.Is<MessageUpdatedNotification>(notification
+                        => notification.UpdatedMessage == messageDto),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }

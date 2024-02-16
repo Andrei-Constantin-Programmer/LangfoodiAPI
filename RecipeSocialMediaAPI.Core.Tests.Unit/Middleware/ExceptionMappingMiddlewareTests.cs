@@ -205,7 +205,6 @@ public class ExceptionMappingMiddlewareTests
     public async Task InvokeAsync_WhenRequestThrowsOperationCanceledException_SetStatusCodeToInternalServerError()
     {
         // Given
-        string recipeId = "1";
         _nextMock
             .Setup(next => next(It.IsAny<HttpContext>()))
             .Throws(new OperationCanceledException())
