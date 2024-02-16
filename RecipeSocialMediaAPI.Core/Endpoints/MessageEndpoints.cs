@@ -45,11 +45,9 @@ public static class MessageEndpoints
         group.MapPost("/send", async (
             [FromBody] SendMessageContract newMessageContract,
             CancellationToken cancellationToken,
-            [FromServices] ISender sender,
-            [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
+            [FromServices] ISender sender) =>
         {
             var sentMessageDto = await sender.Send(new SendMessageCommand(newMessageContract), cancellationToken);
-            await context.Clients.All.ReceiveMessage(sentMessageDto, newMessageContract.ConversationId, cancellationToken);
 
             return Results.Ok(sentMessageDto);
         });

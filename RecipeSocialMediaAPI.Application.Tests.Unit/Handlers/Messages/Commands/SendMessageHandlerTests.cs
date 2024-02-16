@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
+using MediatR;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
@@ -32,6 +34,7 @@ public class SendMessageHandlerTests
     private readonly Mock<IConversationPersistenceRepository> _conversationPersistenceRepositoryMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+    private readonly Mock<IPublisher> _publisherMock;
 
     private readonly IMessageFactory _messageFactory;
 
@@ -52,6 +55,7 @@ public class SendMessageHandlerTests
         _dateTimeProviderMock
             .Setup(provider => provider.Now)
             .Returns(_testDate);
+        _publisherMock = new Mock<IPublisher>();
 
         _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
 
@@ -63,7 +67,8 @@ public class SendMessageHandlerTests
             _conversationQueryRepositoryMock.Object,
             _conversationPersistenceRepositoryMock.Object,
             _recipeQueryRepositoryMock.Object,
-            _dateTimeProviderMock.Object);
+            _dateTimeProviderMock.Object,
+            _publisherMock.Object);
     }
 
     [Theory]
@@ -595,5 +600,75 @@ public class SendMessageHandlerTests
 
         // Then
         await testAction.Should().ThrowAsync<MessageNotFoundException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async void Handle_WhenMessageIsCreated_PublishMessageCreatedNotification()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "u2@mail.com",
+            Password = "Test@321"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+
+        ConnectionConversation conversation = new(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns(conversation);
+
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+
+        Message createdMessage = _messageFactory.CreateTextMessage("m1", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.CreateMessage(
+                user1.Account,
+                contract.Text,
+                It.Is<List<string>>(recipeIds => !recipeIds.Any()),
+                It.Is<List<string>>(imageUrls => !imageUrls.Any()),
+                _testDate,
+                null,
+                It.IsAny<List<string>>()))
+            .Returns(createdMessage);
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
+            .Returns(messageDto);
+
+        // When
+        _ = await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+
+        // Then
+        _publisherMock
+            .Verify(publisher => publisher.Publish(
+                    It.Is<MessageCreatedNotification>(notification
+                        => notification.Message == messageDto
+                        && notification.ConversationId == conversation.ConversationId), 
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }
