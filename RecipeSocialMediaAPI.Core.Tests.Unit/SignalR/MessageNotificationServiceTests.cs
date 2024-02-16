@@ -158,4 +158,48 @@ public class MessageNotificationServiceTests
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task NotifyMessageMarkedAsRead_WhenCancellationIsNotTriggered_NotifyAllClientsOfMessageMarkedAsRead()
+    {
+        // Given
+        string userId = "u1";
+        string messageId = "m1";
+
+        // When
+        await _messageNotificationServiceSUT.NotifyMessageMarkedAsRead(userId, messageId, CancellationToken.None);
+
+        // Then
+        _hubContextMock
+            .Verify(context => context.Clients.All.ReceiveMarkAsRead(userId, messageId, CancellationToken.None), Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task NotifyMessageMarkedAsRead_WhenCancellationIsTriggered_LogsWarning()
+    {
+        // Given
+        string userId = "u1";
+        string messageId = "m1";
+
+        _hubContextMock
+            .Setup(context => context.Clients.All.ReceiveMarkAsRead(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Throws(new OperationCanceledException());
+
+        // When
+        await _messageNotificationServiceSUT.NotifyMessageMarkedAsRead(userId, messageId, new CancellationToken(true));
+
+        // Then
+        _loggerMock
+            .Verify(logger => logger.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<OperationCanceledException>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+    }
 }
