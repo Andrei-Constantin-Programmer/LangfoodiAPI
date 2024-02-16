@@ -4,7 +4,7 @@ namespace RecipeSocialMediaAPI.Core.SignalR;
 
 public interface IMessagingClient
 {
-    Task ReceiveMessage(MessageDTO message);
+    Task ReceiveMessage(MessageDTO message, string conversationId);
     Task ReceiveMessageUpdate(MessageDTO message);
     Task ReceiveMessageDeletion(string messageId);
     Task ReceiveMarkAsRead(string userId, string messageId);

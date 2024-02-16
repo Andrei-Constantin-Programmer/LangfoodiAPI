@@ -48,7 +48,7 @@ public static class MessageEndpoints
             [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
             var sentMessageDto = await sender.Send(new SendMessageCommand(newMessageContract));
-            await context.Clients.All.ReceiveMessage(sentMessageDto);
+            await context.Clients.All.ReceiveMessage(sentMessageDto, newMessageContract.ConversationId);
 
             return Results.Ok(sentMessageDto);
         });
@@ -89,6 +89,4 @@ public static class MessageEndpoints
 
         return group;
     }
-
-
 }
