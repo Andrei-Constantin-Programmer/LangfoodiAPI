@@ -34,7 +34,7 @@ public class MessageNotificationServiceTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async Task NotifyMessageCreated_WhenCancellationIsNotTriggered_NotifyAllClientsOfNewMessage()
+    public async Task NotifyMessageSent_WhenCancellationIsNotTriggered_NotifyAllClientsOfNewMessage()
     {
         // Given
         string conversationId = "convo1";
@@ -51,7 +51,7 @@ public class MessageNotificationServiceTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async Task NotifyMessageCreated_WhenCancellationIsTriggered_LogsWarning()
+    public async Task NotifyMessageSent_WhenCancellationIsTriggered_LogsWarning()
     {
         // Given
         string conversationId = "convo1";
@@ -63,6 +63,49 @@ public class MessageNotificationServiceTests
 
         // When
         await _messageNotificationServiceSUT.NotifyMessageSent(message, conversationId, new CancellationToken(true));
+
+        // Then
+        _loggerMock
+            .Verify(logger => logger.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<OperationCanceledException>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+    }
+
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task NotifyMessageUpdated_WhenCancellationIsNotTriggered_NotifyAllClientsOfMessageUpdate()
+    {
+        // Given
+        MessageDTO message = new("m1", "u1", "User 1", new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+
+        // When
+        await _messageNotificationServiceSUT.NotifyMessageUpdated(message, CancellationToken.None);
+
+        // Then
+        _hubContextMock
+            .Verify(context => context.Clients.All.ReceiveMessageUpdate(message, CancellationToken.None), Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task NotifyMessageUpdated_WhenCancellationIsTriggered_LogsWarning()
+    {
+        // Given
+        MessageDTO message = new("m1", "u1", "User 1", new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+
+        _hubContextMock
+            .Setup(context => context.Clients.All.ReceiveMessageUpdate(It.IsAny<MessageDTO>(), It.IsAny<CancellationToken>()))
+            .Throws(new OperationCanceledException());
+
+        // When
+        await _messageNotificationServiceSUT.NotifyMessageUpdated(message, new CancellationToken(true));
 
         // Then
         _loggerMock

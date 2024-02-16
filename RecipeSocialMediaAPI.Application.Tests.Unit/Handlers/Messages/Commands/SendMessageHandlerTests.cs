@@ -185,18 +185,18 @@ public class SendMessageHandlerTests
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
 
-        Message createdMessage = _messageFactory.CreateImageMessage("m1", user1.Account, contract.ImageURLs, contract.Text, new(), _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateImageMessage("m1", user1.Account, contract.ImageURLs!, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
                     It.Is<List<string>>(recipeIds => !recipeIds.Any()),
-                    It.Is<List<string>>(imageUrls => imageUrls.SequenceEqual(contract.ImageURLs)),
+                    It.Is<List<string>>(imageUrls => imageUrls.SequenceEqual(contract.ImageURLs!)),
                     _testDate,
                     null,
                     It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs[0], contract.ImageURLs[1] });
+        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs![0], contract.ImageURLs[1] });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -267,7 +267,7 @@ public class SendMessageHandlerTests
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
-                    It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds)),
+                    It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds!)),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     null,
@@ -341,7 +341,7 @@ public class SendMessageHandlerTests
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessage(user1.Account,
                     contract.Text,
-                    It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds)),
+                    It.Is<List<string>>(recipeIds => recipeIds.SequenceEqual(contract.RecipeIds!)),
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     null,
@@ -666,8 +666,7 @@ public class SendMessageHandlerTests
         _publisherMock
             .Verify(publisher => publisher.Publish(
                     It.Is<MessageSentNotification>(notification
-                        => notification.Message == messageDto
-                        && notification.ConversationId == conversation.ConversationId), 
+                        => notification.SentMessage == messageDto),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }

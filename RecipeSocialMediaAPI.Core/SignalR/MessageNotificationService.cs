@@ -23,7 +23,19 @@ public class MessageNotificationService : IMessageNotificationService
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "SignalR notification for Message Created has been cancelled for message with id {MessageId}", sentMessage.Id);
+            _logger.LogWarning(ex, "SignalR notification for Message Sent has been cancelled for message with id {MessageId}", sentMessage.Id);
+        }
+    }
+
+    public async Task NotifyMessageUpdated(MessageDTO updatedMessage, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _hubContext.Clients.All.ReceiveMessageUpdate(updatedMessage, cancellationToken);
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "SignalR notification for Message Updated has been cancelled for message with id {MessageId}", updatedMessage.Id);
         }
     }
 }
