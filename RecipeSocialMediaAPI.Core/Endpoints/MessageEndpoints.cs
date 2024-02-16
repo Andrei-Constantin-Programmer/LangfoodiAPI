@@ -44,33 +44,36 @@ public static class MessageEndpoints
 
         group.MapPost("/send", async (
             [FromBody] SendMessageContract newMessageContract,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender,
             [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
-            var sentMessageDto = await sender.Send(new SendMessageCommand(newMessageContract));
-            await context.Clients.All.ReceiveMessage(sentMessageDto, newMessageContract.ConversationId);
+            var sentMessageDto = await sender.Send(new SendMessageCommand(newMessageContract), cancellationToken);
+            await context.Clients.All.ReceiveMessage(sentMessageDto, newMessageContract.ConversationId, cancellationToken);
 
             return Results.Ok(sentMessageDto);
         });
 
         group.MapPut("/update", async (
             [FromBody] UpdateMessageContract updateMessageContract,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender,
             [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
-            var updatedMessage = await sender.Send(new UpdateMessageCommand(updateMessageContract));
-            await context.Clients.All.ReceiveMessageUpdate(updatedMessage);
+            var updatedMessage = await sender.Send(new UpdateMessageCommand(updateMessageContract), cancellationToken);
+            await context.Clients.All.ReceiveMessageUpdate(updatedMessage, cancellationToken);
 
             return Results.Ok();
         });
 
         group.MapDelete("/delete", async (
             [FromQuery] string id,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender,
             [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
-            await sender.Send(new RemoveMessageCommand(id));
-            await context.Clients.All.ReceiveMessageDeletion(id);
+            await sender.Send(new RemoveMessageCommand(id), cancellationToken);
+            await context.Clients.All.ReceiveMessageDeletion(id, cancellationToken);
 
             return Results.Ok();
         });
@@ -78,11 +81,12 @@ public static class MessageEndpoints
         group.MapPut("/mark-as-read", async (
             [FromQuery] string userId,
             [FromQuery] string messageId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender,
             [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
         {
-            await sender.Send(new MarkMessageAsReadCommand(userId, messageId));
-            await context.Clients.All.ReceiveMarkAsRead(userId, messageId);
+            await sender.Send(new MarkMessageAsReadCommand(userId, messageId), cancellationToken);
+            await context.Clients.All.ReceiveMarkAsRead(userId, messageId, cancellationToken);
 
             return Results.Ok();
         });
