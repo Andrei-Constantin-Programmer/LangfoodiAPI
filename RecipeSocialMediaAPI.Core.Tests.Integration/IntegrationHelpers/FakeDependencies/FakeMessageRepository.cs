@@ -2,7 +2,6 @@
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers.FakeDependencies;

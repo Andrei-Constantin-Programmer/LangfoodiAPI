@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 
@@ -12,25 +13,27 @@ internal class MarkMessageAsReadHandler : IRequestHandler<MarkMessageAsReadComma
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
+    private readonly IPublisher _publisher;
 
-    public MarkMessageAsReadHandler(IUserQueryRepository userQueryRepository, IMessageQueryRepository messageQueryRepository, IMessagePersistenceRepository messagePersistenceRepository)
+    public MarkMessageAsReadHandler(IUserQueryRepository userQueryRepository, IMessageQueryRepository messageQueryRepository, IMessagePersistenceRepository messagePersistenceRepository, IPublisher publisher)
     {
         _userQueryRepository = userQueryRepository;
         _messageQueryRepository = messageQueryRepository;
         _messagePersistenceRepository = messagePersistenceRepository;
+        _publisher = publisher;
     }
 
-    public Task Handle(MarkMessageAsReadCommand request, CancellationToken cancellationToken)
+    public async Task Handle(MarkMessageAsReadCommand request, CancellationToken cancellationToken)
     {
-        var user = _userQueryRepository.GetUserById(request.UserId)
+        var user = _userQueryRepository.GetUserById(request.UserId)?.Account
             ?? throw new UserNotFoundException($"No User found with id {request.UserId}");
         var message = _messageQueryRepository.GetMessage(request.MessageId)
             ?? throw new MessageNotFoundException($"No Message found with id {request.MessageId}");
 
-        message.MarkAsSeenBy(user.Account);
+        message.MarkAsSeenBy(user);
 
         _messagePersistenceRepository.UpdateMessage(message);
 
-        return Task.CompletedTask;
+        await _publisher.Publish(new MessageMarkedAsReadNotification(user.Id, message.Id), cancellationToken);
     }
 }

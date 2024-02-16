@@ -3,6 +3,7 @@ using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
@@ -16,7 +17,7 @@ using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record SendMessageCommand(NewMessageContract Contract) : IValidatableRequest<MessageDTO>;
+public record SendMessageCommand(SendMessageContract Contract) : IValidatableRequest<MessageDTO>;
 
 internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageDTO>
 {
@@ -28,6 +29,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
     private readonly IConversationPersistenceRepository _conversationPersistenceRepository;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IPublisher _publisher;
 
     public SendMessageHandler(
         IMessagePersistenceRepository messagePersistenceRepository,
@@ -37,7 +39,8 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         IConversationQueryRepository conversationQueryRepository,
         IConversationPersistenceRepository conversationPersistenceRepository,
         IRecipeQueryRepository recipeQueryRepository,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider,
+        IPublisher publisher)
     {
         _messagePersistenceRepository = messagePersistenceRepository;
         _messageQueryRepository = messageQueryRepository;
@@ -47,6 +50,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         _conversationPersistenceRepository = conversationPersistenceRepository;
         _recipeQueryRepository = recipeQueryRepository;
         _dateTimeProvider = dateTimeProvider;
+        _publisher = publisher;
     }
 
     public async Task<MessageDTO> Handle(SendMessageCommand request, CancellationToken cancellationToken)
@@ -92,7 +96,10 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
 
         _conversationPersistenceRepository.UpdateConversation(conversation, connection, group);
 
-        return await Task.FromResult(_messageMapper.MapMessageToMessageDTO(createdMessage));
+        var messageDto = _messageMapper.MapMessageToMessageDTO(createdMessage);
+        await _publisher.Publish(new MessageSentNotification(messageDto, conversation.ConversationId), cancellationToken);
+
+        return await Task.FromResult(messageDto);
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
@@ -10,14 +11,16 @@ internal class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
 {
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
+    private readonly IPublisher _publisher;
 
-    public RemoveMessageHandler(IMessagePersistenceRepository messagePersistenceRepository, IMessageQueryRepository messageQueryRepository)
+    public RemoveMessageHandler(IMessagePersistenceRepository messagePersistenceRepository, IMessageQueryRepository messageQueryRepository, IPublisher publisher)
     {
         _messagePersistenceRepository = messagePersistenceRepository;
         _messageQueryRepository = messageQueryRepository;
+        _publisher = publisher;
     }
 
-    public Task Handle(RemoveMessageCommand request, CancellationToken cancellationToken)
+    public async Task Handle(RemoveMessageCommand request, CancellationToken cancellationToken)
     {
         if (_messageQueryRepository.GetMessage(request.Id) is null)
         {
@@ -26,8 +29,11 @@ internal class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
 
         bool isSuccessful = _messagePersistenceRepository.DeleteMessage(request.Id);
 
-        return isSuccessful
-            ? Task.CompletedTask
-            : throw new MessageRemovalException(request.Id);
+        if (!isSuccessful)
+        {
+            throw new MessageRemovalException(request.Id);
+        }
+
+        await _publisher.Publish(new MessageDeletedNotification(request.Id), cancellationToken);
     }
 }

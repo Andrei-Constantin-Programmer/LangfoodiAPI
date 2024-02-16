@@ -14,6 +14,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
+
 public class MessageEndpointsTests : EndpointTestBase
 {
     private readonly TestMessage _testMessage1;
@@ -284,7 +285,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var conversation = _fakeConversationRepository
             .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
-        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new(), null);
+        SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new(), null);
 
         // When
         var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
@@ -316,7 +317,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var conversation = _fakeConversationRepository
             .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
-        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
+        SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
 
         // When
         var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
@@ -353,7 +354,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var recipe2 = _fakeRecipeRepository
            .CreateRecipe(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
 
-        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new() { recipe1.Id, recipe2.Id }, new(), null);
+        SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new() { recipe1.Id, recipe2.Id }, new(), null);
 
         // When
         var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
@@ -389,7 +390,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var conversation = _fakeConversationRepository
             .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
-        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, null, new(), new(), null);
+        SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, null, new(), new(), null);
 
         // When
         var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
@@ -409,7 +410,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var conversation = _fakeConversationRepository
             .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
-        NewMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, null, new() { "recipe1", "recipe2" }, new() { "Image1", "Image2" }, null);
+        SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, null, new() { "recipe1", "recipe2" }, new() { "Image1", "Image2" }, null);
 
         // When
         var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);

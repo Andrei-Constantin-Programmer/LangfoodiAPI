@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
+using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -13,16 +15,25 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
 {
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
+    private readonly IMessageMapper _messageMapper;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
+    private readonly IPublisher _publisher;
 
-    public UpdateMessageHandler(IMessagePersistenceRepository messagePersistenceRepository, IMessageQueryRepository messageQueryRepository, IRecipeQueryRepository recipeQueryRepository)
+    public UpdateMessageHandler(
+        IMessagePersistenceRepository messagePersistenceRepository,
+        IMessageQueryRepository messageQueryRepository,
+        IMessageMapper messageMapper,
+        IRecipeQueryRepository recipeQueryRepository,
+        IPublisher publisher)
     {
         _messagePersistenceRepository = messagePersistenceRepository;
         _messageQueryRepository = messageQueryRepository;
+        _messageMapper = messageMapper;
         _recipeQueryRepository = recipeQueryRepository;
+        _publisher = publisher;
     }
 
-    public Task Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
     {
         Message message =
             _messageQueryRepository.GetMessage(request.Contract.Id)
@@ -44,10 +55,15 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
         }
 
         bool isSuccessful = _messagePersistenceRepository.UpdateMessage(message);
+        if (!isSuccessful)
+        {
+            throw new MessageUpdateException($"Could not update message with id {message.Id}");
+        }
 
-        return isSuccessful
-            ? Task.CompletedTask
-            : throw new MessageUpdateException($"Could not update message with id {message.Id}");
+        var updatedMessage = await Task.FromResult(_messageMapper.MapMessageToMessageDTO(message)
+            ?? throw new MessageNotFoundException(message.Id));
+
+        await _publisher.Publish(new MessageUpdatedNotification(updatedMessage), cancellationToken);
     }
 
     private static void AttemptUpdatingTextMessage(UpdateMessageContract contract, TextMessage textMessage)
@@ -69,8 +85,12 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
             throw new TextMessageUpdateException(textMessage.Id, "no changes made");
         }
 
-        textMessage.TextContent = contract.Text
-            ?? throw new TextMessageUpdateException(textMessage.Id, "attempted to nullify text");
+        if (string.IsNullOrWhiteSpace(contract.Text))
+        {
+            throw new TextMessageUpdateException(textMessage.Id, "attempted to nullify text");
+        }
+
+        textMessage.TextContent = contract.Text;
     }
 
     private static void AttemptUpdatingImageMessage(UpdateMessageContract contract, ImageMessage imageMessage)
