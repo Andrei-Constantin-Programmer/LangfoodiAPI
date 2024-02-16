@@ -6,4 +6,5 @@ public interface IMessageNotificationService
 {
     Task NotifyMessageSent(MessageDTO sentMessage, string conversationId, CancellationToken cancellationToken);
     Task NotifyMessageUpdated(MessageDTO updatedMessage, CancellationToken cancellationToken);
+    Task NotifyMessageDeleted(string messageId, CancellationToken cancellationToken);
 }

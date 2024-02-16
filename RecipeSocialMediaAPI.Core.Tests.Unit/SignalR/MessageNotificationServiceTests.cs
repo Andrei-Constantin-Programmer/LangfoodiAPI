@@ -75,7 +75,6 @@ public class MessageNotificationServiceTests
                 Times.Once);
     }
 
-
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
@@ -106,6 +105,48 @@ public class MessageNotificationServiceTests
 
         // When
         await _messageNotificationServiceSUT.NotifyMessageUpdated(message, new CancellationToken(true));
+
+        // Then
+        _loggerMock
+            .Verify(logger => logger.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<OperationCanceledException>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task NotifyMessageDeleted_WhenCancellationIsNotTriggered_NotifyAllClientsOfMessageDeletion()
+    {
+        // Given
+        string messageId = "m1";
+
+        // When
+        await _messageNotificationServiceSUT.NotifyMessageDeleted(messageId, CancellationToken.None);
+
+        // Then
+        _hubContextMock
+            .Verify(context => context.Clients.All.ReceiveMessageDeletion(messageId, CancellationToken.None), Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task NotifyMessageDeleted_WhenCancellationIsTriggered_LogsWarning()
+    {
+        // Given
+        string messageId = "m1";
+
+        _hubContextMock
+            .Setup(context => context.Clients.All.ReceiveMessageDeletion(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Throws(new OperationCanceledException());
+
+        // When
+        await _messageNotificationServiceSUT.NotifyMessageDeleted(messageId, new CancellationToken(true));
 
         // Then
         _loggerMock

@@ -38,4 +38,15 @@ public class MessageNotificationService : IMessageNotificationService
             _logger.LogWarning(ex, "SignalR notification for Message Updated has been cancelled for message with id {MessageId}", updatedMessage.Id);
         }
     }
+    public async Task NotifyMessageDeleted(string messageId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _hubContext.Clients.All.ReceiveMessageDeletion(messageId, cancellationToken);
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "SignalR notification for Message Deleted has been cancelled for message with id {MessageId}", messageId);
+        }
+    }
 }

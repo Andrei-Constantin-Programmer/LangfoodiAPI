@@ -10,26 +10,26 @@ public class MessageUpdatedHandlerTests
 {
     private readonly Mock<IMessageNotificationService> _messageNotificationServiceMock;
 
-    private readonly MessageUpdatedHandler _messageSentHandlerSUT;
+    private readonly MessageUpdatedHandler _messageUpdatedHandlerSUT;
 
     public MessageUpdatedHandlerTests()
     {
         _messageNotificationServiceMock = new Mock<IMessageNotificationService>();
 
-        _messageSentHandlerSUT = new(_messageNotificationServiceMock.Object);
+        _messageUpdatedHandlerSUT = new(_messageNotificationServiceMock.Object);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenCancellationNotTriggered_NotifyMessageSent()
+    public async Task Handle_WhenCancellationNotTriggered_NotifyMessageUpdated()
     {
         // Given
         MessageDTO message = new("m1", "u1", "User 1", new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
         MessageUpdatedNotification notification = new(message);
 
         // When
-        await _messageSentHandlerSUT.Handle(notification, CancellationToken.None);
+        await _messageUpdatedHandlerSUT.Handle(notification, CancellationToken.None);
 
         // Then
         _messageNotificationServiceMock
@@ -50,7 +50,7 @@ public class MessageUpdatedHandlerTests
             .Throws(new OperationCanceledException());
 
         // When
-        var testAction = async () => await _messageSentHandlerSUT.Handle(notification, CancellationToken.None);
+        var testAction = async () => await _messageUpdatedHandlerSUT.Handle(notification, CancellationToken.None);
 
         // Then
         await testAction.Should().ThrowAsync<OperationCanceledException>();
