@@ -76,11 +76,9 @@ public static class MessageEndpoints
             [FromQuery] string userId,
             [FromQuery] string messageId,
             CancellationToken cancellationToken,
-            [FromServices] ISender sender,
-            [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
+            [FromServices] ISender sender) =>
         {
             await sender.Send(new MarkMessageAsReadCommand(userId, messageId), cancellationToken);
-            await context.Clients.All.ReceiveMarkAsRead(userId, messageId, cancellationToken);
 
             return Results.Ok();
         });
