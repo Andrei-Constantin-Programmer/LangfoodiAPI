@@ -31,8 +31,7 @@ public class UpdateMessageHandlerTests
     private readonly Mock<IPublisher> _publisherMock;
 
     private readonly IMessageFactory _messageFactory;
-
-    private readonly UpdateMessageHandler _updateMessageHandlerSUT;
+private readonly UpdateMessageHandler _updateMessageHandlerSUT;
 
     public UpdateMessageHandlerTests()
     {

@@ -55,8 +55,7 @@ public static class MessageEndpoints
         group.MapPut("/update", async (
             [FromBody] UpdateMessageContract updateMessageContract,
             CancellationToken cancellationToken,
-            [FromServices] ISender sender,
-            [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
+            [FromServices] ISender sender) =>
         {
             await sender.Send(new UpdateMessageCommand(updateMessageContract), cancellationToken);
 
@@ -66,11 +65,9 @@ public static class MessageEndpoints
         group.MapDelete("/delete", async (
             [FromQuery] string id,
             CancellationToken cancellationToken,
-            [FromServices] ISender sender,
-            [FromServices] IHubContext<MessagingHub, IMessagingClient> context) =>
+            [FromServices] ISender sender) =>
         {
             await sender.Send(new RemoveMessageCommand(id), cancellationToken);
-            await context.Clients.All.ReceiveMessageDeletion(id, cancellationToken);
 
             return Results.Ok();
         });
