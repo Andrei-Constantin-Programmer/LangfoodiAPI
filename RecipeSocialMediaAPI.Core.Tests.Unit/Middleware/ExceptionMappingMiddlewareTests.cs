@@ -198,6 +198,29 @@ public class ExceptionMappingMiddlewareTests
         HttpResponse response = context.Response;
         response.StatusCode.Should().Be(StatusCodes.Status404NotFound);
     }
+    
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task InvokeAsync_WhenRequestThrowsOperationCanceledException_SetStatusCodeToInternalServerError()
+    {
+        // Given
+        string recipeId = "1";
+        _nextMock
+            .Setup(next => next(It.IsAny<HttpContext>()))
+            .Throws(new OperationCanceledException())
+            .Verifiable();
+
+        HttpContext context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+
+        // When
+        await _exceptionMappingMiddlewareSUT.InvokeAsync(context);
+
+        // Then
+        HttpResponse response = context.Response;
+        response.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+    }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]

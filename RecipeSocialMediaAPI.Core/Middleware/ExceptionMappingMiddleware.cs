@@ -74,6 +74,10 @@ public class ExceptionMappingMiddleware
         {
             await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "Conversation not found");
         }
+        catch (OperationCanceledException)
+        {
+            await HandleExceptionAsync(context, StatusCodes.Status500InternalServerError, "Operation cancelled");
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Internal error: {ErrorMessage}", ex.Message);
