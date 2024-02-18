@@ -403,7 +403,7 @@ public class UserQueryRepositoryTests
         string containedString = "test";
         Expression<Func<UserDocument, bool>> expectedExpression = x
             => x.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
-            && x.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase);
+            || x.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase);
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAll(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
@@ -426,7 +426,7 @@ public class UserQueryRepositoryTests
         string containedString = "test";
         Expression<Func<UserDocument, bool>> expectedExpression = x
             => x.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
-            && x.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase);
+            || x.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase);
 
         List<UserDocument> userDocuments = new()
         {
