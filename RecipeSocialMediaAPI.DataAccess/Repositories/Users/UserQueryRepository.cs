@@ -104,7 +104,7 @@ public class UserQueryRepository : IUserQueryRepository
     }
 
     public IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString) => _userCollection
-        .GetAll(userDoc => userDoc.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
-                        || userDoc.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase))
+        .GetAll(userDoc => userDoc.Handler.Contains(containedString.ToLower())
+                        || userDoc.UserName.Contains(containedString.ToLower()))
         .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);
 }
