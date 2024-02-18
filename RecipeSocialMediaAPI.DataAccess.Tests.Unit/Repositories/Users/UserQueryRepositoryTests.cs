@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
+using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -391,5 +392,88 @@ public class UserQueryRepositoryTests
                     testException,
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once());
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetAllUserAccountsContaining_WhenThereAreNoMatchingUsers_ReturnEmptyEnumerable()
+    {
+        // Given
+        string containedString = "test";
+        Expression<Func<UserDocument, bool>> expectedExpression = x
+            => x.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
+            && x.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase);
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(Enumerable.Empty<UserDocument>());
+
+        // When
+        var result = _userQueryRepositorySUT.GetAllUserAccountsContaining(containedString);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetAllUserAccountsContaining_WhenThereAreMatchingUsers_ReturnUsers()
+    {
+        // Given
+        string containedString = "test";
+        Expression<Func<UserDocument, bool>> expectedExpression = x
+            => x.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
+            && x.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase);
+
+        List<UserDocument> userDocuments = new()
+        {
+            new("non_searched_handle", $"User{containedString}Name", string.Empty, string.Empty),
+            new($"the_{containedString}_handle", "NonSearchedUsername", string.Empty, string.Empty),
+        };
+
+        IUserCredentials testUser1 = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = userDocuments[0].Handler,
+                UserName = userDocuments[0].UserName,
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "email",
+            Password = "password"
+        };
+        IUserCredentials testUser2 = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = userDocuments[1].Handler,
+                UserName = userDocuments[1].UserName,
+                AccountCreationDate = new(2023, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "email",
+            Password = "password"
+        };
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
+            .Returns(userDocuments);
+        _mapperMock
+            .Setup(mapper => mapper.MapUserDocumentToUser(userDocuments[0]))
+            .Returns(testUser1);
+        _mapperMock
+            .Setup(mapper => mapper.MapUserDocumentToUser(userDocuments[1]))
+            .Returns(testUser2);
+
+        // When
+        var result = _userQueryRepositorySUT.GetAllUserAccountsContaining(containedString);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(new List<IUserAccount> { testUser1.Account, testUser2.Account });
     }
 }

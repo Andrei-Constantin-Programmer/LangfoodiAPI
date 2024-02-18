@@ -9,4 +9,5 @@ public interface IUserQueryRepository
     IUserCredentials? GetUserByHandler(string handler);
     IUserCredentials? GetUserByEmail(string email);
     IUserCredentials? GetUserByUsername(string username);
+    IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString);
 }

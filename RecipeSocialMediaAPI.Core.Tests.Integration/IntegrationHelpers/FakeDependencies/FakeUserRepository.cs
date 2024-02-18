@@ -61,4 +61,9 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
 
         return true;
     }
+
+    public IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString) => _collection
+        .Where(userDoc => userDoc.Account.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
+                       && userDoc.Account.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase))
+        .Select(userDoc => userDoc.Account);
 }

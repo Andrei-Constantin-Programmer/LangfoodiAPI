@@ -65,7 +65,8 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         try
         {
             recipes = _recipeCollection
-                .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id);
+                .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id)
+                .ToList();
         }
         catch (Exception ex)
         {

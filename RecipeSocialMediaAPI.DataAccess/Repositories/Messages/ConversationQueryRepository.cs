@@ -126,7 +126,8 @@ public class ConversationQueryRepository : IConversationQueryRepository
             conversations = _conversationCollection
                 .GetAll(conversationDoc => conversationDoc.ConnectionId == null
                     ? groupIds.Any(id => id == conversationDoc.GroupId)
-                    : connectionIds.Any(id => id == conversationDoc.ConnectionId));
+                    : connectionIds.Any(id => id == conversationDoc.ConnectionId))
+                .ToList();
         }
         catch (Exception ex)
         {

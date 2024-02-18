@@ -67,7 +67,8 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         {
             connections = _connectionCollection
                 .GetAll(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
-                                         || connectionDoc.AccountId2 == userAccount.Id);
+                                      || connectionDoc.AccountId2 == userAccount.Id)
+                .ToList();
         }
         catch (Exception ex)
         {
