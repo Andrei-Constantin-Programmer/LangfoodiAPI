@@ -37,9 +37,9 @@ public class AuthenticateUserHandlerTests
     {
         // Given
         UserCredentials? nullUser = null;
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>()))
-            .Returns(nullUser);
+        //_userQueryRepositoryMock
+        //    .Setup(repo => repo.GetUserByHandler(It.IsAny<string>()))
+        //    .Returns(nullUser);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
             .Returns(nullUser);
