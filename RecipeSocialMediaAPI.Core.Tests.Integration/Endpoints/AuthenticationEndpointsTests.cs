@@ -90,7 +90,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Handler, string.Empty));
+        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Email, string.Empty));
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
