@@ -58,6 +58,7 @@ public class ConversationMapperTests
         result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         result.LastMessage.Should().BeNull();
         result.MessagesUnseen.Should().Be(0);
+        result.Name.Should().Be(user2.UserName);
         result.ThumbnailId.Should().Be(user2.ProfileImageId);
         result.IsGroup.Should().BeFalse();
         result.UserIds.Should().BeEquivalentTo(new List<string>{ user1.Id, user2.Id });
@@ -328,6 +329,44 @@ public class ConversationMapperTests
         result.MessagesUnseen.Should().Be(2);
         result.ThumbnailId.Should().Be(user2.ProfileImageId);
         result.IsGroup.Should().BeTrue();
+        result.UserIds.Should().BeEquivalentTo(new List<string> { user1.Id, user2.Id });
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapConversationToConnectionConversation_FromThePerspectiveOfUser2_ReturnMappedConversation()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "u1",
+            Handler = "user_1",
+            UserName = "User 1",
+            ProfileImageId = "img1.png"
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "u2",
+            Handler = "user_2",
+            UserName = "User 2",
+            ProfileImageId = "img2.png"
+        };
+
+        Connection connection = new("conn1", user1, user2, ConnectionStatus.Connected);
+        ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
+
+        // When
+        var result = _conversationMapperSUT.MapConversationToConnectionConversationDTO(user2, conversation);
+
+        // Then
+        result.Id.Should().Be(conversation.ConversationId);
+        result.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
+        result.LastMessage.Should().BeNull();
+        result.MessagesUnseen.Should().Be(0);
+        result.Name.Should().Be(user1.UserName);
+        result.ThumbnailId.Should().Be(user1.ProfileImageId);
+        result.IsGroup.Should().BeFalse();
         result.UserIds.Should().BeEquivalentTo(new List<string> { user1.Id, user2.Id });
     }
 }
