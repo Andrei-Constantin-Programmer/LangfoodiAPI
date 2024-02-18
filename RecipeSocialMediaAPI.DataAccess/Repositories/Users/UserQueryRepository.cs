@@ -20,10 +20,9 @@ public class UserQueryRepository : IUserQueryRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public IEnumerable<IUserCredentials> GetAllUsers() =>
-        _userCollection
-            .GetAll((_) => true)
-            .Select(_mapper.MapUserDocumentToUser);
+    public IEnumerable<IUserCredentials> GetAllUsers() => _userCollection
+        .GetAll((_) => true)
+        .Select(_mapper.MapUserDocumentToUser);
 
     public IUserCredentials? GetUserById(string id)
     {
@@ -103,4 +102,9 @@ public class UserQueryRepository : IUserQueryRepository
             ? null
             : _mapper.MapUserDocumentToUser(userDocument);
     }
+
+    public IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString) => _userCollection
+        .GetAll(userDoc => userDoc.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
+                        || userDoc.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase))
+        .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);
 }
