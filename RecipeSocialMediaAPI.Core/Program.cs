@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using RecipeSocialMediaAPI.Application.Options;
 using System.Text;
-using RecipeSocialMediaAPI.Core.IdentityData;
+using RecipeSocialMediaAPI.Application.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
