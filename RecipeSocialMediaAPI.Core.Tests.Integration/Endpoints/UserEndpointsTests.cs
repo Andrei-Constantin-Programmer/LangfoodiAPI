@@ -154,7 +154,7 @@ public class UserEndpointsTests : EndpointTestBase
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var oldUserExists = _fakeUserRepository.GetUserByUsername(oldUsername) is not null;
-        var newUserExists = _fakeUserRepository.GetUserByUsername(updateContract.UserName) is not null;
+        var newUserExists = _fakeUserRepository.GetUserByUsername(updateContract.UserName!) is not null;
 
         oldUserExists.Should().BeFalse();
         newUserExists.Should().BeTrue();
@@ -174,7 +174,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
-        var userExists = _fakeUserRepository.GetUserByUsername(updateContract.UserName) is not null;
+        var userExists = _fakeUserRepository.GetUserByUsername(updateContract.UserName!) is not null;
         userExists.Should().BeFalse();
     }
 
