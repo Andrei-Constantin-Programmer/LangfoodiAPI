@@ -26,7 +26,7 @@ public class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, Us
     public Task<UserDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
         IUserCredentials user = (
-                    // _userQueryRepository.GetUserByHandler(request.HandlerOrEmail) ??
+                    // _userQueryRepository.GetUserByHandler(request.HandlerOrEmail)??
                     _userQueryRepository.GetUserByEmail(request.HandlerOrEmail))
                     ?? throw new UserNotFoundException($"No user found with handler/email {request.HandlerOrEmail}");
 
