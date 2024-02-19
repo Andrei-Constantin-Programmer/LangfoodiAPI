@@ -25,7 +25,8 @@ public static class UserEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetUsersQuery(containedString)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/create", async (
             [FromBody] NewUserContract newUserContract,

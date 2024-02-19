@@ -7,12 +7,15 @@ using RecipeSocialMediaAPI.Core.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
 public class UserEndpointsTests : EndpointTestBase
 {
-    public UserEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) {}
+    public UserEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
@@ -276,6 +279,20 @@ public class UserEndpointsTests : EndpointTestBase
     public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
+        TestUserCredentials user = new()
+        {
+            Account = new TestUserAccount
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Pass@123"
+        };
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var result = await _client.PostAsync($"user/get-all/?containedString=notContaining", null);
@@ -301,6 +318,9 @@ public class UserEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
         var result = await _client.PostAsync($"user/get-all/?containedString={containedString}", null);
 
@@ -317,5 +337,19 @@ public class UserEndpointsTests : EndpointTestBase
         data[1].Id.Should().Be(user2.Account.Id);
         data[1].Handler.Should().Be(user2.Account.Handler);
         data[1].UserName.Should().Be(user2.Account.UserName);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetAll_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        
+        // When
+        var result = await _client.PostAsync($"user/get-all/?containedString=notContaining", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }
