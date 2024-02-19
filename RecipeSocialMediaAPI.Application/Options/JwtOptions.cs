@@ -1,4 +1,4 @@
-﻿namespace RecipeSocialMediaAPI.Core.Options;
+﻿namespace RecipeSocialMediaAPI.Application.Options;
 
 public class JwtOptions
 {

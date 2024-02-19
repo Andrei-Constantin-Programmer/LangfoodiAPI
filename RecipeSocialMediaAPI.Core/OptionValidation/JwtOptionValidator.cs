@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using RecipeSocialMediaAPI.Core.Options;
+using RecipeSocialMediaAPI.Application.Options;
 using System.Text;
 
 namespace RecipeSocialMediaAPI.Core.OptionValidation;

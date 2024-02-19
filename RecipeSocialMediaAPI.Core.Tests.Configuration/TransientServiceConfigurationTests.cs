@@ -12,6 +12,7 @@ using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.Application.WebClients;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 using RecipeSocialMediaAPI.Core.SignalR;
+using System;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
@@ -113,5 +114,18 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
         // Then
         messageNotificationService.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void BearerTokenService_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var bearerTokenService = scope.ServiceProvider.GetService(typeof(IBearerTokenGeneratorService)) as BearerTokenGeneratorService;
+
+        // Then
+        bearerTokenService.Should().NotBeNull();
     }
 }
