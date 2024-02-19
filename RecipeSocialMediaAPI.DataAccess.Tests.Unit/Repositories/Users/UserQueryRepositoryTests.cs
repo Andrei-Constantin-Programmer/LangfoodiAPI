@@ -6,7 +6,6 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
-using RecipeSocialMediaAPI.DataAccess.Tests.Shared.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -70,7 +69,7 @@ public class UserQueryRepositoryTests
         List<UserDocument> existingUsers = new();
         for (int i = 0; i < numberOfUsers; i++)
         {
-            existingUsers.Add(new UserDocument("TestHandler", "TestName", "TestEmail", "TestPassword"));
+            existingUsers.Add(new UserDocument("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User));
         }
 
         _mongoCollectionWrapperMock
@@ -112,7 +111,7 @@ public class UserQueryRepositoryTests
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -148,7 +147,7 @@ public class UserQueryRepositoryTests
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -215,7 +214,7 @@ public class UserQueryRepositoryTests
         // Given
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -252,7 +251,7 @@ public class UserQueryRepositoryTests
         // Given
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument testDocument = new("TestHandler", "TestName", email, "TestPassword");
+        UserDocument testDocument = new("TestHandler", "TestName", email, "TestPassword", (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -319,7 +318,7 @@ public class UserQueryRepositoryTests
         // Given
         string username = "WrongUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -355,7 +354,7 @@ public class UserQueryRepositoryTests
         // Given
         string username = "TestUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == username;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
@@ -426,8 +425,8 @@ public class UserQueryRepositoryTests
 
         List<UserDocument> userDocuments = new()
         {
-            new("non_searched_handle", $"User{containedString}Name", string.Empty, string.Empty),
-            new($"the_{containedString}_handle", "NonSearchedUsername", string.Empty, string.Empty),
+            new("non_searched_handle", $"User{containedString}Name", string.Empty, string.Empty, (int)UserRole.User),
+            new($"the_{containedString}_handle", "NonSearchedUsername", string.Empty, string.Empty, (int)UserRole.User),
         };
 
         IUserCredentials testUser1 = new TestUserCredentials()

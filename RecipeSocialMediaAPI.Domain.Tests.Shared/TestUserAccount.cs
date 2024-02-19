@@ -17,6 +17,7 @@ public class TestUserAccount : IUserAccount
         get => _pinnedConversationIds.ToImmutableList(); 
         set => _pinnedConversationIds = value.ToHashSet(); 
     }
+    public UserRole Role { get; set; }
 
     public bool AddPin(string pinnedConversationId) => _pinnedConversationIds.Add(pinnedConversationId);
     public bool RemovePin(string pinnedConversationId) => _pinnedConversationIds.Remove(pinnedConversationId);

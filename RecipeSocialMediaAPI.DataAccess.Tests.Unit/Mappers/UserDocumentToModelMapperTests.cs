@@ -3,6 +3,7 @@ using Moq;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -35,7 +36,8 @@ public class UserDocumentToModelMapperTests
             UserName: "TestUser",
             Email: "TestMail",
             Password: "TestPassword",
-            AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+            AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            Role: (int)UserRole.User
         );
 
         // When
@@ -52,7 +54,8 @@ public class UserDocumentToModelMapperTests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<DateTimeOffset>(),
-                It.IsAny<List<string>>()),
+                It.IsAny<List<string>>(),
+                It.IsAny<UserRole>()),
             Times.Never);
     }
 
@@ -69,7 +72,8 @@ public class UserDocumentToModelMapperTests
             Email: "TestMail",
             Password: "TestPassword",
             AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            ProfileImageId: "TestImageId"
+            ProfileImageId: "TestImageId",
+            Role: (int)UserRole.User
         );
 
         TestUserCredentials testUser = new()
@@ -95,7 +99,8 @@ public class UserDocumentToModelMapperTests
                 testDocument.Password,
                 testDocument.ProfileImageId,
                 testDocument.AccountCreationDate,
-                It.IsAny<List<string>>()))
+                It.IsAny<List<string>>(),
+                It.IsAny<UserRole>()))
             .Returns(testUser);
 
         // When
@@ -119,7 +124,8 @@ public class UserDocumentToModelMapperTests
             Password: "TestPassword",
             AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             ProfileImageId: "TestImageId",
-            PinnedConversationIds: new() { "convo1", "convo2" }
+            PinnedConversationIds: new() { "convo1", "convo2" },
+            Role: (int)UserRole.User
         );
 
         TestUserCredentials testUser = new()
@@ -146,7 +152,8 @@ public class UserDocumentToModelMapperTests
                 testDocument.Password,
                 testDocument.ProfileImageId,
                 testDocument.AccountCreationDate,
-                testDocument.PinnedConversationIds))
+                testDocument.PinnedConversationIds,
+                (UserRole)testDocument.Role))
             .Returns(testUser);
 
         // When

@@ -9,11 +9,19 @@ public class UserAccount : IUserAccount
     public string UserName { get; set; }
     public string? ProfileImageId { get; set; }
     public DateTimeOffset AccountCreationDate { get; }
+    public UserRole Role { get; set; }
 
     private readonly HashSet<string> _pinnedConversationIds;
     public ImmutableList<string> PinnedConversationIds => _pinnedConversationIds.ToImmutableList();
 
-    internal UserAccount(string id, string handler, string username, string? profileImageId, DateTimeOffset accountCreationDate, List<string>? pinnedConversationIds = null)
+    internal UserAccount(
+        string id,
+        string handler,
+        string username,
+        string? profileImageId,
+        DateTimeOffset accountCreationDate,
+        List<string>? pinnedConversationIds = null,
+        UserRole role = UserRole.User)
     {
         Id = id;
         Handler = handler;
@@ -21,6 +29,7 @@ public class UserAccount : IUserAccount
         ProfileImageId = profileImageId;
         AccountCreationDate = accountCreationDate;
         _pinnedConversationIds = pinnedConversationIds?.ToHashSet() ?? new();
+        Role = role;
     }
 
     public bool RemovePin(string pinnedConversationId) => _pinnedConversationIds.Remove(pinnedConversationId);

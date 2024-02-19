@@ -79,7 +79,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<HandlerAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>()), Times.Never);
+            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>()), Times.Never);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<UsernameAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>()), Times.Never);
+            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>()), Times.Never);
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<EmailAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>()), Times.Never);
+            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>()), Times.Never);
     }
 
     [Fact]
@@ -163,15 +163,16 @@ public class AddUserHandlerTests
         NewUserContract contract = new("NewHandler", "NewUser", "NewEmail", "NewPass");
         
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>()))
-            .Returns((string handler, string user, string email, string password, DateTimeOffset creationDate) => new TestUserCredentials
+            .Setup(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>()))
+            .Returns((string handler, string user, string email, string password, DateTimeOffset creationDate, UserRole userRole) => new TestUserCredentials
             {
                 Account = new TestUserAccount
                 {
                     Id =  "TestId",
                     Handler = handler,
                     UserName = user,
-                    AccountCreationDate = creationDate
+                    AccountCreationDate = creationDate,
+                    Role = userRole
                 },
                 Email = email,
                 Password = password,

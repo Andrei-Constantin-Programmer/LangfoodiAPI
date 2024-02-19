@@ -17,9 +17,15 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate)
+    public IUserCredentials CreateUser(
+        string handler,
+        string username,
+        string email,
+        string password,
+        DateTimeOffset accountCreationDate,
+        UserRole userRole = UserRole.User)
     {
-        UserDocument newUserDocument = new(handler, username, email, password, null, accountCreationDate);
+        UserDocument newUserDocument = new(handler, username, email, password, (int)userRole, null, accountCreationDate);
         
         newUserDocument = _userCollection.Insert(newUserDocument);
 
@@ -44,7 +50,8 @@ public class UserPersistenceRepository : IUserPersistenceRepository
             UserName = user.Account.UserName,
             Email = user.Email,
             Password = user.Password,
-            ProfileImageId = user.Account.ProfileImageId
+            ProfileImageId = user.Account.ProfileImageId,
+            Role = (int)user.Account.Role
         };
 
         return _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id);

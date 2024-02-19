@@ -4,7 +4,7 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Users;
 
 public interface IUserPersistenceRepository
 {
-    IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate);
+    IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate, UserRole userRole = UserRole.User);
     bool DeleteUser(IUserCredentials user);
     bool DeleteUser(string id);
     bool UpdateUser(IUserCredentials user);
