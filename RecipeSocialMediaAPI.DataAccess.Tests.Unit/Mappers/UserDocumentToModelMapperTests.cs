@@ -84,7 +84,8 @@ public class UserDocumentToModelMapperTests
                 Handler = testDocument.Handler,
                 UserName = testDocument.UserName,
                 AccountCreationDate = testDocument.AccountCreationDate!.Value,
-                ProfileImageId = testDocument.ProfileImageId
+                ProfileImageId = testDocument.ProfileImageId,
+                Role = UserRole.User
             },
             Email = testDocument.Email,
             Password = testDocument.Password
@@ -100,7 +101,7 @@ public class UserDocumentToModelMapperTests
                 testDocument.ProfileImageId,
                 testDocument.AccountCreationDate,
                 It.IsAny<List<string>>(),
-                It.IsAny<UserRole>()))
+                UserRole.User))
             .Returns(testUser);
 
         // When

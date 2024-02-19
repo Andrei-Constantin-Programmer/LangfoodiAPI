@@ -1,4 +1,6 @@
-﻿namespace RecipeSocialMediaAPI.Core.Endpoints;
+﻿using RecipeSocialMediaAPI.Application.Identity;
+
+namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class TestEndpoints
 {
@@ -16,7 +18,8 @@ public static class TestEndpoints
         group.MapPost("/log", (ILogger<Program> logger) =>
         {
             logger.LogInformation("Hello World");
-        });
+        })
+            .RequireAuthorization(IdentityData.AdminUserPolicyName);
 
         return group;
     }

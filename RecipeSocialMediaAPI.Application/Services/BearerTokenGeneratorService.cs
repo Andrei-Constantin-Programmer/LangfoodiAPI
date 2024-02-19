@@ -32,7 +32,9 @@ public class BearerTokenGeneratorService : IBearerTokenGeneratorService
             new(ClaimTypes.Name, user.Account.Id),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Sub, user.Email),
-            new(JwtRegisteredClaimNames.Email, user.Email)
+            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(JwtRegisteredClaimNames.Iss, _jwtOptions.Issuer),
+            new(JwtRegisteredClaimNames.Aud, _jwtOptions.Audience),
         };
 
         if (user.Account.Role is UserRole.Developer)
