@@ -276,9 +276,11 @@ public class UserEndpointsTests : EndpointTestBase
     public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
+        var user = _fakeUserRepository
+            .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsync($"user/get-all/?containedString=notContaining", null);
+        var result = await _client.PostAsync($"user/get-all/?containedString=notContaining&userId={user.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -302,7 +304,7 @@ public class UserEndpointsTests : EndpointTestBase
             .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsync($"user/get-all/?containedString={containedString}", null);
+        var result = await _client.PostAsync($"user/get-all/?containedString={containedString}&userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);

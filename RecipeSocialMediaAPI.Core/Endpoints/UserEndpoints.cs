@@ -21,10 +21,11 @@ public static class UserEndpoints
     private static RouteGroupBuilder AddUserEndpoints(this RouteGroupBuilder group)
     {
         group.MapPost("/get-all", async (
+            [FromQuery] string userId,
             [FromQuery] string containedString,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetUsersQuery(containedString)));
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, Application.Utilities.UserQueryOptions.All)));
         });
 
         group.MapPost("/create", async (
