@@ -30,6 +30,22 @@ public static class UserEndpoints
             return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, containSelf ? UserQueryOptions.All : UserQueryOptions.NonSelf)));
         });
 
+        group.MapPost("/get-connected", async (
+            [FromQuery] string userId,
+            [FromQuery] string containedString,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, UserQueryOptions.Connected)));
+        });
+
+        group.MapPost("/get-unconnected", async (
+            [FromQuery] string userId,
+            [FromQuery] string containedString,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, UserQueryOptions.NotConnected)));
+        });
+
         group.MapPost("/create", async (
             [FromBody] NewUserContract newUserContract,
             [FromServices] ISender sender) =>
