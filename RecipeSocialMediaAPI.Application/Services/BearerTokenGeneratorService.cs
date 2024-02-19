@@ -21,7 +21,7 @@ public class BearerTokenGeneratorService : IBearerTokenGeneratorService
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public string GenerateToken(IUserAccount user)
+    public string GenerateToken(IUserCredentials user)
     {
         JwtSecurityTokenHandler tokenHandler = new();
         var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);
@@ -29,7 +29,10 @@ public class BearerTokenGeneratorService : IBearerTokenGeneratorService
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                    new(ClaimTypes.Name, user.Id),
+                new(ClaimTypes.Name, user.Account.Id),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(JwtRegisteredClaimNames.Sub, user.Email),
+                new(JwtRegisteredClaimNames.Email, user.Email),
             }),
             Expires = _dateTimeProvider.Now.Add(_jwtOptions.Lifetime).UtcDateTime,
             SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

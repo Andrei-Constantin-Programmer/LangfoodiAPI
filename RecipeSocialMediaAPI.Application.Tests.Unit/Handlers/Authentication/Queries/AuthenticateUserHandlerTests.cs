@@ -164,7 +164,7 @@ public class AuthenticateUserHandlerTests
 
         string token = "TestToken";
         _bearerTokenGeneratorServiceMock
-            .Setup(service => service.GenerateToken(testUser.Account))
+            .Setup(service => service.GenerateToken(testUser))
             .Returns(token);
 
         AuthenticateUserQuery query = new(testUser.Account.Handler, decryptedPassword);
@@ -216,7 +216,7 @@ public class AuthenticateUserHandlerTests
 
         string token = "TestToken";
         _bearerTokenGeneratorServiceMock
-            .Setup(service => service.GenerateToken(testUser.Account))
+            .Setup(service => service.GenerateToken(testUser))
             .Returns(token);
 
         AuthenticateUserQuery query = new(testUser.Email, decryptedPassword);

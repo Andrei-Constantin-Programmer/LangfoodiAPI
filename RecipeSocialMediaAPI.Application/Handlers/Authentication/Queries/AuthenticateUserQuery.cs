@@ -43,7 +43,7 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
             throw new InvalidCredentialsException();
         }
 
-        var token = _bearerTokenGeneratorService.GenerateToken(user.Account);
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
 
         return await Task.FromResult(new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(user), token));
     }

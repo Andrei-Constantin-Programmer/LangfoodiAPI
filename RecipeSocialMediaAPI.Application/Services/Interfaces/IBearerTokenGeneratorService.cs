@@ -4,5 +4,5 @@ namespace RecipeSocialMediaAPI.Application.Services.Interfaces;
 
 public interface IBearerTokenGeneratorService
 {
-    string GenerateToken(IUserAccount user);
+    string GenerateToken(IUserCredentials user);
 }
