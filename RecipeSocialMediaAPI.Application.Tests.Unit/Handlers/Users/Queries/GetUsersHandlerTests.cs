@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Users;
+using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
@@ -27,6 +28,29 @@ public class GetUsersHandlerTests
         _connectionQueryRepositoryMock = new Mock<IConnectionQueryRepository>();
 
         _usersHandlerSUT = new(_userQueryRepositoryMock.Object, _userMapperMock.Object, _connectionQueryRepositoryMock.Object);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(UserQueryOptions.All)]
+    [InlineData(UserQueryOptions.NonSelf)]
+    [InlineData(UserQueryOptions.Connected)]
+    [InlineData(UserQueryOptions.NotConnected)]
+    public async Task Handle_QueryingUserDoesNotExist_ThrowUserNotFoundException(UserQueryOptions options)
+    {
+        // Given
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(It.IsAny<string>()))
+            .Returns((IUserCredentials?)null);
+
+        GetUsersQuery query = new("userId", "StringNotFound", options);
+        
+        // When
+        var testAction = async () => await _usersHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<UserNotFoundException>();
     }
 
     [Theory]
