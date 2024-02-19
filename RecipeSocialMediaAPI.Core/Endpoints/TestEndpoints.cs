@@ -19,7 +19,7 @@ public static class TestEndpoints
         {
             logger.LogInformation("Hello World");
         })
-            .RequireAuthorization(IdentityData.AdminUserPolicyName);
+            .RequireAuthorization(IdentityData.DeveloperUserPolicyName);
 
         return group;
     }

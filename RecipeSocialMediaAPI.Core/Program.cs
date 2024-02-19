@@ -45,7 +45,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(IdentityData.AdminUserPolicyName, 
         policy => policy.RequireClaim(IdentityData.AdminUserClaimName, "true"));
     options.AddPolicy(IdentityData.DeveloperUserPolicyName,
-        policy => policy.RequireClaim(IdentityData.DeveloperUserClaimName, "true"));
+        policy => policy.RequireAssertion(context => context.User.HasClaim(claim =>
+            claim.Type == IdentityData.DeveloperUserClaimName || claim.Type == IdentityData.AdminUserClaimName)));
 });
 
 var app = builder.Build();
