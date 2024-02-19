@@ -270,17 +270,19 @@ public class UserEndpointsTests : EndpointTestBase
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact]
+    [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList()
+    [InlineData(true)]
+    [InlineData(false)]
+    public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList(bool containSelf)
     {
         // Given
         var user = _fakeUserRepository
             .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsync($"user/get-all/?containedString=notContaining&userId={user.Account.Id}", null);
+        var result = await _client.PostAsync($"user/get-all/?containedString=notContaining&userId={user.Account.Id}&containSelf={containSelf}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -292,7 +294,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenThereAreUsers_ReturnUsers()
+    public async void GetAll_WhenThereAreUsersAndChoseSelf_ReturnUsersWithSelf()
     {
         // Given
         string containedString = "test";
@@ -304,7 +306,7 @@ public class UserEndpointsTests : EndpointTestBase
             .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsync($"user/get-all/?containedString={containedString}&userId={user1.Account.Id}", null);
+        var result = await _client.PostAsync($"user/get-all/?containedString={containedString}&userId={user1.Account.Id}&containSelf=true", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -319,5 +321,33 @@ public class UserEndpointsTests : EndpointTestBase
         data[1].Id.Should().Be(user2.Account.Id);
         data[1].Handler.Should().Be(user2.Account.Handler);
         data[1].UserName.Should().Be(user2.Account.UserName);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetAll_WhenThereAreUsersAndChoseNonSelf_ReturnUsersWithoutQueryingUser()
+    {
+        // Given
+        string containedString = "test";
+        var user1 = _fakeUserRepository
+            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = _fakeUserRepository
+            .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+
+        // When
+        var result = await _client.PostAsync($"user/get-all/?containedString={containedString}&userId={user1.Account.Id}&containSelf=false", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        data.Should().NotBeNull();
+        data.Should().HaveCount(1);
+
+        data![0].Id.Should().Be(user2.Account.Id);
+        data[0].Handler.Should().Be(user2.Account.Handler);
+        data[0].UserName.Should().Be(user2.Account.UserName);
     }
 }

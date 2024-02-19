@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
+using RecipeSocialMediaAPI.Application.Utilities;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
 
@@ -23,9 +24,10 @@ public static class UserEndpoints
         group.MapPost("/get-all", async (
             [FromQuery] string userId,
             [FromQuery] string containedString,
+            [FromQuery] bool containSelf,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, Application.Utilities.UserQueryOptions.All)));
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, containSelf ? UserQueryOptions.All : UserQueryOptions.NonSelf)));
         });
 
         group.MapPost("/create", async (
