@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using RecipeSocialMediaAPI.Core.Options;
+using System.Text;
 
 namespace RecipeSocialMediaAPI.Core.OptionValidation;
 
@@ -9,7 +10,13 @@ public sealed class JwtOptionValidator : AbstractValidator<JwtOptions>
     {
         RuleFor(x => x.Key)
             .NotEmpty()
-            .WithMessage("The JWT key cannot be empty");
+            .WithMessage("The JWT key cannot be empty")
+            .Must(key =>
+            {
+                var bytes = Encoding.ASCII.GetBytes(key);
+                return bytes.Length * 8 >= 128;
+            })
+            .WithMessage("The JWT key must have at least 128 bits");
 
         RuleFor(x => x.Issuer)
             .NotEmpty()
