@@ -58,7 +58,7 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
                 || conn.Account2.Id == user.Id)
             : user => connections.All(conn 
                 => conn.Account1.Id != user.Id
-                || conn.Account2.Id != user.Id);
+                && conn.Account2.Id != user.Id);
 
         return allUsers
             .Where(user => user.Id != queryingUser.Id && condition(user));

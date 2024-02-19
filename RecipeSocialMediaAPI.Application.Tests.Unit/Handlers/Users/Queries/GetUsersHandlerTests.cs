@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Utilities;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -63,7 +64,7 @@ public class GetUsersHandlerTests
     public async Task Handle_WhenThereAreNoFoundUsers_ReturnsEmptyList(UserQueryOptions options)
     {
         // Given
-        TestUserCredentials user = new()
+        TestUserCredentials queryingUser = new()
         {
             Account = new TestUserAccount()
             {
@@ -75,10 +76,10 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user.Account.Id))
-            .Returns(user);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
+            .Returns(queryingUser);
 
-        GetUsersQuery query = new(user.Account.Id, "StringNotFound", options);
+        GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", options);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
             .Returns(Enumerable.Empty<IUserAccount>());
@@ -97,7 +98,7 @@ public class GetUsersHandlerTests
     public async Task HandleAll_WhenUsersAreFoundAndQueryingUserMatches_ReturnsMappedUsersIncludingQueryingUser()
     {
         // Given
-        TestUserCredentials user = new()
+        TestUserCredentials queryingUser = new()
         {
             Account = new TestUserAccount()
             {
@@ -109,10 +110,10 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user.Account.Id))
-            .Returns(user);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
+            .Returns(queryingUser);
 
-        GetUsersQuery query = new(user.Account.Id, "StringNotFound", UserQueryOptions.All);
+        GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.All);
         IUserAccount account1 = new TestUserAccount()
         {
             Id = "u2",
@@ -128,11 +129,11 @@ public class GetUsersHandlerTests
 
         UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
         UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
-        UserAccountDTO dto3 = new(user.Account.Id, user.Account.Handler, user.Account.UserName, new());
+        UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount>() { account1, account2, user.Account });
+            .Returns(new List<IUserAccount>() { account1, account2, queryingUser.Account });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -140,7 +141,7 @@ public class GetUsersHandlerTests
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account2))
             .Returns(dto2);
         _userMapperMock
-            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(user.Account))
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(queryingUser.Account))
             .Returns(dto3);
 
         // When
@@ -157,7 +158,7 @@ public class GetUsersHandlerTests
     public async Task HandleAll_WhenUsersAreFoundButQueryingUserDoesNotMatch_ReturnsMappedUsersExcludingQueryingUser()
     {
         // Given
-        TestUserCredentials user = new()
+        TestUserCredentials queryingUser = new()
         {
             Account = new TestUserAccount()
             {
@@ -169,10 +170,10 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user.Account.Id))
-            .Returns(user);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
+            .Returns(queryingUser);
 
-        GetUsersQuery query = new(user.Account.Id, "StringNotFound", UserQueryOptions.All);
+        GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.All);
         IUserAccount account1 = new TestUserAccount()
         {
             Id = "u2",
@@ -191,7 +192,7 @@ public class GetUsersHandlerTests
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount>() { account1, account2 });
+            .Returns(new List<IUserAccount> { account1, account2 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -213,7 +214,7 @@ public class GetUsersHandlerTests
     public async Task HandleNonSelf_WhenUsersAreFoundAndQueryingUserMatches_ReturnsMappedUsersExcludingQueryingUser()
     {
         // Given
-        TestUserCredentials user = new()
+        TestUserCredentials queryingUser = new()
         {
             Account = new TestUserAccount()
             {
@@ -225,10 +226,10 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user.Account.Id))
-            .Returns(user);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
+            .Returns(queryingUser);
 
-        GetUsersQuery query = new(user.Account.Id, "StringNotFound", UserQueryOptions.NonSelf);
+        GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NonSelf);
         IUserAccount account1 = new TestUserAccount()
         {
             Id = "u2",
@@ -244,11 +245,11 @@ public class GetUsersHandlerTests
 
         UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
         UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
-        UserAccountDTO dto3 = new(user.Account.Id, user.Account.Handler, user.Account.UserName, new());
+        UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount>() { account1, account2, user.Account });
+            .Returns(new List<IUserAccount> { account1, account2, queryingUser.Account });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -256,7 +257,7 @@ public class GetUsersHandlerTests
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account2))
             .Returns(dto2);
         _userMapperMock
-            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(user.Account))
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(queryingUser.Account))
             .Returns(dto3);
 
         // When
@@ -267,14 +268,13 @@ public class GetUsersHandlerTests
         result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto1, dto2 });
     }
 
-
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task HandleNonSelf_WhenUsersAreFoundAndQueryingUserDoesNotMatch_ReturnsMappedUsersExcludingQueryingUser()
     {
         // Given
-        TestUserCredentials user = new()
+        TestUserCredentials queryingUser = new()
         {
             Account = new TestUserAccount()
             {
@@ -286,10 +286,10 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user.Account.Id))
-            .Returns(user);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
+            .Returns(queryingUser);
 
-        GetUsersQuery query = new(user.Account.Id, "StringNotFound", UserQueryOptions.NonSelf);
+        GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NonSelf);
         IUserAccount account1 = new TestUserAccount()
         {
             Id = "u2",
@@ -308,7 +308,7 @@ public class GetUsersHandlerTests
         
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount>() { account1, account2 });
+            .Returns(new List<IUserAccount> { account1, account2 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -322,5 +322,181 @@ public class GetUsersHandlerTests
         // Then
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto1, dto2 });
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task HandleConnected_WhenUsersAreFound_ReturnsOnlyConnectedUsers()
+    {
+        // Given
+        TestUserCredentials queryingUser = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "UserName 1"
+            },
+            Email = "email@mail.com",
+            Password = "Test@123"
+        };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
+            .Returns(queryingUser);
+
+        GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.Connected);
+        IUserAccount account1 = new TestUserAccount()
+        {
+            Id = "u2",
+            Handler = $"handle_{query.ContainedString}",
+            UserName = "Unrelated Username"
+        };
+        IUserAccount account2 = new TestUserAccount()
+        {
+            Id = "u3",
+            Handler = "user_handle",
+            UserName = $"{query.ContainedString} name"
+        };
+        IUserAccount account3 = new TestUserAccount()
+        {
+            Id = "u4",
+            Handler = $"{query.ContainedString}",
+            UserName = $"Name {query.ContainedString}"
+        };
+        IUserAccount account4 = new TestUserAccount()
+        {
+            Id = "u5",
+            Handler = "user_handle_final",
+            UserName = $"{query.ContainedString.ToUpper()}"
+        };
+
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnectionsForUser(queryingUser.Account))
+            .Returns(new List<IConnection>
+            {
+                new Connection("conn1", queryingUser.Account, account1, ConnectionStatus.Connected),
+                new Connection("conn2", account2, queryingUser.Account, ConnectionStatus.Connected)
+            });
+
+        UserAccountDTO dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new());
+        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
+        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
+        UserAccountDTO dto3 = new(account3.Id, account3.Handler, account3.UserName, new());
+        UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new());
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
+            .Returns(new List<IUserAccount> { account1, account2, queryingUser.Account, account3, account4 });
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
+            .Returns(dto1);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account2))
+            .Returns(dto2);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account3))
+            .Returns(dto3);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account4))
+            .Returns(dto4);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(queryingUser.Account))
+            .Returns(dto0);
+
+        // When
+        var result = await _usersHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto1, dto2 });
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task HandleNotConnected_WhenUsersAreFound_ReturnsOnlyNotConnectedUsers()
+    {
+        // Given
+        TestUserCredentials queryingUser = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "UserName 1"
+            },
+            Email = "email@mail.com",
+            Password = "Test@123"
+        };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
+            .Returns(queryingUser);
+
+        GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NotConnected);
+        IUserAccount account1 = new TestUserAccount()
+        {
+            Id = "u2",
+            Handler = $"handle_{query.ContainedString}",
+            UserName = "Unrelated Username"
+        };
+        IUserAccount account2 = new TestUserAccount()
+        {
+            Id = "u3",
+            Handler = "user_handle",
+            UserName = $"{query.ContainedString} name"
+        };
+        IUserAccount account3 = new TestUserAccount()
+        {
+            Id = "u4",
+            Handler = $"{query.ContainedString}",
+            UserName = $"Name {query.ContainedString}"
+        };
+        IUserAccount account4 = new TestUserAccount()
+        {
+            Id = "u5",
+            Handler = "user_handle_final",
+            UserName = $"{query.ContainedString.ToUpper()}"
+        };
+
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnectionsForUser(queryingUser.Account))
+            .Returns(new List<IConnection>
+            {
+                new Connection("conn1", queryingUser.Account, account1, ConnectionStatus.Connected),
+                new Connection("conn2", account2, queryingUser.Account, ConnectionStatus.Connected)
+            });
+
+        UserAccountDTO dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new());
+        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
+        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
+        UserAccountDTO dto3 = new(account3.Id, account3.Handler, account3.UserName, new());
+        UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new());
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
+            .Returns(new List<IUserAccount> { account1, account2, queryingUser.Account, account3, account4 });
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
+            .Returns(dto1);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account2))
+            .Returns(dto2);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account3))
+            .Returns(dto3);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account4))
+            .Returns(dto4);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(queryingUser.Account))
+            .Returns(dto0);
+
+        // When
+        var result = await _usersHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto3, dto4 });
     }
 }
