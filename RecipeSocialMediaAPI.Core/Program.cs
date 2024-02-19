@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using RecipeSocialMediaAPI.Application.Options;
 using System.Text;
+using RecipeSocialMediaAPI.Core.IdentityData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +39,14 @@ builder.Services
             ValidateIssuerSigningKey = true
         };
     });
-builder.Services.AddAuthorization();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(IdentityData.AdminUserPolicyName, 
+        policy => policy.RequireClaim(IdentityData.AdminUserClaimName, "true"));
+    options.AddPolicy(IdentityData.DeveloperUserPolicyName,
+        policy => policy.RequireClaim(IdentityData.DeveloperUserClaimName, "true"));
+});
 
 var app = builder.Build();
 
