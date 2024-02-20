@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using System.Runtime.Intrinsics.X86;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
@@ -353,29 +354,22 @@ public class UserEndpointsTests : EndpointTestBase
         result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
-    [Fact]
+    [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList()
+    [InlineData(true)]
+    [InlineData(false)]
+    public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList(bool containSelf)
     {
         // Given
-        TestUserCredentials user = new()
-        {
-            Account = new TestUserAccount
-            {
-                Id = "u1",
-                Handler = "user_1",
-                UserName = "User 1"
-            },
-            Email = "u1@mail.com",
-            Password = "Pass@123"
-        };
+        var user = _fakeUserRepository
+            .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"user/get-all/?containedString=notContaining", null);
+        var result = await _client.PostAsync($"user/get-all/?containedString=notContaining&userId={user.Account.Id}&containSelf={containSelf}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -387,7 +381,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenThereAreUsers_ReturnUsers()
+    public async void GetAll_WhenThereAreUsersAndChoseSelf_ReturnUsersWithSelf()
     {
         // Given
         string containedString = "test";
@@ -402,7 +396,7 @@ public class UserEndpointsTests : EndpointTestBase
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"user/get-all/?containedString={containedString}", null);
+        var result = await _client.PostAsync($"user/get-all/?containedString={containedString}&userId={user1.Account.Id}&containSelf=true", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -422,12 +416,189 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async void GetAll_WhenThereAreUsersAndChoseNonSelf_ReturnUsersWithoutQueryingUser()
     {
         // Given
-        
+        string containedString = "test";
+        var user1 = _fakeUserRepository
+            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = _fakeUserRepository
+            .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"user/get-all/?containedString=notContaining", null);
+        var result = await _client.PostAsync($"user/get-all/?containedString={containedString}&userId={user1.Account.Id}&containSelf=false", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        data.Should().NotBeNull();
+        data.Should().HaveCount(1);
+
+        data![0].Id.Should().Be(user2.Account.Id);
+        data[0].Handler.Should().Be(user2.Account.Handler);
+        data[0].UserName.Should().Be(user2.Account.UserName);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetConnected_WhenThereAreNoUsers_ReturnEmptyList()
+    {
+        // Given
+        var user = _fakeUserRepository
+            .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/get-connected/?containedString=notContaining&userId={user.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        data.Should().NotBeNull();
+        data.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetConnected_WhenThereAreUsers_ReturnOnlyConnectedUsers()
+    {
+        // Given
+        string containedString = "test";
+        var user1 = _fakeUserRepository
+            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = _fakeUserRepository
+            .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+
+        _ = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/get-connected/?containedString={containedString}&userId={user1.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        data.Should().NotBeNull();
+        data.Should().HaveCount(1);
+
+        data![0].Id.Should().Be(user2.Account.Id);
+        data[0].Handler.Should().Be(user2.Account.Handler);
+        data[0].UserName.Should().Be(user2.Account.UserName);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetConnected_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        string containedString = "test";
+        var user1 = _fakeUserRepository
+            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = _fakeUserRepository
+            .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+
+        _ = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+
+        // When
+        var result = await _client.PostAsync($"user/get-connected/?containedString={containedString}&userId={user1.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetUnconnected_WhenThereAreNoUsers_ReturnEmptyList()
+    {
+        // Given
+        var user = _fakeUserRepository
+            .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/get-unconnected/?containedString=notContaining&userId={user.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        data.Should().NotBeNull();
+        data.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetUnconnected_WhenThereAreUsers_ReturnOnlyUnconnectedUsers()
+    {
+        // Given
+        string containedString = "test";
+        var user1 = _fakeUserRepository
+            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user3 = _fakeUserRepository
+            .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+
+        _ = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/get-unconnected/?containedString={containedString}&userId={user1.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        data.Should().NotBeNull();
+        data.Should().HaveCount(1);
+
+        data![0].Id.Should().Be(user3.Account.Id);
+        data[0].Handler.Should().Be(user3.Account.Handler);
+        data[0].UserName.Should().Be(user3.Account.UserName);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetUnconnected_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        string containedString = "test";
+        var user1 = _fakeUserRepository
+            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user3 = _fakeUserRepository
+            .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+
+        _ = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+
+        // When
+        var result = await _client.PostAsync($"user/get-unconnected/?containedString={containedString}&userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

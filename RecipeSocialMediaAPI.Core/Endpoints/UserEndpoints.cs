@@ -4,6 +4,7 @@ using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
+using RecipeSocialMediaAPI.Application.Utilities;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
 
@@ -21,10 +22,29 @@ public static class UserEndpoints
     private static RouteGroupBuilder AddUserEndpoints(this RouteGroupBuilder group)
     {
         group.MapPost("/get-all", async (
+            [FromQuery] string userId,
+            [FromQuery] string containedString,
+            [FromQuery] bool containSelf,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, containSelf ? UserQueryOptions.All : UserQueryOptions.NonSelf)));
+        });
+
+        group.MapPost("/get-connected", async (
+            [FromQuery] string userId,
             [FromQuery] string containedString,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetUsersQuery(containedString)));
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, UserQueryOptions.Connected)));
+        })
+            .RequireAuthorization();
+
+        group.MapPost("/get-unconnected", async (
+            [FromQuery] string userId,
+            [FromQuery] string containedString,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, UserQueryOptions.NotConnected)));
         })
             .RequireAuthorization();
 
