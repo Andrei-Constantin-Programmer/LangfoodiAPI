@@ -470,7 +470,7 @@ public class GroupEndpointsTests : EndpointTestBase
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), UserRole.Developer);
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
         var user3 = _fakeUserRepository
@@ -502,7 +502,8 @@ public class GroupEndpointsTests : EndpointTestBase
             {
                 Id = "u0",
                 Handler = "user_0",
-                UserName = "User 0"
+                UserName = "User 0",
+                Role = UserRole.Developer
             },
             Email = "u0@mail.com",
             Password = "Pass@123"
@@ -516,6 +517,35 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void DeleteGroup_WhenUserIsNotDeveloper_ReturnForbidden()
+    {
+        // Given
+        TestUserCredentials user = new()
+        {
+            Account = new TestUserAccount
+            {
+                Id = "u0",
+                Handler = "user_0",
+                UserName = "User 0",
+                Role = UserRole.User
+            },
+            Email = "u0@mail.com",
+            Password = "Pass@123"
+        };
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.DeleteAsync($"group/delete/?groupId=1");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]

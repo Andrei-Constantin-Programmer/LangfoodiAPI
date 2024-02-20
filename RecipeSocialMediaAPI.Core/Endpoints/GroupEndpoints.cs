@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
+using RecipeSocialMediaAPI.Application.Identity;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
 
@@ -51,7 +52,7 @@ public static class GroupEndpoints
             await sender.Send(new RemoveGroupCommand(groupId));
             return Results.Ok();
         })
-            .RequireAuthorization();
+            .RequireAuthorization(IdentityData.DeveloperUserPolicyName);
 
         group.MapPost("/create", async (
             [FromBody] NewGroupContract newGroupContract,
