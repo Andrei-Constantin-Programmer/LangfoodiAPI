@@ -24,14 +24,16 @@ public static class GroupEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetGroupQuery(groupId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/get-by-user", async (
             [FromQuery] string userId,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetGroupsByUserQuery(userId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPut("/update", async (
             [FromBody] UpdateGroupContract updateGroupContract,
@@ -39,7 +41,8 @@ public static class GroupEndpoints
         {
             await sender.Send(new UpdateGroupCommand(updateGroupContract));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         group.MapDelete("/delete", async (
             [FromQuery] string groupId,
@@ -47,13 +50,16 @@ public static class GroupEndpoints
         {
             await sender.Send(new RemoveGroupCommand(groupId));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
+
         group.MapPost("/create", async (
             [FromBody] NewGroupContract newGroupContract,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new CreateGroupCommand(newGroupContract)));
-        });
+        })
+            .RequireAuthorization();
 
         return group;
     }
