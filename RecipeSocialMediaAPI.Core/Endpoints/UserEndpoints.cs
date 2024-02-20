@@ -42,7 +42,8 @@ public static class UserEndpoints
         {
             await sender.Send(new UpdateUserCommand(updateUserContract));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         group.MapDelete("/remove", async (
             [FromQuery] string emailOrId,
@@ -50,7 +51,8 @@ public static class UserEndpoints
         {
             await sender.Send(new RemoveUserCommand(emailOrId));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/username/exists", async (
             [FromQuery] string username,

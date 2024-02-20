@@ -10,6 +10,7 @@ using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
@@ -139,11 +140,12 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
-        NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
-
         var user = _fakeUserRepository
-           .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var oldUsername = user.Account.UserName;
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         UpdateUserContract updateContract = new(user.Account.Id, "TestImageId", "NewUsername", user.Email, user.Password);
 
@@ -166,6 +168,21 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
     {
         // Given
+        TestUserCredentials user = new()
+        {
+            Account = new TestUserAccount
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Pass@123"
+        };
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         UpdateUserContract updateContract = new("TestId", "TestImageId", "TestUsername", "test@mail.com", "Test@123");
 
         // When
@@ -187,10 +204,11 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
-        NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
-
         var user = _fakeUserRepository
-            .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         NewUserContract updateContract = new(user.Account.Id, username, email, password);
 
@@ -204,21 +222,40 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void UserUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user = _fakeUserRepository
+           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        UpdateUserContract updateContract = new(user.Account.Id, "TestImageId", "NewUsername", user.Email, user.Password);
+
+        // When
+        var result = await _client.PutAsJsonAsync("user/update", updateContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
+        var user = _fakeUserRepository
+           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeUserRepository
-           .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(createContract.Email)}");
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user.Email)}");
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        var userExists = _fakeUserRepository.GetUserByUsername(createContract.UserName) is not null;
+        var userExists = _fakeUserRepository.GetUserByUsername(user.Account.UserName) is not null;
         userExists.Should().BeFalse();
     }
 
@@ -228,10 +265,11 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        NewUserContract createContract = new("handler", "TestUsername", "test@mail.com", "Test@123");
-
         var user = _fakeUserRepository
-            .CreateUser(createContract.Handler, createContract.UserName, createContract.Email, _fakeCryptoService.Encrypt(createContract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user.Account.Id)}");
@@ -239,7 +277,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var userExists = _fakeUserRepository.GetUserByUsername(createContract.UserName) is not null;
+        var userExists = _fakeUserRepository.GetUserByUsername(user.Account.UserName) is not null;
         userExists.Should().BeFalse();
     }
 
@@ -249,10 +287,23 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenUserEmailDoesNotExist_ReturnNotFound()
     {
         // Given
-        var email = "test@mail.com";
+        TestUserCredentials user = new()
+        {
+            Account = new TestUserAccount
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Pass@123"
+        };
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(email)}");
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user.Email)}");
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -264,13 +315,42 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenUserIdDoesNotExist_ReturnNotFound()
     {
         // Given
-        var id = "1";
+        TestUserCredentials user = new()
+        {
+            Account = new TestUserAccount
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Pass@123"
+        };
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(id)}");
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user.Account.Id)}");
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void UserRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user = _fakeUserRepository
+           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        // When
+        var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user.Account.Id)}");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
@@ -315,7 +395,7 @@ public class UserEndpointsTests : EndpointTestBase
             .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
+        var _ = _fakeUserRepository
             .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
