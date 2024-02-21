@@ -52,8 +52,7 @@ public static class UserEndpoints
             [FromBody] NewUserContract newUserContract,
             [FromServices] ISender sender) =>
         {
-            UserDTO user = await sender.Send(new AddUserCommand(newUserContract));
-            return Results.Ok(user);
+            return Results.Ok(await sender.Send(new AddUserCommand(newUserContract)));
         });
 
         group.MapPut("/update", async (

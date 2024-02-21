@@ -9,8 +9,6 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
-using RecipeSocialMediaAPI.Application.Services.Interfaces;
-using System.Runtime.Intrinsics.X86;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
@@ -32,11 +30,12 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = (await result.Content.ReadFromJsonAsync<UserDTO>())!;
+        var data = (await result.Content.ReadFromJsonAsync<SuccessfulAuthenticationDTO>())!;
 
-        data.Id.Should().NotBeNull();
-        data.UserName.Should().Be(contract.UserName);
-        data.Email.Should().Be(contract.Email);
+        data.User.Id.Should().NotBeNull();
+        data.User.UserName.Should().Be(contract.UserName);
+        data.User.Email.Should().Be(contract.Email);
+        data.Token.Should().NotBeNullOrWhiteSpace();
     }
 
     [Theory]
@@ -591,7 +590,7 @@ public class UserEndpointsTests : EndpointTestBase
             .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
+        _ = _fakeUserRepository
             .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         _ = _fakeConnectionRepository

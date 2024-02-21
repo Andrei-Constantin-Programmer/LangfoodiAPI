@@ -12,6 +12,7 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
@@ -23,6 +24,7 @@ public class AddUserHandlerTests
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
     private readonly Mock<IUserPersistenceRepository> _userPersistenceRepositoryMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
+    private readonly Mock<IBearerTokenGeneratorService> _bearerTokenGeneratorServiceMock;
 
     private readonly ICryptoService _cryptoServiceFake;
 
@@ -37,10 +39,17 @@ public class AddUserHandlerTests
 
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
+        _bearerTokenGeneratorServiceMock = new Mock<IBearerTokenGeneratorService>();
 
         _cryptoServiceFake = new FakeCryptoService();
 
-        _userHandlerSUT = new AddUserHandler(_mapperMock.Object, _dateTimeProviderMock.Object, _cryptoServiceFake, _userPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object);
+        _userHandlerSUT = new AddUserHandler(
+            _mapperMock.Object,
+            _dateTimeProviderMock.Object,
+            _cryptoServiceFake,
+            _userPersistenceRepositoryMock.Object,
+            _userQueryRepositoryMock.Object,
+            _bearerTokenGeneratorServiceMock.Object);
     }
 
     [Fact]
@@ -190,13 +199,19 @@ public class AddUserHandlerTests
                 PinnedConversationIds: new()
             ));
 
+        string token = "GeneratedToken";
+        _bearerTokenGeneratorServiceMock
+            .Setup(service => service.GenerateToken(It.Is<IUserCredentials>(user => user.Email == contract.Email)))
+            .Returns(token);
+
         // When
         var result = await _userHandlerSUT.Handle(new AddUserCommand(contract), CancellationToken.None);
 
         // Then
-        result.UserName.Should().Be(contract.UserName);
-        result.Email.Should().Be(contract.Email);
-        _cryptoServiceFake.ArePasswordsTheSame(contract.Password, result.Password)
+        result.User.UserName.Should().Be(contract.UserName);
+        result.User.Email.Should().Be(contract.Email);
+        _cryptoServiceFake.ArePasswordsTheSame(contract.Password, result.User.Password)
             .Should().BeTrue();
+        result.Token.Should().Be(token);
     }
 }
