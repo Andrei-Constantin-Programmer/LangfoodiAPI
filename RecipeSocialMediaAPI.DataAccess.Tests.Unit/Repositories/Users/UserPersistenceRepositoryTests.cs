@@ -106,7 +106,15 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
-        UserDocument testDocument = new("Handler", "Initial Name", "Initial Email", "Initial Password", "ProfileImageId", new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero));
+        UserDocument testDocument = new(
+            "Handler", 
+            "Initial Name", 
+            "Initial Email", 
+            "Initial Password", 
+            "ProfileImageId", 
+            new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero), 
+            PinnedConversationIds: new List<string>() { "pid1", "pid2" }
+        );
 
         IUserCredentials updatedUser = new TestUserCredentials
         {
@@ -116,11 +124,15 @@ public class UserPersistenceRepositoryTests
                 Handler = "New Handler",
                 UserName = "New Name",
                 AccountCreationDate = testDocument.AccountCreationDate!.Value.AddDays(5),
-                ProfileImageId = "NewImageId"
+                ProfileImageId = "NewImageId",
             },
             Email = "New Email",
             Password = "New Password"
         };
+
+        updatedUser.Account.AddPin("pid1");
+        updatedUser.Account.AddPin("pid2");
+
         Expression<Func<UserDocument, bool>> findExpression = x => x.Id == testDocument.Id;
         Expression<Func<UserDocument, bool>> updateExpression = x => x.Id == testDocument.Id;
 
@@ -146,7 +158,9 @@ public class UserPersistenceRepositoryTests
                         && doc.UserName == updatedUser.Account.UserName
                         && doc.Email == updatedUser.Email
                         && doc.Password == updatedUser.Password
-                        && doc.ProfileImageId == updatedUser.Account.ProfileImageId),
+                        && doc.ProfileImageId == updatedUser.Account.ProfileImageId
+                        && doc.PinnedConversationIds.ToList()[0] == updatedUser.Account.PinnedConversationIds[0]
+                        && doc.PinnedConversationIds.ToList()[1] == updatedUser.Account.PinnedConversationIds[1]),
                     It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression))),
                 Times.Once);
     }
