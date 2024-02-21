@@ -159,8 +159,8 @@ public class UserPersistenceRepositoryTests
                         && doc.Email == updatedUser.Email
                         && doc.Password == updatedUser.Password
                         && doc.ProfileImageId == updatedUser.Account.ProfileImageId
-                        && doc.PinnedConversationIds.ToList().First() == updatedUser.Account.PinnedConversationIds.First()
-                        && doc.PinnedConversationIds.ToList().Skip(1).First() == updatedUser.Account.PinnedConversationIds.Skip(1).First()),
+                        && doc.PinnedConversationIds!.First() == updatedUser.Account.PinnedConversationIds[0]
+                        && doc.PinnedConversationIds!.Skip(1).First() == updatedUser.Account.PinnedConversationIds[1]),
                     It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression))),
                 Times.Once);
     }
