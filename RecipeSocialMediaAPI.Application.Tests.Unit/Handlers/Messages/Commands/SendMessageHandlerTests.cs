@@ -3,6 +3,7 @@ using MediatR;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
@@ -85,7 +86,8 @@ public class SendMessageHandlerTests
             {
                 Id = "u1",
                 Handler = "user_1",
-                UserName = "User 1"
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId"
             },
             Email = "u1@mail.com",
             Password = "Test@123"
@@ -101,6 +103,11 @@ public class SendMessageHandlerTests
             Email = "u2@mail.com",
             Password = "Test@321"
         };
+        UserPreviewForMessageDTO user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Account.Id))
@@ -126,7 +133,7 @@ public class SendMessageHandlerTests
                     null,
                     It.IsAny<List<string>>()))
             .Returns(createdMessage);
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text);
+        MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -154,7 +161,8 @@ public class SendMessageHandlerTests
             {
                 Id = "u1",
                 Handler = "user_1",
-                UserName = "User 1"
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId"
             },
             Email = "u1@mail.com",
             Password = "Test@123"
@@ -170,6 +178,11 @@ public class SendMessageHandlerTests
             Email = "u2@mail.com",
             Password = "Test@321"
         };
+        UserPreviewForMessageDTO user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Account.Id))
@@ -196,7 +209,7 @@ public class SendMessageHandlerTests
                     It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs![0], contract.ImageURLs[1] });
+        MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs![0], contract.ImageURLs[1] });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -222,10 +235,11 @@ public class SendMessageHandlerTests
             {
                 Id = "u1",
                 Handler = "user_1",
-                UserName = "User 1"
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId"
             },
             Email = "u1@mail.com",
-            Password = "Test@123"
+            Password = "Test@123",
         };
         TestUserCredentials user2 = new()
         {
@@ -238,6 +252,11 @@ public class SendMessageHandlerTests
             Email = "u2@mail.com",
             Password = "Test@321"
         };
+        UserPreviewForMessageDTO user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Account.Id))
@@ -274,7 +293,7 @@ public class SendMessageHandlerTests
                     It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
+        MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -298,7 +317,8 @@ public class SendMessageHandlerTests
             {
                 Id = "u1",
                 Handler = "user_1",
-                UserName = "User 1"
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId"
             },
             Email = "u1@mail.com",
             Password = "Test@123"
@@ -314,6 +334,11 @@ public class SendMessageHandlerTests
             Email = "u2@mail.com",
             Password = "Test@321"
         };
+        UserPreviewForMessageDTO user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Account.Id))
@@ -348,7 +373,7 @@ public class SendMessageHandlerTests
                     It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
+        MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -470,7 +495,8 @@ public class SendMessageHandlerTests
             {
                 Id = "u1",
                 Handler = "user_1",
-                UserName = "User 1"
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId"
             },
             Email = "u1@mail.com",
             Password = "Test@123"
@@ -486,6 +512,11 @@ public class SendMessageHandlerTests
             Email = "u2@mail.com",
             Password = "Test@321"
         };
+        UserPreviewForMessageDTO user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Account.Id))
@@ -517,7 +548,7 @@ public class SendMessageHandlerTests
                     It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
+        MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -543,7 +574,8 @@ public class SendMessageHandlerTests
             {
                 Id = "u1",
                 Handler = "user_1",
-                UserName = "User 1"
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId"
             },
             Email = "u1@mail.com",
             Password = "Test@123"
@@ -559,6 +591,11 @@ public class SendMessageHandlerTests
             Email = "u2@mail.com",
             Password = "Test@321"
         };
+        UserPreviewForMessageDTO user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Account.Id))
@@ -590,7 +627,7 @@ public class SendMessageHandlerTests
                     It.IsAny<List<string>>()))
             .Returns(createdMessage);
 
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
+        MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
@@ -614,7 +651,8 @@ public class SendMessageHandlerTests
             {
                 Id = "u1",
                 Handler = "user_1",
-                UserName = "User 1"
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId"
             },
             Email = "u1@mail.com",
             Password = "Test@123"
@@ -630,6 +668,11 @@ public class SendMessageHandlerTests
             Email = "u2@mail.com",
             Password = "Test@321"
         };
+        UserPreviewForMessageDTO user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Account.Id))
@@ -654,7 +697,7 @@ public class SendMessageHandlerTests
                 null,
                 It.IsAny<List<string>>()))
             .Returns(createdMessage);
-        MessageDTO messageDto = new(createdMessage.Id, user1.Account.Id, user1.Account.UserName, new(), createdMessage.SentDate, TextContent: contract.Text);
+        MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);

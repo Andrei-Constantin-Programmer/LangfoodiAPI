@@ -26,7 +26,7 @@ public class MessageCreatedHandlerTests
     {
         // Given
         string conversationId = "convo1";
-        MessageDTO message = new("m1", "u1", "User 1", new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+        MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
         MessageSentNotification notification = new(message, conversationId);
 
         // When
@@ -44,7 +44,7 @@ public class MessageCreatedHandlerTests
     {
         // Given
         string conversationId = "convo1";
-        MessageDTO message = new("m1", "u1", "User 1", new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+        MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
         MessageSentNotification notification = new(message, conversationId);
 
         _messageNotificationServiceMock

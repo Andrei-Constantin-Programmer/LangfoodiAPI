@@ -13,6 +13,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Queries;
 
@@ -106,6 +107,11 @@ public class GetConversationByGroupHandlerTests
             Handler = "user2",
             UserName = "User 2"
         };
+        UserPreviewForMessageDTO user2Preview = new(
+            user2.Id,
+            user2.UserName,
+            user2.ProfileImageId
+        );
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(user1.Id))
@@ -116,7 +122,7 @@ public class GetConversationByGroupHandlerTests
                 Password = "Test@123"
             });
 
-        MessageDTO lastMessageDto = new("3", user2.Id, user2.UserName, new(), new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
+        MessageDTO lastMessageDto = new("3", user2Preview, new(), new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
 
         List<Message> messages = new()
         {

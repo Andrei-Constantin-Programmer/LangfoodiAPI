@@ -236,7 +236,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().NotBeNull();
         data.LastMessage!.Id.Should().Be(testMessage3.Id);
-        data.LastMessage.SenderName.Should().Be(testMessage3.Sender.UserName);
+        data.LastMessage.UserPreview.Username.Should().Be(testMessage3.Sender.UserName);
         data.LastMessage.SentDate.Should().Be(testMessage3.SentDate);
     }
 
@@ -380,7 +380,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().NotBeNull();
         data.LastMessage!.Id.Should().Be(testMessage3.Id);
-        data.LastMessage.SenderName.Should().Be(testMessage3.Sender.UserName);
+        data.LastMessage.UserPreview.Username.Should().Be(testMessage3.Sender.UserName);
         data.LastMessage.SentDate.Should().Be(testMessage3.SentDate);
     }
 
