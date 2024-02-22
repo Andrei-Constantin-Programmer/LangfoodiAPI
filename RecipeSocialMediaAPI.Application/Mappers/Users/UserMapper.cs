@@ -31,4 +31,13 @@ public class UserMapper : IUserMapper
             PinnedConversationIds: userAccount.PinnedConversationIds.ToList()
         );
     }
+
+    public UserPreviewForMessageDTO MapUserAccountToUserPreviewForMessageDto(IUserAccount userAccount)
+    {
+        return new UserPreviewForMessageDTO(
+            Id: userAccount.Id,
+            Username: userAccount.UserName,
+            ProfileImageId: userAccount.ProfileImageId
+        );
+    }
 }
