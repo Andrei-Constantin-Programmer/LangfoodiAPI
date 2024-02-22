@@ -3,6 +3,7 @@ using MediatR;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
@@ -16,6 +17,7 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands;
 
@@ -125,6 +127,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        UserPreviewForMessageDTO testSenderPreview = new(
+            testSender.Id,
+            testSender.UserName,
+            testSender.ProfileImageId
+        );
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -133,7 +140,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -345,6 +352,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         var testMessage = (ImageMessage)_messageFactory.CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+        UserPreviewForMessageDTO testSenderPreview = new(
+            testSender.Id,
+            testSender.UserName,
+            testSender.ProfileImageId
+        );
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
@@ -353,7 +365,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -391,6 +403,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
+        UserPreviewForMessageDTO testSenderPreview = new(
+            testSender.Id,
+            testSender.UserName,
+            testSender.ProfileImageId
+        );
         var testMessage = (ImageMessage)_messageFactory
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
@@ -401,7 +418,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -560,6 +577,12 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (RecipeMessage)_messageFactory
             .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
+        UserPreviewForMessageDTO testSenderPreview = new(
+            testSender.Id,
+            testSender.UserName,
+            testSender.ProfileImageId
+        );
+
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
@@ -567,7 +590,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -626,6 +649,12 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (RecipeMessage)_messageFactory
             .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
+        UserPreviewForMessageDTO testSenderPreview = new(
+            testSender.Id,
+            testSender.UserName,
+            testSender.ProfileImageId
+        );
+
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
@@ -636,7 +665,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.GetRecipeById(newRecipe.Id))
             .Returns(newRecipe);
 
-        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -882,6 +911,12 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         };
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
+        UserPreviewForMessageDTO testSenderPreview = new(
+            testSender.Id,
+            testSender.UserName,
+            testSender.ProfileImageId
+        );
+
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
             .Returns(testMessage);
@@ -889,7 +924,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessage(testMessage))
             .Returns(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSender.Id, testSender.UserName, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);

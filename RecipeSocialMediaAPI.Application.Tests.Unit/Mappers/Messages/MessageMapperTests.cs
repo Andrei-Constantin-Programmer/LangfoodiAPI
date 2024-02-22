@@ -3,6 +3,7 @@ using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Messages;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -22,6 +23,7 @@ public class MessageMapperTests
     private readonly IMessageFactory _messageFactory;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
+    private readonly Mock<IUserMapper> _userMapperMock;
 
 
     private readonly MessageMapper _messageMapperSUT;
@@ -33,9 +35,10 @@ public class MessageMapperTests
             .Setup(provider => provider.Now)
             .Returns(TEST_DATE);
         _recipeMapperMock = new Mock<IRecipeMapper>();
+        _userMapperMock = new Mock<IUserMapper>();
         _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
 
-        _messageMapperSUT = new MessageMapper(_recipeMapperMock.Object);
+        _messageMapperSUT = new MessageMapper(_recipeMapperMock.Object, _userMapperMock.Object);
     }
 
     [Fact]
@@ -65,14 +68,17 @@ public class MessageMapperTests
 
         MessageDTO expectedResult = new(
             Id: testMessage.Id,
-            SenderId: testSender.Id,
-            SenderName: testSender.UserName,
+            UserPreview: new(testSender.Id, testSender.UserName),
             TextContent: testMessage.TextContent,
             RepliedToMessageId: testMessage.RepliedToMessage!.Id,
             SentDate: testMessage.SentDate,
             UpdatedDate: testMessage.UpdatedDate,
             SeenByUserIds: new()
         );
+
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserPreviewForMessageDto(testMessage.Sender))
+            .Returns(expectedResult.UserPreview);
 
         // When
         var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);
@@ -111,8 +117,7 @@ public class MessageMapperTests
 
         MessageDTO expectedResult = new(
             Id: testMessage.Id,
-            SenderId: testSender.Id,
-            SenderName: testSender.UserName,
+            UserPreview: new(testSender.Id, testSender.UserName),
             ImageURLs: testMessage.ImageURLs.ToList(),
             TextContent: testMessage.TextContent,
             RepliedToMessageId: testMessage.RepliedToMessage!.Id,
@@ -120,6 +125,10 @@ public class MessageMapperTests
             UpdatedDate: testMessage.UpdatedDate,
             SeenByUserIds: new()
         );
+
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserPreviewForMessageDto(testMessage.Sender))
+            .Returns(expectedResult.UserPreview);
 
         // When
         var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);
@@ -162,8 +171,7 @@ public class MessageMapperTests
 
         MessageDTO expectedResult = new(
             Id: testMessage.Id,
-            SenderId: testSender.Id,
-            SenderName: testSender.UserName,
+            UserPreview: new(testSender.Id, testSender.UserName),
             Recipes: new List<RecipePreviewDTO>()
             {
                 new("Recipe1", "First recipe", null),
@@ -184,6 +192,10 @@ public class MessageMapperTests
         _recipeMapperMock
             .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(testMessage.Recipes[1]))
             .Returns(expectedResult.Recipes[1]);
+
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserPreviewForMessageDto(testMessage.Sender))
+            .Returns(expectedResult.UserPreview);
 
         // When
         var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);

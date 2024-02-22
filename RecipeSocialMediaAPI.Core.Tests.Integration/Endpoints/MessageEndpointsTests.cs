@@ -12,6 +12,7 @@ using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
@@ -32,6 +33,7 @@ public class MessageEndpointsTests : EndpointTestBase
                 Id = "0",
                 Handler = "testHandler1",
                 UserName = "TestUsername1",
+                ProfileImageId = "TestUser1ImgId"
             },
             Email = "test1@mail.com",
             Password = "Test@123"
@@ -120,7 +122,9 @@ public class MessageEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(message.Id);
-        data!.SenderId.Should().Be(message.Sender.Id);
+        data!.UserPreview.Id.Should().Be(message.Sender.Id);
+        data!.UserPreview.Username.Should().Be(message.Sender.UserName);
+        data!.UserPreview.ProfileImageId.Should().Be(message.Sender.ProfileImageId);
         data!.SentDate.Should().Be(message.SentDate);
         data!.UpdatedDate.Should().Be(message.UpdatedDate);
         data!.TextContent.Should().Be((message as TextMessage)!.TextContent);
@@ -150,7 +154,9 @@ public class MessageEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(message.Id);
-        data!.SenderId.Should().Be(message.Sender.Id);
+        data!.UserPreview.Id.Should().Be(message.Sender.Id);
+        data!.UserPreview.Username.Should().Be(message.Sender.UserName);
+        data!.UserPreview.ProfileImageId.Should().Be(message.Sender.ProfileImageId);
         data!.SentDate.Should().Be(message.SentDate);
         data!.UpdatedDate.Should().Be(message.UpdatedDate);
         data!.TextContent.Should().Be((message as RecipeMessage)!.TextContent);
@@ -184,7 +190,9 @@ public class MessageEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(message.Id);
-        data!.SenderId.Should().Be(message.Sender.Id);
+        data!.UserPreview.Id.Should().Be(message.Sender.Id);
+        data!.UserPreview.Username.Should().Be(message.Sender.UserName);
+        data!.UserPreview.ProfileImageId.Should().Be(message.Sender.ProfileImageId);
         data!.SentDate.Should().Be(message.SentDate);
         data!.UpdatedDate.Should().Be(message.UpdatedDate);
         data!.TextContent.Should().Be((message as ImageMessage)!.TextContent);
@@ -240,8 +248,9 @@ public class MessageEndpointsTests : EndpointTestBase
         var data = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
         data.Should().HaveCount(2);
         data![0].Id.Should().Be(message1.Id);
-        data[0].SenderId.Should().Be(user1.Account.Id);
-        data[0].SenderName.Should().Be(user1.Account.UserName);
+        data[0].UserPreview.Id.Should().Be(user1.Account.Id);
+        data[0].UserPreview.Username.Should().Be(user1.Account.UserName);
+        data[0].UserPreview.ProfileImageId.Should().Be(user1.Account.ProfileImageId);
         data[0].SentDate.Should().Be(message1.SentDate);
         data[0].UpdatedDate.Should().BeNull();
         data[0].RepliedToMessageId.Should().BeNull();
@@ -250,8 +259,9 @@ public class MessageEndpointsTests : EndpointTestBase
         data[0].Recipes.Should().BeNull();
 
         data![1].Id.Should().Be(message2.Id);
-        data[1].SenderId.Should().Be(user2.Account.Id);
-        data[1].SenderName.Should().Be(user2.Account.UserName);
+        data[1].UserPreview.Id.Should().Be(user2.Account.Id);
+        data[1].UserPreview.Username.Should().Be(user2.Account.UserName);
+        data[1].UserPreview.ProfileImageId.Should().Be(user2.Account.ProfileImageId);
         data[1].SentDate.Should().Be(message2.SentDate);
         data[1].UpdatedDate.Should().BeNull();
         data[1].RepliedToMessageId.Should().Be(message1.Id);
@@ -296,8 +306,9 @@ public class MessageEndpointsTests : EndpointTestBase
         
         data.Should().NotBeNull();
         data!.Id.Should().Be("0");
-        data.SenderId.Should().Be(user.Account.Id);
-        data.SenderName.Should().Be(user.Account.UserName);
+        data.UserPreview.Id.Should().Be(user.Account.Id);
+        data.UserPreview.Username.Should().Be(user.Account.UserName);
+        data.UserPreview.ProfileImageId.Should().Be(user.Account.ProfileImageId);
         data.SentDate.Should().BeCloseTo(_dateTimeProvider.Now, TimeSpan.FromSeconds(5));
         data.UpdatedDate.Should().BeNull();
         data.RepliedToMessageId.Should().BeNull();
@@ -328,8 +339,9 @@ public class MessageEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.Id.Should().Be("0");
-        data.SenderId.Should().Be(user.Account.Id);
-        data.SenderName.Should().Be(user.Account.UserName);
+        data.UserPreview.Id.Should().Be(user.Account.Id);
+        data.UserPreview.Username.Should().Be(user.Account.UserName);
+        data.UserPreview.ProfileImageId.Should().Be(user.Account.ProfileImageId);
         data.SentDate.Should().BeCloseTo(_dateTimeProvider.Now, TimeSpan.FromSeconds(5));
         data.UpdatedDate.Should().BeNull();
         data.RepliedToMessageId.Should().BeNull();
@@ -365,8 +377,9 @@ public class MessageEndpointsTests : EndpointTestBase
 
         data.Should().NotBeNull();
         data!.Id.Should().Be("0");
-        data.SenderId.Should().Be(user.Account.Id);
-        data.SenderName.Should().Be(user.Account.UserName);
+        data.UserPreview.Id.Should().Be(user.Account.Id);
+        data.UserPreview.Username.Should().Be(user.Account.UserName);
+        data.UserPreview.ProfileImageId.Should().Be(user.Account.ProfileImageId);
         data.SentDate.Should().BeCloseTo(_dateTimeProvider.Now, TimeSpan.FromSeconds(5));
         data.UpdatedDate.Should().BeNull();
         data.RepliedToMessageId.Should().BeNull();

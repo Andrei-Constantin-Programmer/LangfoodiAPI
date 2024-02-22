@@ -97,8 +97,7 @@ public class ConversationMapperTests
 
         MessageDTO lastMessageDTO = new(
             lastMessage.Id,
-            user1.Id,
-            user1.UserName,
+            new(user1.Id, user1.UserName),
             new() { user1.Id, user2.Id },
             lastMessage.SentDate
         );
@@ -154,8 +153,7 @@ public class ConversationMapperTests
 
         MessageDTO lastMessageDTO = new(
             lastMessage.Id,
-            user1.Id,
-            user1.UserName,
+            new(user1.Id, user1.UserName),
             new() { user1.Id, user2.Id },
             lastMessage.SentDate
         );
@@ -251,8 +249,7 @@ public class ConversationMapperTests
 
         MessageDTO lastMessageDTO = new(
             lastMessage.Id,
-            user1.Id,
-            user1.UserName,
+            new(user1.Id, user1.UserName),
             new() { user1.Id, user2.Id },
             lastMessage.SentDate
         );
@@ -307,8 +304,7 @@ public class ConversationMapperTests
 
         MessageDTO lastMessageDTO = new(
             lastMessage.Id,
-            user1.Id,
-            user1.UserName,
+            new(user1.Id, user1.UserName),
             new() { user1.Id, user2.Id },
             lastMessage.SentDate
         );
