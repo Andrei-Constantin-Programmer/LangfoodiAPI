@@ -36,7 +36,8 @@ public static class UserEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, UserQueryOptions.Connected)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/get-unconnected", async (
             [FromQuery] string userId,
@@ -44,14 +45,14 @@ public static class UserEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, UserQueryOptions.NotConnected)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/create", async (
             [FromBody] NewUserContract newUserContract,
             [FromServices] ISender sender) =>
         {
-            UserDTO user = await sender.Send(new AddUserCommand(newUserContract));
-            return Results.Ok(user);
+            return Results.Ok(await sender.Send(new AddUserCommand(newUserContract)));
         });
 
         group.MapPut("/update", async (
@@ -60,7 +61,8 @@ public static class UserEndpoints
         {
             await sender.Send(new UpdateUserCommand(updateUserContract));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         group.MapDelete("/remove", async (
             [FromQuery] string emailOrId,
@@ -68,7 +70,8 @@ public static class UserEndpoints
         {
             await sender.Send(new RemoveUserCommand(emailOrId));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/username/exists", async (
             [FromQuery] string username,
@@ -90,7 +93,8 @@ public static class UserEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(sender.Send(new PinConversationCommand(userId, conversationId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/unpin", (
             [FromQuery] string userId,
@@ -98,7 +102,8 @@ public static class UserEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(sender.Send(new UnpinConversationCommand(userId, conversationId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/pins/get", async (
             [FromQuery] string userId,
@@ -106,7 +111,8 @@ public static class UserEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetPinnedConversationsQuery(userId)));
-        });
+        })
+            .RequireAuthorization();
 
         return group;
     }

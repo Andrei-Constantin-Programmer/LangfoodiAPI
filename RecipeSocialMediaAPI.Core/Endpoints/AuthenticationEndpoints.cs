@@ -22,8 +22,9 @@ public static class AuthenticationEndpoints
             [FromBody] AuthenticationAttemptContract authenticationAttempt,
             [FromServices] ISender sender) =>
         {
-            var successfulLogin = await sender.Send(new AuthenticateUserQuery(authenticationAttempt.HandlerOrEmail, authenticationAttempt.Password));
-            return Results.Ok(successfulLogin);
+            var successfulAuthentication = await sender.Send(new AuthenticateUserQuery(authenticationAttempt.HandlerOrEmail, authenticationAttempt.Password));
+
+            return Results.Ok(successfulAuthentication);
         });
 
         return group;

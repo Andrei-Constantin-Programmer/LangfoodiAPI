@@ -92,6 +92,7 @@ internal static class ServicesConfiguration
         builder.Services.AddTransient<IMessageFactory, MessageFactory>();
         builder.Services.AddTransient<IUserFactory, UserFactory>();
         builder.Services.AddTransient<IMessageNotificationService, MessageNotificationService>();
+        builder.Services.AddTransient<IBearerTokenGeneratorService, BearerTokenGeneratorService>();
         builder.Services.AddHttpClient();
 
         // MediatR

@@ -113,7 +113,8 @@ public class UpdateUserHandlerTests
                     encryptedPassword,
                     contract.ProfileImageId,
                     creationDate,
-                    It.IsAny<List<string>>()
+                    It.IsAny<List<string>>(),
+                    It.IsAny<UserRole>()
             ))
             .Returns(new TestUserCredentials
             {

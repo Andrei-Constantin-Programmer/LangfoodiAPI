@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
@@ -13,26 +14,28 @@ using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
-public record AddUserCommand(NewUserContract Contract) : IValidatableRequest<UserDTO>;
+public record AddUserCommand(NewUserContract Contract) : IValidatableRequest<SuccessfulAuthenticationDTO>;
 
-internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
+internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthenticationDTO>
 {
     private readonly IUserMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly ICryptoService _cryptoService;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserPersistenceRepository _userPersistenceRepository;
+    private readonly IBearerTokenGeneratorService _bearerTokenGeneratorService;
 
-    public AddUserHandler(IUserMapper mapper, IDateTimeProvider dateTimeProvider, ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
+    public AddUserHandler(IUserMapper mapper, IDateTimeProvider dateTimeProvider, ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository, IBearerTokenGeneratorService bearerTokenGeneratorService)
     {
         _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;
         _cryptoService = cryptoService;
         _userPersistenceRepository = userPersistenceRepository;
         _userQueryRepository = userQueryRepository;
+        _bearerTokenGeneratorService = bearerTokenGeneratorService;
     }
 
-    public async Task<UserDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
+    public async Task<SuccessfulAuthenticationDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         if (_userQueryRepository.GetUserByHandler(request.Contract.Handler) is not null)
         {
@@ -58,7 +61,9 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, UserDTO>
                 encryptedPassword,
                 _dateTimeProvider.Now);
 
-        return await Task.FromResult(_mapper.MapUserToUserDto(insertedUser));
+        var token = _bearerTokenGeneratorService.GenerateToken(insertedUser);
+
+        return await Task.FromResult(new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(insertedUser), token));
     }
 }
 

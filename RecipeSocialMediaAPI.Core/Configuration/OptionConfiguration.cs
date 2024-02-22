@@ -28,5 +28,10 @@ internal static class OptionConfiguration
             .BindConfiguration(DataDogOptions.CONFIGURATION_SECTION)
             .ValidateOptions()
             .ValidateOnStart();
+
+        builder.Services.AddOptions<JwtOptions>()
+            .BindConfiguration(JwtOptions.CONFIGURATION_SECTION)
+            .ValidateOptions()
+            .ValidateOnStart();
     }
 }

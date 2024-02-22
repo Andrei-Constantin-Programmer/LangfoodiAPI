@@ -25,21 +25,24 @@ public static class ConnectionEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetConnectionQuery(userId1, userId2)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/get-by-user", async (
             [FromQuery] string userId,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetConnectionsByUserQuery(userId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/create", async (
             [FromBody] NewConnectionContract newConnectionContract,
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new CreateConnectionCommand(newConnectionContract)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPut("/update", async (
         [FromBody] UpdateConnectionContract updateConnectionContract,
@@ -47,7 +50,8 @@ public static class ConnectionEndpoints
         {
             await sender.Send(new UpdateConnectionCommand(updateConnectionContract));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         return group;
     }
