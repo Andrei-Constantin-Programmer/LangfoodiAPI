@@ -51,7 +51,8 @@ public class UserPersistenceRepository : IUserPersistenceRepository
             Email = user.Email,
             Password = user.Password,
             ProfileImageId = user.Account.ProfileImageId,
-            Role = (int)user.Account.Role
+            Role = (int)user.Account.Role,
+            PinnedConversationIds = user.Account.PinnedConversationIds.ToList()
         };
 
         return _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id);
