@@ -13,6 +13,8 @@ public class UserAccount : IUserAccount
 
     private readonly HashSet<string> _pinnedConversationIds;
     public ImmutableList<string> PinnedConversationIds => _pinnedConversationIds.ToImmutableList();
+    private readonly HashSet<string> _blockedConnectionIds;
+    public ImmutableList<string> BlockedConnectionIds => _blockedConnectionIds.ToImmutableList();
 
     internal UserAccount(
         string id,
@@ -21,6 +23,7 @@ public class UserAccount : IUserAccount
         string? profileImageId,
         DateTimeOffset accountCreationDate,
         List<string>? pinnedConversationIds = null,
+        List<string>? blockedConnectionIds = null,
         UserRole role = UserRole.User)
     {
         Id = id;
@@ -29,10 +32,13 @@ public class UserAccount : IUserAccount
         ProfileImageId = profileImageId;
         AccountCreationDate = accountCreationDate;
         _pinnedConversationIds = pinnedConversationIds?.ToHashSet() ?? new();
+        _blockedConnectionIds = blockedConnectionIds?.ToHashSet() ?? new();
         Role = role;
     }
 
     public bool RemovePin(string pinnedConversationId) => _pinnedConversationIds.Remove(pinnedConversationId);
 
     public bool AddPin(string pinnedConversationId) => _pinnedConversationIds.Add(pinnedConversationId);
+    public bool UnblockConnection(string connectionId) => _blockedConnectionIds.Remove(connectionId);
+    public bool BlockConnection(string connectionId) => _blockedConnectionIds.Add(connectionId);
 }
