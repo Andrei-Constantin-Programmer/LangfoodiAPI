@@ -249,6 +249,136 @@ public class MessageDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void MapMessageFromDocument_WhenNoTextAndNoRecipesFoundAndNoImageIdsExist_ReturnRemovedRecipeMessage()
+    {
+        // Given
+        string messageId = "1";
+        string senderId = "50";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
+
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(null, null, null),
+            SeenByUserIds: new(),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
+
+        TestUserAccount testSender = new()
+        {
+            Id = senderId,
+            Handler = "Test Handler",
+            UserName = "Test Username",
+            AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        TestRemovedRecipeMessage removedRecipeMessage = new(
+            testDocument.Id!,
+            testSender,
+            testDocument.MessageContent.Text,
+            testDocument.SentDate,
+            null);
+
+        _messageFactoryMock
+            .Setup(factory => factory.CreateRemovedRecipeMessage(
+                removedRecipeMessage.Id,
+                testSender,
+                removedRecipeMessage.Text,
+                new(),
+                removedRecipeMessage.SentDate,
+                removedRecipeMessage.UpdatedDate,
+                null))
+            .Returns(removedRecipeMessage);
+
+        // When
+        var result = (TestRemovedRecipeMessage?)_messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+
+        // Then
+        result.Should().Be(removedRecipeMessage);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void MapMessageFromDocument_WhenNoTextAndNonExistantRecipeIdsAndNoImageIds_ReturnRemovedRecipeMessageAndLogWarningForRecipesNotFound()
+    {
+        // Given
+        string messageId = "1";
+        string senderId = "50";
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
+
+        List<string> recipeIds = new()
+        {
+            "inexistent1",
+            "inexistent2"
+        };
+
+        MessageDocument testDocument = new(
+            Id: messageId,
+            MessageContent: new(null, recipeIds, null),
+            SeenByUserIds: new(),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
+
+        TestUserAccount testSender = new()
+        {
+            Id = senderId,
+            Handler = "Test Handler",
+            UserName = "Test Username",
+            AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        List<RecipeAggregate> recipes = new() { };
+
+        TestRecipeMessage recipeMessage = new(
+            testDocument.Id!,
+            testSender,
+            testDocument.MessageContent.Text!,
+            recipes,
+            testDocument.SentDate,
+            null);
+
+        TestRemovedRecipeMessage expectedResult = new(
+            testDocument.Id!,
+            testSender,
+            testDocument.MessageContent.Text,
+            testDocument.SentDate,
+            testDocument.LastUpdatedDate
+        );
+
+        _recipeQueryRepositoryMock
+            .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
+            .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
+        _messageFactoryMock
+            .Setup(factory => factory.CreateRemovedRecipeMessage(
+                recipeMessage.Id,
+                testSender,
+                recipeMessage.Text,
+                new(),
+                recipeMessage.SentDate,
+                recipeMessage.UpdatedDate,
+                null))
+            .Returns(expectedResult);
+
+        // When
+        var result = (TestRemovedRecipeMessage?)_messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+
+        // Then
+        result.Should().Be(expectedResult);
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Exactly(2));
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void MapMessageFromDocument_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAndLogWarningForRecipesNotFound()
     {
         // Given
@@ -341,7 +471,6 @@ public class MessageDocumentToModelMapperTests
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    [InlineData(true, true, true)]
     [InlineData(false, false, false)]
     [InlineData(true, false, false)]
     public void MapMessageFromDocument_WhenMessageContentIsMalformed_ThrowMalformedMessageDocumentException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
