@@ -17,7 +17,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenValidUserWithEmail_ReturnUserFromDB()
+    public async void Authenticate_WhenValidUserWithEmail_ReturnUserFromDBWithBearerToken()
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
