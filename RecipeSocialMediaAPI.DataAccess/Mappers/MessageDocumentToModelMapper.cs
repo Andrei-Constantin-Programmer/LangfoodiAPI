@@ -1,4 +1,5 @@
-﻿ using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
@@ -31,6 +32,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
         var (text, recipeIds, imageURLs) = messageDocument.MessageContent;
         return (text, recipeIds, imageURLs) switch
         {
+            (null, null, null) => MapMessageDocumentToRemovedRecipeMessage(messageDocument, sender, repliedToMessage),
             (object, null, null) => MapMessageDocumentToTextMessage(messageDocument, sender, repliedToMessage),
             (_, null, object) => MapMessageDocumentToImageMessage(messageDocument, sender, repliedToMessage),
             (_, object, null) => GetRecipeMessage(repliedToMessage),
@@ -53,8 +55,27 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
                 })
                 .OfType<RecipeAggregate>();
 
-            return MapMessageDocumentToRecipeMessage(messageDocument, sender, recipes, repliedToMessage);
+            return recipes.IsNullOrEmpty()
+                ? MapMessageDocumentToRemovedRecipeMessage(messageDocument, sender, repliedToMessage)
+                : MapMessageDocumentToRecipeMessage(messageDocument, sender, recipes, repliedToMessage);
         }
+    }
+
+    private Message MapMessageDocumentToRemovedRecipeMessage(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null)
+    {
+        if (messageDocument.Id is null)
+        {
+            throw new ArgumentException("Cannot map Message Document with null ID to Message");
+        }
+
+        return _messageFactory.CreateRemovedRecipeMessage(
+            messageDocument.Id,
+            sender,
+            messageDocument.MessageContent.Text,
+            GetSeenByUsers(messageDocument),
+            messageDocument.SentDate,
+            messageDocument.LastUpdatedDate,
+            messageRepliedTo);
     }
 
     private Message MapMessageDocumentToTextMessage(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null)
