@@ -9,7 +9,7 @@ using RecipeSocialMediaAPI.Application.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 
-public record AuthenticateUserQuery(string HandlerOrEmail, string Password) : IRequest<SuccessfulAuthenticationDTO>;
+public record AuthenticateUserQuery(string Email, string Password) : IRequest<SuccessfulAuthenticationDTO>;
 
 internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, SuccessfulAuthenticationDTO>
 {
@@ -32,8 +32,8 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
 
     public async Task<SuccessfulAuthenticationDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
-        IUserCredentials user = (_userQueryRepository.GetUserByEmail(request.HandlerOrEmail))
-                    ?? throw new UserNotFoundException($"No user found with handler/email {request.HandlerOrEmail}");
+        IUserCredentials user = (_userQueryRepository.GetUserByEmail(request.Email))
+                    ?? throw new UserNotFoundException($"No user found with handler/email {request.Email}");
 
         var successfulLogin = _cryptoService.ArePasswordsTheSame(request.Password, user.Password ?? string.Empty);
 
