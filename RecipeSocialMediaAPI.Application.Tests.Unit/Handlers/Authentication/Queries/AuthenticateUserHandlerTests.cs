@@ -153,7 +153,8 @@ public class AuthenticateUserHandlerTests
             UserName: testUser.Account.UserName,
             Email: testUser.Email,
             Password: testUser.Password,
-            PinnedConversationIds: new()
+            PinnedConversationIds: new(),
+            BlockedConnectionIds: new()
         );
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByHandler(It.Is<string>(handler => handler == testUser.Account.Handler)))
@@ -204,7 +205,8 @@ public class AuthenticateUserHandlerTests
             UserName: testUser.Account.UserName,
             Email: testUser.Email,
             Password: testUser.Password,
-            PinnedConversationIds: new()
+            PinnedConversationIds: new(),
+            BlockedConnectionIds: new()
         );
 
         _userQueryRepositoryMock

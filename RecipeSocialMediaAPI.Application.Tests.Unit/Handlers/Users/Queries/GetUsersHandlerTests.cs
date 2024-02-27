@@ -127,9 +127,9 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString} name"
         };
 
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
-        UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new());
+        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
@@ -187,8 +187,8 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString} name"
         };
 
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
+        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
@@ -243,9 +243,9 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString} name"
         };
 
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
-        UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new());
+        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
@@ -303,8 +303,8 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString} name"
         };
 
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
+        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
         
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
@@ -379,11 +379,11 @@ public class GetUsersHandlerTests
                 new Connection("conn2", account2, queryingUser.Account, ConnectionStatus.Connected)
             });
 
-        UserAccountDTO dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new());
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
-        UserAccountDTO dto3 = new(account3.Id, account3.Handler, account3.UserName, new());
-        UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new());
+        UserAccountDTO dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
+        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDTO dto3 = new(account3.Id, account3.Handler, account3.UserName, new(), new());
+        UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
@@ -467,11 +467,11 @@ public class GetUsersHandlerTests
                 new Connection("conn2", account2, queryingUser.Account, ConnectionStatus.Connected)
             });
 
-        UserAccountDTO dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new());
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new());
-        UserAccountDTO dto3 = new(account3.Id, account3.Handler, account3.UserName, new());
-        UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new());
+        UserAccountDTO dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
+        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDTO dto3 = new(account3.Id, account3.Handler, account3.UserName, new(), new());
+        UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))

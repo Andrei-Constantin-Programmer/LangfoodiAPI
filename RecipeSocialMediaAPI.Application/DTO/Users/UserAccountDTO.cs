@@ -5,6 +5,7 @@ public record UserAccountDTO(
     string Handler,
     string UserName,
     List<string> PinnedConversationIds,
+    List<string> BlockedConnectionIds,
     string? ProfileImageId = null,
     DateTimeOffset? AccountCreationDate = null
 );

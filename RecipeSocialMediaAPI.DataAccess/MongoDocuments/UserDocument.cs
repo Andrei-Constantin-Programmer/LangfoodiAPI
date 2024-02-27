@@ -12,5 +12,6 @@ public record UserDocument(
     string? ProfileImageId = null,
     DateTimeOffset? AccountCreationDate = null,
     string? Id = null,
-    List<string>? PinnedConversationIds = null
+    List<string>? PinnedConversationIds = null,
+    List<string>? BlockedConnectionIds = null
 ) : MongoDocument(Id);

@@ -105,6 +105,24 @@ public static class UserEndpoints
         })
             .RequireAuthorization();
 
+        group.MapPost("/block", (
+            [FromQuery] string userId,
+            [FromQuery] string connectionId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(sender.Send(new BlockConnectionCommand(userId, connectionId)));
+        })
+            .RequireAuthorization();
+
+        group.MapPost("/unblock", (
+            [FromQuery] string userId,
+            [FromQuery] string connectionId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(sender.Send(new UnblockConnectionCommand(userId, connectionId)));
+        })
+            .RequireAuthorization();
+
         group.MapPost("/pins/get", async (
             [FromQuery] string userId,
             [FromQuery] string conversationId,
