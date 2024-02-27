@@ -23,7 +23,8 @@ public static class ConversationEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetConversationsByUserQuery(userId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/get-by-connection", async (
             [FromQuery] string userId,
@@ -31,7 +32,8 @@ public static class ConversationEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetConversationByConnectionQuery(userId, connectionId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/get-by-group", async (
             [FromQuery] string userId,
@@ -39,7 +41,8 @@ public static class ConversationEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new GetConversationByGroupQuery(userId, groupId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/create-by-connection", async (
             [FromQuery] string userId,
@@ -47,7 +50,8 @@ public static class ConversationEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new CreateConnectionConversationCommand(userId, connectionId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/create-by-group", async (
             [FromQuery] string userId,
@@ -55,7 +59,8 @@ public static class ConversationEndpoints
             [FromServices] ISender sender) =>
         {
             return Results.Ok(await sender.Send(new CreateGroupConversationCommand(userId, groupId)));
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPut("/mark-as-read", async (
             [FromQuery] string userId,
@@ -64,7 +69,8 @@ public static class ConversationEndpoints
         {
             await sender.Send(new MarkConversationAsReadCommand(userId, conversationId));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         return group;
     }

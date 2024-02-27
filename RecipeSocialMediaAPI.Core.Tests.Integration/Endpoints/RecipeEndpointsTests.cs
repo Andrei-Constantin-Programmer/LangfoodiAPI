@@ -8,6 +8,7 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
@@ -84,10 +85,13 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
 
-        _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        _ = _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
@@ -120,6 +124,12 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
 
+        var user = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
         var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
 
@@ -130,17 +140,40 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task RecipeGetById_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        string recipeId = "0";
+
+        _ = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _ = _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+
+        // When
+        var result = await _client.PostAsync($"/recipe/get/id?id={recipeId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task RecipesGetFromUserId_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
     {
         // Given
         string userid = "0";
 
-        _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        _ = _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
-        _fakeRecipeRepository
+        _ = _fakeRecipeRepository
             .CreateRecipe(_secondTestRecipe.Title, _secondTestRecipe.Recipe, _secondTestRecipe.Description, _secondTestRecipe.Chef, _secondTestRecipe.Tags, _secondTestRecipe.CreationDate, _secondTestRecipe.LastUpdatedDate, _secondTestRecipe.ThumbnailId);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var result = await _client.PostAsync($"/recipe/get/userid?id={userid}", null);
@@ -176,15 +209,16 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async void RecipesGetFromUserId_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
-        string userid = "0";
-
-        _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        _ = _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"/recipe/get/userid?id={userid}", null);
+        var result = await _client.PostAsync($"/recipe/get/userid?id={user.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -207,10 +241,14 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async Task RecipesGetFromUserId_WhenNoRecipesExist_ReturnEmptyList()
     {
         // Given
-        string userid = "0";
+        var user = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"/recipe/get/userid?id={userid}", null);
+        var result = await _client.PostAsync($"/recipe/get/userid?id={user.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -223,20 +261,39 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipesGetFromUserId_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _ = _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+
+        // When
+        var result = await _client.PostAsync($"/recipe/get/userid?id={user.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task RecipesGetFromUsername_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
     {
         // Given
-        string username = "TestUsername";
-
-        _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
         _fakeRecipeRepository
             .CreateRecipe(_secondTestRecipe.Title, _secondTestRecipe.Recipe, _secondTestRecipe.Description, _secondTestRecipe.Chef, _secondTestRecipe.Tags, _secondTestRecipe.CreationDate, _secondTestRecipe.LastUpdatedDate, _secondTestRecipe.ThumbnailId);
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"/recipe/get/username?username={username}", null);
+        var result = await _client.PostAsync($"/recipe/get/username?username={user.Account.UserName}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -269,15 +326,16 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async Task RecipesGetFromUserName_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
-        string username = "TestUsername";
-
-        _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"/recipe/get/username?username={username}", null);
+        var result = await _client.PostAsync($"/recipe/get/username?username={user.Account.UserName}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -300,10 +358,14 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async Task RecipesGetFromUsername_WhenNoRecipesExist_ReturnEmptyList()
     {
         // Given
-        string username = "TestUsername";
+        var user = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"/recipe/get/username?username={username}", null);
+        var result = await _client.PostAsync($"/recipe/get/username?username={user.Account.UserName}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -316,14 +378,44 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task RecipesGetFromUserName_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+
+        // When
+        var result = await _client.PostAsync($"/recipe/get/username?username={user.Account.UserName}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task RecipeCreate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
+        TestUserCredentials user = new()
+        {
+            Account = new TestUserAccount
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Pass@123"
+        };
+
         NewRecipeContract newRecipe = new(
             Title: "New Title",
             Description: "New Desc",
             KiloCalories: 1000,
-            ChefId: _testUser.Account.Id,
+            ChefId: user.Account.Id,
             Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
             RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
             {
@@ -332,6 +424,9 @@ public class RecipeEndpointsTests : EndpointTestBase
             }),
             Tags: new HashSet<string>()
         );
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var result = await _client.PostAsJsonAsync("/recipe/create", newRecipe);
@@ -347,8 +442,11 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         string recipeId = "0";
-        _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         NewRecipeContract newRecipe = new(
             Title: "New Title",
@@ -389,6 +487,36 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task RecipeCreate_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        _ = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        NewRecipeContract newRecipe = new(
+            Title: "New Title",
+            Description: "New Desc",
+            KiloCalories: 1000,
+            ChefId: _testUser.Account.Id,
+            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            {
+                new("step1", "url1"),
+                new("step2", "url2")
+            }),
+            Tags: new HashSet<string>()
+        );
+
+        // When
+        var result = await _client.PostAsJsonAsync("/recipe/create", newRecipe);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async Task RecipeUpdate_WhenRecipeExists_UpdateTheRecipe()
     {
         // Given
@@ -407,10 +535,13 @@ public class RecipeEndpointsTests : EndpointTestBase
             Tags: new HashSet<string>()
         );
 
-        _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);
@@ -455,6 +586,12 @@ public class RecipeEndpointsTests : EndpointTestBase
             Tags: new HashSet<string>()
         );
 
+        var user = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
         var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);
 
@@ -468,14 +605,50 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async Task RecipeUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        string recipeId = "0";
+        UpdateRecipeContract newRecipe = new(
+            Id: recipeId,
+            Title: "New Title",
+            Description: "New Desc",
+            KiloCalories: 1000,
+            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            {
+                new("step1", "url1"),
+                new("step2", "url2")
+            }),
+            Tags: new HashSet<string>()
+        );
+
+        _ = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _fakeRecipeRepository
+            .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+
+        // When
+        var updateResult = await _client.PutAsJsonAsync($"/recipe/update", newRecipe);
+
+        // Then
+        updateResult.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void RecipeRemove_WhenRecipeDoesNotExist_ReturnNotFound()
     {
         // Given
         string recipeId = "0";
-        _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var removeResult = await _client.DeleteAsync($"/recipe/remove?id={recipeId}");
@@ -495,10 +668,34 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
 
+        var user = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
         var removeResult = await _client.DeleteAsync($"/recipe/remove?id={recipeId}");
 
         // Then
         removeResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void RecipeRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        string recipeId = "0";
+
+        _ = _fakeUserRepository
+            .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        // When
+        var removeResult = await _client.DeleteAsync($"/recipe/remove?id={recipeId}");
+
+        // Then
+        removeResult.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

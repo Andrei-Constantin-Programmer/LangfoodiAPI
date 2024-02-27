@@ -29,14 +29,18 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        UserDTO authenticatedUser = (await result.Content.ReadFromJsonAsync<UserDTO>())!;
+        var authResult = (await result.Content.ReadFromJsonAsync<SuccessfulAuthenticationDTO>())!;
+
+        var authenticatedUser = authResult.User;
 
         authenticatedUser.Id.Should().Be(userInDb.Account.Id);
         authenticatedUser.UserName.Should().Be(userInDb.Account.UserName);
         authenticatedUser.Email.Should().Be(userInDb.Email);
         authenticatedUser.Password.Should().Be(userInDb.Password);
-    }
 
+        authResult.Token.Should().NotBeNullOrWhiteSpace();
+    }
+    
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]

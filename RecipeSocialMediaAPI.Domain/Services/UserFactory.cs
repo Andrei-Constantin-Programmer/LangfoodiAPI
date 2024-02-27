@@ -13,9 +13,16 @@ public class UserFactory : IUserFactory
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public IUserAccount CreateUserAccount(string id, string handler, string username, string? profileImageId = null, DateTimeOffset? accountCreationDate = null, List<string>? pinnedConversationIds = null)
+    public IUserAccount CreateUserAccount(
+        string id,
+        string handler,
+        string username,
+        string? profileImageId = null,
+        DateTimeOffset? accountCreationDate = null,
+        List<string>? pinnedConversationIds = null,
+        UserRole userRole = UserRole.User)
     {
-        return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now, pinnedConversationIds);
+        return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now, pinnedConversationIds, userRole);
     }
 
     public IUserCredentials CreateUserCredentials(IUserAccount userAccount, string email, string password)
@@ -23,8 +30,17 @@ public class UserFactory : IUserFactory
         return new UserCredentials(userAccount, email, password);
     }
 
-    public IUserCredentials CreateUserCredentials(string id, string handler, string username, string email, string password, string? profileImageId = null, DateTimeOffset? accountCreationDate = null, List<string>? pinnedConversationIds = null)
+    public IUserCredentials CreateUserCredentials(
+        string id,
+        string handler,
+        string username,
+        string email,
+        string password,
+        string? profileImageId = null,
+        DateTimeOffset? accountCreationDate = null,
+        List<string>? pinnedConversationIds = null,
+        UserRole userRole = UserRole.User)
     {
-        return new UserCredentials(CreateUserAccount(id, handler, username, profileImageId, accountCreationDate, pinnedConversationIds), email, password);
+        return new UserCredentials(CreateUserAccount(id, handler, username, profileImageId, accountCreationDate, pinnedConversationIds, userRole), email, password);
     }
 }

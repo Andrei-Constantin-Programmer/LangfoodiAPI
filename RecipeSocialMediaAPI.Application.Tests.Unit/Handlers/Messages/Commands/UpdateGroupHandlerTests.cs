@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Exceptions;
@@ -17,7 +18,9 @@ public class UpdateGroupHandlerTests
     private readonly Mock<IGroupQueryRepository> _groupQueryRepositoryMock;
     private readonly Mock<IGroupPersistenceRepository> _groupPersistenceRepositoryMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
+    private readonly Mock<ILogger<UpdateGroupCommand>> _loggerMock;
 
+    private readonly List<IUserCredentials> _testUsers;
 
     private readonly UpdateGroupHandler _updateGroupHandlerSUT;
 
@@ -26,8 +29,61 @@ public class UpdateGroupHandlerTests
         _groupQueryRepositoryMock = new Mock<IGroupQueryRepository>();
         _groupPersistenceRepositoryMock = new Mock<IGroupPersistenceRepository>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
+        _loggerMock = new Mock<ILogger<UpdateGroupCommand>>();
 
-        _updateGroupHandlerSUT = new(_groupQueryRepositoryMock.Object, _groupPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object);
+        _testUsers = new()
+        {
+            new TestUserCredentials()
+            {
+                Account = new TestUserAccount()
+                {
+                    Id = "1",
+                    Handler = "user1",
+                    UserName = "User 1",
+                    AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                },
+                Email = "user1@mail.com",
+                Password = "pass!123"
+            },
+            new TestUserCredentials()
+            {
+                Account = new TestUserAccount()
+                {
+                    Id = "2",
+                    Handler = "user2",
+                    UserName = "User 2",
+                    AccountCreationDate = new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)
+                },
+                Email = "user2@mail.com",
+                Password = "pass!123"
+            },
+            new TestUserCredentials()
+            {
+                Account = new TestUserAccount()
+                {
+                    Id = "3",
+                    Handler = "user3",
+                    UserName = "User 3",
+                    AccountCreationDate = new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)
+                },
+                Email = "user3@mail.com",
+                Password = "pass!123"
+            },
+            new TestUserCredentials()
+            {
+                Account = new TestUserAccount()
+                {
+                    Id = "4",
+                    Handler = "user4",
+                    UserName = "User 4",
+                    AccountCreationDate = new(2024, 4, 4, 0, 0, 0, TimeSpan.Zero)
+                },
+                Email = "user4@mail.com",
+                Password = "pass!123"
+            }
+        };
+
+        _updateGroupHandlerSUT = new(_groupQueryRepositoryMock.Object, _groupPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -36,13 +92,25 @@ public class UpdateGroupHandlerTests
     public async Task Handle_WhenGroupMetadataIsUpdatedSuccessfully_ReturnTrue()
     {
         // Given
-        Group existingGroup = new("1", "Group", "Group Desc");
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id))
+            .Returns(_testUsers[0]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id))
+            .Returns(_testUsers[1]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id))
+            .Returns(_testUsers[2]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id))
+            .Returns(_testUsers[3]);
+        Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
-            existingGroup.GroupId, 
-            "New Group Name", 
-            "New Group Description", 
-            new List<string>()));
+            existingGroup.GroupId,
+            "New Group Name",
+            "New Group Description",
+            _testUsers.Select(user => user.Account.Id).ToList()));
 
         _groupQueryRepositoryMock
             .Setup(repo => repo.GetGroupById(existingGroup.GroupId))
@@ -53,7 +121,7 @@ public class UpdateGroupHandlerTests
                 group => group.GroupId == existingGroup.GroupId
                       && group.GroupName == command.Contract.GroupName
                       && group.GroupDescription == command.Contract.GroupDescription
-                      && !group.Users.Any())))
+                      && group.Users.Count == _testUsers.Count)))
             .Returns(true);
 
         // When
@@ -102,13 +170,25 @@ public class UpdateGroupHandlerTests
     public async Task Handle_WhenGroupSuffersNoChanges_DoesNotThrow()
     {
         // Given
-        Group existingGroup = new("1", "Group", "Group Desc");
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id))
+            .Returns(_testUsers[0]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id))
+            .Returns(_testUsers[1]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id))
+            .Returns(_testUsers[2]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id))
+            .Returns(_testUsers[3]);
+        Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
             existingGroup.GroupId, 
             existingGroup.GroupName, 
-            existingGroup.GroupDescription, 
-            new List<string>()));
+            existingGroup.GroupDescription,
+            _testUsers.Select(user => user.Account.Id).ToList()));
 
         _groupQueryRepositoryMock
             .Setup(repo => repo.GetGroupById(existingGroup.GroupId))
@@ -131,72 +211,20 @@ public class UpdateGroupHandlerTests
     public async Task Handle_WhenGroupUsersAreRemoved_UpdateAndDontThrow()
     {
         // Given
-        List<IUserCredentials> users = new()
-        {
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "1",
-                    Handler = "user1",
-                    UserName = "User 1",
-                    AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user1@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "2",
-                    Handler = "user2",
-                    UserName = "User 2",
-                    AccountCreationDate = new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user2@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "3",
-                    Handler = "user3",
-                    UserName = "User 3",
-                    AccountCreationDate = new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user3@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "4",
-                    Handler = "user4",
-                    UserName = "User 4",
-                    AccountCreationDate = new(2024, 4, 4, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user4@mail.com",
-                Password = "pass!123"
-            }
-        };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id))
+            .Returns(_testUsers[0]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id))
+            .Returns(_testUsers[1]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id))
+            .Returns(_testUsers[2]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id))
+            .Returns(_testUsers[3]);
 
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[0].Account.Id))
-            .Returns(users[0]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[1].Account.Id))
-            .Returns(users[1]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[2].Account.Id))
-            .Returns(users[2]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[3].Account.Id))
-            .Returns(users[3]);
-
-        Group existingGroup = new("1", "Group", "Group Desc", users.Select(user => user.Account));
+        Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
             existingGroup.GroupId, 
@@ -204,8 +232,8 @@ public class UpdateGroupHandlerTests
             existingGroup.GroupDescription, 
             new List<string>()
             {
-                users[0].Account.Id,
-                users[1].Account.Id,
+                _testUsers[0].Account.Id,
+                _testUsers[1].Account.Id,
             }));
 
         _groupQueryRepositoryMock
@@ -218,8 +246,8 @@ public class UpdateGroupHandlerTests
                       && group.GroupName == existingGroup.GroupName
                       && group.GroupDescription == existingGroup.GroupDescription
                       && group.Users.Count == 2
-                      && group.Users.Contains(users[0].Account)
-                      && group.Users.Contains(users[1].Account))))
+                      && group.Users.Contains(_testUsers[0].Account)
+                      && group.Users.Contains(_testUsers[1].Account))))
             .Returns(true);
 
         // When
@@ -232,75 +260,77 @@ public class UpdateGroupHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenAllGroupUsersAreRemoved_DeleteAndLog()
+    {
+        // Given
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id))
+            .Returns(_testUsers[0]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id))
+            .Returns(_testUsers[1]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id))
+            .Returns(_testUsers[2]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id))
+            .Returns(_testUsers[3]);
+
+        Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
+
+        UpdateGroupCommand command = new(new UpdateGroupContract(
+            existingGroup.GroupId,
+            existingGroup.GroupName,
+            existingGroup.GroupDescription,
+            new List<string>()));
+
+        _groupQueryRepositoryMock
+            .Setup(repo => repo.GetGroupById(existingGroup.GroupId))
+            .Returns(existingGroup);
+
+        _groupPersistenceRepositoryMock
+            .Setup(repo => repo.DeleteGroup(It.Is<Group>(
+                group => group.GroupId == existingGroup.GroupId
+                      && group.GroupName == existingGroup.GroupName
+                      && group.GroupDescription == existingGroup.GroupDescription
+                      && group.Users.Count == 0)))
+            .Returns(true);
+
+        // When
+        var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
+
+        // Then
+        await testAction.Should().NotThrowAsync();
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString() == $"Group with id {existingGroup.GroupId} was deleted due to all users quitting the group"),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenGroupUsersAreAdded_UpdateAndDontThrow()
     {
         // Given
-        List<IUserCredentials> users = new()
-        {
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "1",
-                    Handler = "user1",
-                    UserName = "User 1",
-                    AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user1@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "2",
-                    Handler = "user2",
-                    UserName = "User 2",
-                    AccountCreationDate = new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user2@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "3",
-                    Handler = "user3",
-                    UserName = "User 3",
-                    AccountCreationDate = new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user3@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "4",
-                    Handler = "user4",
-                    UserName = "User 4",
-                    AccountCreationDate = new(2024, 4, 4, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user4@mail.com",
-                Password = "pass!123"
-            }
-        };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id))
+            .Returns(_testUsers[0]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id))
+            .Returns(_testUsers[1]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id))
+            .Returns(_testUsers[2]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id))
+            .Returns(_testUsers[3]);
 
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[0].Account.Id))
-            .Returns(users[0]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[1].Account.Id))
-            .Returns(users[1]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[2].Account.Id))
-            .Returns(users[2]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[3].Account.Id))
-            .Returns(users[3]);
-
-        Group existingGroup = new("1", "Group", "Group Desc", users.Take(3).Select(user => user.Account));
+        Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Take(3).Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
             existingGroup.GroupId, 
@@ -308,10 +338,10 @@ public class UpdateGroupHandlerTests
             existingGroup.GroupDescription, 
             new List<string>()
             {
-                users[0].Account.Id,
-                users[1].Account.Id,
-                users[2].Account.Id,
-                users[3].Account.Id,
+                _testUsers[0].Account.Id,
+                _testUsers[1].Account.Id,
+                _testUsers[2].Account.Id,
+                _testUsers[3].Account.Id,
             }));
 
         _groupQueryRepositoryMock
@@ -324,10 +354,10 @@ public class UpdateGroupHandlerTests
                       && group.GroupName == existingGroup.GroupName
                       && group.GroupDescription == existingGroup.GroupDescription
                       && group.Users.Count == 4
-                      && group.Users.Contains(users[0].Account)
-                      && group.Users.Contains(users[1].Account)
-                      && group.Users.Contains(users[2].Account)
-                      && group.Users.Contains(users[3].Account))))
+                      && group.Users.Contains(_testUsers[0].Account)
+                      && group.Users.Contains(_testUsers[1].Account)
+                      && group.Users.Contains(_testUsers[2].Account)
+                      && group.Users.Contains(_testUsers[3].Account))))
             .Returns(true);
 
         // When
@@ -343,72 +373,20 @@ public class UpdateGroupHandlerTests
     public async Task Handle_WhenGroupUsersAreBothAddedAndRemoved_UpdateAndDontThrow()
     {
         // Given
-        List<IUserCredentials> users = new()
-        {
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "1",
-                    Handler = "user1",
-                    UserName = "User 1",
-                    AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user1@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "2",
-                    Handler = "user2",
-                    UserName = "User 2",
-                    AccountCreationDate = new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user2@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "3",
-                    Handler = "user3",
-                    UserName = "User 3",
-                    AccountCreationDate = new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user3@mail.com",
-                Password = "pass!123"
-            },
-            new TestUserCredentials()
-            {
-                Account = new TestUserAccount()
-                {
-                    Id = "4",
-                    Handler = "user4",
-                    UserName = "User 4",
-                    AccountCreationDate = new(2024, 4, 4, 0, 0, 0, TimeSpan.Zero)
-                },
-                Email = "user4@mail.com",
-                Password = "pass!123"
-            }
-        };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id))
+            .Returns(_testUsers[0]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id))
+            .Returns(_testUsers[1]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id))
+            .Returns(_testUsers[2]);
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id))
+            .Returns(_testUsers[3]);
 
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[0].Account.Id))
-            .Returns(users[0]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[1].Account.Id))
-            .Returns(users[1]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[2].Account.Id))
-            .Returns(users[2]);
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[3].Account.Id))
-            .Returns(users[3]);
-
-        Group existingGroup = new("1", "Group", "Group Desc", users.Take(3).Select(user => user.Account));
+        Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Take(3).Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
             existingGroup.GroupId, 
@@ -416,8 +394,8 @@ public class UpdateGroupHandlerTests
             existingGroup.GroupDescription, 
             new List<string>()
             {
-                users[0].Account.Id,
-                users[3].Account.Id,
+                _testUsers[0].Account.Id,
+                _testUsers[3].Account.Id,
             }));
 
         _groupQueryRepositoryMock
@@ -430,8 +408,8 @@ public class UpdateGroupHandlerTests
                       && group.GroupName == existingGroup.GroupName
                       && group.GroupDescription == existingGroup.GroupDescription
                       && group.Users.Count == 2
-                      && group.Users.Contains(users[0].Account)
-                      && group.Users.Contains(users[3].Account))))
+                      && group.Users.Contains(_testUsers[0].Account)
+                      && group.Users.Contains(_testUsers[3].Account))))
             .Returns(true);
 
         // When

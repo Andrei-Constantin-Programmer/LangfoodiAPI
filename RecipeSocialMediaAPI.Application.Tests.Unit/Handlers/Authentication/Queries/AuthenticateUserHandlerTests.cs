@@ -10,6 +10,7 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 
@@ -17,6 +18,7 @@ public class AuthenticateUserHandlerTests
 {
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
     private readonly Mock<IUserMapper> _mapperMock;
+    private readonly Mock<IBearerTokenGeneratorService> _bearerTokenGeneratorServiceMock;
     private readonly ICryptoService _cryptoServiceFake;
 
     private readonly AuthenticateUserHandler _authenticateUserHandlerSUT;
@@ -25,9 +27,14 @@ public class AuthenticateUserHandlerTests
     {
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _mapperMock = new Mock<IUserMapper>();
+        _bearerTokenGeneratorServiceMock = new Mock<IBearerTokenGeneratorService>();
         _cryptoServiceFake = new FakeCryptoService();
 
-        _authenticateUserHandlerSUT = new AuthenticateUserHandler(_userQueryRepositoryMock.Object, _mapperMock.Object, _cryptoServiceFake);
+        _authenticateUserHandlerSUT = new AuthenticateUserHandler(
+            _userQueryRepositoryMock.Object,
+            _mapperMock.Object,
+            _cryptoServiceFake,
+            _bearerTokenGeneratorServiceMock.Object);
     }
 
     [Fact]
@@ -121,12 +128,18 @@ public class AuthenticateUserHandlerTests
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
             .Returns(expectedUserDto);
 
+        string token = "TestToken";
+        _bearerTokenGeneratorServiceMock
+            .Setup(service => service.GenerateToken(testUser))
+            .Returns(token);
+
         AuthenticateUserQuery query = new(testUser.Email, decryptedPassword);
 
         // When
         var result = await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
 
         // Then
-        result.Should().Be(expectedUserDto);
+        result.User.Should().Be(expectedUserDto);
+        result.Token.Should().Be(token);
     }
 }

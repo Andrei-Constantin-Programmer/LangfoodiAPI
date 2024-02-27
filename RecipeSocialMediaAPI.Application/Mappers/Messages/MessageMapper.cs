@@ -1,6 +1,7 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
@@ -10,18 +11,19 @@ namespace RecipeSocialMediaAPI.Application.Mappers.Messages;
 public class MessageMapper : IMessageMapper
 {
     private readonly IRecipeMapper _recipeMapper;
+    private readonly IUserMapper _userMapper;
 
-    public MessageMapper(IRecipeMapper recipeMapper)
+    public MessageMapper(IRecipeMapper recipeMapper, IUserMapper userMapper)
     {
         _recipeMapper = recipeMapper;
+        _userMapper = userMapper;
     }
 
     public MessageDTO MapMessageToMessageDTO(Message message)
     {
         MessageDTO messageDTO = new(
             Id: message.Id,
-            SenderId: message.Sender.Id,
-            SenderName: message.Sender.UserName,
+            UserPreview: _userMapper.MapUserAccountToUserPreviewForMessageDto(message.Sender),
             SeenByUserIds: message.SeenBy.Select(user => user.Id).ToList(),
             SentDate: message.SentDate,
             UpdatedDate: message.UpdatedDate,

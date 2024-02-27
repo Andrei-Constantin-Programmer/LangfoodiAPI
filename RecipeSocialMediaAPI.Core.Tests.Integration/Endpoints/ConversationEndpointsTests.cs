@@ -9,6 +9,7 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
@@ -52,22 +53,25 @@ public class ConversationEndpointsTests : EndpointTestBase
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
 
         var connection = _fakeConnectionRepository
-            .CreateConnection(user1, user2, ConnectionStatus.Connected);
+            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
         var conversation1 = _fakeConversationRepository
             .CreateConnectionConversation(connection);
 
         var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1, user2 });
+            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
         var conversation2 = _fakeConversationRepository
             .CreateGroupConversation(group);
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"conversation/get-by-user/?userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-user/?userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -89,10 +93,13 @@ public class ConversationEndpointsTests : EndpointTestBase
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"conversation/get-by-user/?userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-user/?userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -106,7 +113,21 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void GetConversationsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
-        
+        TestUserCredentials user = new()
+        {
+            Account = new TestUserAccount
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "u1@mail.com",
+            Password = "Pass@123"
+        };
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
         var result = await _client.PostAsync("conversation/get-by-user/?userId=0", null);
 
@@ -117,22 +138,53 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
+    public async void GetConversationsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
 
         var connection = _fakeConnectionRepository
-            .CreateConnection(user1, user2, ConnectionStatus.Connected);
+            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
+        _ = _fakeConversationRepository
+            .CreateConnectionConversation(connection);
+
+        var group = _fakeGroupRepository
+            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
+        _ = _fakeConversationRepository
+            .CreateGroupConversation(group);
+
+        // When
+        var result = await _client.PostAsync($"conversation/get-by-user/?userId={user1.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetConversationByConnection_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+
+        var connection = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
 
         var conversation = _fakeConversationRepository
             .CreateConnectionConversation(connection);
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}&userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}&userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -150,29 +202,32 @@ public class ConversationEndpointsTests : EndpointTestBase
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
 
         var connection = _fakeConnectionRepository
-            .CreateConnection(user1, user2, ConnectionStatus.Connected);
+            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
 
         var conversation = _fakeConversationRepository
             .CreateConnectionConversation(connection);
 
         Message testMessage1 = _fakeMessageRepository
-            .CreateMessage(user1, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
+            .CreateMessage(user1.Account, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage2 = _fakeMessageRepository
             .CreateMessage(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage3 = _fakeMessageRepository
-            .CreateMessage(user1, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
+            .CreateMessage(user1.Account, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
         
         conversation.SendMessage(testMessage1);
         conversation.SendMessage(testMessage3);
         conversation.SendMessage(testMessage2);
-        
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}&userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}&userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -181,7 +236,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().NotBeNull();
         data.LastMessage!.Id.Should().Be(testMessage3.Id);
-        data.LastMessage.SenderName.Should().Be(testMessage3.Sender.UserName);
+        data.LastMessage.UserPreview.Username.Should().Be(testMessage3.Sender.UserName);
         data.LastMessage.SentDate.Should().Be(testMessage3.SentDate);
     }
 
@@ -192,15 +247,18 @@ public class ConversationEndpointsTests : EndpointTestBase
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
 
         var connection = _fakeConnectionRepository
-            .CreateConnection(user1, user2, ConnectionStatus.Connected);
+            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}&userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}&userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -212,14 +270,41 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void GetConversationByConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId=1&userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId=1&userId={user.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetConversationByConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+
+        var connection = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
+
+        var conversation = _fakeConversationRepository
+            .CreateConnectionConversation(connection);
+
+        // When
+        var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}&userId={user1.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
@@ -229,18 +314,21 @@ public class ConversationEndpointsTests : EndpointTestBase
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
 
         var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1, user2 });
+            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
 
         var conversation = _fakeConversationRepository
             .CreateGroupConversation(group);
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"conversation/get-by-group/?groupId={group.GroupId}&userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-group/?groupId={group.GroupId}&userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -258,29 +346,32 @@ public class ConversationEndpointsTests : EndpointTestBase
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
 
         var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1, user2 });
+            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
 
         var conversation = _fakeConversationRepository
             .CreateGroupConversation(group);
 
         Message testMessage1 = _fakeMessageRepository
-            .CreateMessage(user1, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
+            .CreateMessage(user1.Account, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage2 = _fakeMessageRepository
             .CreateMessage(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage3 = _fakeMessageRepository
-            .CreateMessage(user1, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
+            .CreateMessage(user1.Account, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
 
         conversation.SendMessage(testMessage1);
         conversation.SendMessage(testMessage3);
         conversation.SendMessage(testMessage2);
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"conversation/get-by-group/?groupId={group.GroupId}&userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-group/?groupId={group.GroupId}&userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -289,7 +380,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().NotBeNull();
         data.LastMessage!.Id.Should().Be(testMessage3.Id);
-        data.LastMessage.SenderName.Should().Be(testMessage3.Sender.UserName);
+        data.LastMessage.UserPreview.Username.Should().Be(testMessage3.Sender.UserName);
         data.LastMessage.SentDate.Should().Be(testMessage3.SentDate);
     }
 
@@ -300,15 +391,18 @@ public class ConversationEndpointsTests : EndpointTestBase
     {
         // Given
         var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
 
         var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1, user2 });
+            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"conversation/get-by-group/?groupId={group.GroupId}&userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-group/?groupId={group.GroupId}&userId={user1.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -320,14 +414,41 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void GetConversationByGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
-        var result = await _client.PostAsync($"conversation/get-by-group/?groupId=1&userId={user1.Id}", null);
+        var result = await _client.PostAsync($"conversation/get-by-group/?groupId=1&userId={user.Account.Id}", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void GetConversationByGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+
+        var group = _fakeGroupRepository
+            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
+
+        _ = _fakeConversationRepository
+            .CreateGroupConversation(group);
+
+        // When
+        var result = await _client.PostAsync($"conversation/get-by-group/?groupId={group.GroupId}&userId={user1.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
@@ -343,6 +464,9 @@ public class ConversationEndpointsTests : EndpointTestBase
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         IConnection newConnection = _fakeConnectionRepository.CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var result = await _client.PostAsync($"/conversation/create-by-connection/?userId={user1.Account.Id}&connectionId={newConnection.ConnectionId}", null);
@@ -364,14 +488,38 @@ public class ConversationEndpointsTests : EndpointTestBase
     public async void CreateConnectionConversation_WhenConnectionIsNotFound_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
+        var user = _fakeUserRepository
             .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
-        var result = await _client.PostAsync($"/conversation/create-by-connection/?userId={user1.Account.Id}&connectionId=0", null);
+        var result = await _client.PostAsync($"/conversation/create-by-connection/?userId={user.Account.Id}&connectionId=0", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateConnectionConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        IConnection newConnection = _fakeConnectionRepository.CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+
+        // When
+        var result = await _client.PostAsync($"/conversation/create-by-connection/?userId={user1.Account.Id}&connectionId={newConnection.ConnectionId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
@@ -387,6 +535,9 @@ public class ConversationEndpointsTests : EndpointTestBase
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         Group newGroup = _fakeGroupRepository.CreateGroup("testGroup","This is a test group.",new List<IUserAccount> { user1.Account, user2.Account});
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // When
         var result = await _client.PostAsync($"/conversation/create-by-group/?userId={user1.Account.Id}&groupId={newGroup.GroupId}", null);
@@ -411,11 +562,35 @@ public class ConversationEndpointsTests : EndpointTestBase
         var user = _fakeUserRepository
             .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
         var result = await _client.PostAsync($"/conversation/create-by-group/?userId={user.Account.Id}&groupId=0", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void CreateGroupConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given        
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        Group newGroup = _fakeGroupRepository.CreateGroup("testGroup", "This is a test group.", new List<IUserAccount> { user1.Account, user2.Account });
+
+        // When
+        var result = await _client.PostAsync($"/conversation/create-by-group/?userId={user1.Account.Id}&groupId={newGroup.GroupId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
@@ -447,6 +622,9 @@ public class ConversationEndpointsTests : EndpointTestBase
         conversation.SendMessage(message3);
         conversation.SendMessage(message4);
 
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         // When
         var result = await _client.PutAsync($"/conversation/mark-as-read/?userId={user1.Account.Id}&conversationId={conversation.ConversationId}", null);
 
@@ -454,5 +632,41 @@ public class ConversationEndpointsTests : EndpointTestBase
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         message3.SeenBy.Should().Contain(user1.Account);
         message4.SeenBy.Should().Contain(user1.Account);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void MarkConversationAsRead_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user1 = _fakeUserRepository
+            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var connection = _fakeConnectionRepository
+            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = _fakeConversationRepository
+            .CreateConnectionConversation(connection);
+
+        var message1 = _fakeMessageRepository
+            .CreateMessage(user1.Account, "Sent by user", new(), new(), new(2024, 2, 2, 12, 0, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
+        var message2 = _fakeMessageRepository
+            .CreateMessage(user2.Account, "Seen by user", new(), new(), new(2024, 2, 2, 12, 30, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
+        var message3 = _fakeMessageRepository
+            .CreateMessage(user1.Account, "Not seen 1", new(), new(), new(2024, 2, 2, 13, 1, 20, TimeSpan.Zero), null, new() { user2.Account.Id });
+        var message4 = _fakeMessageRepository
+            .CreateMessage(user1.Account, "Not seen 2", new(), new(), new(2024, 2, 2, 13, 2, 34, TimeSpan.Zero), null, new() { user2.Account.Id });
+
+        conversation.SendMessage(message1);
+        conversation.SendMessage(message2);
+        conversation.SendMessage(message3);
+        conversation.SendMessage(message4);
+
+        // When
+        var result = await _client.PutAsync($"/conversation/mark-as-read/?userId={user1.Account.Id}&conversationId={conversation.ConversationId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

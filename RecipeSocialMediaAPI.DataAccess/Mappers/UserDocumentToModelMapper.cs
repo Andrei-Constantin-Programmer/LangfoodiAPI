@@ -29,7 +29,8 @@ public class UserDocumentToModelMapper : IUserDocumentToModelMapper
             userDocument.Password, 
             userDocument.ProfileImageId,
             userDocument.AccountCreationDate,
-            userDocument.PinnedConversationIds
+            userDocument.PinnedConversationIds,
+            (UserRole)userDocument.Role
         );
     }
 }

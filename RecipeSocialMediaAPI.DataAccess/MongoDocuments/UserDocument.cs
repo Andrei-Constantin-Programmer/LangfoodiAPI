@@ -8,6 +8,7 @@ public record UserDocument(
     string UserName,
     string Email,
     string Password,
+    int Role,
     string? ProfileImageId = null,
     DateTimeOffset? AccountCreationDate = null,
     string? Id = null,

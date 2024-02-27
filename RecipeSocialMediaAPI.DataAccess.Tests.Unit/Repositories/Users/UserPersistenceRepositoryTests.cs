@@ -43,7 +43,8 @@ public class UserPersistenceRepositoryTests
             UserName: "TestName", 
             Email: "TestEmail", 
             Password: "TestPassword", 
-            AccountCreationDate: new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero) 
+            AccountCreationDate: new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero),
+            Role: (int)UserRole.User
         );
 
         _mongoCollectionWrapperMock
@@ -68,7 +69,8 @@ public class UserPersistenceRepositoryTests
             UserName: "TestName",
             Email: "TestEmail",
             Password: "TestPassword",
-            AccountCreationDate: new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            AccountCreationDate: new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero),
+            Role: (int)UserRole.User
         );
 
         IUserCredentials testUser = new TestUserCredentials()
@@ -106,7 +108,16 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
-        UserDocument testDocument = new("Handler", "Initial Name", "Initial Email", "Initial Password", "ProfileImageId", new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero));
+        UserDocument testDocument = new(
+            "Handler", 
+            "Initial Name", 
+            "Initial Email", 
+            "Initial Password",
+            (int)UserRole.User,
+            "ProfileImageId", 
+            new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero), 
+            PinnedConversationIds: new List<string>() { "pid1", "pid2" }
+        );
 
         IUserCredentials updatedUser = new TestUserCredentials
         {
@@ -116,11 +127,15 @@ public class UserPersistenceRepositoryTests
                 Handler = "New Handler",
                 UserName = "New Name",
                 AccountCreationDate = testDocument.AccountCreationDate!.Value.AddDays(5),
-                ProfileImageId = "NewImageId"
+                ProfileImageId = "NewImageId",
             },
             Email = "New Email",
             Password = "New Password"
         };
+
+        updatedUser.Account.AddPin("pid1");
+        updatedUser.Account.AddPin("pid2");
+
         Expression<Func<UserDocument, bool>> findExpression = x => x.Id == testDocument.Id;
         Expression<Func<UserDocument, bool>> updateExpression = x => x.Id == testDocument.Id;
 
@@ -146,7 +161,9 @@ public class UserPersistenceRepositoryTests
                         && doc.UserName == updatedUser.Account.UserName
                         && doc.Email == updatedUser.Email
                         && doc.Password == updatedUser.Password
-                        && doc.ProfileImageId == updatedUser.Account.ProfileImageId),
+                        && doc.ProfileImageId == updatedUser.Account.ProfileImageId
+                        && doc.PinnedConversationIds!.First() == updatedUser.Account.PinnedConversationIds[0]
+                        && doc.PinnedConversationIds!.Skip(1).First() == updatedUser.Account.PinnedConversationIds[1]),
                     It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression))),
                 Times.Once);
     }
@@ -157,7 +174,7 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
-        UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password");
+        UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password", (int)UserRole.User);
 
         IUserCredentials updatedUser = new TestUserCredentials
         {
@@ -190,7 +207,7 @@ public class UserPersistenceRepositoryTests
     public void UpdateUser_WhenCollectionCantUpdate_ReturnFalse()
     {
         // Given
-        UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password");
+        UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password", (int)UserRole.User);
         IUserCredentials updatedUser = new TestUserCredentials
         {
             Account = new TestUserAccount()
@@ -224,7 +241,7 @@ public class UserPersistenceRepositoryTests
     public void DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
     {
         // Given
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
@@ -245,7 +262,7 @@ public class UserPersistenceRepositoryTests
     public void DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
     {
         // Given
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword");
+        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))

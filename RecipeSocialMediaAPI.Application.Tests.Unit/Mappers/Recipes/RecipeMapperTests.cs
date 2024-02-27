@@ -8,6 +8,7 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using CloudinaryDotNet.Actions;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Mappers.Recipes;
 
@@ -182,7 +183,7 @@ public class RecipeMapperTests
             Id = "TestId",
             Handler = "TestHandler",
             UserName = "TestUsername",
-            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero),
         };
 
         RecipeAggregate testRecipe = new(
@@ -217,7 +218,8 @@ public class RecipeMapperTests
         result.Id.Should().Be("1");
         result.Title.Should().Be("title");
         result.Description.Should().Be("desc");
-        result.Chef.Should().BeEquivalentTo(testChef);
+        result.Chef.Id.Should().Be(testChef.Id);
+        result.Chef.UserName.Should().Be(testChef.UserName);
         result.CreationDate.Should().Be(_testDate);
         result.LastUpdatedDate.Should().Be(_testDate);
         result.Tags.Should().BeEmpty();

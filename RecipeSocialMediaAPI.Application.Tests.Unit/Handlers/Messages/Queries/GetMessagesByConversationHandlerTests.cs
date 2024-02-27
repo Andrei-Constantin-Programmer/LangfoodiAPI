@@ -90,10 +90,10 @@ public class GetMessagesByConversationHandlerTests
         };
         List<MessageDTO> expectedDtos = new()
         {
-            new(messages[0].Id, messages[0].Sender.Id, messages[0].Sender.UserName, new(), messages[0].SentDate),
-            new(messages[1].Id, messages[1].Sender.Id, messages[1].Sender.UserName, new(), messages[1].SentDate),
-            new(messages[2].Id, messages[2].Sender.Id, messages[2].Sender.UserName, new(), messages[2].SentDate),
-            new(messages[3].Id, messages[3].Sender.Id, messages[3].Sender.UserName, new(), messages[3].SentDate)
+            new(messages[0].Id, new(messages[0].Sender.Id, messages[0].Sender.UserName), new(), messages[0].SentDate),
+            new(messages[1].Id, new(messages[1].Sender.Id, messages[1].Sender.UserName), new(), messages[1].SentDate),
+            new(messages[2].Id, new(messages[2].Sender.Id, messages[2].Sender.UserName), new(), messages[2].SentDate),
+            new(messages[3].Id, new(messages[3].Sender.Id, messages[3].Sender.UserName), new(), messages[3].SentDate)
         };
 
         _messageMapperMock

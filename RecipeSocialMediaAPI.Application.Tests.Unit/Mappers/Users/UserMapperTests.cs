@@ -67,6 +67,37 @@ public class UserMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapUserAccountToUserPreviewForMessageDto_GivenUserAccount_ReturnUserPreviewForMessageDto()
+    {
+        // Given
+        IUserAccount testUser = new TestUserAccount
+        {
+            Id = "1",
+            Handler = "handler",
+            UserName = "user",
+            AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero),
+            ProfileImageId = "img.png",
+            PinnedConversationIds = (new List<string> { "convo1", "convo2" }).ToImmutableList()
+        };
+
+        UserPreviewForMessageDTO expectedResult = new(
+            Id: testUser.Id,
+            Username: testUser.UserName,
+            ProfileImageId: testUser.ProfileImageId
+        );
+
+        // When
+        var result = _userMapperSUT.MapUserAccountToUserPreviewForMessageDto(testUser);
+
+        // Then
+        result.Id.Should().Be(expectedResult.Id);
+        result.Username.Should().Be(expectedResult.Username);
+        result.ProfileImageId.Should().Be(expectedResult.ProfileImageId);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public void MapUserAccountToUserAccountDto_GivenUser_ReturnUserAccountDto()
     {
         // Given
