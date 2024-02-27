@@ -13,6 +13,7 @@ public class UserAccount : IUserAccount
 
     private readonly HashSet<string> _pinnedConversationIds;
     public ImmutableList<string> PinnedConversationIds => _pinnedConversationIds.ToImmutableList();
+
     private readonly HashSet<string> _blockedConnectionIds;
     public ImmutableList<string> BlockedConnectionIds => _blockedConnectionIds.ToImmutableList();
 

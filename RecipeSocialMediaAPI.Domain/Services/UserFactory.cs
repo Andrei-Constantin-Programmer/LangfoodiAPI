@@ -20,9 +20,10 @@ public class UserFactory : IUserFactory
         string? profileImageId = null,
         DateTimeOffset? accountCreationDate = null,
         List<string>? pinnedConversationIds = null,
+        List<string>? blockedConnectionIds = null,
         UserRole userRole = UserRole.User)
     {
-        return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now, pinnedConversationIds, userRole);
+        return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now, pinnedConversationIds, blockedConnectionIds, userRole);
     }
 
     public IUserCredentials CreateUserCredentials(IUserAccount userAccount, string email, string password)
@@ -39,8 +40,9 @@ public class UserFactory : IUserFactory
         string? profileImageId = null,
         DateTimeOffset? accountCreationDate = null,
         List<string>? pinnedConversationIds = null,
+        List<string>? blockedConnectionIds = null,
         UserRole userRole = UserRole.User)
     {
-        return new UserCredentials(CreateUserAccount(id, handler, username, profileImageId, accountCreationDate, pinnedConversationIds, userRole), email, password);
+        return new UserCredentials(CreateUserAccount(id, handler, username, profileImageId, accountCreationDate, pinnedConversationIds, blockedConnectionIds, userRole), email, password);
     }
 }
