@@ -14,31 +14,6 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 {
     public AuthenticationEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
-    //[Fact]
-    //[Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    //[Trait(Traits.MODULE, Traits.Modules.CORE)]
-    //public async void Authenticate_WhenValidUserWithHandler_ReturnUserFromDB()
-    //{
-    //    // Given
-    //    NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
-
-    //    var userInDb = _fakeUserRepository
-    //        .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-
-    //    // When
-    //    var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Handler, userToCreate.Password));
-
-    //    // Then
-    //    result.StatusCode.Should().Be(HttpStatusCode.OK);
-    //    UserDTO authenticatedUser = (await result.Content.ReadFromJsonAsync<UserDTO>())!;
-
-    //    authenticatedUser.Id.Should().Be(userInDb.Account.Id);
-    //    authenticatedUser.Handler.Should().Be(userInDb.Account.Handler);
-    //    authenticatedUser.UserName.Should().Be(userInDb.Account.UserName);
-    //    authenticatedUser.Email.Should().Be(userInDb.Email);
-    //    authenticatedUser.Password.Should().Be(userInDb.Password);
-    //}
-
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
