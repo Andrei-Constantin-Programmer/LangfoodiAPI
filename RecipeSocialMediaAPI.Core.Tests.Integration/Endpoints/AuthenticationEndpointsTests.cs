@@ -17,34 +17,6 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenValidUserWithHandler_ReturnUserFromDBWithBearerToken()
-    {
-        // Given
-        NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
-
-        var userInDb = _fakeUserRepository
-            .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-
-        // When
-        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Handler, userToCreate.Password));
-
-        // Then
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var authResult = (await result.Content.ReadFromJsonAsync<SuccessfulAuthenticationDTO>())!;
-
-        var authenticatedUser = authResult.User;
-
-        authenticatedUser.Id.Should().Be(userInDb.Account.Id);
-        authenticatedUser.UserName.Should().Be(userInDb.Account.UserName);
-        authenticatedUser.Email.Should().Be(userInDb.Email);
-        authenticatedUser.Password.Should().Be(userInDb.Password);
-
-        authResult.Token.Should().NotBeNullOrWhiteSpace();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void Authenticate_WhenValidUserWithEmail_ReturnUserFromDBWithBearerToken()
     {
         // Given
@@ -97,7 +69,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
             .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
-        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Handler, string.Empty));
+        var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Email, string.Empty));
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
