@@ -55,6 +55,7 @@ public class UserDocumentToModelMapperTests
                 It.IsAny<string>(),
                 It.IsAny<DateTimeOffset>(),
                 It.IsAny<List<string>>(),
+                It.IsAny<List<string>>(),
                 It.IsAny<UserRole>()),
             Times.Never);
     }
@@ -100,6 +101,7 @@ public class UserDocumentToModelMapperTests
                 testDocument.Password,
                 testDocument.ProfileImageId,
                 testDocument.AccountCreationDate,
+                It.IsAny<List<string>>(),
                 It.IsAny<List<string>>(),
                 UserRole.User))
             .Returns(testUser);
@@ -154,6 +156,7 @@ public class UserDocumentToModelMapperTests
                 testDocument.ProfileImageId,
                 testDocument.AccountCreationDate,
                 testDocument.PinnedConversationIds,
+                testDocument.BlockedConnectionIds,
                 (UserRole)testDocument.Role))
             .Returns(testUser);
 

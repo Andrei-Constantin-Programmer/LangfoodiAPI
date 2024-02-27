@@ -33,7 +33,8 @@ public class UserMapperTests
                 UserName = "user",
                 AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero),
                 ProfileImageId = "img.png",
-                PinnedConversationIds = (new List<string> { "convo1", "convo2" }).ToImmutableList()
+                PinnedConversationIds = (new List<string> { "convo1", "convo2" }).ToImmutableList(),
+                BlockedConnectionIds = (new List<string> { "conn1", "conn2" }).ToImmutableList()
             },
             Email = "mail",
             Password = "password"
@@ -47,7 +48,8 @@ public class UserMapperTests
             Password: testUser.Password,
             AccountCreationDate: testUser.Account.AccountCreationDate,
             ProfileImageId: testUser.Account.ProfileImageId,
-            PinnedConversationIds: testUser.Account.PinnedConversationIds.ToList()
+            PinnedConversationIds: testUser.Account.PinnedConversationIds.ToList(),
+            BlockedConnectionIds: testUser.Account.BlockedConnectionIds.ToList()
         );
 
         // When
@@ -62,6 +64,7 @@ public class UserMapperTests
         result.AccountCreationDate.Should().Be(expectedResult.AccountCreationDate);
         result.ProfileImageId.Should().Be(expectedResult.ProfileImageId);
         result.PinnedConversationIds.Should().BeEquivalentTo(expectedResult.PinnedConversationIds);
+        result.BlockedConnectionIds.Should().BeEquivalentTo(expectedResult.BlockedConnectionIds);
     }
 
     [Fact]
@@ -108,7 +111,8 @@ public class UserMapperTests
             UserName = "user",
             AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero),
             ProfileImageId = "img.png",
-            PinnedConversationIds = (new List<string> { "convo1", "convo2" }).ToImmutableList()
+            PinnedConversationIds = (new List<string> { "convo1", "convo2" }).ToImmutableList(),
+            BlockedConnectionIds = (new List<string> { "conn1", "conn2" }).ToImmutableList()
         };
 
         UserAccountDTO expectedResult = new(
@@ -117,7 +121,8 @@ public class UserMapperTests
             UserName: testUser.UserName,
             AccountCreationDate: testUser.AccountCreationDate,
             ProfileImageId: testUser.ProfileImageId,
-            PinnedConversationIds: testUser.PinnedConversationIds.ToList()
+            PinnedConversationIds: testUser.PinnedConversationIds.ToList(),
+            BlockedConnectionIds: testUser.BlockedConnectionIds.ToList()
         );
 
         // When
@@ -130,5 +135,6 @@ public class UserMapperTests
         result.AccountCreationDate.Should().Be(expectedResult.AccountCreationDate);
         result.ProfileImageId.Should().Be(expectedResult.ProfileImageId);
         result.PinnedConversationIds.Should().BeEquivalentTo(expectedResult.PinnedConversationIds);
+        result.BlockedConnectionIds.Should().BeEquivalentTo(expectedResult.BlockedConnectionIds);
     }
 }

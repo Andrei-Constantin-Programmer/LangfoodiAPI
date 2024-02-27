@@ -118,7 +118,8 @@ public class AuthenticateUserHandlerTests
             UserName: testUser.Account.UserName,
             Email: testUser.Email,
             Password: testUser.Password,
-            PinnedConversationIds: new()
+            PinnedConversationIds: new(),
+            BlockedConnectionIds: new()
         );
 
         _userQueryRepositoryMock

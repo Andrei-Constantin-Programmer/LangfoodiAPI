@@ -196,7 +196,8 @@ public class AddUserHandlerTests
                 AccountCreationDate: user.Account.AccountCreationDate,
                 Email: user.Email, 
                 Password: user.Password,
-                PinnedConversationIds: new()
+                PinnedConversationIds: new(),
+                BlockedConnectionIds: new()
             ));
 
         string token = "GeneratedToken";

@@ -137,7 +137,8 @@ public class AddRecipeHandlerTests
                     Handler: "handler", 
                     UserName: "name", 
                     AccountCreationDate: new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero),
-                    PinnedConversationIds: new()
+                    PinnedConversationIds: new(),
+                    BlockedConnectionIds: new()
                 ),
                 Tags: recipe.Tags, 
                 CreationDate: recipe.CreationDate,

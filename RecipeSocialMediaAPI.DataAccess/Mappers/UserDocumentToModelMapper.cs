@@ -30,6 +30,7 @@ public class UserDocumentToModelMapper : IUserDocumentToModelMapper
             userDocument.ProfileImageId,
             userDocument.AccountCreationDate,
             userDocument.PinnedConversationIds,
+            userDocument.BlockedConnectionIds,
             (UserRole)userDocument.Role
         );
     }
