@@ -10,5 +10,4 @@ public interface IMessageFactory
     Message CreateImageMessage(string id, IUserAccount sender, IEnumerable<string> images, string? textContent, List<IUserAccount> seenBy, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null);
 
     public Message CreateRecipeMessage(string id, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, string? textContent, List<IUserAccount> seenBy, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null);
-    public Message CreateRemovedRecipeMessage(string id, IUserAccount sender, string? textContent, List<IUserAccount> seenBy, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null);
 }

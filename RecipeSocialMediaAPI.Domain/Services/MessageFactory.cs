@@ -29,9 +29,4 @@ public class MessageFactory : IMessageFactory
     {
         return new RecipeMessage(_dateTimeProvider, id, sender, recipes, textContent, sentDate, updatedDate, repliedToMessage, seenBy);
     }
-
-    public Message CreateRemovedRecipeMessage(string id, IUserAccount sender, string? textContent, List<IUserAccount> seenBy, DateTimeOffset sentDate, DateTimeOffset? updatedDate = null, Message? repliedToMessage = null)
-    {
-        return new RemovedRecipeMessage(_dateTimeProvider, id, sender, textContent, sentDate, updatedDate, repliedToMessage, seenBy);
-    }
 }
