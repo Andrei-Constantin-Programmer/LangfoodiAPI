@@ -50,6 +50,11 @@ public class ExceptionMappingMiddleware
             _logger.LogInformation(ex, "Attempted to change connection status to unsupported status {UnsupportedStatus}", ex.UnsupportedStatus);
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Unsupported connection status");
         }
+        catch (AttemptedToSendMessageToBlockedConnectionException ex)
+        {
+            _logger.LogWarning(ex, "Attempted to send a message to a blocked connection");
+            await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Cannot send message to blocked connection");
+        }
         catch (UserNotFoundException)
         {
             await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "User not found");

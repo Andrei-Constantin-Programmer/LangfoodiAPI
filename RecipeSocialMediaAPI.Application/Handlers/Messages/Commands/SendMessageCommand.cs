@@ -60,6 +60,11 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
 
         Conversation conversation = _conversationQueryRepository.GetConversationById(request.Contract.ConversationId)
             ?? throw new ConversationNotFoundException($"Conversation with id {request.Contract.ConversationId} was not found");
+
+        if (IsBlockedConnectionConversation(conversation, out var connectionId))
+        {
+            throw new AttemptedToSendMessageToBlockedConnectionException($"Cannot send message to connection {connectionId}, as it is blocked");
+        }
         
         foreach (var recipeId in request.Contract.RecipeIds ?? new List<string>())
         {
@@ -100,6 +105,19 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         await _publisher.Publish(new MessageSentNotification(messageDto, conversation.ConversationId), cancellationToken);
 
         return await Task.FromResult(messageDto);
+    }
+
+    private static bool IsBlockedConnectionConversation(Conversation conversation, out string? connectionId)
+    {
+        if (conversation is not ConnectionConversation connConversation)
+        {
+            connectionId = null;
+            return false;
+        }
+
+        connectionId = conversation.ConversationId;
+        return connConversation.Connection.Account1.BlockedConnectionIds.Contains(connConversation.Connection.ConnectionId)
+            || connConversation.Connection.Account2.BlockedConnectionIds.Contains(connConversation.Connection.ConnectionId);
     }
 }
 

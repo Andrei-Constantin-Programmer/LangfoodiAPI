@@ -22,6 +22,7 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using System.Collections.Immutable;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands;
 
@@ -712,5 +713,64 @@ public class SendMessageHandlerTests
                         => notification.SentMessage == messageDto),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async void Handle_WhenConnectionIsBlocked_ThrowAttemptedToSendMessageToBlockedConnectionException(bool isBlocker)
+    {
+        // Given
+        string connectionId = "conn1";
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId",
+                BlockedConnectionIds = isBlocker ? new List<string>().ToImmutableList() : new List<string> { connectionId }.ToImmutableList()
+            },
+            Email = "u1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2",
+                BlockedConnectionIds = !isBlocker ? new List<string>().ToImmutableList() : new List<string> { connectionId }.ToImmutableList()
+            },
+            Email = "u2@mail.com",
+            Password = "Test@321"
+        };
+        UserPreviewForMessageDTO user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(user1.Account.Id))
+            .Returns(user1);
+
+        ConnectionConversation conversation = new(new Connection(connectionId, user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
+            .Returns(conversation);
+
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+
+        // When
+        var testAction = async () => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<AttemptedToSendMessageToBlockedConnectionException>();
     }
 }
