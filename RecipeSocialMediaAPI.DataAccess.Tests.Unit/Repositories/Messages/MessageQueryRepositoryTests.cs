@@ -625,7 +625,7 @@ public class MessageQueryRepositoryTests
             .Returns(testSender);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe);
+        var result = _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
 
         // Then
         result.Should().NotBeNull();
@@ -691,7 +691,7 @@ public class MessageQueryRepositoryTests
             .Returns(testSender);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe);
+        var result = _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
 
         // Then
         result.Should().NotBeNull();
@@ -755,7 +755,7 @@ public class MessageQueryRepositoryTests
             .Returns((IUserCredentials?)null);
 
         // When
-        var testAction = () => _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe).ToList();
+        var testAction = () => _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id).ToList();
 
         // Then
         testAction.Should().Throw<UserDocumentNotFoundException>();

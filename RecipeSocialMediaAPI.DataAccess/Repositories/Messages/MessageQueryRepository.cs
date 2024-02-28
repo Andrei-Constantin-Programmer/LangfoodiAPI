@@ -55,11 +55,11 @@ public class MessageQueryRepository : IMessageQueryRepository
         return _mapper.MapMessageFromDocument(messageDocument, sender, repliedToMessage);
     }
 
-    public IEnumerable<Message> GetMessagesWithRecipe(RecipeAggregate recipe)
+    public IEnumerable<Message> GetMessagesWithRecipe(string recipeId)
     {
         var messageDocuments = _messageCollection.GetAll(messageDoc 
             => messageDoc.MessageContent.RecipeIds != null 
-            && messageDoc.MessageContent.RecipeIds.Contains(recipe.Id));
+            && messageDoc.MessageContent.RecipeIds.Contains(recipeId));
         
         return messageDocuments
             .Select(messageDoc => _mapper.MapMessageFromDocument(

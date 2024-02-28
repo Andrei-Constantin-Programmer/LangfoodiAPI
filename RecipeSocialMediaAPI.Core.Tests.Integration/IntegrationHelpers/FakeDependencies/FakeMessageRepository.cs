@@ -1,7 +1,6 @@
 ﻿using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
@@ -24,9 +23,9 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
 
     public Message? GetMessage(string id) => _collection.FirstOrDefault(m => m.Id == id);
 
-    public IEnumerable<Message> GetMessagesWithRecipe(RecipeAggregate recipe) => _collection
+    public IEnumerable<Message> GetMessagesWithRecipe(string recipeId) => _collection
         .Where(m => m is RecipeMessage message 
-                 && message.Recipes.Any(r => r.Id == recipe.Id));
+                 && message.Recipes.Any(r => r.Id == recipeId));
 
     public Message CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
     {
