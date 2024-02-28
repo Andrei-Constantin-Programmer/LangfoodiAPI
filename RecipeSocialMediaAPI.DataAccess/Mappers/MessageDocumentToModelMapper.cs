@@ -1,4 +1,5 @@
-﻿ using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
@@ -52,6 +53,17 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
                     return recipe;
                 })
                 .OfType<RecipeAggregate>();
+
+            if (recipes.IsNullOrEmpty())
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    throw new MalformedMessageDocumentException(messageDocument);
+                }
+
+                _logger.LogWarning("Malformed message found with no existing recipes: {MessageId}", messageDocument.Id);
+                return MapMessageDocumentToTextMessage(messageDocument, sender, repliedToMessage);
+            }
 
             return MapMessageDocumentToRecipeMessage(messageDocument, sender, recipes, repliedToMessage);
         }
