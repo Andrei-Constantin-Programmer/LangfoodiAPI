@@ -539,6 +539,36 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public async void SendMessage_WhenConnectionIsBlocked_ReturnBadRequest()
+    {
+        // Given
+        string connectionId = "conn1";
+        var user1 = _fakeUserRepository
+          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = _fakeUserRepository
+            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+
+        user1.Account.BlockConnection(connectionId);
+        _fakeUserRepository.UpdateUser(user1);
+
+        var conversation = _fakeConversationRepository
+            .CreateConnectionConversation(new Connection(connectionId, user1.Account, user2.Account, ConnectionStatus.Connected));
+
+        SendMessageContract newMessageContract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsJsonAsync($"message/send", newMessageContract);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public async void UpdateMessage_WhenTextMessageExists_ReturnOk()
     {
         // Given
