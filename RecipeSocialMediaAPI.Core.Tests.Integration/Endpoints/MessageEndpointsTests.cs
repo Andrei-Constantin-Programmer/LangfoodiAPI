@@ -356,7 +356,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
+    public async void SendMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
     {
         // Given
         var user = _fakeUserRepository
@@ -392,7 +392,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateMessage_WhenContractIsValidForImageMessage_ReturnCreatedMessage()
+    public async void SendMessage_WhenContractIsValidForImageMessage_ReturnCreatedMessage()
     {
         // Given
         var user = _fakeUserRepository
@@ -428,7 +428,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateMessage_WhenContractIsValidForRecipeMessage_ReturnCreatedMessage()
+    public async void SendMessage_WhenContractIsValidForRecipeMessage_ReturnCreatedMessage()
     {
         // Given
         var user = _fakeUserRepository
@@ -473,7 +473,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateMessage_WhenContractContainsNoMessageContent_ReturnBadRequest()
+    public async void SendMessage_WhenContractContainsNoMessageContent_ReturnBadRequest()
     {
         // Given
         var user = _fakeUserRepository
@@ -496,7 +496,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateMessage_WhenContractIsInvalid_ReturnBadRequest()
+    public async void SendMessage_WhenContractIsInvalid_ReturnBadRequest()
     {
         // Given
         var user = _fakeUserRepository
@@ -519,7 +519,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async void SendMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user = _fakeUserRepository
