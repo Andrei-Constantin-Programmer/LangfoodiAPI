@@ -47,6 +47,8 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
             imageIds.Add(recipeToRemove.ThumbnailId);
         }
 
+        await _publisher.Publish(new RecipeRemovedNotification(recipeToRemove.Id), cancellationToken);
+
         bool isRecipeRemoved = _recipePersistenceRepository.DeleteRecipe(request.Id);
         bool areImagesRemoved = imageIds.Count <= 0 || _imageHostingPersistenceRepository.BulkRemoveHostedImages(imageIds);
 
@@ -59,7 +61,5 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
         {
             throw new RecipeRemovalException(recipeToRemove.Id);
         }
-
-        await _publisher.Publish(new RecipeRemovedNotification(recipeToRemove.Id), cancellationToken);
     }
 }
