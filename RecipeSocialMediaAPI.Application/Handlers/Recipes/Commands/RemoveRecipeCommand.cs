@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Notifications;
 using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -15,16 +16,23 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
     private readonly IRecipePersistenceRepository _recipePersistenceRepository;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
     private readonly IImageHostingPersistenceRepository _imageHostingPersistenceRepository;
+    private readonly IPublisher _publisher;
 
-    public RemoveRecipeHandler(IRecipePersistenceRepository recipePersistenceRepository, IRecipeQueryRepository recipeQueryRepository, IImageHostingPersistenceRepository imageHostingPersistenceRepository, ILogger<RemoveRecipeCommand> logger)
+    public RemoveRecipeHandler(
+        IRecipePersistenceRepository recipePersistenceRepository,
+        IRecipeQueryRepository recipeQueryRepository,
+        IImageHostingPersistenceRepository imageHostingPersistenceRepository,
+        ILogger<RemoveRecipeCommand> logger,
+        IPublisher publisher)
     {
         _recipePersistenceRepository = recipePersistenceRepository;
         _recipeQueryRepository = recipeQueryRepository;
         _imageHostingPersistenceRepository = imageHostingPersistenceRepository;
         _logger = logger;
+        _publisher = publisher;
     }
 
-    public Task Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
+    public async Task Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
     {
         RecipeAggregate? recipeToRemove = _recipeQueryRepository.GetRecipeById(request.Id) 
             ?? throw new RecipeNotFoundException(request.Id);
@@ -47,8 +55,11 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
             _logger.LogWarning("Some of the images for recipe {RecipeId} failed to be removed, ids: {ImageIds}", recipeToRemove.Id, string.Join(",",imageIds));
         }
 
-        return isRecipeRemoved
-            ? Task.CompletedTask
-            : throw new RecipeRemovalException(recipeToRemove.Id);
+        if (!isRecipeRemoved)
+        {
+            throw new RecipeRemovalException(recipeToRemove.Id);
+        }
+
+        await _publisher.Publish(new RecipeRemovedNotification(recipeToRemove.Id), cancellationToken);
     }
 }
