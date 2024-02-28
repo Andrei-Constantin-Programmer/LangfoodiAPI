@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Neleus.LambdaCompare;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
@@ -77,6 +78,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new("Text"),
+            SeenByUserIds: new(),
             SenderId: "1",
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -131,6 +133,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new("Text"),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new (2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -193,6 +196,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(hasText ? "Text" : null, null, imageURLs),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -256,6 +260,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(hasText ? "Text" : null, recipeIds, null),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -339,6 +344,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new(null, recipeIds, null),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -419,6 +425,7 @@ public class MessageQueryRepositoryTests
         MessageDocument testDocument = new(
             Id: messageId,
             MessageContent: new("Text"),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -479,6 +486,7 @@ public class MessageQueryRepositoryTests
                     Id: newMessage.Id,
                     SenderId: newMessage.Sender.Id,
                     MessageContent: new(),
+                    SeenByUserIds: new(),
                     SentDate: newMessage.SentDate,
                     MessageRepliedToId: newMessage.RepliedToMessage?.Id
                 ));
@@ -506,6 +514,7 @@ public class MessageQueryRepositoryTests
                 isTextNull ? null : "Test Text",
                 isRecipeListNull ? null : new List<string>(),
                 isImageListNull ? null : new List<string>()),
+            SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
@@ -551,7 +560,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     public void GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
@@ -574,5 +583,181 @@ public class MessageQueryRepositoryTests
                 testException,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetMessagesWithRecipe_WhenNoMessagesFoundWithRecipeId_ReturnEmptyCollection()
+    {
+        // Given
+        string senderId = "50";
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+
+        RecipeAggregate recipe = new(
+            "r1",
+            "Recipe1",
+            new(new(), new()),
+            "Description1",
+            testSender.Account,
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
+
+        _messageCollectionMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(Enumerable.Empty<MessageDocument>());
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns(testSender);
+
+        // When
+        var result = _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetMessagesWithRecipe_WhenMessagesFoundWithRecipeId_ReturnMappedMessages()
+    {
+        // Given
+        string senderId = "50";
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+
+        RecipeAggregate recipe = new(
+            "r1",
+            "Recipe1",
+            new(new(), new()),
+            "Description1",
+            testSender.Account,
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        MessageDocument testDocument = new(
+            Id: "m1",
+            MessageContent: new(null, new() { recipe.Id }, null),
+            SeenByUserIds: new(),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
+
+        TestRecipeMessage recipeMessage = new(
+        testDocument.Id!,
+            testSender.Account,
+            testDocument.MessageContent.Text!,
+            new List<RecipeAggregate>() { recipe },
+            testDocument.SentDate,
+        null);
+
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
+
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
+            .Returns(recipeMessage);
+        _messageCollectionMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(new List<MessageDocument> { testDocument });
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns(testSender);
+
+        // When
+        var result = _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+        result.Should().Contain(recipeMessage);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    public void GetMessagesWithRecipe_WhenUserNotFound_ThrowUserDocumentNotFoundException()
+    {
+        // Given
+        string senderId = "50";
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+
+        RecipeAggregate recipe = new(
+            "r1",
+            "Recipe1",
+            new(new(), new()),
+            "Description1",
+            testSender.Account,
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        MessageDocument testDocument = new(
+            Id: "m1",
+            MessageContent: new(null, new() { recipe.Id }, null),
+            SeenByUserIds: new(),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
+
+        TestRecipeMessage recipeMessage = new(
+        testDocument.Id!,
+            testSender.Account,
+            testDocument.MessageContent.Text!,
+            new List<RecipeAggregate>() { recipe },
+            testDocument.SentDate,
+        null);
+
+        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
+
+        _messageCollectionMock
+            .Setup(collection => collection.GetAll(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
+            .Returns(new List<MessageDocument> { testDocument });
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserById(senderId))
+            .Returns((IUserCredentials?)null);
+
+        // When
+        var testAction = () => _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id).ToList();
+
+        // Then
+        testAction.Should().Throw<UserDocumentNotFoundException>();
     }
 }

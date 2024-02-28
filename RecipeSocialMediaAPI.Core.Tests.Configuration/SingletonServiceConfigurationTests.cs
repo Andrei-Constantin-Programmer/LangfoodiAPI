@@ -11,6 +11,8 @@ using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Messages;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Services;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
@@ -93,5 +95,17 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
         // Then
         messageMapper.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void ConversationMapper_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        var conversationMapper = _serviceProvider.GetService(typeof(IConversationMapper)) as ConversationMapper;
+
+        // Then
+        conversationMapper.Should().NotBeNull();
     }
 }

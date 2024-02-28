@@ -20,6 +20,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
     protected readonly Mock<ICloudinarySignatureService> _cloudinarySignatureServiceMock;
     protected readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
     protected readonly HttpClient _client;
+    protected readonly IBearerTokenGeneratorService _bearerTokenGeneratorService;
 
     internal IDateTimeProvider _dateTimeProvider;
     internal FakeRecipeRepository _fakeRecipeRepository;
@@ -29,7 +30,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
     internal FakeGroupRepository _fakeGroupRepository;
     internal FakeConversationRepository _fakeConversationRepository;
 
-    internal FakeCryptoService _fakeCryptoService; 
+    internal FakeCryptoService _fakeCryptoService;
 
     public EndpointTestBase(WebApplicationFactory<Program> factory)
     {
@@ -75,5 +76,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
                 services.AddSingleton(_cloudinarySignatureServiceMock.Object);
             }))
             .CreateClient();
+
+        _bearerTokenGeneratorService = factory.Services.GetService<IBearerTokenGeneratorService>()!;
     }
 }

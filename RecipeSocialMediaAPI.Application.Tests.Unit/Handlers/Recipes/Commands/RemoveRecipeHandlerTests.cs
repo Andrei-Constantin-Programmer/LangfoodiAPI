@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
+using RecipeSocialMediaAPI.Application.Handlers.Recipes.Notifications;
 using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
@@ -16,6 +18,7 @@ public class RemoveRecipeHandlerTests
     private readonly Mock<IImageHostingPersistenceRepository> _imageHostingPersistenceRepositoryMock;
     private readonly Mock<IRecipePersistenceRepository> _recipePersistenceRepositoryMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
+    private readonly Mock<IPublisher> _publisherMock;
 
     private readonly RemoveRecipeHandler _removeRecipeHandler;
 
@@ -27,11 +30,14 @@ public class RemoveRecipeHandlerTests
         _recipePersistenceRepositoryMock = new Mock<IRecipePersistenceRepository>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
         _imageHostingPersistenceRepositoryMock = new Mock<IImageHostingPersistenceRepository>();
+        _publisherMock = new Mock<IPublisher>();
+
         _removeRecipeHandler = new RemoveRecipeHandler(
             _recipePersistenceRepositoryMock.Object,
             _recipeQueryRepositoryMock.Object,
             _imageHostingPersistenceRepositoryMock.Object,
-            _loggerMock.Object);
+            _loggerMock.Object,
+            _publisherMock.Object);
     }
 
     [Fact]
@@ -263,4 +269,45 @@ public class RemoveRecipeHandlerTests
             Times.Once);
     }
 
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_RecipeExistsAndIsDeleted_PublishRecipeRemovedNotification()
+    {
+        // Given
+        string recipeId = "1";
+
+        _recipeQueryRepositoryMock
+            .Setup(x => x.GetRecipeById(It.IsAny<string>()))
+            .Returns(new RecipeAggregate(
+                "1",
+                "title",
+                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                "desc",
+                new TestUserAccount
+                {
+                    Id = "1",
+                    Handler = "handler",
+                    UserName = "name",
+                    AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
+                },
+                _testDate,
+                _testDate,
+                new HashSet<string>()
+            ));
+
+        _recipePersistenceRepositoryMock
+            .Setup(x => x.DeleteRecipe(It.IsAny<string>()))
+            .Returns(true);
+
+        // When
+        await _removeRecipeHandler.Handle(new RemoveRecipeCommand(recipeId), CancellationToken.None);
+
+        // Then
+        _publisherMock
+            .Verify(publisher => publisher.Publish(
+                    It.Is<RecipeRemovedNotification>(notification => notification.RecipeId == recipeId), 
+                    It.IsAny<CancellationToken>()), 
+                Times.Once);
+    }
 }

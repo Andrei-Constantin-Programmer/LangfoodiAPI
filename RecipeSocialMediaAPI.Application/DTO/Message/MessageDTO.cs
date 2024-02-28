@@ -1,11 +1,12 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 
 namespace RecipeSocialMediaAPI.Application.DTO.Message;
 
 public record MessageDTO(
     string Id,
-    string SenderId,
-    string SenderName,
+    UserPreviewForMessageDTO UserPreview,
+    List<string> SeenByUserIds,
     DateTimeOffset? SentDate = null,
     DateTimeOffset? UpdatedDate = null,
     string? RepliedToMessageId = null,

@@ -6,6 +6,7 @@ namespace RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 public record MessageDocument(
     string SenderId,
     MessageContentDTO MessageContent,
+    List<string> SeenByUserIds,
     DateTimeOffset SentDate,
     DateTimeOffset? LastUpdatedDate = null,
     string? MessageRepliedToId = null,

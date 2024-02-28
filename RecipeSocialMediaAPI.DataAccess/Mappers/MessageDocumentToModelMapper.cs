@@ -1,5 +1,7 @@
-﻿ using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Exceptions;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
@@ -15,12 +17,14 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
     private readonly ILogger<MessageDocumentToModelMapper> _logger;
     private readonly IMessageFactory _messageFactory;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
+    private readonly IUserQueryRepository _userQueryRepository;
 
-    public MessageDocumentToModelMapper(ILogger<MessageDocumentToModelMapper> logger, IMessageFactory messageFactory, IRecipeQueryRepository recipeQueryRepository)
+    public MessageDocumentToModelMapper(ILogger<MessageDocumentToModelMapper> logger, IMessageFactory messageFactory, IRecipeQueryRepository recipeQueryRepository, IUserQueryRepository userQueryRepository)
     {
         _logger = logger;
         _messageFactory = messageFactory;
         _recipeQueryRepository = recipeQueryRepository;
+        _userQueryRepository = userQueryRepository;
     }
 
     public Message MapMessageFromDocument(MessageDocument messageDocument, IUserAccount sender, Message? repliedToMessage)
@@ -50,6 +54,17 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
                 })
                 .OfType<RecipeAggregate>();
 
+            if (recipes.IsNullOrEmpty())
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    throw new MalformedMessageDocumentException(messageDocument);
+                }
+
+                _logger.LogWarning("Malformed message found with no existing recipes: {MessageId}", messageDocument.Id);
+                return MapMessageDocumentToTextMessage(messageDocument, sender, repliedToMessage);
+            }
+
             return MapMessageDocumentToRecipeMessage(messageDocument, sender, recipes, repliedToMessage);
         }
     }
@@ -65,6 +80,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             messageDocument.Id,
             sender,
             messageDocument.MessageContent.Text!,
+            GetSeenByUsers(messageDocument),
             messageDocument.SentDate,
             messageDocument.LastUpdatedDate,
             messageRepliedTo);
@@ -82,6 +98,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             sender,
             messageDocument.MessageContent.ImageURLs!,
             messageDocument.MessageContent.Text,
+            GetSeenByUsers(messageDocument),
             messageDocument.SentDate,
             messageDocument.LastUpdatedDate,
             messageRepliedTo);
@@ -99,8 +116,15 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             sender,
             recipes,
             messageDocument.MessageContent.Text,
+            GetSeenByUsers(messageDocument),
             messageDocument.SentDate,
             messageDocument.LastUpdatedDate,
             messageRepliedTo);
     }
+
+    private List<IUserAccount> GetSeenByUsers(MessageDocument messageDocument) => messageDocument.SeenByUserIds
+        .Select(userId => _userQueryRepository.GetUserById(userId))
+        .Where(user => user is not null)
+        .Select(user => user!.Account)
+        .ToList();
 }

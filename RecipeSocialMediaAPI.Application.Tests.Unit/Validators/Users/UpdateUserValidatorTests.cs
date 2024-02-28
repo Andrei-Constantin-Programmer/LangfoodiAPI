@@ -25,7 +25,7 @@ public class UpdateUserValidatorTests
     public void UpdateUserValidation_WhenValidUser_DontThrow()
     {
         // Given
-        UpdateUserCommand testCommand = new(new UpdateUserContract("testId", "TestUser", "test@mail.com", "Test@123"));
+        UpdateUserCommand testCommand = new(new UpdateUserContract("testId", "TestImageId","TestUser", "test@mail.com", "Test@123"));
 
         _userValidationServiceMock
             .Setup(service => service.ValidUserName(It.IsAny<string>()))
@@ -53,7 +53,7 @@ public class UpdateUserValidatorTests
     public void UpdateUserValidation_WhenInvalidUser_ThrowsValidationException()
     {
         // Given
-        UpdateUserCommand testCommand = new(new UpdateUserContract("TestId", string.Empty, "test.com", "test"));
+        UpdateUserCommand testCommand = new(new UpdateUserContract("TestId", "TestImageId", string.Empty, "test.com", "test"));
 
         _userValidationServiceMock
             .Setup(service => service.ValidUserName(It.IsAny<string>()))

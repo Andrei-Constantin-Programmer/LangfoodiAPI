@@ -15,13 +15,13 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
         _collection = new();
     }
 
-    public Conversation? GetConversationByConnection(string connectionId) => _collection
+    public ConnectionConversation? GetConversationByConnection(string connectionId) => _collection
         .FirstOrDefault(conversation => conversation is ConnectionConversation connConvo 
-                                     && connConvo.Connection.ConnectionId == connectionId);
+                                     && connConvo.Connection.ConnectionId == connectionId) as ConnectionConversation;
 
-    public Conversation? GetConversationByGroup(string groupId) => _collection
+    public GroupConversation? GetConversationByGroup(string groupId) => _collection
         .FirstOrDefault(conversation => conversation is GroupConversation groupConvo
-                                     && groupConvo.Group.GroupId == groupId);
+                                     && groupConvo.Group.GroupId == groupId) as GroupConversation;
 
     public Conversation? GetConversationById(string id) => _collection
         .FirstOrDefault(conversation => conversation.ConversationId == id);

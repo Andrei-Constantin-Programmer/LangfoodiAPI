@@ -2,6 +2,7 @@
 using MediatR;
 using RecipeSocialMediaAPI.Application.Cryptography;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Messages;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
@@ -20,6 +21,7 @@ using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Application.WebClients;
 using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.Core.Middleware;
+using RecipeSocialMediaAPI.Core.SignalR;
 using RecipeSocialMediaAPI.DataAccess.Mappers;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
@@ -46,6 +48,7 @@ internal static class ServicesConfiguration
         builder.Services.AddSingleton<IRecipeMapper, RecipeMapper>();
         builder.Services.AddSingleton<IUserMapper, UserMapper>();
         builder.Services.AddSingleton<IMessageMapper, MessageMapper>();
+        builder.Services.AddSingleton<IConversationMapper, ConversationMapper>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<Application.AssemblyReference>(ServiceLifetime.Singleton);
 
@@ -88,6 +91,8 @@ internal static class ServicesConfiguration
         builder.Services.AddTransient<ICryptoService, CryptoService>();
         builder.Services.AddTransient<IMessageFactory, MessageFactory>();
         builder.Services.AddTransient<IUserFactory, UserFactory>();
+        builder.Services.AddTransient<IMessageNotificationService, MessageNotificationService>();
+        builder.Services.AddTransient<IBearerTokenGeneratorService, BearerTokenGeneratorService>();
         builder.Services.AddHttpClient();
 
         // MediatR
@@ -96,6 +101,17 @@ internal static class ServicesConfiguration
             config.RegisterServicesFromAssemblyContaining<AssemblyReference>();
             config.RegisterServicesFromAssemblyContaining<Application.AssemblyReference>();
             config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>));
+        });
+
+        // SignalR
+        builder.Services.AddSignalR();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
         });
     }
 }

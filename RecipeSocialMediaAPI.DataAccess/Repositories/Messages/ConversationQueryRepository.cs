@@ -55,7 +55,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         return _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages);
     }
 
-    public Conversation? GetConversationByConnection(string connectionId)
+    public ConnectionConversation? GetConversationByConnection(string connectionId)
     {
         ConversationDocument? conversationDocument;
         try
@@ -77,11 +77,11 @@ public class ConversationQueryRepository : IConversationQueryRepository
         List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, connection, null, messages)
+            ? (ConnectionConversation)_mapper.MapConversationFromDocument(conversationDocument, connection, null, messages)
             : null;
     }
 
-    public Conversation? GetConversationByGroup(string groupId)
+    public GroupConversation? GetConversationByGroup(string groupId)
     {
         ConversationDocument? conversationDocument;
         try
@@ -103,7 +103,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         List<Message> messages = GetMessages(conversationDocument);
 
         return conversationDocument is not null
-            ? _mapper.MapConversationFromDocument(conversationDocument, null, group, messages)
+            ? (GroupConversation)_mapper.MapConversationFromDocument(conversationDocument, null, group, messages)
             : null;
     }
 
@@ -113,13 +113,21 @@ public class ConversationQueryRepository : IConversationQueryRepository
 
         try
         {
-            var groups = _groupQueryRepository.GetGroupsByUser(userAccount);
-            var connections = _connectionQueryRepository.GetConnectionsForUser(userAccount);
+            var groupIds = _groupQueryRepository
+                .GetGroupsByUser(userAccount)
+                ?.Select(g => g.GroupId)
+                .ToList() ?? new List<string>();
+
+            var connectionIds = _connectionQueryRepository
+                .GetConnectionsForUser(userAccount)
+                ?.Select(c => c.ConnectionId)
+                .ToList() ?? new List<string>();
 
             conversations = _conversationCollection
-                .GetAll(conversationDoc => conversationDoc.ConnectionId == null 
-                                         ? groups.Any(group => group.GroupId == conversationDoc.GroupId) 
-                                         : connections.Any(connection => connection.ConnectionId == conversationDoc.ConnectionId));
+                .GetAll(conversationDoc => conversationDoc.ConnectionId == null
+                    ? groupIds.Any(id => id == conversationDoc.GroupId)
+                    : connectionIds.Any(id => id == conversationDoc.ConnectionId))
+                .ToList();
         }
         catch (Exception ex)
         {

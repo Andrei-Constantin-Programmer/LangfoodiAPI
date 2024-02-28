@@ -1,9 +1,20 @@
-﻿namespace RecipeSocialMediaAPI.Domain.Models.Users;
+﻿using System.Collections.Immutable;
+
+namespace RecipeSocialMediaAPI.Domain.Models.Users;
 
 public interface IUserAccount
 {
     string Id { get; }
     string Handler { get; }
     string UserName { get; set; }
+    string? ProfileImageId { get; set; }
     DateTimeOffset AccountCreationDate { get; }
+    ImmutableList<string> PinnedConversationIds { get; }
+    ImmutableList<string> BlockedConnectionIds { get; }
+    public UserRole Role { get; set; }
+
+    public bool RemovePin(string pinnedConversationId);
+    public bool AddPin(string pinnedConversationId);
+    public bool UnblockConnection(string connectionId);
+    public bool BlockConnection(string connectionId);
 }

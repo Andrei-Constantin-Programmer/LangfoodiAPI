@@ -12,27 +12,47 @@ internal static class SwaggerConfiguration
             {
                 Type = SecuritySchemeType.ApiKey,
                 In = ParameterLocation.Header,
-                Name = "authorization",
-                Description = "Authorization string expects user token",
+                Name = "Authorization",
+                Description = "Authorization expects a valid API key",
                 Scheme = "ApiKeyScheme"
             });
 
-            var key = new OpenApiSecurityScheme()
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "ApiKey"
+                Type = SecuritySchemeType.Http,
+                In = ParameterLocation.Header,
+                Name = "Authorization",
+                Description = "Authorization expects a valid token",
+                Scheme = "Bearer",
+                BearerFormat = "JWT"
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                { 
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "ApiKey"
+                        },
+                        In = ParameterLocation.Header
+                    }, 
+                    new List<string>() 
                 },
-                In = ParameterLocation.Header
-            };
-
-            var requirement = new OpenApiSecurityRequirement
-            {
-                { key, new List<string>() }
-            };
-            options.AddSecurityRequirement(requirement);
-
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new List<string>()
+                }
+            });
         });
     }
 }

@@ -13,7 +13,7 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         _collection = new List<IUserCredentials>();
     }
 
-    public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate)
+    public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate, UserRole userRole = UserRole.User)
     {
         var id = _collection.Count.ToString();
         IUserCredentials newUser = new TestUserCredentials
@@ -23,7 +23,8 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
                 Id = id,
                 Handler = handler,
                 UserName = username,
-                AccountCreationDate = accountCreationDate
+                AccountCreationDate = accountCreationDate,
+                Role = userRole
             },
             Email = email,
             Password = password
@@ -56,9 +57,15 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         }
 
         updatedUser.Account.UserName = user.Account.UserName;
+        updatedUser.Account.Role = user.Account.Role;
         updatedUser.Email = user.Email;
         updatedUser.Password = user.Password;
 
         return true;
     }
+
+    public IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString) => _collection
+        .Where(user => user.Account.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
+                    || user.Account.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase))
+        .Select(user => user.Account);
 }

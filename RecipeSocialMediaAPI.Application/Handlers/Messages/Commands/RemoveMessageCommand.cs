@@ -1,6 +1,9 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
+using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
@@ -10,24 +13,41 @@ internal class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
 {
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
+    private readonly IPublisher _publisher;
+    private readonly IImageHostingPersistenceRepository _imageHostingPersistenceRepository;
 
-    public RemoveMessageHandler(IMessagePersistenceRepository messagePersistenceRepository, IMessageQueryRepository messageQueryRepository)
+    public RemoveMessageHandler(
+        IMessagePersistenceRepository messagePersistenceRepository,
+        IMessageQueryRepository messageQueryRepository,
+        IPublisher publisher,
+        IImageHostingPersistenceRepository imageHostingPersistenceRepository)
     {
         _messagePersistenceRepository = messagePersistenceRepository;
         _messageQueryRepository = messageQueryRepository;
+        _publisher = publisher;
+        _imageHostingPersistenceRepository = imageHostingPersistenceRepository;
     }
 
-    public Task Handle(RemoveMessageCommand request, CancellationToken cancellationToken)
+    public async Task Handle(RemoveMessageCommand request, CancellationToken cancellationToken)
     {
-        if (_messageQueryRepository.GetMessage(request.Id) is null)
+        Message message = _messageQueryRepository.GetMessage(request.Id)
+            ?? throw new MessageNotFoundException(request.Id);
+
+        List<string> imagesToDelete = new();
+        if (message is ImageMessage imgMessage)
         {
-            throw new MessageNotFoundException(request.Id);
+            imagesToDelete = imgMessage.ImageURLs.ToList();
         }
 
         bool isSuccessful = _messagePersistenceRepository.DeleteMessage(request.Id);
 
-        return isSuccessful
-            ? Task.CompletedTask
-            : throw new MessageRemovalException(request.Id);
+        if (!isSuccessful)
+        {
+            throw new MessageRemovalException(request.Id);
+        }
+
+        _imageHostingPersistenceRepository.BulkRemoveHostedImages(imagesToDelete);
+
+        await _publisher.Publish(new MessageDeletedNotification(request.Id), cancellationToken);
     }
 }

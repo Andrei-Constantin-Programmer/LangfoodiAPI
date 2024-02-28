@@ -75,7 +75,9 @@ public class GetRecipeByIdHandlerTests
                 Id: testRecipeAggregate.Chef.Id,
                 UserName: testRecipeAggregate.Chef.UserName,
                 Handler: testRecipeAggregate.Chef.Handler,
-                AccountCreationDate: testRecipeAggregate.Chef.AccountCreationDate
+                AccountCreationDate: testRecipeAggregate.Chef.AccountCreationDate,
+                PinnedConversationIds: new(),
+                BlockedConnectionIds: new()
             ),
             Ingredients: new List<IngredientDTO>(),
             RecipeSteps: new Stack<RecipeStepDTO>(new List<RecipeStepDTO>()),

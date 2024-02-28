@@ -16,8 +16,8 @@ public class ConnectionConversation : Conversation
 
     public override void SendMessage(Message message)
     {
-        if (message.Sender != _connection.Account1 
-            && message.Sender != _connection.Account2)
+        if (message.Sender.Id != _connection.Account1.Id 
+            && message.Sender.Id != _connection.Account2.Id)
         {
             throw new ArgumentException($"Message {message} cannot be sent to conversation {ConversationId}, as the sender is not part of the conversation.");
         }

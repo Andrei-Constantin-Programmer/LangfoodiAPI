@@ -4,26 +4,55 @@ using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
+using RecipeSocialMediaAPI.Application.Utilities;
 
 namespace RecipeSocialMediaAPI.Core.Endpoints;
 
 public static class UserEndpoints
 {
-    public static void MapUserEndpoints(this WebApplication app)
+    public static WebApplication MapUserEndpoints(this WebApplication app)
     {
         app.MapGroup("/user")
             .AddUserEndpoints()
             .WithTags("User");
+
+        return app;
     }
 
     private static RouteGroupBuilder AddUserEndpoints(this RouteGroupBuilder group)
     {
+        group.MapPost("/get-all", async (
+            [FromQuery] string userId,
+            [FromQuery] string containedString,
+            [FromQuery] bool containSelf,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, containSelf ? UserQueryOptions.All : UserQueryOptions.NonSelf)));
+        });
+
+        group.MapPost("/get-connected", async (
+            [FromQuery] string userId,
+            [FromQuery] string containedString,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, UserQueryOptions.Connected)));
+        })
+            .RequireAuthorization();
+
+        group.MapPost("/get-unconnected", async (
+            [FromQuery] string userId,
+            [FromQuery] string containedString,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetUsersQuery(userId, containedString, UserQueryOptions.NotConnected)));
+        })
+            .RequireAuthorization();
+
         group.MapPost("/create", async (
             [FromBody] NewUserContract newUserContract,
             [FromServices] ISender sender) =>
         {
-            UserDTO user = await sender.Send(new AddUserCommand(newUserContract));
-            return Results.Ok(user);
+            return Results.Ok(await sender.Send(new AddUserCommand(newUserContract)));
         });
 
         group.MapPut("/update", async (
@@ -32,7 +61,8 @@ public static class UserEndpoints
         {
             await sender.Send(new UpdateUserCommand(updateUserContract));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         group.MapDelete("/remove", async (
             [FromQuery] string emailOrId,
@@ -40,7 +70,8 @@ public static class UserEndpoints
         {
             await sender.Send(new RemoveUserCommand(emailOrId));
             return Results.Ok();
-        });
+        })
+            .RequireAuthorization();
 
         group.MapPost("/username/exists", async (
             [FromQuery] string username,
@@ -55,6 +86,51 @@ public static class UserEndpoints
         {
             return Results.Ok(await sender.Send(new CheckEmailExistsQuery(email)));
         });
+
+        group.MapPost("/pin", (
+            [FromQuery] string userId,
+            [FromQuery] string conversationId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(sender.Send(new PinConversationCommand(userId, conversationId)));
+        })
+            .RequireAuthorization();
+
+        group.MapPost("/unpin", (
+            [FromQuery] string userId,
+            [FromQuery] string conversationId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(sender.Send(new UnpinConversationCommand(userId, conversationId)));
+        })
+            .RequireAuthorization();
+
+        group.MapPost("/block", (
+            [FromQuery] string userId,
+            [FromQuery] string connectionId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(sender.Send(new BlockConnectionCommand(userId, connectionId)));
+        })
+            .RequireAuthorization();
+
+        group.MapPost("/unblock", (
+            [FromQuery] string userId,
+            [FromQuery] string connectionId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(sender.Send(new UnblockConnectionCommand(userId, connectionId)));
+        })
+            .RequireAuthorization();
+
+        group.MapPost("/pins/get", async (
+            [FromQuery] string userId,
+            [FromQuery] string conversationId,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new GetPinnedConversationsQuery(userId)));
+        })
+            .RequireAuthorization();
 
         return group;
     }

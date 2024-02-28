@@ -3,32 +3,33 @@ using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetConversationByConnectionQuery(string ConnectionId) : IRequest<ConnectionConversationDTO>;
+public record GetConversationByConnectionQuery(string UserId, string ConnectionId) : IRequest<ConversationDTO>;
 
-internal class GetConversationByConnectionHandler : IRequestHandler<GetConversationByConnectionQuery, ConnectionConversationDTO>
+internal class GetConversationByConnectionHandler : IRequestHandler<GetConversationByConnectionQuery, ConversationDTO>
 {
     private readonly IConversationQueryRepository _conversationQueryRepository;
-    private readonly IMessageMapper _messageMapper;
+    private readonly IConversationMapper _conversationMapper;
+    private readonly IUserQueryRepository _userQueryRepository;
 
-    public GetConversationByConnectionHandler(IConversationQueryRepository conversationQueryRepository, IMessageMapper messageMapper)
+    public GetConversationByConnectionHandler(IConversationQueryRepository conversationQueryRepository, IConversationMapper conversationMapper, IUserQueryRepository userQueryRepository)
     {
         _conversationQueryRepository = conversationQueryRepository;
-        _messageMapper = messageMapper;
+        _conversationMapper = conversationMapper;
+        _userQueryRepository = userQueryRepository;
     }
 
-    public Task<ConnectionConversationDTO> Handle(GetConversationByConnectionQuery request, CancellationToken cancellationToken)
+    public Task<ConversationDTO> Handle(GetConversationByConnectionQuery request, CancellationToken cancellationToken)
     {
+        var user = _userQueryRepository.GetUserById(request.UserId)?.Account
+            ?? throw new UserNotFoundException($"No User found with id {request.UserId}");
+
         var conversation = _conversationQueryRepository.GetConversationByConnection(request.ConnectionId)
             ?? throw new ConversationNotFoundException($"No Conversation found for Connection with id {request.ConnectionId}");
 
-        var lastMessage = conversation.Messages
-            .MaxBy(message => message.SentDate);
-
-        var lastMessageDto = lastMessage is null ? null : _messageMapper.MapMessageToMessageDTO(lastMessage);
-
-        return Task.FromResult(new ConnectionConversationDTO(conversation.ConversationId, request.ConnectionId, lastMessageDto));
+        return Task.FromResult(_conversationMapper.MapConversationToConnectionConversationDTO(user, conversation));
     }
 }

@@ -27,6 +27,6 @@ internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUse
 
         return Task.FromResult(_connectionQueryRepository
             .GetConnectionsForUser(user)
-            .Select(connection => new ConnectionDTO(connection.Account1.Id, connection.Account2.Id, connection.Status.ToString())));
+            .Select(connection => new ConnectionDTO(connection.ConnectionId, connection.Account1.Id, connection.Account2.Id, connection.Status.ToString())));
     }
 }

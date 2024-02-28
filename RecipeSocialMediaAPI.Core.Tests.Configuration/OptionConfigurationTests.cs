@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.DataAccess.Helpers;
 using FluentAssertions;
 using RecipeSocialMediaAPI.Core.Options;
 using RecipeSocialMediaAPI.Core.OptionValidation;
+using RecipeSocialMediaAPI.Application.Options;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
@@ -65,6 +66,23 @@ public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Prog
         // Then
         dataDogOptions.Should().NotBeNull();
         dataDogOptions!.Value.Should().NotBeNull();
+        validationResult.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    public void JwtOptions_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        var jwtOptions = _serviceProvider.GetService(typeof(IOptions<JwtOptions>)) as IOptions<JwtOptions>;
+
+        // When
+        var validationResult = new JwtOptionValidator().Validate(jwtOptions!.Value).IsValid;
+
+        // Then
+        jwtOptions.Should().NotBeNull();
+        jwtOptions!.Value.Should().NotBeNull();
         validationResult.Should().BeTrue();
     }
 }

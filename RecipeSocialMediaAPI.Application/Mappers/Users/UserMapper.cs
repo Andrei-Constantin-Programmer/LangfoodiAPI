@@ -1,19 +1,11 @@
 ﻿using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Mappers.Users;
 
 public class UserMapper : IUserMapper
 {
-    private readonly IUserFactory _userFactory;
-
-    public UserMapper(IUserFactory userFactory)
-    {
-        _userFactory = userFactory;
-    }
-
     public UserDTO MapUserToUserDto(IUserCredentials userCredentials)
     {
         return new UserDTO(
@@ -22,19 +14,11 @@ public class UserMapper : IUserMapper
             UserName: userCredentials.Account.UserName,
             AccountCreationDate: userCredentials.Account.AccountCreationDate,
             Email: userCredentials.Email,
-            Password: userCredentials.Password
+            Password: userCredentials.Password,
+            ProfileImageId: userCredentials.Account.ProfileImageId,
+            PinnedConversationIds: userCredentials.Account.PinnedConversationIds.ToList(),
+            BlockedConnectionIds: userCredentials.Account.BlockedConnectionIds.ToList()
         );
-    }
-
-    public IUserCredentials MapUserDtoToUser(UserDTO userDto)
-    {
-        return _userFactory.CreateUserCredentials(
-            userDto.Id, 
-            userDto.Handler, 
-            userDto.UserName, 
-            userDto.Email, 
-            userDto.Password, 
-            userDto.AccountCreationDate);
     }
 
     public UserAccountDTO MapUserAccountToUserAccountDto(IUserAccount userAccount)
@@ -43,16 +27,19 @@ public class UserMapper : IUserMapper
             Id: userAccount.Id,
             Handler: userAccount.Handler,
             UserName: userAccount.UserName,
-            AccountCreationDate: userAccount.AccountCreationDate
+            ProfileImageId: userAccount.ProfileImageId,
+            AccountCreationDate: userAccount.AccountCreationDate,
+            PinnedConversationIds: userAccount.PinnedConversationIds.ToList(),
+            BlockedConnectionIds: userAccount.BlockedConnectionIds.ToList()
         );
     }
 
-    public IUserAccount MapUserAccountDtoToUserAccount(UserAccountDTO userAccountDto)
+    public UserPreviewForMessageDTO MapUserAccountToUserPreviewForMessageDto(IUserAccount userAccount)
     {
-        return _userFactory.CreateUserAccount(
-            userAccountDto.Id,
-            userAccountDto.Handler,
-            userAccountDto.UserName,
-            userAccountDto.AccountCreationDate);
+        return new UserPreviewForMessageDTO(
+            Id: userAccount.Id,
+            Username: userAccount.UserName,
+            ProfileImageId: userAccount.ProfileImageId
+        );
     }
 }

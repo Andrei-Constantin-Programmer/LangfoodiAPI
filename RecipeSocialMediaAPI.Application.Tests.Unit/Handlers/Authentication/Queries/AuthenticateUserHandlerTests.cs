@@ -10,6 +10,7 @@ using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 
@@ -17,6 +18,7 @@ public class AuthenticateUserHandlerTests
 {
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
     private readonly Mock<IUserMapper> _mapperMock;
+    private readonly Mock<IBearerTokenGeneratorService> _bearerTokenGeneratorServiceMock;
     private readonly ICryptoService _cryptoServiceFake;
 
     private readonly AuthenticateUserHandler _authenticateUserHandlerSUT;
@@ -25,9 +27,14 @@ public class AuthenticateUserHandlerTests
     {
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _mapperMock = new Mock<IUserMapper>();
+        _bearerTokenGeneratorServiceMock = new Mock<IBearerTokenGeneratorService>();
         _cryptoServiceFake = new FakeCryptoService();
 
-        _authenticateUserHandlerSUT = new AuthenticateUserHandler(_userQueryRepositoryMock.Object, _mapperMock.Object, _cryptoServiceFake);
+        _authenticateUserHandlerSUT = new AuthenticateUserHandler(
+            _userQueryRepositoryMock.Object,
+            _mapperMock.Object,
+            _cryptoServiceFake,
+            _bearerTokenGeneratorServiceMock.Object);
     }
 
     [Fact]
@@ -37,9 +44,6 @@ public class AuthenticateUserHandlerTests
     {
         // Given
         UserCredentials? nullUser = null;
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>()))
-            .Returns(nullUser);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
             .Returns(nullUser);
@@ -53,38 +57,6 @@ public class AuthenticateUserHandlerTests
         await action.Should()
             .ThrowAsync<UserNotFoundException>()
             .WithMessage("No user found*");
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenHandlerIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
-    {
-        // Given
-        var encryptedPassword = _cryptoServiceFake.Encrypt("TestPass");
-        IUserCredentials testUser = new TestUserCredentials
-        {
-            Account = new TestUserAccount
-            {
-                Id = "TestId",
-                Handler = "TestHandler",
-                UserName = "TestUsername",
-                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
-            },
-            Email = "TestEmail",
-            Password = encryptedPassword
-        };
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByHandler(It.Is<string>(handler => handler == testUser.Account.Handler)))
-            .Returns(testUser);
-
-        AuthenticateUserQuery query = new(testUser.Account.Handler, "WrongPass");
-
-        // When
-        var action = async () => await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
-
-        // Then
-        await action.Should().ThrowAsync<InvalidCredentialsException>();
     }
 
     [Fact]
@@ -122,50 +94,6 @@ public class AuthenticateUserHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenHandlerIsFoundAndCredentialsPass_ReturnMappedDTO()
-    {
-        // Given
-        var decryptedPassword = "TestPass";
-        var encryptedPassword = _cryptoServiceFake.Encrypt(decryptedPassword);
-        IUserCredentials testUser = new TestUserCredentials
-        {
-            Account = new TestUserAccount
-            {
-                Id = "TestId",
-                Handler = "TestHandler",
-                UserName = "TestUsername",
-                AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
-            },
-            Email = "TestEmail",
-            Password = encryptedPassword
-        };
-
-        UserDTO expectedUserDto = new(
-            Id: testUser.Account.Id,
-            Handler: testUser.Account.Handler,
-            UserName: testUser.Account.UserName,
-            Email: testUser.Email,
-            Password: testUser.Password
-        );
-        _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByHandler(It.Is<string>(handler => handler == testUser.Account.Handler)))
-            .Returns(testUser);
-        _mapperMock
-            .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
-            .Returns(expectedUserDto);
-
-        AuthenticateUserQuery query = new(testUser.Account.Handler, decryptedPassword);
-
-        // When
-        var result = await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
-
-        // Then
-        result.Should().Be(expectedUserDto);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     public async Task Handle_WhenEmailIsFoundAndCredentialsPass_ReturnMappedDTO()
     {
         // Given
@@ -189,7 +117,9 @@ public class AuthenticateUserHandlerTests
             Handler: testUser.Account.Handler,
             UserName: testUser.Account.UserName,
             Email: testUser.Email,
-            Password: testUser.Password
+            Password: testUser.Password,
+            PinnedConversationIds: new(),
+            BlockedConnectionIds: new()
         );
 
         _userQueryRepositoryMock
@@ -199,12 +129,18 @@ public class AuthenticateUserHandlerTests
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
             .Returns(expectedUserDto);
 
+        string token = "TestToken";
+        _bearerTokenGeneratorServiceMock
+            .Setup(service => service.GenerateToken(testUser))
+            .Returns(token);
+
         AuthenticateUserQuery query = new(testUser.Email, decryptedPassword);
 
         // When
         var result = await _authenticateUserHandlerSUT.Handle(query, CancellationToken.None);
 
         // Then
-        result.Should().Be(expectedUserDto);
+        result.User.Should().Be(expectedUserDto);
+        result.Token.Should().Be(token);
     }
 }

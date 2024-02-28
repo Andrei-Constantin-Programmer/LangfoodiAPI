@@ -13,9 +13,17 @@ public class UserFactory : IUserFactory
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public IUserAccount CreateUserAccount(string id, string handler, string username, DateTimeOffset? accountCreationDate = null)
+    public IUserAccount CreateUserAccount(
+        string id,
+        string handler,
+        string username,
+        string? profileImageId = null,
+        DateTimeOffset? accountCreationDate = null,
+        List<string>? pinnedConversationIds = null,
+        List<string>? blockedConnectionIds = null,
+        UserRole userRole = UserRole.User)
     {
-        return new UserAccount(id, handler, username, accountCreationDate ?? _dateTimeProvider.Now);
+        return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now, pinnedConversationIds, blockedConnectionIds, userRole);
     }
 
     public IUserCredentials CreateUserCredentials(IUserAccount userAccount, string email, string password)
@@ -23,8 +31,18 @@ public class UserFactory : IUserFactory
         return new UserCredentials(userAccount, email, password);
     }
 
-    public IUserCredentials CreateUserCredentials(string id, string handler, string username, string email, string password, DateTimeOffset? accountCreationDate = null)
+    public IUserCredentials CreateUserCredentials(
+        string id,
+        string handler,
+        string username,
+        string email,
+        string password,
+        string? profileImageId = null,
+        DateTimeOffset? accountCreationDate = null,
+        List<string>? pinnedConversationIds = null,
+        List<string>? blockedConnectionIds = null,
+        UserRole userRole = UserRole.User)
     {
-        return new UserCredentials(CreateUserAccount(id, handler, username, accountCreationDate), email, password);
+        return new UserCredentials(CreateUserAccount(id, handler, username, profileImageId, accountCreationDate, pinnedConversationIds, blockedConnectionIds, userRole), email, password);
     }
 }

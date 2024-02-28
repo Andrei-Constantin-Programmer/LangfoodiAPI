@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
@@ -17,12 +18,18 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
     private readonly IGroupQueryRepository _groupQueryRepository;
     private readonly IGroupPersistenceRepository _groupPersistenceRepository;
     private readonly IUserQueryRepository _userQueryRepository;
+    private readonly ILogger<UpdateGroupCommand> _logger;
 
-    public UpdateGroupHandler(IGroupQueryRepository groupQueryRepository, IGroupPersistenceRepository groupPersistenceRepository, IUserQueryRepository userQueryRepository)
+    public UpdateGroupHandler(
+        IGroupQueryRepository groupQueryRepository,
+        IGroupPersistenceRepository groupPersistenceRepository,
+        IUserQueryRepository userQueryRepository,
+        ILogger<UpdateGroupCommand> logger)
     {
         _groupQueryRepository = groupQueryRepository;
         _groupPersistenceRepository = groupPersistenceRepository;
         _userQueryRepository = userQueryRepository;
+        _logger = logger;
     }
 
     public Task Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
@@ -43,7 +50,16 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
 
         UpdateGroupUserList(updatedGroup, newUserList);
 
-        var isSuccessful = _groupPersistenceRepository.UpdateGroup(updatedGroup);
+        bool isSuccessful = false;
+        if (updatedGroup.Users.Count == 0)
+        {
+            isSuccessful = _groupPersistenceRepository.DeleteGroup(updatedGroup);
+            _logger.LogInformation("Group with id {GroupId} was deleted due to all users quitting the group", group.GroupId);
+        }
+        else
+        {
+            isSuccessful = _groupPersistenceRepository.UpdateGroup(updatedGroup);
+        }
 
         return isSuccessful
             ? Task.CompletedTask
