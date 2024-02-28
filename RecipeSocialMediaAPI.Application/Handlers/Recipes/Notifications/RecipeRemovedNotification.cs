@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Notifications;
 
@@ -18,7 +19,17 @@ internal class RecipeRemovedHandler : INotificationHandler<RecipeRemovedNotifica
 
     public Task Handle(RecipeRemovedNotification notification, CancellationToken cancellationToken)
     {
-        // TODO: To be implemented
+        var messages = _messageQueryRepository.GetMessagesWithRecipe(notification.RecipeId);
+
+        foreach (var message in messages.Cast<RecipeMessage>())
+        {
+            if (message.Recipes.Count == 1
+                && string.IsNullOrWhiteSpace(message.TextContent))
+            {
+                _messagePersistenceRepository.DeleteMessage(message);
+            }
+        }
+
         return Task.CompletedTask;
     }
 }
