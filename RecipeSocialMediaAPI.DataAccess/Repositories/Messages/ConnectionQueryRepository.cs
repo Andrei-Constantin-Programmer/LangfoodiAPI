@@ -59,16 +59,15 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
             : null;
     }
 
-    public List<IConnection> GetConnectionsForUser(IUserAccount userAccount)
+    public async Task<List<IConnection>> GetConnectionsForUser(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
-        List<ConnectionDocument> connections = new();
+        IEnumerable<ConnectionDocument> connections = Enumerable.Empty<ConnectionDocument>();
 
         try
         {
-            connections = _connectionCollection
+            connections = await _connectionCollection
                 .GetAll(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
-                                      || connectionDoc.AccountId2 == userAccount.Id)
-                .ToList();
+                                      || connectionDoc.AccountId2 == userAccount.Id, cancellationToken);
         }
         catch (Exception ex)
         {

@@ -40,12 +40,12 @@ public class GroupQueryRepository : IGroupQueryRepository
             : null;
     }
 
-    public IEnumerable<Group> GetGroupsByUser(IUserAccount userAccount)
+    public async Task<IEnumerable<Group>> GetGroupsByUser(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
         try
         {
-            return _groupCollection
-                .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id))
+            return (await _groupCollection
+                .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id), cancellationToken))
                 .Select(_mapper.MapGroupFromDocument);
         }
         catch (Exception ex)

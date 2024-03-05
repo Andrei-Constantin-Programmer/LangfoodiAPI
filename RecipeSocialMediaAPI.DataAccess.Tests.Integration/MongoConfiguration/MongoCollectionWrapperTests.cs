@@ -31,7 +31,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
+    public async Task GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
     {
         // Given
         List<TestDocument> existingDocuments = new();
@@ -43,7 +43,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(existingDocuments);
 
         // When
-        var result = _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('1'));
+        var result = (await _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('1'))).ToList();
 
         // Then
         result.Should().OnlyContain(doc => doc.TestProperty == "1" || doc.TestProperty == "10");
@@ -53,7 +53,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAll_WhenNoDocumentsMatch_ReturnEmptyList()
+    public async Task GetAll_WhenNoDocumentsMatch_ReturnEmptyListAsync()
     {
         // Given
         List<TestDocument> existingDocuments = new();
@@ -65,7 +65,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(existingDocuments);
 
         // When
-        var result = _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('a'));
+        var result = await _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('a'));
 
         // Then
         result.Should().BeEmpty();
@@ -74,12 +74,12 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAll_WhenThereAreNoDocuments_ReturnEmptyList()
+    public async Task GetAll_WhenThereAreNoDocuments_ReturnEmptyListAsync()
     {
         // Given
 
         // When
-        var result = _mongoCollectionWrapperSUT.GetAll(_ => true);
+        var result = await _mongoCollectionWrapperSUT.GetAll(_ => true);
 
         // Then
         result.Should().BeEmpty();

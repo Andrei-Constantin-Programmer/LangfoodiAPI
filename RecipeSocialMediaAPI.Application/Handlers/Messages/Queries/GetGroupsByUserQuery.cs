@@ -20,19 +20,19 @@ internal class GetGroupsByUserHandler : IRequestHandler<GetGroupsByUserQuery, IE
         _userQueryRepository = userQueryRepository;
     }
 
-    public Task<IEnumerable<GroupDTO>> Handle(GetGroupsByUserQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<GroupDTO>> Handle(GetGroupsByUserQuery request, CancellationToken cancellationToken)
     {
         IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
-        return Task.FromResult(_groupQueryRepository
-            .GetGroupsByUser(user)
+        return (await _groupQueryRepository
+            .GetGroupsByUser(user, cancellationToken))
             .Select(group => new GroupDTO(
                 group.GroupId,
                 group.GroupName,
                 group.GroupDescription,
                 group.Users
                     .Select(user => user.Id)
-                    .ToList())));
+                    .ToList()));
     }
 }

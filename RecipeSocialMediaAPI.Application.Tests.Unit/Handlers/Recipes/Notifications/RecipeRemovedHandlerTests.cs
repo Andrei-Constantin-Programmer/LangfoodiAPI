@@ -40,8 +40,8 @@ public class RecipeRemovedHandlerTests
     {
         // Given
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessagesWithRecipe(It.IsAny<string>()))
-            .Returns(Enumerable.Empty<Message>());
+            .Setup(repo => repo.GetMessagesWithRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Enumerable.Empty<Message>());
 
         // When
         await _recipeRemovedHandlerSUT.Handle(new RecipeRemovedNotification("r1"), CancellationToken.None);
@@ -110,8 +110,8 @@ public class RecipeRemovedHandlerTests
             );
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessagesWithRecipe(It.IsAny<string>()))
-            .Returns(new List<Message> { message1, message2, message3 });
+            .Setup(repo => repo.GetMessagesWithRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Message> { message1, message2, message3 });
 
         // When
         await _recipeRemovedHandlerSUT.Handle(new RecipeRemovedNotification(recipeBeingDeleted.Id), CancellationToken.None);

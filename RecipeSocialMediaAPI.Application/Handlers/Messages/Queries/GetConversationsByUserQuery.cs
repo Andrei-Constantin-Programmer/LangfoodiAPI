@@ -29,16 +29,15 @@ internal class GetConversationsByUserHandler : IRequestHandler<GetConversationsB
         IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
             ?? throw new UserNotFoundException($"No User with id {request.UserId} was found");
 
-        return await Task.FromResult(_conversationQueryRepository
-            .GetConversationsByUser(user)
-            .Select(conversation => (ConversationDTO)(conversation switch
+        return (await _conversationQueryRepository
+            .GetConversationsByUser(user, cancellationToken))
+            .Select(conversation => conversation switch
             {
                 ConnectionConversation connConvo => _conversationMapper.MapConversationToConnectionConversationDTO(user, connConvo),
                 GroupConversation groupConvo => _conversationMapper.MapConversationToGroupConversationDTO(user, groupConvo),
 
                 _ => throw new UnsupportedConversationException(conversation)
-            }))
-            .ToList()
-        );
+            })
+            .ToList();
     }
 }

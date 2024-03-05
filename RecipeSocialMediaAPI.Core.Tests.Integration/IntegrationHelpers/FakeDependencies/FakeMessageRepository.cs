@@ -23,9 +23,9 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
 
     public Message? GetMessage(string id) => _collection.FirstOrDefault(m => m.Id == id);
 
-    public IEnumerable<Message> GetMessagesWithRecipe(string recipeId) => _collection
+    public Task<IEnumerable<Message>> GetMessagesWithRecipe(string recipeId, CancellationToken cancellationToken = default) => Task.FromResult(_collection
         .Where(m => m is RecipeMessage message 
-                 && message.Recipes.Any(r => r.Id == recipeId));
+                 && message.Recipes.Any(r => r.Id == recipeId)));
 
     public Message CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
     {

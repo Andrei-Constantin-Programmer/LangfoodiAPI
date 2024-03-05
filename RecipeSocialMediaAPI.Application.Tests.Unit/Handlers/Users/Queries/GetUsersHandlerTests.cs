@@ -81,8 +81,8 @@ public class GetUsersHandlerTests
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", options);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(Enumerable.Empty<IUserAccount>());
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Enumerable.Empty<IUserAccount>());
 
         // When
         var result = await _usersHandlerSUT.Handle(query, CancellationToken.None);
@@ -132,8 +132,8 @@ public class GetUsersHandlerTests
         UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount>() { account1, account2, queryingUser.Account });
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IUserAccount>() { account1, account2, queryingUser.Account });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -191,8 +191,8 @@ public class GetUsersHandlerTests
         UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount> { account1, account2 });
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IUserAccount> { account1, account2 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -248,8 +248,8 @@ public class GetUsersHandlerTests
         UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount> { account1, account2, queryingUser.Account });
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IUserAccount> { account1, account2, queryingUser.Account });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -307,8 +307,8 @@ public class GetUsersHandlerTests
         UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
         
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount> { account1, account2 });
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IUserAccount> { account1, account2 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -372,8 +372,8 @@ public class GetUsersHandlerTests
         };
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnectionsForUser(queryingUser.Account))
-            .Returns(new List<IConnection>
+            .Setup(repo => repo.GetConnectionsForUser(queryingUser.Account, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IConnection>
             {
                 new Connection("conn1", queryingUser.Account, account1, ConnectionStatus.Connected),
                 new Connection("conn2", account2, queryingUser.Account, ConnectionStatus.Connected)
@@ -386,8 +386,8 @@ public class GetUsersHandlerTests
         UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount> { account1, account2, queryingUser.Account, account3, account4 });
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IUserAccount> { account1, account2, queryingUser.Account, account3, account4 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);
@@ -459,9 +459,8 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString.ToUpper()}"
         };
 
-        _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnectionsForUser(queryingUser.Account))
-            .Returns(new List<IConnection>
+        _connectionQueryRepositoryMock.Setup(repo => repo.GetConnectionsForUser(queryingUser.Account, It.IsAny<CancellationToken>()))
+        .ReturnsAsync(new List<IConnection>
             {
                 new Connection("conn1", queryingUser.Account, account1, ConnectionStatus.Connected),
                 new Connection("conn2", account2, queryingUser.Account, ConnectionStatus.Connected)
@@ -474,8 +473,8 @@ public class GetUsersHandlerTests
         UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString))
-            .Returns(new List<IUserAccount> { account1, account2, queryingUser.Account, account3, account4 });
+            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IUserAccount> { account1, account2, queryingUser.Account, account3, account4 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
             .Returns(dto1);

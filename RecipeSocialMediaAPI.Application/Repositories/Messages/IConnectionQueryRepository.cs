@@ -8,5 +8,5 @@ public interface IConnectionQueryRepository
     IConnection? GetConnection(string connectionId);
     IConnection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2);
 
-    List<IConnection> GetConnectionsForUser(IUserAccount userAccount);
+    Task<List<IConnection>> GetConnectionsForUser(IUserAccount userAccount, CancellationToken cancellationToken = default);
 }

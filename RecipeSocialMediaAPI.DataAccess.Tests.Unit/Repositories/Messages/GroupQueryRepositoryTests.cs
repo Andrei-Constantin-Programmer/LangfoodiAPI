@@ -144,7 +144,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetGroupsByUser_WhenUserHasGroups_ReturnMappedGroups()
+    public async Task GetGroupsByUser_WhenUserHasGroups_ReturnMappedGroupsAsync()
     {
         // Given
         List<IUserAccount> users = new()
@@ -205,8 +205,8 @@ public class GroupQueryRepositoryTests
         );
 
         _groupCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Returns(new List<GroupDocument>() { groupDoc1, groupDoc2 });
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<GroupDocument>() { groupDoc1, groupDoc2 });
 
         Group group1 = new(groupDoc1.Id!, groupDoc1.GroupName, groupDoc1.GroupDescription, users.Take(3));
         Group group2 = new(groupDoc2.Id!, groupDoc2.GroupName, groupDoc2.GroupDescription, users.Take(1).Concat(users.Skip(3)).ToList());
@@ -219,7 +219,7 @@ public class GroupQueryRepositoryTests
             .Returns(group2);
 
         // When
-        var result = _groupQueryRepositorySUT.GetGroupsByUser(users[0]);
+        var result = await _groupQueryRepositorySUT.GetGroupsByUser(users[0]);
 
         // Then
         result.Should().HaveCount(2);
@@ -230,7 +230,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetGroupsByUser_WhenUserHasNoGroups_ReturnEmptyCollection()
+    public async Task GetGroupsByUser_WhenUserHasNoGroups_ReturnEmptyCollectionAsync()
     {
         // Given
         TestUserAccount testUser = new()
@@ -242,11 +242,11 @@ public class GroupQueryRepositoryTests
         };
 
         _groupCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Returns(new List<GroupDocument>());
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<GroupDocument>());
 
         // When
-        var result = _groupQueryRepositorySUT.GetGroupsByUser(testUser);
+        var result = await _groupQueryRepositorySUT.GetGroupsByUser(testUser);
 
         // Then
         result.Should().BeEmpty();
@@ -255,7 +255,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetGroupsByUser_WhenMongoThrowsAnException_LogErrorAndReturnEmptyCollection()
+    public async Task GetGroupsByUser_WhenMongoThrowsAnException_LogErrorAndReturnEmptyCollectionAsync()
     {
         // Given
         TestUserAccount testUser = new()
@@ -268,11 +268,11 @@ public class GroupQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _groupCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _groupQueryRepositorySUT.GetGroupsByUser(testUser);
+        var result = await _groupQueryRepositorySUT.GetGroupsByUser(testUser);
 
         // Then
         result.Should().BeEmpty();

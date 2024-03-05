@@ -17,9 +17,9 @@ internal class RecipeRemovedHandler : INotificationHandler<RecipeRemovedNotifica
         _messagePersistenceRepository = messagePersistenceRepository;
     }
 
-    public Task Handle(RecipeRemovedNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(RecipeRemovedNotification notification, CancellationToken cancellationToken)
     {
-        var messages = _messageQueryRepository.GetMessagesWithRecipe(notification.RecipeId);
+        var messages = await _messageQueryRepository.GetMessagesWithRecipe(notification.RecipeId, cancellationToken);
 
         foreach (var message in messages.Cast<RecipeMessage>())
         {
@@ -29,7 +29,5 @@ internal class RecipeRemovedHandler : INotificationHandler<RecipeRemovedNotifica
                 _messagePersistenceRepository.DeleteMessage(message);
             }
         }
-
-        return Task.CompletedTask;
     }
 }

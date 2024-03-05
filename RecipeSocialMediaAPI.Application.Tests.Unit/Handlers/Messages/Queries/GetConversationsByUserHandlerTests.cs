@@ -56,8 +56,8 @@ public class GetConversationsByUserHandlerTests
             .Returns(user);
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationsByUser(user.Account))
-            .Returns(new List<Conversation>());
+            .Setup(repo => repo.GetConversationsByUser(user.Account, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Conversation>());
 
         GetConversationsByUserQuery query = new(user.Account.Id);
 
@@ -131,8 +131,8 @@ public class GetConversationsByUserHandlerTests
             .Returns(convo2Dto);
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationsByUser(user1.Account))
-            .Returns(conversations);
+            .Setup(repo => repo.GetConversationsByUser(user1.Account, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversations);
 
         GetConversationsByUserQuery query = new(user1.Account.Id);
 

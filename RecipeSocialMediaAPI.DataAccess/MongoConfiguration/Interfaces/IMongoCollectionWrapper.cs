@@ -5,7 +5,7 @@ namespace RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 
 public interface IMongoCollectionWrapper<TDocument> where TDocument : MongoDocument
 {
-    IEnumerable<TDocument> GetAll(Expression<Func<TDocument, bool>> expr);
+    Task<IEnumerable<TDocument>> GetAll(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default);
     TDocument Insert(TDocument doc);
     bool Contains(Expression<Func<TDocument, bool>> expr);
     TDocument? Find(Expression<Func<TDocument, bool>> expr);

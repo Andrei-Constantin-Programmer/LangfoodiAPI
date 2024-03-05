@@ -5,5 +5,5 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 public interface IMessageQueryRepository
 {
     Message? GetMessage(string id);
-    IEnumerable<Message> GetMessagesWithRecipe(string recipeId);
+    Task<IEnumerable<Message>> GetMessagesWithRecipe(string recipeId, CancellationToken cancellationToken = default);
 }

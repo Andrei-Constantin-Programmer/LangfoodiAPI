@@ -54,40 +54,36 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public IEnumerable<RecipeAggregate> GetRecipesByChef(IUserAccount? chef)
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChef(IUserAccount? chef, CancellationToken cancellationToken = default)
     {
         if (chef is null)
         {
             return Enumerable.Empty<RecipeAggregate>();
         }
 
-        List<RecipeDocument> recipes;
+        IEnumerable<RecipeDocument> recipes = Enumerable.Empty<RecipeDocument>();
         try
         {
-            recipes = _recipeCollection
-                .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id)
-                .ToList();
+            recipes = await _recipeCollection
+                .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id, cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogInformation(ex, "There was an error trying to get recipes for chef with id {ChefId}: {ErrorMessage}", chef.Id, ex.Message);
-            recipes = new();
         }
 
-        return recipes.Count == 0
-            ? Enumerable.Empty<RecipeAggregate>()
-            : recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
+        return recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
     }
 
-    public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId)
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefId(string chefId, CancellationToken cancellationToken = default)
     {
         IUserAccount? chef = _userQueryRepository.GetUserById(chefId)?.Account;
-        return GetRecipesByChef(chef);
+        return await GetRecipesByChef(chef, cancellationToken);
     }
 
-    public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName)
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefName(string chefName, CancellationToken cancellationToken = default)
     {
         IUserAccount? chef = _userQueryRepository.GetUserByUsername(chefName)?.Account;
-        return GetRecipesByChef(chef);
+        return await GetRecipesByChef(chef, cancellationToken);
     }
 }

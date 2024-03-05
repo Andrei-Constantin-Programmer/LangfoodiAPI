@@ -6,7 +6,6 @@ using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
@@ -55,11 +54,11 @@ public class MessageQueryRepository : IMessageQueryRepository
         return _mapper.MapMessageFromDocument(messageDocument, sender, repliedToMessage);
     }
 
-    public IEnumerable<Message> GetMessagesWithRecipe(string recipeId)
+    public async Task<IEnumerable<Message>> GetMessagesWithRecipe(string recipeId, CancellationToken cancellationToken = default)
     {
-        var messageDocuments = _messageCollection.GetAll(messageDoc 
+        var messageDocuments = await _messageCollection.GetAll(messageDoc 
             => messageDoc.MessageContent.RecipeIds != null 
-            && messageDoc.MessageContent.RecipeIds.Contains(recipeId));
+            && messageDoc.MessageContent.RecipeIds.Contains(recipeId), cancellationToken);
         
         return messageDocuments
             .Select(messageDoc => _mapper.MapMessageFromDocument(

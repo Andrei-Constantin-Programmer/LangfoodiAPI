@@ -69,8 +69,8 @@ public class GetGroupsByUserHandlerTests
         Group group3 = new("g3", "Group 3", "Group not involving user 1", new List<IUserAccount>() { users[1], users[2] } );
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupsByUser(users[0]))
-            .Returns(new List<Group>() { group1, group2 });
+            .Setup(repo => repo.GetGroupsByUser(users[0], It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Group>() { group1, group2 });
 
         GetGroupsByUserQuery query = new(users[0].Id);
 
@@ -95,7 +95,7 @@ public class GetGroupsByUserHandlerTests
         _userQueryRepositoryMock
             .Verify(repo => repo.GetUserById(It.IsAny<string>()), Times.Once);
         _groupQueryRepositoryMock
-            .Verify(repo => repo.GetGroupsByUser(It.IsAny<IUserAccount>()), Times.Once);
+            .Verify(repo => repo.GetGroupsByUser(It.IsAny<IUserAccount>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -121,8 +121,8 @@ public class GetGroupsByUserHandlerTests
             });
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupsByUser(testUser))
-            .Returns(new List<Group>());
+            .Setup(repo => repo.GetGroupsByUser(testUser, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Group>());
 
         GetGroupsByUserQuery query = new(testUser.Id);
 

@@ -107,27 +107,26 @@ public class ConversationQueryRepository : IConversationQueryRepository
             : null;
     }
 
-    public List<Conversation> GetConversationsByUser(IUserAccount userAccount)
+    public async Task<List<Conversation>> GetConversationsByUser(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
-        List<ConversationDocument> conversations = new();
+        IEnumerable<ConversationDocument> conversations = Enumerable.Empty<ConversationDocument>();
 
         try
         {
-            var groupIds = _groupQueryRepository
-                .GetGroupsByUser(userAccount)
+            var groupIds = (await _groupQueryRepository
+                .GetGroupsByUser(userAccount, cancellationToken))
                 ?.Select(g => g.GroupId)
                 .ToList() ?? new List<string>();
 
-            var connectionIds = _connectionQueryRepository
-                .GetConnectionsForUser(userAccount)
+            var connectionIds = (await _connectionQueryRepository
+                .GetConnectionsForUser(userAccount, cancellationToken))
                 ?.Select(c => c.ConnectionId)
                 .ToList() ?? new List<string>();
 
-            conversations = _conversationCollection
+            conversations = (await _conversationCollection
                 .GetAll(conversationDoc => conversationDoc.ConnectionId == null
                     ? groupIds.Any(id => id == conversationDoc.GroupId)
-                    : connectionIds.Any(id => id == conversationDoc.ConnectionId))
-                .ToList();
+                    : connectionIds.Any(id => id == conversationDoc.ConnectionId), cancellationToken));
         }
         catch (Exception ex)
         {

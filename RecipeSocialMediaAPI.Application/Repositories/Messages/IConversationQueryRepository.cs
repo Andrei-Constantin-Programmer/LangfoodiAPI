@@ -10,5 +10,5 @@ public interface IConversationQueryRepository
     ConnectionConversation? GetConversationByConnection(string connectionId);
     GroupConversation? GetConversationByGroup(string groupId);
 
-    List<Conversation> GetConversationsByUser(IUserAccount userAccount);
+    Task<List<Conversation>> GetConversationsByUser(IUserAccount userAccount, CancellationToken cancellationToken = default);
 }

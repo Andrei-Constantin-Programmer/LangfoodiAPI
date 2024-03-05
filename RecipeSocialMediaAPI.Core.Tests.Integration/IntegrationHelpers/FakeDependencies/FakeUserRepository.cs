@@ -38,7 +38,7 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
 
     public bool DeleteUser(string id) => _collection.RemoveAll(user => user.Account.Id == id) > 0;
 
-    public IEnumerable<IUserCredentials> GetAllUsers() => _collection;
+    public async Task<IEnumerable<IUserCredentials>> GetAllUsers(CancellationToken cancellationToken = default) => await Task.FromResult(_collection);
 
     public IUserCredentials? GetUserById(string id) => _collection.Find(user => user.Account.Id == id);
 
@@ -64,8 +64,8 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         return true;
     }
 
-    public IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString) => _collection
+    public Task<IEnumerable<IUserAccount>> GetAllUserAccountsContaining(string containedString, CancellationToken cancellationToken = default) => Task.FromResult(_collection
         .Where(user => user.Account.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
                     || user.Account.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase))
-        .Select(user => user.Account);
+        .Select(user => user.Account));
 }

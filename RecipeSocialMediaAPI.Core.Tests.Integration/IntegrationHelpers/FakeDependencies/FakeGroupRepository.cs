@@ -15,8 +15,8 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
 
     public Group? GetGroupById(string groupId) => _collection.FirstOrDefault(group => group.GroupId == groupId);
 
-    public IEnumerable<Group> GetGroupsByUser(IUserAccount userAccount) => _collection
-        .Where(group => group.Users.Any(user => user.Id == userAccount.Id));
+    public Task<IEnumerable<Group>> GetGroupsByUser(IUserAccount userAccount, CancellationToken cancellationToken = default) => Task.FromResult(_collection
+        .Where(group => group.Users.Any(user => user.Id == userAccount.Id)));
 
     public Group CreateGroup(string groupName, string groupDescription, List<IUserAccount> users)
     {

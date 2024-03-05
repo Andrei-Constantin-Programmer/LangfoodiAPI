@@ -19,10 +19,10 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
         _collection.FirstOrDefault(conn => (conn.Account1.Id == userAccount1.Id && conn.Account2.Id == userAccount2.Id)
                                               || (conn.Account1.Id == userAccount2.Id && conn.Account2.Id == userAccount1.Id));
 
-    public List<IConnection> GetConnectionsForUser(IUserAccount userAccount) => 
-        _collection
+    public Task<List<IConnection>> GetConnectionsForUser(IUserAccount userAccount, CancellationToken cancellationToken = default) =>
+        Task.FromResult(_collection
             .Where(conn => conn.Account1.Id == userAccount.Id || conn.Account2.Id == userAccount.Id)
-            .ToList();
+            .ToList());
 
     public IConnection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus)
     {

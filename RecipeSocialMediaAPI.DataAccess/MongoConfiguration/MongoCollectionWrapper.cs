@@ -20,9 +20,10 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         _collection = _database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
     }
 
-    public IEnumerable<TDocument> GetAll(Expression<Func<TDocument, bool>> expr)
+    public async Task<IEnumerable<TDocument>> GetAll(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
-        return _collection?.Find(expr).ToEnumerable() ?? Enumerable.Empty<TDocument>();
+        return (await _collection.FindAsync(expr, cancellationToken: cancellationToken))
+            .ToEnumerable(cancellationToken: cancellationToken) ?? Enumerable.Empty<TDocument>();
     }
 
     public TDocument Insert(TDocument doc)

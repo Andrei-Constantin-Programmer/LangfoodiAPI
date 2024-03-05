@@ -588,7 +588,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessagesWithRecipe_WhenNoMessagesFoundWithRecipeId_ReturnEmptyCollection()
+    public async Task GetMessagesWithRecipe_WhenNoMessagesFoundWithRecipeId_ReturnEmptyCollectionAsync()
     {
         // Given
         string senderId = "50";
@@ -618,14 +618,15 @@ public class MessageQueryRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
 
         _messageCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(Enumerable.Empty<MessageDocument>());
+            .Setup(collection => collection.GetAll(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Enumerable.Empty<MessageDocument>());
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(senderId))
             .Returns(testSender);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
+        var result = await _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
 
         // Then
         result.Should().NotBeNull();
@@ -635,7 +636,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessagesWithRecipe_WhenMessagesFoundWithRecipeId_ReturnMappedMessages()
+    public async Task GetMessagesWithRecipe_WhenMessagesFoundWithRecipeId_ReturnMappedMessagesAsync()
     {
         // Given
         string senderId = "50";
@@ -684,14 +685,16 @@ public class MessageQueryRepositoryTests
             .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
             .Returns(recipeMessage);
         _messageCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(new List<MessageDocument> { testDocument });
+            .Setup(collection => collection.GetAll(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<MessageDocument> { testDocument });
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(senderId))
             .Returns(testSender);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
+        var result = await _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
 
         // Then
         result.Should().NotBeNull();
@@ -702,7 +705,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessagesWithRecipe_WhenUserNotFound_ThrowUserDocumentNotFoundException()
+    public async Task GetMessagesWithRecipe_WhenUserNotFound_ThrowUserDocumentNotFoundExceptionAsync()
     {
         // Given
         string senderId = "50";
@@ -748,16 +751,18 @@ public class MessageQueryRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
 
         _messageCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(new List<MessageDocument> { testDocument });
+            .Setup(collection => collection.GetAll(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<MessageDocument> { testDocument });
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserById(senderId))
             .Returns((IUserCredentials?)null);
 
         // When
-        var testAction = () => _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id).ToList();
+        var testAction = async () => (await _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id)).ToList();
 
         // Then
-        testAction.Should().Throw<UserDocumentNotFoundException>();
+        await testAction.Should().ThrowAsync<UserDocumentNotFoundException>();
     }
 }
