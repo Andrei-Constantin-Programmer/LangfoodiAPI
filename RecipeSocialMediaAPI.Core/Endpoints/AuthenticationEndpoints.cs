@@ -22,7 +22,7 @@ public static class AuthenticationEndpoints
             [FromBody] AuthenticationAttemptContract authenticationAttempt,
             [FromServices] ISender sender) =>
         {
-            var successfulAuthentication = await sender.Send(new AuthenticateUserQuery(authenticationAttempt.HandlerOrEmail, authenticationAttempt.Password));
+            var successfulAuthentication = await sender.Send(new AuthenticateUserQuery(authenticationAttempt.Email, authenticationAttempt.Password));
 
             return Results.Ok(successfulAuthentication);
         });
