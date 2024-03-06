@@ -39,7 +39,7 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
 
     public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefName(string chefName, CancellationToken cancellationToken = default) => await Task.FromResult(_collection.FindAll(x => x.Chef.UserName == chefName));
 
-    public bool UpdateRecipe(RecipeAggregate recipe)
+    public async Task<bool> UpdateRecipe(RecipeAggregate recipe, CancellationToken cancellationToken = default)
     {
         RecipeAggregate? existingRecipe = _collection.FirstOrDefault(x => x.Id == recipe.Id);
         if (existingRecipe is null)
@@ -58,6 +58,6 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         _collection.Remove(existingRecipe);
         _collection.Add(updatedRecipe);
 
-        return true;
+        return await Task.FromResult(true);
     }
 }

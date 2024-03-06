@@ -34,11 +34,11 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         return await _mapper.MapMessageFromDocument(messageDocument, sender, messageRepliedTo, cancellationToken);
     }
 
-    public bool UpdateMessage(Message message)
+    public async Task<bool> UpdateMessage(Message message, CancellationToken cancellationToken = default)
     {
         try
         {
-            return _messageCollection.UpdateRecord(new MessageDocument(
+            return await _messageCollection.UpdateRecord(new MessageDocument(
                 Id: message.Id,
                 SenderId: message.Sender.Id,
                 MessageContent: message switch
@@ -54,7 +54,8 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
                 LastUpdatedDate: message.UpdatedDate,
                 MessageRepliedToId: message.RepliedToMessage?.Id
             ),
-            doc => doc.Id == message.Id);
+            doc => doc.Id == message.Id,
+            cancellationToken);
         }
         catch (Exception ex)
         {

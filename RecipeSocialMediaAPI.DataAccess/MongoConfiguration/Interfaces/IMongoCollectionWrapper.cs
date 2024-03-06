@@ -8,7 +8,7 @@ public interface IMongoCollectionWrapper<TDocument> where TDocument : MongoDocum
     Task<TDocument?> Find(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default);
     Task<IEnumerable<TDocument>> GetAll(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default);
     Task<TDocument> Insert(TDocument doc, CancellationToken cancellationToken = default);
+    Task<bool> UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default);
     bool Contains(Expression<Func<TDocument, bool>> expr);
     bool Delete(Expression<Func<TDocument, bool>> expr);
-    bool UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr);
 }

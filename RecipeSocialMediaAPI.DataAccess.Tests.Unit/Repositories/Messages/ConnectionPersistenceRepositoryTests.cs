@@ -84,7 +84,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConnection_WhenUpdateIsSuccessful_ReturnTrue()
+    public async Task UpdateConnection_WhenUpdateIsSuccessful_ReturnTrueAsync()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -114,11 +114,12 @@ public class ConnectionPersistenceRepositoryTests
                 => document.AccountId1 == testUser1.Id
                    && document.AccountId2 == testUser2.Id
                    && document.ConnectionStatus == "Connected"),
-                   It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(true);
+                   It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
+                   It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.UpdateConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.UpdateConnection(testConnection);
 
         // Then
         result.Should().BeTrue();
@@ -127,7 +128,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConnection_WhenUpdateIsUnsuccessful_ReturnFalse()
+    public async Task UpdateConnection_WhenUpdateIsUnsuccessful_ReturnFalseAsync()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -157,11 +158,12 @@ public class ConnectionPersistenceRepositoryTests
                 => document.AccountId1 == testUser1.Id
                    && document.AccountId2 == testUser2.Id
                    && document.ConnectionStatus == "Connected"),
-                   It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(false);
+                   It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                   It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.UpdateConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.UpdateConnection(testConnection);
 
         // Then
         result.Should().BeFalse();

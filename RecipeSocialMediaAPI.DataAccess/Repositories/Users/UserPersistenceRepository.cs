@@ -33,10 +33,6 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         return _mapper.MapUserDocumentToUser(newUserDocument);
     }
 
-    public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);
-
-    public bool DeleteUser(string id) => _userCollection.Delete(userDoc => userDoc.Id == id);
-
     public async Task<bool> UpdateUser(IUserCredentials user, CancellationToken cancellationToken = default)
     {
         var userDocument = await _userCollection.Find(userDoc => userDoc.Id == user.Account.Id, cancellationToken);
@@ -57,6 +53,10 @@ public class UserPersistenceRepository : IUserPersistenceRepository
             BlockedConnectionIds = user.Account.BlockedConnectionIds.ToList()
         };
 
-        return _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id);
+        return await _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id, cancellationToken);
     }
+
+    public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);
+
+    public bool DeleteUser(string id) => _userCollection.Delete(userDoc => userDoc.Id == id);
 }

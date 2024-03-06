@@ -37,7 +37,7 @@ internal class MarkConversationAsReadHandler : IRequestHandler<MarkConversationA
         foreach (var message in unseenMessages)
         {
             message.MarkAsSeenBy(user);
-            _messagePersistenceRepository.UpdateMessage(message);
+            await _messagePersistenceRepository.UpdateMessage(message, cancellationToken);
         }
     }
 }

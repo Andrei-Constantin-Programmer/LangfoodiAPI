@@ -262,7 +262,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdate()
+    public async Task UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdateAsync()
     {
         // Given
         TestDocument testDocument = new("Test");
@@ -271,7 +271,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         TestDocument updatedDocument = new("Updated");
 
         // When
-        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.TestProperty == "Nonexistent");
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.TestProperty == "Nonexistent");
 
         // Then
         wasUpdatedSuccessfully.Should().BeFalse();
@@ -282,13 +282,13 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdate()
+    public async Task UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdateAsync()
     {
         // Given
         TestDocument updatedDocument = new("Updated");
 
         // When
-        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => true);
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => true);
 
         // Then
         wasUpdatedSuccessfully.Should().BeFalse();
@@ -298,7 +298,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdate()
+    public async Task UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdateAsync()
     {
         // Given
         TestDocument testDocument = new("Test");
@@ -307,7 +307,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         TestDocument updatedDocument = new(Id: testDocument.Id, TestProperty: "Updated");
 
         // When
-        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.Id == testDocument.Id);
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.Id == testDocument.Id);
 
         // Then
         wasUpdatedSuccessfully.Should().BeTrue();

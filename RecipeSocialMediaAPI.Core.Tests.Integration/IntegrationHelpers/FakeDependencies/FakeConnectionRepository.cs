@@ -33,7 +33,7 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
         return await Task.FromResult(newConnection);
     }
 
-    public bool UpdateConnection(IConnection connection)
+    public async Task<bool> UpdateConnection(IConnection connection, CancellationToken cancellationToken = default)
     {
         IConnection? existingConnection = _collection.FirstOrDefault(x => x.ConnectionId == connection.ConnectionId);
         if (existingConnection is null)
@@ -46,7 +46,7 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
         _collection.Remove(existingConnection);
         _collection.Add(updatedConnection);
 
-        return true;
+        return await Task.FromResult(true);
     }
 
     public bool DeleteConnection(IConnection connection) => _collection.Remove(connection);

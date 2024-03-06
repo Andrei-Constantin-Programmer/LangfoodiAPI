@@ -28,7 +28,7 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
         return await Task.FromResult(group);
     }
 
-    public bool UpdateGroup(Group group)
+    public async Task<bool> UpdateGroup(Group group, CancellationToken cancellationToken = default)
     {
         Group? existingGroup = _collection.FirstOrDefault(g => g.GroupId == group.GroupId);
         if (existingGroup is null)
@@ -40,7 +40,7 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
         _collection.Remove(existingGroup);
         _collection.Add(updatedGroup);
 
-        return true;
+        return await Task.FromResult(true);
     }
 
     public bool DeleteGroup(Group group) => _collection.Remove(group);

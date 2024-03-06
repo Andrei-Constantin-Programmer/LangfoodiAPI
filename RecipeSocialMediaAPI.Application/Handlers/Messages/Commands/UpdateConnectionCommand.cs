@@ -46,7 +46,7 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
 
         connection.Status = newStatus;
 
-        var isSuccessful = _connectionPersistenceRepository.UpdateConnection(connection);
+        var isSuccessful = await _connectionPersistenceRepository.UpdateConnection(connection, cancellationToken);
 
         if (!isSuccessful)
         {

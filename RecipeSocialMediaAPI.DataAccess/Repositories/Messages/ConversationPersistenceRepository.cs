@@ -63,13 +63,14 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
             _ => throw new InvalidConversationException($"Could not update conversation with id {conversation.ConversationId} of unknown type {conversation.GetType()}"),
         };
 
-        return _conversationCollection.UpdateRecord(new ConversationDocument(
+        return await _conversationCollection.UpdateRecord(
+            new ConversationDocument(
                 Id: conversation.ConversationId,
                 ConnectionId: connectionId,
                 GroupId: groupId,
-                Messages: conversation.Messages.Select(message => message.Id).ToList()
-            ),
-            conversationDoc => conversationDoc.Id == conversation.ConversationId);
+                Messages: conversation.Messages.Select(message => message.Id).ToList()),
+            conversationDoc => conversationDoc.Id == conversation.ConversationId,
+            cancellationToken);
     }
 
     private async Task<string?> GetConnectionId(IConnection connection, CancellationToken cancellationToken = default) => 

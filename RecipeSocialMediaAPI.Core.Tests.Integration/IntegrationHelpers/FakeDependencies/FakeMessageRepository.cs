@@ -56,7 +56,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         return message;
     }
 
-    public bool UpdateMessage(Message message)
+    public async Task<bool> UpdateMessage(Message message, CancellationToken cancellationToken = default)
     {
         Message? existingMessage = _collection.FirstOrDefault(x => x.Id == message.Id);
         if (existingMessage is null)
@@ -67,7 +67,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         _collection.Remove(existingMessage);
         _collection.Add(message);
 
-        return true;
+        return await Task.FromResult(true);
     }
 
     public bool DeleteMessage(Message message) => _collection.Remove(message);

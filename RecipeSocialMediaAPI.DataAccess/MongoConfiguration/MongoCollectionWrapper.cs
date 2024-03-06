@@ -44,6 +44,18 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         }
     }
 
+    public async Task<bool> UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return (await _collection.ReplaceOneAsync(expr, record, cancellationToken: cancellationToken)).ModifiedCount > 0;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     public bool Delete(Expression<Func<TDocument, bool>> expr)
     {
         return _collection?.DeleteOne(expr).DeletedCount > 0;
@@ -52,18 +64,6 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
     public bool Contains(Expression<Func<TDocument, bool>> expr)
     {
         return _collection?.Find(expr).Any() ?? false;
-    }
-
-    public bool UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr)
-    {
-        try
-        {
-            return _collection?.ReplaceOne(expr, record).ModifiedCount > 0;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
     }
 
     private protected static string GetCollectionName(Type documentType) =>

@@ -57,7 +57,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             request.Contract.ThumbnailId
         );
 
-        bool isSuccessful = _recipePersistenceRepository.UpdateRecipe(updatedRecipe);
+        bool isSuccessful = await _recipePersistenceRepository.UpdateRecipe(updatedRecipe, cancellationToken);
 
         if (!isSuccessful)
         {

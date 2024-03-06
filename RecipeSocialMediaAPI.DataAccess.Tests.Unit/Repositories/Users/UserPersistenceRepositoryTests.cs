@@ -148,8 +148,11 @@ public class UserPersistenceRepositoryTests
             .ReturnsAsync(testDocument);
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<UserDocument>(), It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<UserDocument>(), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var result = await _userPersistenceRepositorySUT.UpdateUser(updatedUser);
@@ -168,7 +171,8 @@ public class UserPersistenceRepositoryTests
                         && doc.ProfileImageId == updatedUser.Account.ProfileImageId
                         && doc.PinnedConversationIds!.First() == updatedUser.Account.PinnedConversationIds[0]
                         && doc.PinnedConversationIds!.Skip(1).First() == updatedUser.Account.PinnedConversationIds[1]),
-                    It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression))),
+                    It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
@@ -229,8 +233,11 @@ public class UserPersistenceRepositoryTests
             .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<UserDocument>(), It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<UserDocument>(), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
         var result = await _userPersistenceRepositorySUT.UpdateUser(updatedUser);

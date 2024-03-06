@@ -15,7 +15,7 @@ public interface IRecipePersistenceRepository
         DateTimeOffset lastUpdatedDate,
         string? thumbnailId,
         CancellationToken cancellationToken = default);
-    bool UpdateRecipe(RecipeAggregate recipe);
+    Task<bool> UpdateRecipe(RecipeAggregate recipe, CancellationToken cancellationToken = default);
     bool DeleteRecipe(RecipeAggregate recipe);
     bool DeleteRecipe(string id);
 }

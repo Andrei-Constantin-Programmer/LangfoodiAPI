@@ -25,11 +25,11 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
         return await _mapper.MapGroupFromDocument(groupDocument, cancellationToken);
     }
 
-    public bool UpdateGroup(Group group)
+    public async Task<bool> UpdateGroup(Group group, CancellationToken cancellationToken = default)
     {
-        return _groupCollection.UpdateRecord(
+        return await _groupCollection.UpdateRecord(
             new GroupDocument(group.GroupName, group.GroupDescription, group.Users.Select(user => user.Id).ToList(), group.GroupId),
-            groupDoc => groupDoc.Id == group.GroupId);
+            groupDoc => groupDoc.Id == group.GroupId, cancellationToken);
     }
 
     public bool DeleteGroup(Group group) => DeleteGroup(group.GroupId);

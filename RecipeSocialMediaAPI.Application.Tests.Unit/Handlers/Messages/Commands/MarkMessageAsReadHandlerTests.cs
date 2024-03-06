@@ -82,12 +82,14 @@ public class MarkMessageAsReadHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<Message>(m
-                    => m.Id == message.Id
-                    && m.Sender == message.Sender
-                    && m.SeenBy.SequenceEqual(new List<IUserAccount> { user1.Account, user2.Account })
-                    && m.SentDate == message.SentDate
-                    && m.UpdatedDate == message.UpdatedDate)), 
+            .Verify(repo => repo.UpdateMessage(
+                    It.Is<Message>(m
+                        => m.Id == message.Id
+                        && m.Sender == message.Sender
+                        && m.SeenBy.SequenceEqual(new List<IUserAccount> { user1.Account, user2.Account })
+                        && m.SentDate == message.SentDate
+                        && m.UpdatedDate == message.UpdatedDate), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 

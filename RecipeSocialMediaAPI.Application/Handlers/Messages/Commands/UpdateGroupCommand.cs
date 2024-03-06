@@ -58,7 +58,7 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
         }
         else
         {
-            isSuccessful = _groupPersistenceRepository.UpdateGroup(updatedGroup);
+            isSuccessful = await _groupPersistenceRepository.UpdateGroup(updatedGroup, cancellationToken);
         }
 
         if (!isSuccessful)

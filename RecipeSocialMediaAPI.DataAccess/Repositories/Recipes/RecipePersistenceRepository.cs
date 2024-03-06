@@ -40,7 +40,8 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public bool UpdateRecipe(RecipeAggregate recipe) => _recipeCollection.UpdateRecord(
+    public async Task<bool> UpdateRecipe(RecipeAggregate recipe, CancellationToken cancellationToken = default) => await 
+        _recipeCollection.UpdateRecord(
             new RecipeDocument(
                 Id: recipe.Id,
                 Title: recipe.Title,
@@ -55,9 +56,9 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 CreationDate: recipe.CreationDate,
                 LastUpdatedDate: recipe.LastUpdatedDate,
                 Tags: recipe.Tags.ToList(),
-                ServingSize: recipe.Recipe.ServingSize is not null ? (recipe.Recipe.ServingSize.Quantity, recipe.Recipe.ServingSize.UnitOfMeasurement) : null
-            ),
-            doc => doc.Id == recipe.Id
+                ServingSize: recipe.Recipe.ServingSize is not null ? (recipe.Recipe.ServingSize.Quantity, recipe.Recipe.ServingSize.UnitOfMeasurement) : null),
+            doc => doc.Id == recipe.Id,
+            cancellationToken
         );
 
     public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);

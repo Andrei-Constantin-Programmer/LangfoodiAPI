@@ -32,7 +32,7 @@ internal class MarkMessageAsReadHandler : IRequestHandler<MarkMessageAsReadComma
 
         message.MarkAsSeenBy(user);
 
-        _messagePersistenceRepository.UpdateMessage(message);
+        await _messagePersistenceRepository.UpdateMessage(message, cancellationToken);
 
         await _publisher.Publish(new MessageMarkedAsReadNotification(user.Id, message.Id), cancellationToken);
     }

@@ -81,10 +81,12 @@ public class UpdateConnectionHandlerTests
             .ReturnsAsync(existingConnection);
 
         _connectionPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateConnection(It.Is<IConnection>(
-                connection => (connection.Account1 == user1.Account && connection.Account2 == user2.Account)
-                           || (connection.Account1 == user2.Account && connection.Account2 == user1.Account))))
-            .Returns(true);
+            .Setup(repo => repo.UpdateConnection(
+                It.Is<IConnection>(connection 
+                    => (connection.Account1 == user1.Account && connection.Account2 == user2.Account)
+                    || (connection.Account1 == user2.Account && connection.Account2 == user1.Account)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, newConnectionStatus);
 
@@ -94,7 +96,9 @@ public class UpdateConnectionHandlerTests
         // Then
         await testAction.Should().NotThrowAsync();
         _connectionPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateConnection(It.Is<IConnection>(connection => connection.Status == connectionStatusEnumValue)), Times.Once);
+            .Verify(repo => repo.UpdateConnection(
+                It.Is<IConnection>(connection => connection.Status == connectionStatusEnumValue), 
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -145,8 +149,8 @@ public class UpdateConnectionHandlerTests
             .ReturnsAsync(existingConnection);
 
         _connectionPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateConnection(It.IsAny<IConnection>()))
-            .Returns(false);
+            .Setup(repo => repo.UpdateConnection(It.IsAny<IConnection>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Connected");
 
@@ -212,7 +216,7 @@ public class UpdateConnectionHandlerTests
         // Then
         await testAction.Should().NotThrowAsync();
         _connectionPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
+            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -271,7 +275,7 @@ public class UpdateConnectionHandlerTests
         await testAction.Should()
             .ThrowAsync<UnsupportedConnectionStatusException>();
         _connectionPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
+            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -327,7 +331,7 @@ public class UpdateConnectionHandlerTests
         // Thens
         await testAction.Should().ThrowAsync<ConnectionNotFoundException>();
         _connectionPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
+            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Theory]
@@ -383,6 +387,6 @@ public class UpdateConnectionHandlerTests
             .WithMessage($"No user found with id {(!user1Exists ? user1.Account.Id : user2.Account.Id)}");
 
         _connectionPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>()), Times.Never);
+            .Verify(repo => repo.UpdateConnection(It.IsAny<IConnection>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

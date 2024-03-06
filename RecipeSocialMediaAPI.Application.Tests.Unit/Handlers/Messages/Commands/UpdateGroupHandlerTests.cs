@@ -117,12 +117,13 @@ public class UpdateGroupHandlerTests
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(It.Is<Group>(
-                group => group.GroupId == existingGroup.GroupId
-                      && group.GroupName == command.Contract.GroupName
-                      && group.GroupDescription == command.Contract.GroupDescription
-                      && group.Users.Count == _testUsers.Count)))
-            .Returns(true);
+            .Setup(repo => repo.UpdateGroup(
+                It.Is<Group>(group => group.GroupId == existingGroup.GroupId
+                                   && group.GroupName == command.Contract.GroupName
+                                   && group.GroupDescription == command.Contract.GroupDescription
+                                   && group.Users.Count == _testUsers.Count), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
@@ -150,12 +151,14 @@ public class UpdateGroupHandlerTests
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(It.Is<Group>(
-                group => group.GroupId == existingGroup.GroupId
-                      && group.GroupName == command.Contract.GroupName
-                      && group.GroupDescription == command.Contract.GroupDescription
-                      && !group.Users.Any())))
-            .Returns(false);
+            .Setup(repo => repo.UpdateGroup(
+                It.Is<Group>(
+                    group => group.GroupId == existingGroup.GroupId
+                          && group.GroupName == command.Contract.GroupName
+                          && group.GroupDescription == command.Contract.GroupDescription
+                          && !group.Users.Any()), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
         var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
@@ -195,8 +198,8 @@ public class UpdateGroupHandlerTests
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(It.IsAny<Group>()))
-            .Returns(true);
+            .Setup(repo => repo.UpdateGroup(It.IsAny<Group>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
@@ -241,14 +244,16 @@ public class UpdateGroupHandlerTests
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(It.Is<Group>(
-                group => group.GroupId == existingGroup.GroupId
-                      && group.GroupName == existingGroup.GroupName
-                      && group.GroupDescription == existingGroup.GroupDescription
-                      && group.Users.Count == 2
-                      && group.Users.Contains(_testUsers[0].Account)
-                      && group.Users.Contains(_testUsers[1].Account))))
-            .Returns(true);
+            .Setup(repo => repo.UpdateGroup(
+                It.Is<Group>(
+                    group => group.GroupId == existingGroup.GroupId
+                          && group.GroupName == existingGroup.GroupName
+                          && group.GroupDescription == existingGroup.GroupDescription
+                          && group.Users.Count == 2
+                          && group.Users.Contains(_testUsers[0].Account)
+                          && group.Users.Contains(_testUsers[1].Account)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
@@ -349,16 +354,18 @@ public class UpdateGroupHandlerTests
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(It.Is<Group>(
-                group => group.GroupId == existingGroup.GroupId
-                      && group.GroupName == existingGroup.GroupName
-                      && group.GroupDescription == existingGroup.GroupDescription
-                      && group.Users.Count == 4
-                      && group.Users.Contains(_testUsers[0].Account)
-                      && group.Users.Contains(_testUsers[1].Account)
-                      && group.Users.Contains(_testUsers[2].Account)
-                      && group.Users.Contains(_testUsers[3].Account))))
-            .Returns(true);
+            .Setup(repo => repo.UpdateGroup(
+                It.Is<Group>(
+                    group => group.GroupId == existingGroup.GroupId
+                          && group.GroupName == existingGroup.GroupName
+                          && group.GroupDescription == existingGroup.GroupDescription
+                          && group.Users.Count == 4
+                          && group.Users.Contains(_testUsers[0].Account)
+                          && group.Users.Contains(_testUsers[1].Account)
+                          && group.Users.Contains(_testUsers[2].Account)
+                          && group.Users.Contains(_testUsers[3].Account)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);
@@ -403,14 +410,16 @@ public class UpdateGroupHandlerTests
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(It.Is<Group>(
-                group => group.GroupId == existingGroup.GroupId
-                      && group.GroupName == existingGroup.GroupName
-                      && group.GroupDescription == existingGroup.GroupDescription
-                      && group.Users.Count == 2
-                      && group.Users.Contains(_testUsers[0].Account)
-                      && group.Users.Contains(_testUsers[3].Account))))
-            .Returns(true);
+            .Setup(repo => repo.UpdateGroup(
+                It.Is<Group>(
+                    group => group.GroupId == existingGroup.GroupId
+                          && group.GroupName == existingGroup.GroupName
+                          && group.GroupDescription == existingGroup.GroupDescription
+                          && group.Users.Count == 2
+                          && group.Users.Contains(_testUsers[0].Account)
+                          && group.Users.Contains(_testUsers[3].Account)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);

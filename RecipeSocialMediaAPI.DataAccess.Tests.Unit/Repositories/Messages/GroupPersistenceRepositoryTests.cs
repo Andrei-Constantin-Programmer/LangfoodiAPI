@@ -97,7 +97,7 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateGroup_WhenUpdateIsSuccessful_ReturnTrue()
+    public async Task UpdateGroup_WhenUpdateIsSuccessful_ReturnTrueAsync()
     {
         // Given
         List<IUserAccount> users = new()
@@ -129,11 +129,12 @@ public class GroupPersistenceRepositoryTests
                              && groupDoc.GroupName == group.GroupName
                              && groupDoc.GroupDescription == group.GroupDescription
                              && groupDoc.UserIds.SequenceEqual(users.Select(user => user.Id))),
-                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(true);
+                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _groupPersistenceRepositorySUT.UpdateGroup(group);
+        var result = await _groupPersistenceRepositorySUT.UpdateGroup(group);
 
         // Then
         result.Should().BeTrue();
@@ -142,7 +143,7 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateGroup_WhenUpdateIsUnsuccessful_ReturnFalse()
+    public async Task UpdateGroup_WhenUpdateIsUnsuccessful_ReturnFalseAsync()
     {
         // Given
         List<IUserAccount> users = new()
@@ -174,11 +175,12 @@ public class GroupPersistenceRepositoryTests
                              && groupDoc.GroupName == group.GroupName
                              && groupDoc.GroupDescription == group.GroupDescription
                              && groupDoc.UserIds.SequenceEqual(users.Select(user => user.Id))),
-                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(false);
+                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _groupPersistenceRepositorySUT.UpdateGroup(group);
+        var result = await _groupPersistenceRepositorySUT.UpdateGroup(group);
 
         // Then
         result.Should().BeFalse();

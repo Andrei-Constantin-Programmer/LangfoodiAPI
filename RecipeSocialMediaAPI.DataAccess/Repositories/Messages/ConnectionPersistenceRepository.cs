@@ -30,16 +30,17 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         return await _mapper.MapConnectionFromDocument(connectionDocument, cancellationToken);
     }
 
-    public bool UpdateConnection(IConnection connection)
+    public async Task<bool> UpdateConnection(IConnection connection, CancellationToken cancellationToken = default)
     {
-        return _connectionCollection.UpdateRecord(
+        return await _connectionCollection.UpdateRecord(
             new ConnectionDocument(
                 AccountId1: connection.Account1.Id,
                 AccountId2: connection.Account2.Id,
                 ConnectionStatus: connection.Status.ToString()
             ),
             doc => (doc.AccountId1 == connection.Account1.Id && doc.AccountId2 == connection.Account2.Id)
-                || (doc.AccountId1 == connection.Account2.Id && doc.AccountId2 == connection.Account1.Id));
+                || (doc.AccountId1 == connection.Account2.Id && doc.AccountId2 == connection.Account1.Id),
+            cancellationToken);
     }
 
     public bool DeleteConnection(IConnection connection) => DeleteConnection(connection.Account1, connection.Account2);

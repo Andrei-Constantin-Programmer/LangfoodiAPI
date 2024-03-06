@@ -120,7 +120,7 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecipe_WhenRecipeIsSuccessfullyUpdated_ReturnTrue()
+    public async Task UpdateRecipe_WhenRecipeIsSuccessfullyUpdated_ReturnTrueAsync()
     {
         // Given
         IUserAccount testChef = new TestUserAccount()
@@ -146,11 +146,14 @@ public class RecipePersistenceRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<RecipeDocument>(), It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<RecipeDocument>(), 
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _recipePersistenceRepositorySUT.UpdateRecipe(recipe);
+        var result = await _recipePersistenceRepositorySUT.UpdateRecipe(recipe);
 
         // Then
         result.Should().BeTrue();
@@ -172,14 +175,15 @@ public class RecipePersistenceRepositoryTests
                         && recipeDoc.ThumbnailId == recipe.ThumbnailId
                         && recipeDoc.ServingSize.GetValueOrDefault().Quantity == recipe.Recipe.ServingSize!.Quantity
                         && recipeDoc.ServingSize.GetValueOrDefault().UnitOfMeasurement == recipe.Recipe.ServingSize!.UnitOfMeasurement),
-                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecipe_WhenRecipeIsNotUpdated_ReturnFalse()
+    public async Task UpdateRecipe_WhenRecipeIsNotUpdated_ReturnFalseAsync()
     {
         // Given
         IUserAccount testChef = new TestUserAccount()
@@ -205,11 +209,14 @@ public class RecipePersistenceRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<RecipeDocument>(), It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.UpdateRecord(
+                It.IsAny<RecipeDocument>(), 
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _recipePersistenceRepositorySUT.UpdateRecipe(recipe);
+        var result = await _recipePersistenceRepositorySUT.UpdateRecipe(recipe);
 
         // Then
         result.Should().BeFalse();

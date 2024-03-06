@@ -53,7 +53,7 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
                 throw new CorruptedMessageException($"Message with id {message.Id} could not be updated, as it is corrupted");
         }
 
-        bool isSuccessful = _messagePersistenceRepository.UpdateMessage(message);
+        bool isSuccessful = await _messagePersistenceRepository.UpdateMessage(message, cancellationToken);
         if (!isSuccessful)
         {
             throw new MessageUpdateException($"Could not update message with id {message.Id}");

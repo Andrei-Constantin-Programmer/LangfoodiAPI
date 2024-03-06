@@ -77,7 +77,7 @@ public class MarkConversationAsReadHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -136,16 +136,20 @@ public class MarkConversationAsReadHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Exactly(2));
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<Message>(message => 
-                    message.Id == messages[3].Id &&
-                    message.SeenBy.Contains(user1.Account))), 
+            .Verify(repo => repo.UpdateMessage(
+                    It.Is<Message>(message => 
+                        message.Id == messages[3].Id &&
+                        message.SeenBy.Contains(user1.Account)), 
+                    It.IsAny<CancellationToken>()), 
                 Times.Once);
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<Message>(message =>
-                    message.Id == messages[4].Id &&
-                    message.SeenBy.Contains(user1.Account))),
+            .Verify(repo => repo.UpdateMessage(
+                    It.Is<Message>(message =>
+                        message.Id == messages[4].Id &&
+                        message.SeenBy.Contains(user1.Account)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
@@ -197,7 +201,7 @@ public class MarkConversationAsReadHandlerTests
         // Then
         await testAction.Should().ThrowAsync<UserNotFoundException>();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -248,6 +252,6 @@ public class MarkConversationAsReadHandlerTests
         // Then
         await testAction.Should().ThrowAsync<ConversationNotFoundException>();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }
