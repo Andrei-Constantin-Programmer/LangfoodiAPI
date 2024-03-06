@@ -5,6 +5,6 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 public interface IGroupQueryRepository
 {
-    Group? GetGroupById(string groupId);
+    Task<Group?> GetGroupById(string groupId, CancellationToken cancellationToken = default);
     Task<IEnumerable<Group>> GetGroupsByUser(IUserAccount userAccount, CancellationToken cancellationToken = default);
 }

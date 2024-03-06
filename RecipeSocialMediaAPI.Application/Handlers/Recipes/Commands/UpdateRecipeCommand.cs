@@ -28,10 +28,9 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
         _recipeQueryRepository = recipeQueryRepository;
     }
 
-    public Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate existingRecipe = 
-            _recipeQueryRepository.GetRecipeById(request.Contract.Id) 
+        RecipeAggregate existingRecipe = (await _recipeQueryRepository.GetRecipeById(request.Contract.Id, cancellationToken))
             ?? throw new RecipeNotFoundException(request.Contract.Id);
 
         RecipeAggregate updatedRecipe = new(
@@ -60,9 +59,10 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
         bool isSuccessful = _recipePersistenceRepository.UpdateRecipe(updatedRecipe);
 
-        return isSuccessful
-            ? Task.CompletedTask
-            : throw new RecipeUpdateException($"Could not update recipe with id {existingRecipe.Id}");
+        if (!isSuccessful)
+        {
+            throw new RecipeUpdateException($"Could not update recipe with id {existingRecipe.Id}");
+        }
     }
 }
 

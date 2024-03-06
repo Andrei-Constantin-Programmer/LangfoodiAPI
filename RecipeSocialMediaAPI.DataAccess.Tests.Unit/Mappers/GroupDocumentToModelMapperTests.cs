@@ -26,7 +26,7 @@ public class GroupDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void MapGroupFromDocument_WhenGroupDocumentIsValid_ReturnsMappedGroup()
+    public async Task MapGroupFromDocument_WhenGroupDocumentIsValid_ReturnsMappedGroupAsync()
     {
         // Given
         TestUserCredentials testUser1 = new()
@@ -55,11 +55,11 @@ public class GroupDocumentToModelMapperTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser1.Account.Id))
-            .Returns(testUser1);
+            .Setup(repo => repo.GetUserById(testUser1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser2.Account.Id))
-            .Returns(testUser2);
+            .Setup(repo => repo.GetUserById(testUser2.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser2);
 
         GroupDocument testDocument = new(
             Id: "1",
@@ -69,7 +69,7 @@ public class GroupDocumentToModelMapperTests
         );
 
         // When
-        var result = _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
+        var result = await _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
 
         // Then
         result.Should().NotBeNull();
@@ -85,7 +85,7 @@ public class GroupDocumentToModelMapperTests
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(false, false)]
-    public void MapGroupFromDocument_WhenUsersDontExist_ThrowsUserDocumentNotFoundException(bool firstUserExists, bool secondUserExists)
+    public async Task MapGroupFromDocument_WhenUsersDontExist_ThrowsUserDocumentNotFoundExceptionAsync(bool firstUserExists, bool secondUserExists)
     {
         // Given
         TestUserCredentials? testUser1 =
@@ -129,24 +129,23 @@ public class GroupDocumentToModelMapperTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userId1))
-            .Returns(testUser1);
+            .Setup(repo => repo.GetUserById(userId1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userId2))
-            .Returns(testUser2);
+            .Setup(repo => repo.GetUserById(userId2, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser2);
 
         // When
-        var result = () => _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
+        var result = async () => await _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
 
         // Then
-        result.Should().Throw<UserDocumentNotFoundException>();
-
+        await result.Should().ThrowAsync<UserDocumentNotFoundException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void MapGroupFromDocument_WhenListOfUsersIsEmpty_ShouldNotThrowUserDocumentNotFoundException()
+    public async Task MapGroupFromDocument_WhenListOfUsersIsEmpty_ShouldNotThrowUserDocumentNotFoundExceptionAsync()
     {
         // Given
         GroupDocument testDocument = new(
@@ -157,7 +156,7 @@ public class GroupDocumentToModelMapperTests
         );
 
         // When
-        var result = _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
+        var result = await _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
 
         // Then
         result.Should().NotBeNull();

@@ -48,19 +48,19 @@ public class CreateConnectionHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount1.Id))
-            .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test1@mail.com", Password = "TestPass" });
+            .Setup(repo => repo.GetUserById(userAccount1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = userAccount1, Email = "test1@mail.com", Password = "TestPass" });
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount2.Id))
-            .Returns(new TestUserCredentials() { Account = userAccount2, Email = "test2@mail.com", Password = "TestPass" });
+            .Setup(repo => repo.GetUserById(userAccount2.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = userAccount2, Email = "test2@mail.com", Password = "TestPass" });
 
         NewConnectionContract testContract = new(userAccount1.Id, userAccount2.Id);
 
         Connection testConnection = new("0", userAccount1, userAccount2, ConnectionStatus.Pending);
 
         _connectionPersistenceRepositoryMock
-            .Setup(repo => repo.CreateConnection(userAccount1, userAccount2, ConnectionStatus.Pending))
-            .Returns(testConnection);
+            .Setup(repo => repo.CreateConnection(userAccount1, userAccount2, ConnectionStatus.Pending, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testConnection);
 
         // When
         var result = await _connectionHandlerSUT.Handle(new CreateConnectionCommand(testContract), CancellationToken.None);
@@ -99,15 +99,15 @@ public class CreateConnectionHandlerTests
         if (user1Exists)
         {
             _userQueryRepositoryMock
-                .Setup(repo => repo.GetUserById(userAccount1.Id))
-                .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test1@mail.com", Password = "TestPass" });
+                .Setup(repo => repo.GetUserById(userAccount1.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new TestUserCredentials() { Account = userAccount1, Email = "test1@mail.com", Password = "TestPass" });
         }
 
         if (user2Exists) 
         {
             _userQueryRepositoryMock
-                .Setup(repo => repo.GetUserById(userAccount2.Id))
-                .Returns(new TestUserCredentials() { Account = userAccount2, Email = "test2@mail.com", Password = "TestPass" });
+                .Setup(repo => repo.GetUserById(userAccount2.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new TestUserCredentials() { Account = userAccount2, Email = "test2@mail.com", Password = "TestPass" });
         }
 
         NewConnectionContract testContract = new(userAccount1.Id, userAccount2.Id);
@@ -115,8 +115,8 @@ public class CreateConnectionHandlerTests
         Connection testConnection = new("0", userAccount1, userAccount2, ConnectionStatus.Pending);
 
         _connectionPersistenceRepositoryMock
-            .Setup(repo => repo.CreateConnection(userAccount1, userAccount2, ConnectionStatus.Pending))
-            .Returns(testConnection);
+            .Setup(repo => repo.CreateConnection(userAccount1, userAccount2, ConnectionStatus.Pending, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testConnection);
 
         // When
         var testAction = async () => await _connectionHandlerSUT.Handle(new CreateConnectionCommand(testContract), CancellationToken.None);

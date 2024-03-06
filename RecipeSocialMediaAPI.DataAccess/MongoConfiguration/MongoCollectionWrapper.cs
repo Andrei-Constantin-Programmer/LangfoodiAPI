@@ -49,9 +49,9 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         return _collection?.Find(expr).Any() ?? false;
     }
 
-    public TDocument? Find(Expression<Func<TDocument, bool>> expr)
+    public async Task<TDocument?> Find(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
-        return _collection?.Find(expr).FirstOrDefault();
+        return (await _collection.FindAsync(expr)).FirstOrDefault();
     }
 
     public bool UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr)

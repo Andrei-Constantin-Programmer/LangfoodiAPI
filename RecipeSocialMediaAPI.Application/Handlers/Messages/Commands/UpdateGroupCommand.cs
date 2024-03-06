@@ -32,9 +32,9 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
         _logger = logger;
     }
 
-    public Task Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
     {
-        Group group = _groupQueryRepository.GetGroupById(request.Contract.GroupId)
+        Group group = await _groupQueryRepository.GetGroupById(request.Contract.GroupId, cancellationToken)
             ?? throw new GroupNotFoundException(request.Contract.GroupId);
 
         Group updatedGroup = new(
@@ -43,9 +43,9 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
             groupDescription: request.Contract.GroupDescription,
             users: group.Users.ToList());
 
-        var newUserList = request.Contract.UserIds
-            .Select(userId => _userQueryRepository.GetUserById(userId)?.Account
-                           ?? throw new UserNotFoundException(userId))
+        var newUserList = (await Task.WhenAll(request.Contract.UserIds
+            .Select(async userId => (await _userQueryRepository.GetUserById(userId, cancellationToken))?.Account
+                           ?? throw new UserNotFoundException(userId))))
             .ToList();
 
         UpdateGroupUserList(updatedGroup, newUserList);
@@ -61,9 +61,10 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
             isSuccessful = _groupPersistenceRepository.UpdateGroup(updatedGroup);
         }
 
-        return isSuccessful
-            ? Task.CompletedTask
-            : throw new GroupUpdateException($"Could not update group with id {group.GroupId}");
+        if (!isSuccessful)
+        {
+            throw new GroupUpdateException($"Could not update group with id {group.GroupId}");
+        }
     }
 
     private static void UpdateGroupUserList(Group group, List<IUserAccount> newUserList)

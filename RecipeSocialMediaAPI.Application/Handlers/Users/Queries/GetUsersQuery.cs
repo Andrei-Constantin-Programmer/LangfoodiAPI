@@ -27,7 +27,7 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
 
     public async Task<List<UserAccountDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount queryingUser = _userQueryRepository.GetUserById(request.UserId)?.Account
+        IUserAccount queryingUser = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
         var allUsers = await _userQueryRepository.GetAllUserAccountsContaining(request.ContainedString, cancellationToken);
@@ -40,32 +40,32 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
     }
 
     private static IEnumerable<IUserAccount> GetFilteredUsers(
-        IUserAccount queryingUser, 
-        IEnumerable<IUserAccount> allUsers, 
+        IUserAccount queryingUser,
+        IEnumerable<IUserAccount> allUsers,
         UserQueryOptions queryOptions,
         List<IConnection> connections) => queryOptions switch
-    {
-        UserQueryOptions.All => allUsers,
-        UserQueryOptions.NonSelf => allUsers.Where(user => user.Id != queryingUser.Id),
-        UserQueryOptions.Connected => GetUsersFilteredByConnection(
-            queryingUser, 
-            allUsers, 
-            user => connections
-                .Any(conn => conn.Account1.Id == user.Id
-                          || conn.Account2.Id == user.Id)),
-        UserQueryOptions.NotConnected => GetUsersFilteredByConnection(
-            queryingUser, 
-            allUsers,
-            user => connections
-                .All(conn => conn.Account1.Id != user.Id
-                          && conn.Account2.Id != user.Id)),
+        {
+            UserQueryOptions.All => allUsers,
+            UserQueryOptions.NonSelf => allUsers.Where(user => user.Id != queryingUser.Id),
+            UserQueryOptions.Connected => GetUsersFilteredByConnection(
+                queryingUser,
+                allUsers,
+                user => connections
+                    .Any(conn => conn.Account1.Id == user.Id
+                              || conn.Account2.Id == user.Id)),
+            UserQueryOptions.NotConnected => GetUsersFilteredByConnection(
+                queryingUser,
+                allUsers,
+                user => connections
+                    .All(conn => conn.Account1.Id != user.Id
+                              && conn.Account2.Id != user.Id)),
 
-        _ => throw new ArgumentException($"Unsupported query options {queryOptions}")
-    };
+            _ => throw new ArgumentException($"Unsupported query options {queryOptions}")
+        };
 
     private static IEnumerable<IUserAccount> GetUsersFilteredByConnection(
-        IUserAccount queryingUser, 
-        IEnumerable<IUserAccount> allUsers, 
+        IUserAccount queryingUser,
+        IEnumerable<IUserAccount> allUsers,
         Predicate<IUserAccount> condition)
     => allUsers.Where(user => user.Id != queryingUser.Id && condition(user));
 }

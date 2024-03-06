@@ -22,7 +22,7 @@ internal class GetGroupsByUserHandler : IRequestHandler<GetGroupsByUserQuery, IE
 
     public async Task<IEnumerable<GroupDTO>> Handle(GetGroupsByUserQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
+        IUserAccount user = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
         return (await _groupQueryRepository

@@ -96,8 +96,8 @@ public class AddRecipeHandlerTests
         testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
 
         _userQueryRepositoryMock
-            .Setup(x => x.GetUserById(It.IsAny<string>()))
-            .Returns(new TestUserCredentials
+            .Setup(x => x.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials
             {
                 Account = new TestUserAccount
                 {

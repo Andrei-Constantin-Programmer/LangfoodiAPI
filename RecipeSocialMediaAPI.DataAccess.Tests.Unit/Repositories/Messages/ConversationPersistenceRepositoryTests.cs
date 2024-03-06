@@ -45,7 +45,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateConnectionConversation_WhenConnectionExists_CreatesConversationAndReturnsIt()
+    public async Task CreateConnectionConversation_WhenConnectionExists_CreatesConversationAndReturnsItAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -76,8 +76,10 @@ public partial class ConversationPersistenceRepositoryTests
             || (connDoc.AccountId1 == user2.Id && connDoc.AccountId2 == user1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(connectionDoc);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connectionDoc);
 
         ConversationDocument conversationDocument = new(
             Id: "convoId",
@@ -97,7 +99,7 @@ public partial class ConversationPersistenceRepositoryTests
             .Returns(mappedConversation);
 
         // When
-        var result = _conversationPersistenceRepositorySUT.CreateConnectionConversation(testConnection) as ConnectionConversation;
+        var result = (await _conversationPersistenceRepositorySUT.CreateConnectionConversation(testConnection)) as ConnectionConversation;
 
         // Then
         result.Should().NotBeNull();
@@ -107,7 +109,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateConnectionConversation_WhenConnectionDoesNotExist_ThrowsConnectionDocumentNotFoundException()
+    public async void CreateConnectionConversation_WhenConnectionDoesNotExist_ThrowsConnectionDocumentNotFoundException()
     {
         // Given
         TestUserAccount user1 = new()
@@ -128,14 +130,16 @@ public partial class ConversationPersistenceRepositoryTests
         Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Returns((ConnectionDocument?)null);
+            .Setup(collection => collection.Find(
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ConnectionDocument?)null);
 
         // When
         var testAction = () => _conversationPersistenceRepositorySUT.CreateConnectionConversation(testConnection);
 
         // Then
-        testAction.Should().Throw<ConnectionDocumentNotFoundException>();
+        await testAction.Should().ThrowAsync<ConnectionDocumentNotFoundException>();
     }
 
     [Fact]
@@ -189,7 +193,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConversation_WhenConversationIsConnectionConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrue()
+    public async Task UpdateConversation_WhenConversationIsConnectionConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrueAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -215,8 +219,10 @@ public partial class ConversationPersistenceRepositoryTests
             ConnectionStatus: "Pending"
         );
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Returns(connectionDoc);
+            .Setup(collection => collection.Find(
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connectionDoc);
 
         ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
         {
@@ -236,7 +242,7 @@ public partial class ConversationPersistenceRepositoryTests
             .Returns(true);
 
         // When
-        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
+        var result = await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
 
         // Then
         result.Should().BeTrue();
@@ -247,7 +253,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConversation_WhenConversationIsConnectionConversationButUpdateIsUnsuccessful_ReturnsFalse()
+    public async Task UpdateConversation_WhenConversationIsConnectionConversationButUpdateIsUnsuccessful_ReturnsFalseAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -274,8 +280,10 @@ public partial class ConversationPersistenceRepositoryTests
         );
 
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Returns(connectionDoc);
+            .Setup(collection => collection.Find(
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connectionDoc);
 
         ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
         {
@@ -289,7 +297,7 @@ public partial class ConversationPersistenceRepositoryTests
             .Returns(false);
 
         // When
-        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
+        var result = await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
 
         // Then
         result.Should().BeFalse();
@@ -298,7 +306,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConversation_WhenConversationIsConnectionConversationButConnectionIsNotFoundInTheDatabase_DoesNotUpdateAndThrowsInvalidConversationException()
+    public async Task UpdateConversation_WhenConversationIsConnectionConversationButConnectionIsNotFoundInTheDatabase_DoesNotUpdateAndThrowsInvalidConversationExceptionAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -318,8 +326,10 @@ public partial class ConversationPersistenceRepositoryTests
 
         Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Returns((ConnectionDocument?)null);
+            .Setup(collection => collection.Find(
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ConnectionDocument?)null);
 
         ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
         {
@@ -327,11 +337,11 @@ public partial class ConversationPersistenceRepositoryTests
         });
 
         // When
-        var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
+        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
 
         // Then
-        testAction.Should()
-            .Throw<InvalidConversationException>()
+        await testAction.Should()
+            .ThrowAsync<InvalidConversationException>()
             .WithMessage("No connection found*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
@@ -340,7 +350,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConversation_WhenConversationIsConnectionConversationButNoConnectionSupplied_DoesNotUpdateConversationAndThrowsArgumentException()
+    public async Task UpdateConversation_WhenConversationIsConnectionConversationButNoConnectionSupplied_DoesNotUpdateConversationAndThrowsArgumentExceptionAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -366,8 +376,10 @@ public partial class ConversationPersistenceRepositoryTests
             ConnectionStatus: "Pending"
         );
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Returns(connectionDoc);
+            .Setup(collection => collection.Find(
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connectionDoc);
 
         ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
         {
@@ -375,11 +387,11 @@ public partial class ConversationPersistenceRepositoryTests
         });
 
         // When
-        var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
+        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
 
         // Then
-        testAction.Should()
-            .Throw<ArgumentException>()
+        await testAction.Should()
+            .ThrowAsync<ArgumentException>()
             .WithMessage("No connection provided*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
@@ -388,7 +400,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConversation_WhenConversationIsGroupConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrue()
+    public async Task UpdateConversation_WhenConversationIsGroupConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrueAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -425,7 +437,7 @@ public partial class ConversationPersistenceRepositoryTests
             .Returns(true);
 
         // When
-        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null, testGroup);
+        var result = await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null, testGroup);
 
         // Then
         result.Should().BeTrue();
@@ -436,7 +448,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConversation_WhenConversationIsGroupConversationButUpdateIsUnsuccessful_ReturnsFalse()
+    public async Task UpdateConversation_WhenConversationIsGroupConversationButUpdateIsUnsuccessful_ReturnsFalseAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -467,7 +479,7 @@ public partial class ConversationPersistenceRepositoryTests
             .Returns(false);
 
         // When
-        var result = _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null, testGroup);
+        var result = await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null, testGroup);
 
         // Then
         result.Should().BeFalse();
@@ -476,7 +488,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConversation_WhenConversationIsGroupConversationButNoGroupIsProvided_DoesNotUpdateConversationAndThrowsArgumentException()
+    public async Task UpdateConversation_WhenConversationIsGroupConversationButNoGroupIsProvided_DoesNotUpdateConversationAndThrowsArgumentExceptionAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -501,11 +513,11 @@ public partial class ConversationPersistenceRepositoryTests
         });
 
         // When
-        var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null);
+        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null);
 
         // Then
-        testAction.Should()
-            .Throw<ArgumentException>()
+        await testAction.Should()
+            .ThrowAsync<ArgumentException>()
             .WithMessage("No group provided*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);
@@ -514,17 +526,17 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConversation_WhenConversationIsOfUnknownType_DoesNotUpdateConversationAndThrowsInvalidConversationException()
+    public async Task UpdateConversation_WhenConversationIsOfUnknownType_DoesNotUpdateConversationAndThrowsInvalidConversationExceptionAsync()
     {
         // Given
         TestConversation testConversation = new("ConvoId", new List<Message>());
         
         // When
-        var testAction = () => _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
+        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
 
         // Then
-        testAction.Should()
-            .Throw<InvalidConversationException>()
+        await testAction.Should()
+            .ThrowAsync<InvalidConversationException>()
             .WithMessage("*TestConversation*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateRecord(It.IsAny<ConversationDocument>(), It.IsAny<Expression<Func<ConversationDocument, bool>>>()), Times.Never);

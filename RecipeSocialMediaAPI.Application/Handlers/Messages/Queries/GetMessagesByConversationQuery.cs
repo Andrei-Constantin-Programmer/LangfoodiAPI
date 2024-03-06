@@ -20,13 +20,13 @@ internal class GetMessagesByConversationHandler : IRequestHandler<GetMessagesByC
         _messageMapper = messageMapper;
     }
 
-    public Task<List<MessageDTO>> Handle(GetMessagesByConversationQuery request, CancellationToken cancellationToken)
+    public async Task<List<MessageDTO>> Handle(GetMessagesByConversationQuery request, CancellationToken cancellationToken)
     {
-        Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId)
+        Conversation conversation = await _conversationQueryRepository.GetConversationById(request.ConversationId, cancellationToken)
             ?? throw new ConversationNotFoundException($"No conversation found with id {request.ConversationId}");
 
-        return Task.FromResult(conversation.Messages
+        return conversation.Messages
             .Select(_messageMapper.MapMessageToMessageDTO)
-            .ToList());
+            .ToList();
     }
 }

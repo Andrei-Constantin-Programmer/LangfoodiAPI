@@ -33,14 +33,14 @@ internal class CreateGroupConversationHandler : IRequestHandler<CreateGroupConve
 
     public async Task<ConversationDTO> Handle(CreateGroupConversationCommand request, CancellationToken cancellationToken)
     {
-        IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
+        IUserAccount user = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
-        Group group = _groupQueryRepository.GetGroupById(request.GroupId)
-                                    ?? throw new GroupNotFoundException(request.GroupId);
+        Group group = (await _groupQueryRepository.GetGroupById(request.GroupId, cancellationToken))
+            ?? throw new GroupNotFoundException(request.GroupId);
 
         Conversation newConversation = _conversationPersistenceRepository.CreateGroupConversation(group);
 
-        return await Task.FromResult(_conversationMapper.MapConversationToGroupConversationDTO(user, (GroupConversation)newConversation));
+        return _conversationMapper.MapConversationToGroupConversationDTO(user, (GroupConversation)newConversation);
     }
 }

@@ -25,12 +25,12 @@ public class MessageQueryRepository : IMessageQueryRepository
         _userQueryRepository = userQueryRepository;
     }
 
-    public Message? GetMessage(string id)
+    public async Task<Message?> GetMessage(string id, CancellationToken cancellationToken = default)
     {
         MessageDocument? messageDocument;
         try
         {
-            messageDocument = _messageCollection.Find(messageDoc => messageDoc.Id == id);
+            messageDocument = await _messageCollection.Find(messageDoc => messageDoc.Id == id, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -43,15 +43,15 @@ public class MessageQueryRepository : IMessageQueryRepository
             return null;
         }
 
-        IUserAccount? sender = GetSender(messageDocument.SenderId, messageDocument.Id);
+        IUserAccount? sender = await GetSender(messageDocument.SenderId, messageDocument.Id, cancellationToken);
         if (sender is null)
         {
             return null;
         }
 
-        Message? repliedToMessage = GetRepliedToMessage(messageDocument);
+        Message? repliedToMessage = await GetRepliedToMessage(messageDocument, cancellationToken);
 
-        return _mapper.MapMessageFromDocument(messageDocument, sender, repliedToMessage);
+        return await _mapper.MapMessageFromDocument(messageDocument, sender, repliedToMessage, cancellationToken);
     }
 
     public async Task<IEnumerable<Message>> GetMessagesWithRecipe(string recipeId, CancellationToken cancellationToken = default)
@@ -60,17 +60,18 @@ public class MessageQueryRepository : IMessageQueryRepository
             => messageDoc.MessageContent.RecipeIds != null 
             && messageDoc.MessageContent.RecipeIds.Contains(recipeId), cancellationToken);
         
-        return messageDocuments
-            .Select(messageDoc => _mapper.MapMessageFromDocument(
+        return await Task.WhenAll(messageDocuments
+            .Select(async messageDoc => await _mapper.MapMessageFromDocument(
                 messageDoc, 
-                GetSender(messageDoc.SenderId, messageDoc.Id) 
+                await GetSender(messageDoc.SenderId, messageDoc.Id, cancellationToken) 
                     ?? throw new UserDocumentNotFoundException(messageDoc.SenderId), 
-                GetRepliedToMessage(messageDoc)));
+                await GetRepliedToMessage(messageDoc, cancellationToken), 
+                cancellationToken)));
     }
 
-    private IUserAccount? GetSender(string senderId, string? messageId)
+    private async Task<IUserAccount?> GetSender(string senderId, string? messageId, CancellationToken cancellationToken = default)
     {
-        IUserAccount? sender = _userQueryRepository.GetUserById(senderId)?.Account;
+        IUserAccount? sender = (await _userQueryRepository.GetUserById(senderId, cancellationToken))?.Account;
         if (sender is null)
         {
             _logger.LogWarning("The sender with id {SenderId} was not found for message with id {MessageId}", senderId, messageId);
@@ -79,8 +80,8 @@ public class MessageQueryRepository : IMessageQueryRepository
         return sender;
     }
 
-    private Message? GetRepliedToMessage(MessageDocument messageDocument) => 
+    private async Task<Message?> GetRepliedToMessage(MessageDocument messageDocument, CancellationToken cancellationToken = default) => 
         messageDocument.MessageRepliedToId is not null
-            ? GetMessage(messageDocument.MessageRepliedToId)
+            ? await GetMessage(messageDocument.MessageRepliedToId, cancellationToken)
             : null;
 }

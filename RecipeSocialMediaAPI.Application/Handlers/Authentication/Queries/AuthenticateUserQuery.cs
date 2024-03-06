@@ -32,11 +32,10 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
 
     public async Task<SuccessfulAuthenticationDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
-        IUserCredentials user = (_userQueryRepository.GetUserByEmail(request.Email))
+        IUserCredentials user = await _userQueryRepository.GetUserByEmail(request.Email, cancellationToken)
                     ?? throw new UserNotFoundException($"No user found with handler/email {request.Email}");
 
         var successfulLogin = _cryptoService.ArePasswordsTheSame(request.Password, user.Password ?? string.Empty);
-
         if (!successfulLogin)
         {
             throw new InvalidCredentialsException();
@@ -44,6 +43,6 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
 
-        return await Task.FromResult(new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(user), token));
+        return new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(user), token);
     }
 }

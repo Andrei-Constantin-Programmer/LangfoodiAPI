@@ -110,7 +110,7 @@ public class MessageEndpointsTests : EndpointTestBase
         // Given
         var user = _fakeUserRepository
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
+        var message = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender,"hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -145,7 +145,7 @@ public class MessageEndpointsTests : EndpointTestBase
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _fakeRecipeRepository
            .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
-        var message = _fakeMessageRepository
+        var message = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id}, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -184,7 +184,7 @@ public class MessageEndpointsTests : EndpointTestBase
         // Given
         var user = _fakeUserRepository
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
+        var message = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1"}, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -256,19 +256,19 @@ public class MessageEndpointsTests : EndpointTestBase
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
           .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var connection = _fakeConnectionRepository
+        var connection = await _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
-        var conversation = _fakeConversationRepository
+        var conversation = await _fakeConversationRepository
             .CreateConnectionConversation(connection);
 
-        var message1 = _fakeMessageRepository
+        var message1 = await _fakeMessageRepository
             .CreateMessage(user1.Account, "Message 1", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
-        var message2 = _fakeMessageRepository
+        var message2 = await _fakeMessageRepository
             .CreateMessage(user2.Account, "Message 2", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), message1, new());
         
         conversation.SendMessage(message1);
         conversation.SendMessage(message2);
-        _fakeConversationRepository.UpdateConversation(conversation, connection);
+        await _fakeConversationRepository.UpdateConversation(conversation, connection);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -332,19 +332,19 @@ public class MessageEndpointsTests : EndpointTestBase
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var user2 = _fakeUserRepository
           .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var connection = _fakeConnectionRepository
+        var connection = await _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
-        var conversation = _fakeConversationRepository
+        var conversation = await _fakeConversationRepository
             .CreateConnectionConversation(connection);
 
-        var message1 = _fakeMessageRepository
+        var message1 = await _fakeMessageRepository
             .CreateMessage(user1.Account, "Message 1", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
-        var message2 = _fakeMessageRepository
+        var message2 = await _fakeMessageRepository
             .CreateMessage(user2.Account, "Message 2", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), message1, new());
 
         conversation.SendMessage(message1);
         conversation.SendMessage(message2);
-        _fakeConversationRepository.UpdateConversation(conversation, connection);
+        await _fakeConversationRepository.UpdateConversation(conversation, connection);
 
         // When
         var result = await _client.PostAsync($"message/get-by-conversation/?conversationId={conversation.ConversationId}", null);
@@ -549,9 +549,9 @@ public class MessageEndpointsTests : EndpointTestBase
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
         user1.Account.BlockConnection(connectionId);
-        _fakeUserRepository.UpdateUser(user1);
+        await _fakeUserRepository.UpdateUser(user1);
 
-        var conversation = _fakeConversationRepository
+        var conversation = await _fakeConversationRepository
             .CreateConnectionConversation(new Connection(connectionId, user1.Account, user2.Account, ConnectionStatus.Connected));
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
@@ -574,7 +574,7 @@ public class MessageEndpointsTests : EndpointTestBase
         // Given
         var user = _fakeUserRepository
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var existingMessage = _fakeMessageRepository
+        var existingMessage = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", null, null);
@@ -588,7 +588,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var message = _fakeMessageRepository.GetMessage(existingMessage.Id) as TextMessage;
+        var message = (await _fakeMessageRepository.GetMessage(existingMessage.Id)) as TextMessage;
 
         message.Should().NotBeNull();
         message!.Id.Should().Be(existingMessage.Id);
@@ -608,7 +608,7 @@ public class MessageEndpointsTests : EndpointTestBase
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var oldRecipe = _fakeRecipeRepository
            .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
-        var existingMessage = _fakeMessageRepository
+        var existingMessage = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var newRecipe = _fakeRecipeRepository
@@ -624,7 +624,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var message = _fakeMessageRepository.GetMessage(existingMessage.Id) as RecipeMessage;
+        var message = (await _fakeMessageRepository.GetMessage(existingMessage.Id)) as RecipeMessage;
 
         message.Should().NotBeNull();
         message!.Id.Should().Be(existingMessage.Id);
@@ -643,7 +643,7 @@ public class MessageEndpointsTests : EndpointTestBase
         // Given
         var user = _fakeUserRepository
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var existingMessage = _fakeMessageRepository
+        var existingMessage = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", null, new() { "image 2" });
@@ -657,7 +657,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var message = _fakeMessageRepository.GetMessage(existingMessage.Id) as ImageMessage;
+        var message = (await _fakeMessageRepository.GetMessage(existingMessage.Id)) as ImageMessage;
 
         message.Should().NotBeNull();
         message!.Id.Should().Be(existingMessage.Id);
@@ -696,11 +696,10 @@ public class MessageEndpointsTests : EndpointTestBase
         // Given
         _ = _fakeUserRepository
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var existingMessage = _fakeMessageRepository
+        var existingMessage = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", null, null);
-        var oldUpdatedDate = existingMessage.UpdatedDate;
 
         // When
         var result = await _client.PutAsJsonAsync($"message/update", contract);
@@ -736,7 +735,7 @@ public class MessageEndpointsTests : EndpointTestBase
         // Given
         var user = _fakeUserRepository
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
+        var message = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -769,7 +768,7 @@ public class MessageEndpointsTests : EndpointTestBase
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _fakeRecipeRepository
            .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
-        var message = _fakeMessageRepository
+        var message = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -808,7 +807,7 @@ public class MessageEndpointsTests : EndpointTestBase
         // Given
         var user = _fakeUserRepository
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
+        var message = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -877,7 +876,7 @@ public class MessageEndpointsTests : EndpointTestBase
         // Given
         var user = _fakeUserRepository
           .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
+        var message = await _fakeMessageRepository
             .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -888,7 +887,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        _fakeMessageRepository.GetMessage(message.Id).Should().BeNull();
+        (await _fakeMessageRepository.GetMessage(message.Id)).Should().BeNull();
     }
 
     [Fact]

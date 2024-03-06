@@ -46,8 +46,8 @@ public class CreateGroupConversationHandlerTests
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount1.Id))
-            .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
+            .Setup(repo => repo.GetUserById(userAccount1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
 
         Group group = new(
             groupId: "group1",
@@ -56,8 +56,8 @@ public class CreateGroupConversationHandlerTests
         );
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(group.GroupId))
-            .Returns(group);
+            .Setup(repo => repo.GetGroupById(group.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group);
         
         GroupConversation expectedConversation = new(group, "conversation1");
 
@@ -105,8 +105,8 @@ public class CreateGroupConversationHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount1.Id))
-            .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
+            .Setup(repo => repo.GetUserById(userAccount1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
 
         Group group = new(
             groupId: "group1",
@@ -115,8 +115,8 @@ public class CreateGroupConversationHandlerTests
         );
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(group.GroupId))
-            .Returns(group);
+            .Setup(repo => repo.GetGroupById(group.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group);
 
         GroupConversation expectedConversation = new(group, "conversation1");
 

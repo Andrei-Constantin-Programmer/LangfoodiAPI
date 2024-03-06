@@ -52,8 +52,8 @@ public class GetConversationByConnectionHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Id))
-            .Returns(new TestUserCredentials()
+            .Setup(repo => repo.GetUserById(user1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials()
             {
                 Account = user1,
                 Email = "user1@mail.com",
@@ -64,8 +64,8 @@ public class GetConversationByConnectionHandlerTests
         ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationByConnection(connection.ConnectionId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationByConnection(connection.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, null, new() { user1.Id, user2.Id });
         _conversationMapperMock
@@ -107,8 +107,8 @@ public class GetConversationByConnectionHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Id))
-            .Returns(new TestUserCredentials()
+            .Setup(repo => repo.GetUserById(user1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials()
             {
                 Account = user1,
                 Email = "user1@mail.com",
@@ -135,8 +135,8 @@ public class GetConversationByConnectionHandlerTests
             .Returns(conversationDto);
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationByConnection(connection.ConnectionId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationByConnection(connection.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         GetConversationByConnectionQuery query = new(user1.Id, connection.ConnectionId);
 
@@ -163,8 +163,8 @@ public class GetConversationByConnectionHandlerTests
             UserName = "User 1"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Id))
-            .Returns(new TestUserCredentials()
+            .Setup(repo => repo.GetUserById(user1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials()
             {
                 Account = user1,
                 Email = "user1@mail.com",
@@ -173,8 +173,8 @@ public class GetConversationByConnectionHandlerTests
 
         string connectionId = "conn1";
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationByConnection(connectionId))
-            .Returns((ConnectionConversation?)null);
+            .Setup(repo => repo.GetConversationByConnection(connectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ConnectionConversation?)null);
 
         GetConversationByConnectionQuery query = new(user1.Id, connectionId);
 

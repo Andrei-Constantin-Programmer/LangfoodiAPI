@@ -21,7 +21,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         _messageCollection = mongoCollectionFactory.CreateCollection<MessageDocument>();
     }
 
-    public Message CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
+    public async Task<Message> CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
     {
         MessageDocument messageDocument = _messageCollection.Insert(new MessageDocument(
             SenderId: sender.Id,
@@ -31,7 +31,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
             MessageRepliedToId: messageRepliedTo?.Id
         ));
 
-        return _mapper.MapMessageFromDocument(messageDocument, sender, messageRepliedTo);
+        return await _mapper.MapMessageFromDocument(messageDocument, sender, messageRepliedTo, cancellationToken);
     }
 
     public bool UpdateMessage(Message message)

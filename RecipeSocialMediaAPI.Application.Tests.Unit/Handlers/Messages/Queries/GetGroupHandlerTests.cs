@@ -48,8 +48,8 @@ public class GetGroupHandlerTests
         Group existingGroup = new("g1", "Group", "Group Desc", users);
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId))
-            .Returns(existingGroup);
+            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingGroup);
 
         GetGroupQuery query = new(existingGroup.GroupId);
 
@@ -71,8 +71,8 @@ public class GetGroupHandlerTests
     {
         // Given
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(It.IsAny<string>()))
-            .Returns((Group?)null);
+            .Setup(repo => repo.GetGroupById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Group?)null);
 
         GetGroupQuery query = new("g1");
 

@@ -17,17 +17,17 @@ internal class GetGroupHandler : IRequestHandler<GetGroupQuery, GroupDTO>
         _groupQueryRepository = groupQueryRepository;
     }
 
-    public Task<GroupDTO> Handle(GetGroupQuery request, CancellationToken cancellationToken)
+    public async Task<GroupDTO> Handle(GetGroupQuery request, CancellationToken cancellationToken)
     {
-        Group group = _groupQueryRepository.GetGroupById(request.GroupId)
+        Group group = await _groupQueryRepository.GetGroupById(request.GroupId, cancellationToken)
             ?? throw new GroupNotFoundException(request.GroupId);
 
-        return Task.FromResult(new GroupDTO(
+        return new GroupDTO(
             group.GroupId,
             group.GroupName,
             group.GroupDescription, 
             group.Users
                 .Select(user => user.Id)
-                .ToList()));
+                .ToList());
     }
 }

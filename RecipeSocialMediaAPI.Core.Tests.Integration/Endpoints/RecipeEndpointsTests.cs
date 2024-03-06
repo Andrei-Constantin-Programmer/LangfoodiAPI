@@ -548,8 +548,8 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         updateResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        var recipe = _fakeRecipeRepository.GetRecipeById(recipeId);
 
+        var recipe = await _fakeRecipeRepository.GetRecipeById(recipeId);
         recipe.Should().NotBeNull();
         recipe!.Id.Should().Be(recipeId);
         recipe.Title.Should().Be(newRecipe.Title);
@@ -598,7 +598,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Then
         updateResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
-        var recipe = _fakeRecipeRepository.GetRecipeById(recipeId);
+        var recipe = await _fakeRecipeRepository.GetRecipeById(recipeId);
         recipe.Should().BeNull();
     }
 
@@ -656,7 +656,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Then
         removeResult.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var recipe = _fakeRecipeRepository.GetRecipeById(recipeId);
+        var recipe = await _fakeRecipeRepository.GetRecipeById(recipeId);
         recipe.Should().BeNull();
     }
 

@@ -68,7 +68,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
-        var existingConnection = _fakeConnectionRepository
+        var existingConnection = await _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
@@ -160,7 +160,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
-        var existingConnection = _fakeConnectionRepository
+        _ = _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         // When
@@ -183,9 +183,9 @@ public class ConnectionEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        var connection1 = _fakeConnectionRepository
+        var connection1 = await _fakeConnectionRepository
             .CreateConnection(_testUser1.Account, _testUser2.Account, ConnectionStatus.Pending);
-        var connection2 = _fakeConnectionRepository
+        var connection2 = await _fakeConnectionRepository
             .CreateConnection(_testUser1.Account, _testUser3.Account, ConnectionStatus.Connected);
         _ = _fakeConnectionRepository
             .CreateConnection(_testUser3.Account, _testUser2.Account, ConnectionStatus.Blocked);
@@ -198,6 +198,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
+
         var data = await result.Content.ReadFromJsonAsync<List<ConnectionDTO>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(2);
@@ -269,14 +270,14 @@ public class ConnectionEndpointsTests : EndpointTestBase
         // Given
         var user1 = _fakeUserRepository
             .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
+        _ = _fakeUserRepository
             .CreateUser(_testUser1.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
+        _ = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        var connection1 = _fakeConnectionRepository
+        _ = _fakeConnectionRepository
             .CreateConnection(_testUser1.Account, _testUser2.Account, ConnectionStatus.Pending);
-        var connection2 = _fakeConnectionRepository
+        _ = _fakeConnectionRepository
             .CreateConnection(_testUser1.Account, _testUser3.Account, ConnectionStatus.Connected);
         _ = _fakeConnectionRepository
             .CreateConnection(_testUser3.Account, _testUser2.Account, ConnectionStatus.Blocked);
@@ -403,7 +404,8 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var connection = _fakeConnectionRepository.GetConnection(user1.Account, user2.Account);
+
+        var connection = await _fakeConnectionRepository.GetConnection(user1.Account, user2.Account);
         connection.Should().NotBeNull();
         connection!.Status.Should().Be(connectionStatus);
     }

@@ -47,8 +47,8 @@ public class GetConnectionsByUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser.Account.Id))
-            .Returns(testUser);
+            .Setup(repo => repo.GetUserById(testUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser);
 
         _connectionQueryRepositoryMock
             .Setup(repo => repo.GetConnectionsForUser(It.IsAny<IUserAccount>(), It.IsAny<CancellationToken>()))
@@ -83,8 +83,8 @@ public class GetConnectionsByUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser.Account.Id))
-            .Returns(testUser);
+            .Setup(repo => repo.GetUserById(testUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser);
 
         Connection connection1 = new(
             "0",

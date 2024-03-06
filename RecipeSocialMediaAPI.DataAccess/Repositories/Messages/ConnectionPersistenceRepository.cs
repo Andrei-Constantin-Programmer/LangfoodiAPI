@@ -19,7 +19,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public IConnection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus)
+    public async Task<IConnection> CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
     {
         ConnectionDocument connectionDocument = _connectionCollection.Insert(new ConnectionDocument(
             AccountId1: userAccount1.Id,
@@ -27,7 +27,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
             ConnectionStatus: connectionStatus.ToString()
         ));
 
-        return _mapper.MapConnectionFromDocument(connectionDocument);
+        return await _mapper.MapConnectionFromDocument(connectionDocument, cancellationToken);
     }
 
     public bool UpdateConnection(IConnection connection)

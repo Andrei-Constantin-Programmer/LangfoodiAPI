@@ -170,7 +170,7 @@ public class GroupEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
 
-        Group group = _fakeGroupRepository
+        Group group = await _fakeGroupRepository
             .CreateGroup("Test Group", "Test Group Description", new() { user1.Account, user2, user3});
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
@@ -220,7 +220,7 @@ public class GroupEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
 
-        Group group = _fakeGroupRepository
+        Group group = await _fakeGroupRepository
             .CreateGroup("Test Group", "Test Group Description", new() { user1, user2, user3 });
 
         // When
@@ -243,9 +243,9 @@ public class GroupEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
 
-        Group group1 = _fakeGroupRepository
+        Group group1 = await _fakeGroupRepository
             .CreateGroup("Test Group 1", "Test Group 1 Description", new() { user1.Account, user2 });
-        Group group2 = _fakeGroupRepository
+        Group group2 = await _fakeGroupRepository
             .CreateGroup("Test Group 2", "Test Group 2 Description", new() { user1.Account, user3 });
         _ = _fakeGroupRepository
             .CreateGroup("Test Group 3", "Test Group 3 Description", new() { user2, user3 });
@@ -342,9 +342,9 @@ public class GroupEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
 
-        Group group1 = _fakeGroupRepository
+        _ = await _fakeGroupRepository
             .CreateGroup("Test Group 1", "Test Group 1 Description", new() { user1, user2 });
-        Group group2 = _fakeGroupRepository
+        _ = await _fakeGroupRepository
             .CreateGroup("Test Group 2", "Test Group 2 Description", new() { user1, user3 });
         _ = _fakeGroupRepository
             .CreateGroup("Test Group 3", "Test Group 3 Description", new() { user2, user3 });
@@ -369,7 +369,7 @@ public class GroupEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
 
-        Group existingGroup = _fakeGroupRepository
+        Group existingGroup = await _fakeGroupRepository
             .CreateGroup("Test Group", "Test Group Description", new() { user1.Account, user2, user3 });
 
         UpdateGroupContract contract = new(existingGroup.GroupId, "New Group", "New Group Description", new() { user1.Account.Id, user2.Id });
@@ -382,7 +382,8 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var group = _fakeGroupRepository.GetGroupById(existingGroup.GroupId);
+
+        var group = await _fakeGroupRepository.GetGroupById(existingGroup.GroupId);
         group.Should().NotBeNull();
         group!.GroupName.Should().Be(contract.GroupName);
         group.GroupDescription.Should().Be(contract.GroupDescription);
@@ -423,7 +424,7 @@ public class GroupEndpointsTests : EndpointTestBase
         var user2 = _fakeUserRepository
             .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
         
-        Group existingGroup = _fakeGroupRepository
+        Group existingGroup = await _fakeGroupRepository
             .CreateGroup("Test Group", "Test Group Description", new() { user1.Account, user2 });
 
         UpdateGroupContract contract = new(existingGroup.GroupId, "New Group", "New Group Description", new() { user1.Account.Id, user2.Id, "nonExistentUser" });
@@ -451,7 +452,7 @@ public class GroupEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
 
-        Group existingGroup = _fakeGroupRepository
+        Group existingGroup = await _fakeGroupRepository
             .CreateGroup("Test Group", "Test Group Description", new() { user1, user2, user3 });
 
         UpdateGroupContract contract = new(existingGroup.GroupId, "New Group", "New Group Description", new() { user1.Id, user2.Id });
@@ -476,7 +477,7 @@ public class GroupEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
 
-        Group group = _fakeGroupRepository
+        Group group = await _fakeGroupRepository
             .CreateGroup("Test Group", "Test Group Description", new() { user1.Account, user2, user3 });
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
@@ -487,7 +488,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        _fakeGroupRepository.GetGroupById(group.GroupId).Should().BeNull();
+        (await _fakeGroupRepository.GetGroupById(group.GroupId)).Should().BeNull();
     }
 
     [Fact]
@@ -561,7 +562,7 @@ public class GroupEndpointsTests : EndpointTestBase
         var user3 = _fakeUserRepository
             .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
 
-        Group group = _fakeGroupRepository
+        Group group = await _fakeGroupRepository
             .CreateGroup("Test Group", "Test Group Description", new() { user1, user2, user3 });
 
         // When

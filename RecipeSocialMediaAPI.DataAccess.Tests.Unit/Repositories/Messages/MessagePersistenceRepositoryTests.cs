@@ -53,7 +53,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateMessage_WhenMessageIsValid_AddMessageToCollectionAndReturnMappedMessage()
+    public async Task CreateMessage_WhenMessageIsValid_AddMessageToCollectionAndReturnMappedMessageAsync()
     {
         // Given
         IUserAccount testSender = new TestUserAccount()
@@ -85,11 +85,11 @@ public class MessagePersistenceRepositoryTests
             null);
 
         _messageDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(It.IsAny<MessageDocument>(), testSender, null))
-            .Returns(expectedMessage);
+            .Setup(mapper => mapper.MapMessageFromDocument(It.IsAny<MessageDocument>(), testSender, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedMessage);
 
         // When
-        var result = _messagePersistenceRepositorySUT.CreateMessage(
+        var result = await _messagePersistenceRepositorySUT.CreateMessage(
             testSender,
             expectedMessage.Text,
             expectedMessage.Recipes.Select(r => r.Id).ToList(),

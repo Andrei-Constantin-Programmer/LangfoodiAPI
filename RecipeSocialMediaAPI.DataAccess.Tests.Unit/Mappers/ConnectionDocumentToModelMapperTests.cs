@@ -32,7 +32,7 @@ public class ConnectionDocumentToModelMapperTests
     [InlineData(ConnectionStatus.Pending)]
     [InlineData(ConnectionStatus.Connected)]
     [InlineData(ConnectionStatus.Favourite)]
-    public void MapConnectionFromDocument_WhenDocumentIsValid_ReturnCorrectlyMappedDocument(ConnectionStatus connectionStatus)
+    public async Task MapConnectionFromDocument_WhenDocumentIsValid_ReturnCorrectlyMappedDocumentAsync(ConnectionStatus connectionStatus)
     {
         // Given
         TestUserCredentials testUser1 = new()
@@ -68,14 +68,14 @@ public class ConnectionDocumentToModelMapperTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser1.Account.Id))
-            .Returns(testUser1);
+            .Setup(repo => repo.GetUserById(testUser1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser2.Account.Id))
-            .Returns(testUser2);
+            .Setup(repo => repo.GetUserById(testUser2.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser2);
 
         // When
-        var result = _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+        var result = await _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
 
         // Then
         result.Account1.Should().Be(testUser1.Account);
@@ -89,7 +89,7 @@ public class ConnectionDocumentToModelMapperTests
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(false, false)]
-    public void MapConnectionFromDocument_WhenUsersDontExist_ThrowUserDocumentNotFoundException(bool firstUserExists, bool secondUserExists)
+    public async Task MapConnectionFromDocument_WhenUsersDontExist_ThrowUserDocumentNotFoundExceptionAsync(bool firstUserExists, bool secondUserExists)
     {
         // Given
         TestUserCredentials? testUser1 = 
@@ -128,23 +128,23 @@ public class ConnectionDocumentToModelMapperTests
         ConnectionDocument testDocument = new(userId1, userId2, "Pending");
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userId1))
-            .Returns(testUser1);
+            .Setup(repo => repo.GetUserById(userId1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userId2))
-            .Returns(testUser2);
+            .Setup(repo => repo.GetUserById(userId2, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser2);
 
         // When
-        var testAction = () => _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
 
         // Then
-        testAction.Should().Throw<UserDocumentNotFoundException>();
+        await testAction.Should().ThrowAsync<UserDocumentNotFoundException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void MapConnectionFromDocument_WhenConnectionStatusCantBeMapped_ThrowInvalidConnectionStatusException()
+    public async Task MapConnectionFromDocument_WhenConnectionStatusCantBeMapped_ThrowInvalidConnectionStatusExceptionAsync()
     {
         // Given
         TestUserCredentials testUser1 = new()
@@ -176,23 +176,23 @@ public class ConnectionDocumentToModelMapperTests
         ConnectionDocument testDocument = new(testUser1.Account.Id, testUser2.Account.Id, "MalformedStatus");
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser1.Account.Id))
-            .Returns(testUser1);
+            .Setup(repo => repo.GetUserById(testUser1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser2.Account.Id))
-            .Returns(testUser2);
+            .Setup(repo => repo.GetUserById(testUser2.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser2);
 
         // When
-        var testAction = () => _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
 
         // Then
-        testAction.Should().Throw<InvalidConnectionStatusException>();
+        await testAction.Should().ThrowAsync<InvalidConnectionStatusException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void MapConnectionFromDocument_WhenTheAccountsAreTheSame_ThrowException()
+    public async Task MapConnectionFromDocument_WhenTheAccountsAreTheSame_ThrowExceptionAsync()
     {
         // Given
         TestUserCredentials testUser = new()
@@ -211,13 +211,13 @@ public class ConnectionDocumentToModelMapperTests
         ConnectionDocument testDocument = new(testUser.Account.Id, testUser.Account.Id, "Pending");
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser.Account.Id))
-            .Returns(testUser);
+            .Setup(repo => repo.GetUserById(testUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser);
 
         // When
-        var testAction = () => _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
 
         // Then
-        testAction.Should().Throw<Exception>();
+        await testAction.Should().ThrowAsync<Exception>();
     }
 }

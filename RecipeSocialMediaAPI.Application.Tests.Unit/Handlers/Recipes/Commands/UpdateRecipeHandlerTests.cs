@@ -86,8 +86,8 @@ public class UpdateRecipeHandlerTests
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>()))
-            .Returns(new RecipeAggregate(
+            .Setup(x => x.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new RecipeAggregate(
                 testContract.Id, 
                 testContract.Title,
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
@@ -135,8 +135,8 @@ public class UpdateRecipeHandlerTests
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>()))
-            .Returns(new RecipeAggregate(
+            .Setup(x => x.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new RecipeAggregate(
                 testContract.Id, 
                 testContract.Title,
                 new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),

@@ -67,13 +67,13 @@ public class MarkMessageAsReadHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user2.Account.Id))
-            .Returns(user2);
+            .Setup(repo => repo.GetUserById(user2.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user2);
 
         TestMessage message = new("m1", user1.Account, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, seenBy: new List<IUserAccount> { user1.Account });
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(message.Id))
-            .Returns(message);
+            .Setup(repo => repo.GetMessage(message.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(message);
         
         MarkMessageAsReadCommand command = new(user2.Account.Id, message.Id);
 
@@ -120,12 +120,12 @@ public class MarkMessageAsReadHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user2.Account.Id))
-            .Returns(user2);
+            .Setup(repo => repo.GetUserById(user2.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user2);
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(It.IsAny<string>()))
-            .Returns((Message?)null);
+            .Setup(repo => repo.GetMessage(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Message?)null);
         
         MarkMessageAsReadCommand command = new(user2.Account.Id, "m1");
 
@@ -155,8 +155,8 @@ public class MarkMessageAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>()))
-            .Returns((IUserCredentials?)null);
+            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IUserCredentials?)null);
 
         MarkMessageAsReadCommand command = new("u1", "m1");
 
@@ -196,13 +196,13 @@ public class MarkMessageAsReadHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user2.Account.Id))
-            .Returns(user2);
+            .Setup(repo => repo.GetUserById(user2.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user2);
 
         TestMessage message = new("m1", user1.Account, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, seenBy: new List<IUserAccount> { user1.Account });
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(message.Id))
-            .Returns(message);
+            .Setup(repo => repo.GetMessage(message.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(message);
 
         MarkMessageAsReadCommand command = new(user2.Account.Id, message.Id);
 

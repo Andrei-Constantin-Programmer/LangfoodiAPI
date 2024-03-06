@@ -6,7 +6,7 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 public interface IConversationPersistenceRepository
 {
-    public Conversation CreateConnectionConversation(IConnection connection);
-    public Conversation CreateGroupConversation(Group group);
-    public bool UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null);
+    Task<Conversation> CreateConnectionConversation(IConnection connection, CancellationToken cancellationToken = default);
+    Conversation CreateGroupConversation(Group group);
+    Task<bool> UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default);
 }

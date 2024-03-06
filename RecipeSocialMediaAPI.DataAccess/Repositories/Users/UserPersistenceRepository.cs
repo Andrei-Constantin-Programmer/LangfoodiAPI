@@ -36,9 +36,9 @@ public class UserPersistenceRepository : IUserPersistenceRepository
 
     public bool DeleteUser(string id) => _userCollection.Delete(userDoc => userDoc.Id == id);
 
-    public bool UpdateUser(IUserCredentials user)
+    public async Task<bool> UpdateUser(IUserCredentials user, CancellationToken cancellationToken = default)
     {
-        var userDocument = _userCollection.Find(userDoc => userDoc.Id == user.Account.Id);
+        var userDocument = await _userCollection.Find(userDoc => userDoc.Id == user.Account.Id, cancellationToken);
 
         if (userDocument is null)
         {

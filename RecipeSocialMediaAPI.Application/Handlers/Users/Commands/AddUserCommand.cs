@@ -37,17 +37,17 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
 
     public async Task<SuccessfulAuthenticationDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if (_userQueryRepository.GetUserByHandler(request.Contract.Handler) is not null)
+        if ((await _userQueryRepository.GetUserByHandler(request.Contract.Handler, cancellationToken)) is not null)
         {
             throw new HandlerAlreadyInUseException(request.Contract.Handler);
         }
 
-        if (_userQueryRepository.GetUserByUsername(request.Contract.UserName) is not null)
+        if ((await _userQueryRepository.GetUserByUsername(request.Contract.UserName, cancellationToken)) is not null)
         {
             throw new UsernameAlreadyInUseException(request.Contract.UserName);
         }
 
-        if (_userQueryRepository.GetUserByEmail(request.Contract.Email) is not null)
+        if ((await _userQueryRepository.GetUserByEmail(request.Contract.Email, cancellationToken)) is not null)
         {
             throw new EmailAlreadyInUseException(request.Contract.Email);
         }
@@ -63,7 +63,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
 
         var token = _bearerTokenGeneratorService.GenerateToken(insertedUser);
 
-        return await Task.FromResult(new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(insertedUser), token));
+        return new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(insertedUser), token);
     }
 }
 

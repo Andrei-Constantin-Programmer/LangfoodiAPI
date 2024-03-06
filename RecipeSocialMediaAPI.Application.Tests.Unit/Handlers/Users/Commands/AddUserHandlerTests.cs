@@ -72,8 +72,8 @@ public class AddUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>()))
-            .Returns(existingUser);
+            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUser);
         AddUserCommand command = new(
             new NewUserContract(
                 Handler: existingUser.Account.Handler,
@@ -111,8 +111,8 @@ public class AddUserHandlerTests
         };
             
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
-            .Returns(existingUser);
+            .Setup(repo => repo.GetUserByUsername(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUser);
         AddUserCommand command = new(
             new NewUserContract(
                 Handler: existingUser.Account.Handler,
@@ -150,8 +150,8 @@ public class AddUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
-            .Returns(existingUser);
+            .Setup(repo => repo.GetUserByEmail(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUser);
         NewUserContract contract = new("TestHandler", "NewUser", existingUser.Email,"NewPass");
 
         // When

@@ -24,13 +24,13 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         _logger = logger;
     }
 
-    public RecipeAggregate? GetRecipeById(string id)
+    public async Task<RecipeAggregate?> GetRecipeById(string id, CancellationToken cancellationToken = default)
     {
         RecipeDocument? recipeDocument;
         try
         {
-            recipeDocument = _recipeCollection
-                .Find(recipeDoc => recipeDoc.Id == id);
+            recipeDocument = await _recipeCollection
+                .Find(recipeDoc => recipeDoc.Id == id, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -43,7 +43,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
             return null;
         }
 
-        IUserAccount? chef = _userQueryRepository.GetUserById(recipeDocument.ChefId)?.Account;
+        IUserAccount? chef = (await _userQueryRepository.GetUserById(recipeDocument.ChefId, cancellationToken))?.Account;
 
         if (chef is null)
         {
@@ -77,13 +77,13 @@ public class RecipeQueryRepository : IRecipeQueryRepository
 
     public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefId(string chefId, CancellationToken cancellationToken = default)
     {
-        IUserAccount? chef = _userQueryRepository.GetUserById(chefId)?.Account;
+        IUserAccount? chef = (await _userQueryRepository.GetUserById(chefId, cancellationToken))?.Account;
         return await GetRecipesByChef(chef, cancellationToken);
     }
 
     public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefName(string chefName, CancellationToken cancellationToken = default)
     {
-        IUserAccount? chef = _userQueryRepository.GetUserByUsername(chefName)?.Account;
+        IUserAccount? chef = (await _userQueryRepository.GetUserByUsername(chefName, cancellationToken))?.Account;
         return await GetRecipesByChef(chef, cancellationToken);
     }
 }

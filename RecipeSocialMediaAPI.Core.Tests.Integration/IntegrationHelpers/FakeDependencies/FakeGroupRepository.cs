@@ -13,18 +13,19 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
         _collection = new();
     }
 
-    public Group? GetGroupById(string groupId) => _collection.FirstOrDefault(group => group.GroupId == groupId);
+    public async Task<Group?> GetGroupById(string groupId, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.FirstOrDefault(group => group.GroupId == groupId));
 
     public Task<IEnumerable<Group>> GetGroupsByUser(IUserAccount userAccount, CancellationToken cancellationToken = default) => Task.FromResult(_collection
         .Where(group => group.Users.Any(user => user.Id == userAccount.Id)));
 
-    public Group CreateGroup(string groupName, string groupDescription, List<IUserAccount> users)
+    public async Task<Group> CreateGroup(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         Group group = new(id, groupName, groupDescription, users);
         _collection.Add(group);
 
-        return group;
+        return await Task.FromResult(group);
     }
 
     public bool UpdateGroup(Group group)
@@ -46,7 +47,7 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
 
     public bool DeleteGroup(string groupId)
     {
-        var group = GetGroupById(groupId);
+        var group = GetGroupById(groupId).Result;
 
         return group is not null && _collection.Remove(group);
     }

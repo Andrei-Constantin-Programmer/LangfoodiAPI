@@ -1,6 +1,8 @@
-﻿using RecipeSocialMediaAPI.Application.Repositories.Messages;
+﻿using Moq;
+using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
@@ -21,22 +23,22 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         _collection = new();
     }
 
-    public Message? GetMessage(string id) => _collection.FirstOrDefault(m => m.Id == id);
+    public async Task<Message?> GetMessage(string id, CancellationToken cancellationToken = default) => await Task.FromResult(_collection.FirstOrDefault(m => m.Id == id));
 
-    public Task<IEnumerable<Message>> GetMessagesWithRecipe(string recipeId, CancellationToken cancellationToken = default) => Task.FromResult(_collection
+    public async Task<IEnumerable<Message>> GetMessagesWithRecipe(string recipeId, CancellationToken cancellationToken = default) => await Task.FromResult(_collection
         .Where(m => m is RecipeMessage message 
                  && message.Recipes.Any(r => r.Id == recipeId)));
 
-    public Message CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
+    public async Task<Message> CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         Message message;
 
         if (recipeIds?.Count > 0)
         {
-            var recipes = recipeIds
-                .Select(id => _recipeQueryRepository.GetRecipeById(id)!)
-                .ToList();
+            var recipes = (await Task.WhenAll(recipeIds
+                .Select(async id => await _recipeQueryRepository.GetRecipeById(id, cancellationToken)!)))
+                .OfType<RecipeAggregate>();
 
             message = _messageFactory
                 .CreateRecipeMessage(id, sender, recipes, text, new(), sentDate, repliedToMessage: messageRepliedTo);
@@ -72,7 +74,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
 
     public bool DeleteMessage(string messageId)
     {
-        var message = GetMessage(messageId);
+        var message = GetMessage(messageId).Result;
 
         return message is not null && _collection.Remove(message);
     }

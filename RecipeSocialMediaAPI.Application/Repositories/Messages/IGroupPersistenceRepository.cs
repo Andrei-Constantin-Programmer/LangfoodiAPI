@@ -5,8 +5,8 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 public interface IGroupPersistenceRepository
 {
-    public Group CreateGroup(string groupName, string groupDescription, List<IUserAccount> users);
-    public bool UpdateGroup(Group group);
-    public bool DeleteGroup(Group group);
-    public bool DeleteGroup(string groupId);
+    Task<Group> CreateGroup(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default);
+    bool UpdateGroup(Group group);
+    bool DeleteGroup(Group group);
+    bool DeleteGroup(string groupId);
 }

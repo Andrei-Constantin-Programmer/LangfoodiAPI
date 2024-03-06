@@ -30,7 +30,7 @@ internal class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
 
     public async Task Handle(RemoveMessageCommand request, CancellationToken cancellationToken)
     {
-        Message message = _messageQueryRepository.GetMessage(request.Id)
+        Message message = (await _messageQueryRepository.GetMessage(request.Id, cancellationToken))
             ?? throw new MessageNotFoundException(request.Id);
 
         List<string> imagesToDelete = new();

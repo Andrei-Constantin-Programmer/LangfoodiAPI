@@ -111,16 +111,16 @@ public class SendMessageHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Conversation conversation = withGroupConversation
             ? new GroupConversation(new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1.Account, user2.Account }), "convo1")
             : new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
         
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
@@ -132,8 +132,9 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     null,
-                    It.IsAny<List<string>>()))
-            .Returns(createdMessage);
+                    It.IsAny<List<string>>(), 
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdMessage);
         MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
@@ -145,7 +146,7 @@ public class SendMessageHandlerTests
         // Then
         result.Should().Be(messageDto);
         _conversationPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateConversation(conversation, It.IsAny<Connection>(), It.IsAny<Group>()), Times.Once);
+            .Verify(repo => repo.UpdateConversation(conversation, It.IsAny<Connection>(), It.IsAny<Group>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Theory]
@@ -186,16 +187,16 @@ public class SendMessageHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Conversation conversation = withGroupConversation
             ? new GroupConversation(new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1.Account, user2.Account }), "convo1")
             : new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
 
@@ -207,8 +208,9 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => imageUrls.SequenceEqual(contract.ImageURLs!)),
                     _testDate,
                     null,
-                    It.IsAny<List<string>>()))
-            .Returns(createdMessage);
+                    It.IsAny<List<string>>(), 
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdMessage);
 
         MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, ImageURLs: new() { contract.ImageURLs![0], contract.ImageURLs[1] });
         _messageMapperMock
@@ -260,26 +262,26 @@ public class SendMessageHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Conversation conversation = withGroupConversation
             ? new GroupConversation(new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1.Account, user2.Account }), "convo1")
             : new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         RecipeAggregate existingRecipe1 = new("R1", "Recipe 1", new(new() { new("Apples", 500, "grams") }, new()), "Recipe Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
         RecipeAggregate existingRecipe2 = new("R2", "Recipe 2", new(new() { new("Pears", 300, "grams") }, new()), "Recipe 2 Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
 
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(existingRecipe1.Id))
-            .Returns(existingRecipe1);
+            .Setup(repo => repo.GetRecipeById(existingRecipe1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingRecipe1);
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(existingRecipe2.Id))
-            .Returns(existingRecipe2);
+            .Setup(repo => repo.GetRecipeById(existingRecipe2.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingRecipe2);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
@@ -291,8 +293,9 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     null,
-                    It.IsAny<List<string>>()))
-            .Returns(createdMessage);
+                    It.IsAny<List<string>>(), 
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdMessage);
 
         MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
@@ -342,24 +345,24 @@ public class SendMessageHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Conversation conversation = new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         RecipeAggregate existingRecipe1 = new("R1", "Recipe 1", new(new() { new("Apples", 500, "grams") }, new()), "Recipe Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
         RecipeAggregate existingRecipe2 = new("R2", "Recipe 2", new(new() { new("Pears", 300, "grams") }, new()), "Recipe 2 Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
 
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(existingRecipe1.Id))
-            .Returns(existingRecipe1);
+            .Setup(repo => repo.GetRecipeById(existingRecipe1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingRecipe1);
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(existingRecipe2.Id))
-            .Returns((RecipeAggregate?)null);
+            .Setup(repo => repo.GetRecipeById(existingRecipe2.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((RecipeAggregate?)null);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
@@ -371,8 +374,9 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     null,
-                    It.IsAny<List<string>>()))
-            .Returns(createdMessage);
+                    It.IsAny<List<string>>(), 
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdMessage);
 
         MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, Recipes: new() { new(existingRecipe1.Id, existingRecipe1.Title, null), new(existingRecipe2.Id, existingRecipe2.Title, null) });
         _messageMapperMock
@@ -416,14 +420,14 @@ public class SendMessageHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns((UserCredentials?)null);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((UserCredentials?)null);
 
         Conversation conversation = new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
@@ -464,14 +468,14 @@ public class SendMessageHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Conversation conversation = new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns((Conversation?)null);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Conversation?)null);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
@@ -520,21 +524,21 @@ public class SendMessageHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Conversation conversation = withGroupConversation
             ? new GroupConversation(new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1.Account, user2.Account }), "convo1")
             : new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         Message repliedToMessage = _messageFactory.CreateTextMessage("m1", user2.Account, "I am being replied to", new(), _dateTimeProviderMock.Object.Now);
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(repliedToMessage.Id))
-            .Returns(repliedToMessage);
+            .Setup(repo => repo.GetMessage(repliedToMessage.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(repliedToMessage);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
 
@@ -546,8 +550,9 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     repliedToMessage,
-                    It.IsAny<List<string>>()))
-            .Returns(createdMessage);
+                    It.IsAny<List<string>>(), 
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdMessage);
 
         MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
         _messageMapperMock
@@ -599,21 +604,21 @@ public class SendMessageHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Conversation conversation = withGroupConversation
             ? new GroupConversation(new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1.Account, user2.Account }), "convo1")
             : new ConnectionConversation(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         Message repliedToMessage = _messageFactory.CreateTextMessage("m1", user2.Account, "I am being replied to", new(), _dateTimeProviderMock.Object.Now);
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(repliedToMessage.Id))
-            .Returns((Message?)null);
+            .Setup(repo => repo.GetMessage(repliedToMessage.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Message?)null);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), repliedToMessage.Id);
 
@@ -625,8 +630,9 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     repliedToMessage,
-                    It.IsAny<List<string>>()))
-            .Returns(createdMessage);
+                    It.IsAny<List<string>>(), 
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdMessage);
 
         MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text, RepliedToMessageId: repliedToMessage.Id);
         _messageMapperMock
@@ -676,14 +682,14 @@ public class SendMessageHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         ConnectionConversation conversation = new(new Connection("conn1", user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
@@ -696,8 +702,9 @@ public class SendMessageHandlerTests
                 It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                 _testDate,
                 null,
-                It.IsAny<List<string>>()))
-            .Returns(createdMessage);
+                It.IsAny<List<string>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdMessage);
         MessageDTO messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
@@ -756,14 +763,14 @@ public class SendMessageHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         ConnectionConversation conversation = new(new Connection(connectionId, user1.Account, user2.Account, ConnectionStatus.Connected), "convo1");
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 

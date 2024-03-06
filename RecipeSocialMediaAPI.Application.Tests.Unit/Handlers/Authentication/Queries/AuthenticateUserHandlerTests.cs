@@ -11,6 +11,7 @@ using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using System.Threading;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 
@@ -45,8 +46,8 @@ public class AuthenticateUserHandlerTests
         // Given
         UserCredentials? nullUser = null;
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
-            .Returns(nullUser);
+            .Setup(repo => repo.GetUserByEmail(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nullUser);
 
         AuthenticateUserQuery query = new("TestUser", "TestPass");
 
@@ -79,8 +80,8 @@ public class AuthenticateUserHandlerTests
             Password = encryptedPassword
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
-            .Returns(testUser);
+            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser);
 
         AuthenticateUserQuery query = new(testUser.Email, "WrongPass");
 
@@ -123,8 +124,8 @@ public class AuthenticateUserHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
-            .Returns(testUser);
+            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser);
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
             .Returns(expectedUserDto);

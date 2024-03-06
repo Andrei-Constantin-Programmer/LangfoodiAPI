@@ -39,7 +39,7 @@ public class MessageDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void MapMessageFromDocument_WhenOnlyTextIsPresent_ReturnTextMessage()
+    public async Task MapMessageFromDocument_WhenOnlyTextIsPresent_ReturnTextMessageAsync()
     {
         // Given
         string messageId = "1";
@@ -62,8 +62,8 @@ public class MessageDocumentToModelMapperTests
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testSender.Id))
-            .Returns(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
+            .Setup(repo => repo.GetUserById(testSender.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         TestTextMessage textMessage = new(
             testDocument.Id!,
@@ -86,7 +86,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(textMessage);
 
         // When
-        var result = _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
 
         // Then
         result.Should().BeEquivalentTo(textMessage);
@@ -97,7 +97,7 @@ public class MessageDocumentToModelMapperTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(true)]
     [InlineData(false)]
-    public void MapMessageFromDocument_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
+    public async void MapMessageFromDocument_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
     {
         // Given
         string messageId = "1";
@@ -126,8 +126,8 @@ public class MessageDocumentToModelMapperTests
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testSender.Id))
-            .Returns(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
+            .Setup(repo => repo.GetUserById(testSender.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         TestImageMessage imageMessage = new(
             testDocument.Id!,
@@ -152,7 +152,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(imageMessage);
 
         // When
-        var result = (TestImageMessage?)_messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = (TestImageMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
 
         // Then
         result.Should().Be(imageMessage);
@@ -163,7 +163,7 @@ public class MessageDocumentToModelMapperTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(true)]
     [InlineData(false)]
-    public void MapMessageFromDocument_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessage(bool hasText)
+    public async Task MapMessageFromDocument_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessageAsync(bool hasText)
     {
         // Given
         string messageId = "1";
@@ -192,8 +192,8 @@ public class MessageDocumentToModelMapperTests
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testSender.Id))
-            .Returns(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
+            .Setup(repo => repo.GetUserById(testSender.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         List<RecipeAggregate> recipes = new()
         {
@@ -226,8 +226,8 @@ public class MessageDocumentToModelMapperTests
             new() { testSender });
 
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
-            .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
+            .Setup(repo => repo.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string id, CancellationToken _) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         _messageFactoryMock
             .Setup(factory => factory.CreateRecipeMessage(
                 recipeMessage.Id,
@@ -241,7 +241,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(recipeMessage);
 
         // When
-        var result = (TestRecipeMessage?)_messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = (TestRecipeMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
 
         // Then
         result.Should().Be(recipeMessage);
@@ -250,7 +250,7 @@ public class MessageDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFound_ReturnTextMessageAndLogError()
+    public async Task MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFound_ReturnTextMessageAndLogErrorAsync()
     {
         // Given
         string messageId = "1";
@@ -292,7 +292,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(textMessage);
 
         // When
-        var result = (TestTextMessage?)_messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = (TestTextMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
 
         // Then
         result.Should().Be(textMessage);
@@ -309,7 +309,7 @@ public class MessageDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFoundAndNoText_ThrowMalformedMessageDocumentException()
+    public async Task MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFoundAndNoText_ThrowMalformedMessageDocumentExceptionAsync()
     {
         // Given
         string messageId = "1";
@@ -349,20 +349,20 @@ public class MessageDocumentToModelMapperTests
             null);
 
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
-            .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
+            .Setup(repo => repo.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string id, CancellationToken _) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         
         // When
-        var testAction = () => _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var testAction = async () => await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
 
         // Then
-        testAction.Should().Throw<MalformedMessageDocumentException>();
+        await testAction.Should().ThrowAsync<MalformedMessageDocumentException>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void MapMessageFromDocument_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAndLogWarningForRecipesNotFound()
+    public async Task MapMessageFromDocument_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAndLogWarningForRecipesNotFoundAsync()
     {
         // Given
         string messageId = "1";
@@ -422,8 +422,8 @@ public class MessageDocumentToModelMapperTests
             null);
 
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(It.IsAny<string>()))
-            .Returns((string id) => recipes.FirstOrDefault(recipe => recipe.Id == id));
+            .Setup(repo => repo.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string id, CancellationToken _) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         _messageFactoryMock
             .Setup(factory => factory.CreateRecipeMessage(
                 recipeMessage.Id,
@@ -437,7 +437,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(recipeMessage);
         
         // When
-        var result = (TestRecipeMessage?)_messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = (TestRecipeMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
 
         // Then
         result.Should().Be(recipeMessage);
@@ -456,7 +456,7 @@ public class MessageDocumentToModelMapperTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(false, false, false)]
     [InlineData(true, false, false)]
-    public void MapMessageFromDocument_WhenMessageContentIsMalformed_ThrowMalformedMessageDocumentException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
+    public async Task MapMessageFromDocument_WhenMessageContentIsMalformed_ThrowMalformedMessageDocumentExceptionAsync(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
     {
         // Given
         string messageId = "1";
@@ -490,9 +490,9 @@ public class MessageDocumentToModelMapperTests
             null);
 
         // When
-        var action = () => _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var action = async () => await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
 
         // Then
-        action.Should().Throw<MalformedMessageDocumentException>();
+        await action.Should().ThrowAsync<MalformedMessageDocumentException>();
     }
 }

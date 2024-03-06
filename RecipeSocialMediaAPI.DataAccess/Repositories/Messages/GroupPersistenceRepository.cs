@@ -18,11 +18,11 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
         _mapper = mapper;
     }
 
-    public Group CreateGroup(string groupName, string groupDescription, List<IUserAccount> users)
+    public async Task<Group> CreateGroup(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default)
     {
         GroupDocument groupDocument = _groupCollection.Insert(new(groupName, groupDescription, users.Select(user => user.Id).ToList()));
 
-        return _mapper.MapGroupFromDocument(groupDocument);
+        return await _mapper.MapGroupFromDocument(groupDocument, cancellationToken);
     }
 
     public bool UpdateGroup(Group group)

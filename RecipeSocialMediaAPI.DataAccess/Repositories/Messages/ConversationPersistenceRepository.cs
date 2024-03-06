@@ -22,9 +22,9 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public Conversation CreateConnectionConversation(IConnection connection)
+    public async Task<Conversation> CreateConnectionConversation(IConnection connection, CancellationToken cancellationToken = default)
     {
-        ConnectionDocument connectionDocument = GetConnectionDocument(connection)
+        ConnectionDocument connectionDocument = await GetConnectionDocument(connection, cancellationToken)
             ?? throw new ConnectionDocumentNotFoundException(connection.Account1, connection.Account2);
 
         ConversationDocument conversationDocument = _conversationCollection.Insert(new(
@@ -45,19 +45,20 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         return _mapper.MapConversationFromDocument(conversationDocument, null, group, new());
     }
 
-    public bool UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null)
+    public async Task<bool> UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default)
     {
         (string? connectionId, string? groupId) = conversation switch
         {
             ConnectionConversation connectionConversation =>
                 (connection is not null 
-                ? GetConnectionId(connection) 
+                ? await GetConnectionId(connection, cancellationToken) 
                     ?? throw new InvalidConversationException($"No connection found for ConnectionConversation with id {conversation.ConversationId}")
                 : throw new ArgumentException($"No connection provided when updating ConnectionConversation with id {conversation.ConversationId}"),
                 (string?)null),
+
             GroupConversation groupConversation => 
-            (null, 
-            group?.GroupId ?? throw new ArgumentException($"No group provided when updating GroupConversation with id {conversation.ConversationId}")),
+            (null, group?.GroupId 
+                ?? throw new ArgumentException($"No group provided when updating GroupConversation with id {conversation.ConversationId}")),
 
             _ => throw new InvalidConversationException($"Could not update conversation with id {conversation.ConversationId} of unknown type {conversation.GetType()}"),
         };
@@ -71,13 +72,15 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
             conversationDoc => conversationDoc.Id == conversation.ConversationId);
     }
 
-    private string? GetConnectionId(IConnection connection) => 
+    private async Task<string?> GetConnectionId(IConnection connection, CancellationToken cancellationToken = default) => 
         connection is not null 
-        ? (GetConnectionDocument(connection)?.Id) 
+        ? (await GetConnectionDocument(connection, cancellationToken))?.Id 
         : null;
 
-    private ConnectionDocument? GetConnectionDocument(IConnection connection) =>
-        _connectionCollection.Find(conn => (conn.AccountId1 == connection.Account1.Id && conn.AccountId2 == connection.Account2.Id) 
-                                        || (conn.AccountId1 == connection.Account2.Id && conn.AccountId2 == connection.Account1.Id));
+    private async Task<ConnectionDocument?> GetConnectionDocument(IConnection connection, CancellationToken cancellationToken = default) =>
+        await _connectionCollection.Find(conn => (conn.AccountId1 == connection.Account1.Id 
+                                                                  && conn.AccountId2 == connection.Account2.Id) 
+                                              || (conn.AccountId1 == connection.Account2.Id 
+                                                                  && conn.AccountId2 == connection.Account1.Id), cancellationToken);
 
 }

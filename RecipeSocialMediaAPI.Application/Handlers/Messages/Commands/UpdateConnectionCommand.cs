@@ -23,14 +23,14 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
         _userQueryRepository = userQueryRepository;
     }
 
-    public Task Handle(UpdateConnectionCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateConnectionCommand request, CancellationToken cancellationToken)
     {
-        IUserAccount user1 = _userQueryRepository.GetUserById(request.Contract.UserId1)?.Account
+        IUserAccount user1 = (await _userQueryRepository.GetUserById(request.Contract.UserId1, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId1}");
-        IUserAccount user2 = _userQueryRepository.GetUserById(request.Contract.UserId2)?.Account
+        IUserAccount user2 = (await _userQueryRepository.GetUserById(request.Contract.UserId2, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId2}");
 
-        IConnection? connection = _connectionQueryRepository.GetConnection(user1, user2)
+        IConnection? connection = await _connectionQueryRepository.GetConnection(user1, user2, cancellationToken)
             ?? throw new ConnectionNotFoundException($"No connection found between users with ids {user1.Id} and {user2.Id}");
 
         var isValidConnectionStatus = Enum.TryParse(request.Contract.NewConnectionStatus, out ConnectionStatus newStatus);
@@ -41,15 +41,16 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
 
         if (connection.Status == newStatus)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         connection.Status = newStatus;
 
         var isSuccessful = _connectionPersistenceRepository.UpdateConnection(connection);
 
-        return isSuccessful
-            ? Task.CompletedTask
-            : throw new ConnectionUpdateException($"Could not update connection between users with ids {user1.Id} and {user2.Id}");
+        if (!isSuccessful)
+        {
+            throw new ConnectionUpdateException($"Could not update connection between users with ids {user1.Id} and {user2.Id}");
+        }
     }
 }

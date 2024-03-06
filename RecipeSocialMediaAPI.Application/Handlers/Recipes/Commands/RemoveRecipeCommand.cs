@@ -34,7 +34,7 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 
     public async Task Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate? recipeToRemove = _recipeQueryRepository.GetRecipeById(request.Id) 
+        RecipeAggregate? recipeToRemove = await _recipeQueryRepository.GetRecipeById(request.Id, cancellationToken) 
             ?? throw new RecipeNotFoundException(request.Id);
 
         var imageIds = recipeToRemove.Recipe.Steps

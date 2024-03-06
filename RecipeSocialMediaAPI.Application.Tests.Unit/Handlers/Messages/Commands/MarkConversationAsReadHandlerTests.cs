@@ -60,15 +60,15 @@ public class MarkConversationAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
@@ -110,8 +110,8 @@ public class MarkConversationAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         List<Message> messages = new()
         {
@@ -126,8 +126,8 @@ public class MarkConversationAsReadHandlerTests
         ConnectionConversation conversation = new(connection, "convo1", messages);
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
@@ -179,15 +179,15 @@ public class MarkConversationAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>()))
-            .Returns((IUserCredentials?)null);
+            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IUserCredentials?)null);
 
         Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
@@ -230,15 +230,15 @@ public class MarkConversationAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns((Conversation?)null);
+            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Conversation?)null);
 
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 

@@ -49,18 +49,19 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessage_WhenMessageWithIdNotFound_ReturnNull()
+    public async Task GetMessage_WhenMessageWithIdNotFound_ReturnNullAsync()
     {
         // Given
         string messageId = "1";
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
-        MessageDocument? nullMessageDocument = null;
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(nullMessageDocument);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((MessageDocument?)null);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessage(messageId);
+        var result = await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().BeNull();
@@ -69,7 +70,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessage_WhenMessageIsFoundButSenderIsNotFound_LogWarningAndReturnNull()
+    public async Task GetMessage_WhenMessageIsFoundButSenderIsNotFound_LogWarningAndReturnNullAsync()
     {
         // Given
         string messageId = "1";
@@ -99,14 +100,16 @@ public class MessageQueryRepositoryTests
         );
 
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _mapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender, null))
-            .Returns(testMessage);
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessage(messageId);
+        var result = await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().BeNull();
@@ -123,7 +126,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessage_WhenOnlyTextIsPresent_ReturnTextMessage()
+    public async void GetMessage_WhenOnlyTextIsPresent_ReturnTextMessage()
     {
         // Given
         string messageId = "1";
@@ -159,17 +162,19 @@ public class MessageQueryRepositoryTests
             null);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
-            .Returns(textMessage);
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(textMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(testDocument);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns(testSender);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
         
         // When
-        var result = (TestTextMessage?) _messageQueryRepositorySUT.GetMessage(messageId);
+        var result = (TestTextMessage?) await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().Be(textMessage);
@@ -180,7 +185,7 @@ public class MessageQueryRepositoryTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(true)]
     [InlineData(false)]
-    public void GetMessage_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
+    public async Task GetMessage_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessageAsync(bool hasText)
     {
         // Given
         string messageId = "1";
@@ -223,17 +228,19 @@ public class MessageQueryRepositoryTests
             null);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
-            .Returns(imageMessage);
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(imageMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(testDocument);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns(testSender);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
 
         // When
-        var result = (TestImageMessage?)_messageQueryRepositorySUT.GetMessage(messageId);
+        var result = (TestImageMessage?) await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().Be(imageMessage);
@@ -244,7 +251,7 @@ public class MessageQueryRepositoryTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(true)]
     [InlineData(false)]
-    public void GetMessage_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessage(bool hasText)
+    public async Task GetMessage_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessageAsync(bool hasText)
     {
         // Given
         string messageId = "1";
@@ -307,17 +314,19 @@ public class MessageQueryRepositoryTests
             null);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account,  null))
-            .Returns(recipeMessage);
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account,  null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(recipeMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(testDocument);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns(testSender);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
 
         // When
-        var result = (TestRecipeMessage?)_messageQueryRepositorySUT.GetMessage(messageId);
+        var result = (TestRecipeMessage?) await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().Be(recipeMessage);
@@ -326,7 +335,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessage_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessage()
+    public async Task GetMessage_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAsync()
     {
         // Given
         string messageId = "1";
@@ -391,17 +400,19 @@ public class MessageQueryRepositoryTests
             null);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
-            .Returns(recipeMessage);
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(recipeMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(testDocument);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns(testSender);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
 
         // When
-        var result = (TestRecipeMessage?)_messageQueryRepositorySUT.GetMessage(messageId);
+        var result = (TestRecipeMessage?) await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().Be(recipeMessage);
@@ -415,7 +426,7 @@ public class MessageQueryRepositoryTests
     [InlineData(3)]
     [InlineData(5)]
     [InlineData(10)]
-    public void GetMessage_WhenMessageIsReply_ReturnMessageWithRepliedToMessage(int nestingLevel)
+    public async Task GetMessage_WhenMessageIsReply_ReturnMessageWithRepliedToMessageAsync(int nestingLevel)
     {
         // Given
         string messageId = "1";
@@ -453,17 +464,19 @@ public class MessageQueryRepositoryTests
         TestMessage testMessage = GenerateReplyTree(testDocument.Id!, testSender.Account, innerMessageSender, testDocument.SentDate, nestingLevel);
             
         _mapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
-            .Returns(testMessage);
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(testDocument);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns(testSender);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
 
         // When
-        var result = (TestMessage?)_messageQueryRepositorySUT.GetMessage(messageId);
+        var result = (TestMessage?) await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().Be(testMessage);
@@ -481,8 +494,10 @@ public class MessageQueryRepositoryTests
 
             Expression<Func<MessageDocument, bool>> innerExpression = x => x.Id == id;
             _messageCollectionMock
-                .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(innerExpression, expr))))
-                .Returns(new MessageDocument(
+                .Setup(collection => collection.Find(
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(innerExpression, expr)), 
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new MessageDocument(
                     Id: newMessage.Id,
                     SenderId: newMessage.Sender.Id,
                     MessageContent: new(),
@@ -501,7 +516,7 @@ public class MessageQueryRepositoryTests
     [InlineData(true, true, true)]
     [InlineData(false, false, false)]
     [InlineData(true, false, false)]
-    public void GetMessage_WhenMapperThrowsException_ThrowException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
+    public async Task GetMessage_WhenMapperThrowsException_ThrowExceptionAsync(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
     {
         // Given
         string messageId = "1";
@@ -540,38 +555,40 @@ public class MessageQueryRepositoryTests
             null);
 
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr))))
-            .Returns(testDocument);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns(testSender);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
 
         Exception testException = new("Mapping exception");
         _mapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<Message?>()))
+            .Setup(mapper => mapper.MapMessageFromDocument(It.IsAny<MessageDocument>(), It.IsAny<IUserAccount>(), It.IsAny<Message?>(), It.IsAny<CancellationToken>()))
             .Throws(testException);
 
         // When
-        var action = () => _messageQueryRepositorySUT.GetMessage(messageId);
+        var action = async () => await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
-        action.Should().Throw<Exception>().WithMessage(testException.Message);
+        await action.Should().ThrowAsync<Exception>().WithMessage(testException.Message);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
+    public async Task GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNullAsync()
     {
         // Given
         string messageId = "1";
         Exception testException = new("Test exception message");
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<MessageDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _messageQueryRepositorySUT.GetMessage(messageId);
+        var result = await _messageQueryRepositorySUT.GetMessage(messageId);
 
         // Then
         result.Should().BeNull();
@@ -622,8 +639,8 @@ public class MessageQueryRepositoryTests
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Enumerable.Empty<MessageDocument>());
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns(testSender);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
 
         // When
         var result = await _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
@@ -682,16 +699,16 @@ public class MessageQueryRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
 
         _mapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null))
-            .Returns(recipeMessage);
+            .Setup(mapper => mapper.MapMessageFromDocument(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(recipeMessage);
         _messageCollectionMock
             .Setup(collection => collection.GetAll(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<MessageDocument> { testDocument });
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns(testSender);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
 
         // When
         var result = await _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id);
@@ -756,8 +773,8 @@ public class MessageQueryRepositoryTests
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<MessageDocument> { testDocument });
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(senderId))
-            .Returns((IUserCredentials?)null);
+            .Setup(repo => repo.GetUserById(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IUserCredentials?)null);
 
         // When
         var testAction = async () => (await _messageQueryRepositorySUT.GetMessagesWithRecipe(recipe.Id)).ToList();

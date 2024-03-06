@@ -22,7 +22,7 @@ internal class GetMessageDetailedByIdHandler : IRequestHandler<GetMessageDetaile
 
     public async Task<MessageDetailedDTO> Handle(GetMessageDetailedByIdQuery request, CancellationToken cancellationToken)
     {
-        Message message = _messageQueryRepository.GetMessage(request.Id)
+        Message message = (await _messageQueryRepository.GetMessage(request.Id, cancellationToken))
             ?? throw new MessageNotFoundException(request.Id);
 
         return await Task.FromResult(_mapper.MapMessageToDetailedMessageDTO(message));

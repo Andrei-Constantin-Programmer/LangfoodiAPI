@@ -36,7 +36,7 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateGroup_WhenGroupIsInsertedSuccessfully_ReturnsMappedGroup()
+    public async Task CreateGroup_WhenGroupIsInsertedSuccessfully_ReturnsMappedGroupAsync()
     {
         // Given
         var groupName = "Group";
@@ -82,11 +82,11 @@ public class GroupPersistenceRepositoryTests
         Group expectedGroup = new(insertedDocument.Id!, insertedDocument.GroupName, insertedDocument.GroupDescription, users);
 
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(insertedDocument))
-            .Returns(expectedGroup);
+            .Setup(mapper => mapper.MapGroupFromDocument(insertedDocument, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedGroup);
 
         // When
-        var result = _groupPersistenceRepositorySUT.CreateGroup(groupName, groupDesc, users);
+        var result = await _groupPersistenceRepositorySUT.CreateGroup(groupName, groupDesc, users);
 
         // Then
         result.Should().Be(expectedGroup);

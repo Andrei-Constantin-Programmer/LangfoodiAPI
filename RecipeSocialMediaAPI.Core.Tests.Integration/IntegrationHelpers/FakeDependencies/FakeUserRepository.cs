@@ -40,15 +40,19 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
 
     public async Task<IEnumerable<IUserCredentials>> GetAllUsers(CancellationToken cancellationToken = default) => await Task.FromResult(_collection);
 
-    public IUserCredentials? GetUserById(string id) => _collection.Find(user => user.Account.Id == id);
+    public async Task<IUserCredentials?> GetUserById(string id, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(user => user.Account.Id == id));
 
-    public IUserCredentials? GetUserByEmail(string email) => _collection.Find(user => user.Email == email);
+    public async Task<IUserCredentials?> GetUserByEmail(string email, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(user => user.Email == email));
 
-    public IUserCredentials? GetUserByUsername(string username) => _collection.Find(user => user.Account.UserName == username);
+    public async Task<IUserCredentials?> GetUserByUsername(string username, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(user => user.Account.UserName == username));
 
-    public IUserCredentials? GetUserByHandler(string handler) => _collection.Find(user => user.Account.Handler == handler);
+    public async Task<IUserCredentials?> GetUserByHandler(string handler, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(user => user.Account.Handler == handler));
 
-    public bool UpdateUser(IUserCredentials user)
+    public async Task<bool> UpdateUser(IUserCredentials user, CancellationToken cancellationToken = default)
     {
         IUserCredentials? updatedUser = _collection.FirstOrDefault(u => u.Account.Id == user.Account.Id);
         if (updatedUser is null)
@@ -61,7 +65,7 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         updatedUser.Email = user.Email;
         updatedUser.Password = user.Password;
 
-        return true;
+        return await Task.FromResult(true);
     }
 
     public Task<IEnumerable<IUserAccount>> GetAllUserAccountsContaining(string containedString, CancellationToken cancellationToken = default) => Task.FromResult(_collection

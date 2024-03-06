@@ -42,8 +42,8 @@ public class GetUsersHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>()))
-            .Returns((IUserCredentials?)null);
+            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IUserCredentials?)null);
 
         GetUsersQuery query = new("userId", "StringNotFound", options);
         
@@ -76,8 +76,8 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
-            .Returns(queryingUser);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", options);
         _userQueryRepositoryMock
@@ -110,8 +110,8 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
-            .Returns(queryingUser);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.All);
         IUserAccount account1 = new TestUserAccount()
@@ -170,8 +170,8 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
-            .Returns(queryingUser);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.All);
         IUserAccount account1 = new TestUserAccount()
@@ -226,8 +226,8 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
-            .Returns(queryingUser);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NonSelf);
         IUserAccount account1 = new TestUserAccount()
@@ -286,8 +286,8 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
-            .Returns(queryingUser);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NonSelf);
         IUserAccount account1 = new TestUserAccount()
@@ -342,8 +342,8 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
-            .Returns(queryingUser);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.Connected);
         IUserAccount account1 = new TestUserAccount()
@@ -430,8 +430,8 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id))
-            .Returns(queryingUser);
+            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NotConnected);
         IUserAccount account1 = new TestUserAccount()

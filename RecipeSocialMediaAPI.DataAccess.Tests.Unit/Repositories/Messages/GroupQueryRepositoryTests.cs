@@ -40,7 +40,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetGroupById_WhenDocumentExists_ReturnMappedDocument()
+    public async Task GetGroupById_WhenDocumentExists_ReturnMappedDocumentAsync()
     {
         // Given
         List<IUserAccount> users = new()
@@ -81,17 +81,19 @@ public class GroupQueryRepositoryTests
 
         Expression<Func<GroupDocument, bool>> expectedExpression = doc => doc.Id == groupDoc.Id;
         _groupCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(groupDoc);
+            .Setup(collection => collection.Find(
+                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(groupDoc);
         
         Group expectedGroup = new(groupDoc.Id!, groupDoc.GroupName, groupDoc.GroupDescription, users);
 
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc))
-            .Returns(expectedGroup);
+            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedGroup);
 
         // When
-        var result = _groupQueryRepositorySUT.GetGroupById("1");
+        var result = await _groupQueryRepositorySUT.GetGroupById("1");
 
         // Then
         result.Should().Be(expectedGroup);
@@ -100,15 +102,15 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetGroupById_WhenDocumentIsNotInTheDatabase_ReturnNull()
+    public async Task GetGroupById_WhenDocumentIsNotInTheDatabase_ReturnNullAsync()
     {
         // Given
         _groupCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Returns((GroupDocument?)null);
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((GroupDocument?)null);
 
         // When
-        var result = _groupQueryRepositorySUT.GetGroupById("1");
+        var result = await _groupQueryRepositorySUT.GetGroupById("1");
 
         // Then
         result.Should().BeNull();
@@ -117,16 +119,16 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetGroupById_WhenMongoThrowsException_LogExceptionAndReturnNull()
+    public async Task GetGroupById_WhenMongoThrowsException_LogExceptionAndReturnNullAsync()
     {
         // Given
         Exception testException = new("Test Exception");
         _groupCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.Find(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _groupQueryRepositorySUT.GetGroupById("1");
+        var result = await _groupQueryRepositorySUT.GetGroupById("1");
 
         // Then
         result.Should().BeNull();
@@ -212,11 +214,11 @@ public class GroupQueryRepositoryTests
         Group group2 = new(groupDoc2.Id!, groupDoc2.GroupName, groupDoc2.GroupDescription, users.Take(1).Concat(users.Skip(3)).ToList());
 
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc1))
-            .Returns(group1);
+            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group1);
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc2))
-            .Returns(group2);
+            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc2, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group2);
 
         // When
         var result = await _groupQueryRepositorySUT.GetGroupsByUser(users[0]);

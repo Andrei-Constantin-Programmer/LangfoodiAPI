@@ -24,14 +24,14 @@ public class UserQueryRepository : IUserQueryRepository
         .GetAll((_) => true, cancellationToken))
         .Select(_mapper.MapUserDocumentToUser);
 
-    public IUserCredentials? GetUserById(string id)
+    public async Task<IUserCredentials?> GetUserById(string id, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
         try
         {
-            userDocument = _userCollection
-                .Find(userDoc => userDoc.Id == id);
+            userDocument = await _userCollection
+                .Find(userDoc => userDoc.Id == id, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -44,13 +44,13 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public IUserCredentials? GetUserByEmail(string email)
+    public async Task<IUserCredentials?> GetUserByEmail(string email, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
         try
         {
-            userDocument = _userCollection
-                .Find(userDoc => userDoc.Email == email);
+            userDocument = await _userCollection
+                .Find(userDoc => userDoc.Email == email, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -63,14 +63,14 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public IUserCredentials? GetUserByHandler(string handler)
+    public async Task<IUserCredentials?> GetUserByHandler(string handler, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
         try
         {
-            userDocument = _userCollection
-                .Find(userDoc => userDoc.Handler == handler);
+            userDocument = await _userCollection
+                .Find(userDoc => userDoc.Handler == handler, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -83,14 +83,14 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public IUserCredentials? GetUserByUsername(string username)
+    public async Task<IUserCredentials?> GetUserByUsername(string username, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
         try
         {
-            userDocument = _userCollection
-                .Find(userDoc => userDoc.UserName == username);
+            userDocument = await _userCollection
+                .Find(userDoc => userDoc.UserName == username, cancellationToken);
         }
         catch (Exception ex)
         {

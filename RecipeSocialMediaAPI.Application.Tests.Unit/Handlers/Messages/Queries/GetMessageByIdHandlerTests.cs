@@ -34,8 +34,8 @@ public class GetMessageByIdHandlerTests
     {
         // Given
         _messageQueryRepository
-            .Setup(repo => repo.GetMessage(It.IsAny<string>()))
-            .Returns((Message?)null);
+            .Setup(repo => repo.GetMessage(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Message?)null);
 
         GetMessageByIdQuery testQuery = new("MessageId");
 
@@ -74,8 +74,8 @@ public class GetMessageByIdHandlerTests
         MessageDTO mappedMessage = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, testMessage.UpdatedDate);
 
         _messageQueryRepository
-            .Setup(repo => repo.GetMessage(testMessage.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessage(testMessage.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(mappedMessage);

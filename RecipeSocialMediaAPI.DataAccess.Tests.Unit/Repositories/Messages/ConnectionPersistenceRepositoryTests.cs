@@ -36,7 +36,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateConnection_WhenConnectionIsValid_AddConnectionToCollectionAndReturnMappedConnection()
+    public async Task CreateConnection_WhenConnectionIsValid_AddConnectionToCollectionAndReturnMappedConnectionAsync()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -63,11 +63,11 @@ public class ConnectionPersistenceRepositoryTests
             .Setup(collection => collection.Insert(It.IsAny<ConnectionDocument>()))
             .Returns(testDocument);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument))
-            .Returns(testConnection);
+            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testConnection);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.CreateConnection(testUser1, testUser2, testConnection.Status);
+        var result = await _connectionPersistenceRepositorySUT.CreateConnection(testUser1, testUser2, testConnection.Status);
 
         // Then
         result.Should().Be(testConnection);

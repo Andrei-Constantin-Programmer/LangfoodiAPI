@@ -30,7 +30,8 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
 
     public bool DeleteRecipe(string id) => _collection.RemoveAll(x => x.Id == id) > 0;
 
-    public RecipeAggregate? GetRecipeById(string id) => _collection.Find(x => x.Id == id);
+    public async Task<RecipeAggregate?> GetRecipeById(string id, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(x => x.Id == id));
 
     public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChef(IUserAccount? user, CancellationToken cancellationToken = default) => await GetRecipesByChefId(user!.Id, cancellationToken);
 

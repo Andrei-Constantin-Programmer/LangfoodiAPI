@@ -17,17 +17,18 @@ internal class RemoveGroupHandler : IRequestHandler<RemoveGroupCommand>
         _groupQueryRepository = groupQueryRepository;
     }
 
-    public Task Handle(RemoveGroupCommand request, CancellationToken cancellationToken)
+    public async Task Handle(RemoveGroupCommand request, CancellationToken cancellationToken)
     {
-        if (_groupQueryRepository.GetGroupById(request.GroupId) is null)
+        if (await _groupQueryRepository.GetGroupById(request.GroupId, cancellationToken) is null)
         {
             throw new GroupNotFoundException(request.GroupId);
         }
 
         bool isSuccessful = _groupPersistenceRepository.DeleteGroup(request.GroupId);
 
-        return isSuccessful
-            ? Task.CompletedTask
-            : throw new GroupRemovalException(request.GroupId);
+        if (!isSuccessful)
+        {
+            throw new GroupRemovalException(request.GroupId);
+        }
     }
 }
