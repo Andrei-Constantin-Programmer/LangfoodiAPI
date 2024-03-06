@@ -20,54 +20,60 @@ public static class ConversationEndpoints
     {
         group.MapPost("/get-by-user", async (
             [FromQuery] string userId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetConversationsByUserQuery(userId)));
+            return Results.Ok(await sender.Send(new GetConversationsByUserQuery(userId), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/get-by-connection", async (
             [FromQuery] string userId,
             [FromQuery] string connectionId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetConversationByConnectionQuery(userId, connectionId)));
+            return Results.Ok(await sender.Send(new GetConversationByConnectionQuery(userId, connectionId), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/get-by-group", async (
             [FromQuery] string userId,
             [FromQuery] string groupId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetConversationByGroupQuery(userId, groupId)));
+            return Results.Ok(await sender.Send(new GetConversationByGroupQuery(userId, groupId), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/create-by-connection", async (
             [FromQuery] string userId,
             [FromQuery] string connectionId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new CreateConnectionConversationCommand(userId, connectionId)));
+            return Results.Ok(await sender.Send(new CreateConnectionConversationCommand(userId, connectionId), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/create-by-group", async (
             [FromQuery] string userId,
             [FromQuery] string groupId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new CreateGroupConversationCommand(userId, groupId)));
+            return Results.Ok(await sender.Send(new CreateGroupConversationCommand(userId, groupId), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPut("/mark-as-read", async (
             [FromQuery] string userId,
             [FromQuery] string conversationId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new MarkConversationAsReadCommand(userId, conversationId));
+            await sender.Send(new MarkConversationAsReadCommand(userId, conversationId), cancellationToken);
             return Results.Ok();
         })
             .RequireAuthorization();

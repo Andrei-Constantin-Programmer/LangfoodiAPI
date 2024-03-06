@@ -22,33 +22,37 @@ public static class ConnectionEndpoints
         group.MapPost("/get", async (
             [FromQuery] string userId1,
             [FromQuery] string userId2,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetConnectionQuery(userId1, userId2)));
+            return Results.Ok(await sender.Send(new GetConnectionQuery(userId1, userId2), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/get-by-user", async (
             [FromQuery] string userId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetConnectionsByUserQuery(userId)));
+            return Results.Ok(await sender.Send(new GetConnectionsByUserQuery(userId), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/create", async (
             [FromBody] NewConnectionContract newConnectionContract,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new CreateConnectionCommand(newConnectionContract)));
+            return Results.Ok(await sender.Send(new CreateConnectionCommand(newConnectionContract), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPut("/update", async (
-        [FromBody] UpdateConnectionContract updateConnectionContract,
+            [FromBody] UpdateConnectionContract updateConnectionContract,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new UpdateConnectionCommand(updateConnectionContract));
+            await sender.Send(new UpdateConnectionCommand(updateConnectionContract), cancellationToken);
             return Results.Ok();
         })
             .RequireAuthorization();

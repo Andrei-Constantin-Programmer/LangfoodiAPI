@@ -22,43 +22,48 @@ public static class GroupEndpoints
     {
         group.MapPost("/get", async (
             [FromQuery] string groupId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetGroupQuery(groupId)));
+            return Results.Ok(await sender.Send(new GetGroupQuery(groupId), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/get-by-user", async (
             [FromQuery] string userId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetGroupsByUserQuery(userId)));
+            return Results.Ok(await sender.Send(new GetGroupsByUserQuery(userId), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPut("/update", async (
             [FromBody] UpdateGroupContract updateGroupContract,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new UpdateGroupCommand(updateGroupContract));
+            await sender.Send(new UpdateGroupCommand(updateGroupContract), cancellationToken);
             return Results.Ok();
         })
             .RequireAuthorization();
 
         group.MapDelete("/delete", async (
             [FromQuery] string groupId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new RemoveGroupCommand(groupId));
+            await sender.Send(new RemoveGroupCommand(groupId), cancellationToken);
             return Results.Ok();
         })
             .RequireAuthorization(IdentityData.DeveloperUserPolicyName);
 
         group.MapPost("/create", async (
             [FromBody] NewGroupContract newGroupContract,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new CreateGroupCommand(newGroupContract)));
+            return Results.Ok(await sender.Send(new CreateGroupCommand(newGroupContract), cancellationToken));
         })
             .RequireAuthorization();
 

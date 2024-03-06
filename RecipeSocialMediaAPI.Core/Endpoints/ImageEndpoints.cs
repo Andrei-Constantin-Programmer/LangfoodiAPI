@@ -19,26 +19,29 @@ public static class ImageEndpoints
     private static RouteGroupBuilder AddImageEndpoints(this RouteGroupBuilder group)
     {
         group.MapPost("/get/cloudinary-signature", async (
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery()));
+            return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery(), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapDelete("/single-delete", async (
             [FromQuery] string publicId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new RemoveImageCommand(publicId));
+            await sender.Send(new RemoveImageCommand(publicId), cancellationToken);
             return Results.Ok();
         })
             .RequireAuthorization();
 
         group.MapDelete("/bulk-delete", async (
             [FromQuery] string[] publicIds,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new RemoveMultipleImagesCommand(publicIds.ToList()));
+            await sender.Send(new RemoveMultipleImagesCommand(publicIds.ToList()), cancellationToken);
             return Results.Ok();
         })
             .RequireAuthorization();

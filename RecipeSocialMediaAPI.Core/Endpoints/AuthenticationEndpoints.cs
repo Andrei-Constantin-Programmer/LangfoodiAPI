@@ -20,9 +20,11 @@ public static class AuthenticationEndpoints
     {
         group.MapPost("/authenticate", async (
             [FromBody] AuthenticationAttemptContract authenticationAttempt,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            var successfulAuthentication = await sender.Send(new AuthenticateUserQuery(authenticationAttempt.Email, authenticationAttempt.Password));
+            var successfulAuthentication = await sender
+                .Send(new AuthenticateUserQuery(authenticationAttempt.Email, authenticationAttempt.Password), cancellationToken);
 
             return Results.Ok(successfulAuthentication);
         });
