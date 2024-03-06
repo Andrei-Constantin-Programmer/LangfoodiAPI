@@ -10,14 +10,10 @@ using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
-using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
-using RecipeSocialMediaAPI.Infrastructure.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
-using RecipeSocialMediaAPI.Application.Repositories.Images;
-using RecipeSocialMediaAPI.Infrastructure.Repositories.Images;
 
-namespace RecipeSocialMediaAPI.Presentation.Tests.Configuration;
+namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
 public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -195,32 +191,6 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
         // Then
         userPersistenceRepository.Should().NotBeNull();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
-    public void ImageHostingQueryRepository_ShouldBeConfiguredCorrectly()
-    {
-        // Given
-        using var scope = _factory.Services.CreateScope();
-        var imageHostingQueryRepository = scope.ServiceProvider.GetService(typeof(IImageHostingQueryRepository)) as ImageHostingQueryRepository;
-
-        // Then
-        imageHostingQueryRepository.Should().NotBeNull();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
-    public void ImageHostingPersistenceRepository_ShouldBeConfiguredCorrectly()
-    {
-        // Given
-        using var scope = _factory.Services.CreateScope();
-        var imageHostingQueryRepository = scope.ServiceProvider.GetService(typeof(IImageHostingPersistenceRepository)) as ImageHostingPersistenceRepository;
-
-        // Then
-        imageHostingQueryRepository.Should().NotBeNull();
     }
 
     [Fact]

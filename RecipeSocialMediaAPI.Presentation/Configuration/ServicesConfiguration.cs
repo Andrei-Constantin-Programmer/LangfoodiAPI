@@ -9,8 +9,6 @@ using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Users;
-using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
-using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
@@ -26,16 +24,15 @@ using RecipeSocialMediaAPI.Infrastructure.Mappers;
 using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
-using RecipeSocialMediaAPI.Infrastructure.Repositories.ImageHosting;
-using RecipeSocialMediaAPI.Infrastructure.Repositories.Images;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Messages;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Recipes;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.Presentation;
 
-namespace RecipeSocialMediaAPI.Presentation.Configuration;
+namespace RecipeSocialMediaAPI.Core.Configuration;
 
 internal static class ServicesConfiguration
 {
@@ -78,16 +75,12 @@ internal static class ServicesConfiguration
         builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         builder.Services.AddScoped<IUserPersistenceRepository, UserPersistenceRepository>();
 
-        builder.Services.AddScoped<IImageHostingQueryRepository, ImageHostingQueryRepository>();
-        builder.Services.AddScoped<IImageHostingPersistenceRepository, ImageHostingPersistenceRepository>();
-
         builder.Services.AddScoped(
             typeof(IPipelineBehavior<,>),
             typeof(LoggingPipelineBehaviour<,>));
 
         // Transients
         builder.Services.AddTransient<ICloudinaryWebClient, CloudinaryWebClient>();
-        builder.Services.AddTransient<ICloudinarySignatureService, CloudinarySignatureService>();
         builder.Services.AddTransient<ICryptoService, CryptoService>();
         builder.Services.AddTransient<IMessageFactory, MessageFactory>();
         builder.Services.AddTransient<IUserFactory, UserFactory>();

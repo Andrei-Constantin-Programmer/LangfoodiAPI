@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Application.Repositories.Images;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
 
@@ -9,16 +9,16 @@ public record class RemoveMultipleImagesCommand(List<string> PublicIds) : IReque
 
 internal class RemoveMultipleImagesHandler : IRequestHandler<RemoveMultipleImagesCommand>
 {
-    private readonly IImageHostingPersistenceRepository _imageHostingPersistenceRepository;
+    private readonly ICloudinaryWebClient _cloudinaryWebClient;
 
-    public RemoveMultipleImagesHandler(IImageHostingPersistenceRepository imageHostingPersistenceRepository)
+    public RemoveMultipleImagesHandler(ICloudinaryWebClient cloudinaryWebClient)
     {
-        _imageHostingPersistenceRepository = imageHostingPersistenceRepository;
+        _cloudinaryWebClient = cloudinaryWebClient;
     }
 
     public Task Handle(RemoveMultipleImagesCommand request, CancellationToken cancellationToken)
     {
-        bool isSuccessful = _imageHostingPersistenceRepository.BulkRemoveHostedImages(request.PublicIds);
+        bool isSuccessful = _cloudinaryWebClient.BulkRemoveHostedImages(request.PublicIds);
 
         return isSuccessful
             ? Task.CompletedTask

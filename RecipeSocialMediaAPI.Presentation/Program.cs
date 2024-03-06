@@ -2,6 +2,7 @@ using RecipeSocialMediaAPI.Presentation.Utilities;
 using RecipeSocialMediaAPI.Presentation.Configuration;
 using RecipeSocialMediaAPI.Presentation.Middleware;
 using RecipeSocialMediaAPI.Presentation.SignalR;
+using RecipeSocialMediaAPI.Core.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

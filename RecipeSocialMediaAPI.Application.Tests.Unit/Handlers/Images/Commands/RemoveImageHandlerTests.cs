@@ -2,21 +2,22 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
-using RecipeSocialMediaAPI.Application.Repositories.Images;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Images.Commands;
 public class RemoveImageHandlerTests
 {
-    private readonly Mock<IImageHostingPersistenceRepository> _imageHostingPersistenceRepositoryMock;
+    private readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
 
     private readonly RemoveImageHandler _removeImageHandlerSUT;
 
     private const string TEST_PUBLIC_ID = "354234535sgf45";
 
-    public RemoveImageHandlerTests() {
-        _imageHostingPersistenceRepositoryMock = new Mock<IImageHostingPersistenceRepository>();
-        _removeImageHandlerSUT = new RemoveImageHandler(_imageHostingPersistenceRepositoryMock.Object);
+    public RemoveImageHandlerTests() 
+    {
+        _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
+        _removeImageHandlerSUT = new RemoveImageHandler(_cloudinaryWebClientMock.Object);
     }
 
     [Fact]
@@ -25,7 +26,7 @@ public class RemoveImageHandlerTests
     public async Task Handle_RemoveImageWorks_TaskIsCompleted()
     {
         // Given
-        _imageHostingPersistenceRepositoryMock
+        _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(TEST_PUBLIC_ID))
             .Returns(true);
 
@@ -35,7 +36,7 @@ public class RemoveImageHandlerTests
 
         // Then
         await action.Should().NotThrowAsync();
-        _imageHostingPersistenceRepositoryMock
+        _cloudinaryWebClientMock
             .Verify(repo => repo.RemoveHostedImage(TEST_PUBLIC_ID));
     }
 
@@ -45,7 +46,7 @@ public class RemoveImageHandlerTests
     public async Task Handle_RemoveImageFails_ExceptionThrown()
     {
         // Given
-        _imageHostingPersistenceRepositoryMock
+        _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(TEST_PUBLIC_ID))
             .Returns(false);
 

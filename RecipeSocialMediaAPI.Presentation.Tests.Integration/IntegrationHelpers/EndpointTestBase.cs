@@ -17,7 +17,6 @@ namespace RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers
 
 public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Program>>
 {
-    protected readonly Mock<ICloudinarySignatureService> _cloudinarySignatureServiceMock;
     protected readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
     protected readonly HttpClient _client;
     protected readonly IBearerTokenGeneratorService _bearerTokenGeneratorService;
@@ -35,7 +34,6 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
     public EndpointTestBase(WebApplicationFactory<Program> factory)
     {
         _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
-        _cloudinarySignatureServiceMock = new Mock<ICloudinarySignatureService>();
 
         _dateTimeProvider = new DateTimeProvider();
 
@@ -73,7 +71,6 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
                 services.AddSingleton<ICryptoService>(_fakeCryptoService);
 
                 services.AddSingleton(_cloudinaryWebClientMock.Object);
-                services.AddSingleton(_cloudinarySignatureServiceMock.Object);
             }))
             .CreateClient();
 

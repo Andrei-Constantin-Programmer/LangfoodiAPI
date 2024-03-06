@@ -12,9 +12,8 @@ using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.Application.WebClients;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 using RecipeSocialMediaAPI.Presentation.SignalR;
-using System;
 
-namespace RecipeSocialMediaAPI.Presentation.Tests.Configuration;
+namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
 public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -75,19 +74,6 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
         // Then
         userFactory.Should().NotBeNull();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
-    public void CloudinarySignatureService_ShouldBeConfiguredCorrectly()
-    {
-        // Given
-        using var scope = _factory.Services.CreateScope();
-        var signatureService = scope.ServiceProvider.GetService(typeof(ICloudinarySignatureService)) as CloudinarySignatureService;
-
-        // Then
-        signatureService.Should().NotBeNull();
     }
 
     [Fact]

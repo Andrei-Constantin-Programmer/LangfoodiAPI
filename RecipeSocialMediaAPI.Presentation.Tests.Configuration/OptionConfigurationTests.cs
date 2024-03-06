@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using Microsoft.Extensions.Options;
-using RecipeSocialMediaAPI.Infrastructure.Helpers;
 using FluentAssertions;
-using RecipeSocialMediaAPI.Presentation.Options;
-using RecipeSocialMediaAPI.Presentation.OptionValidation;
+using RecipeSocialMediaAPI.Core.OptionValidation;
 using RecipeSocialMediaAPI.Application.Options;
+using RecipeSocialMediaAPI.Infrastructure.Helpers;
+using RecipeSocialMediaAPI.Presentation.OptionValidation;
+using RecipeSocialMediaAPI.Presentation.Options;
 
-namespace RecipeSocialMediaAPI.Presentation.Tests.Configuration;
+namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
 public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -38,13 +39,13 @@ public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Prog
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
-    public void CloudinaryApiOptions_ShouldBeConfiguredCorrectly()
+    public void CloudinaryOptions_ShouldBeConfiguredCorrectly()
     {
         // Given
-        var cloudinaryOptions = _serviceProvider.GetService(typeof(IOptions<CloudinaryApiOptions>)) as IOptions<CloudinaryApiOptions>;
+        var cloudinaryOptions = _serviceProvider.GetService(typeof(IOptions<CloudinaryOptions>)) as IOptions<CloudinaryOptions>;
 
         // When
-        var validationResult = new CloudinaryApiOptionValidator().Validate(cloudinaryOptions!.Value).IsValid;
+        var validationResult = new CloudinaryOptionValidator().Validate(cloudinaryOptions!.Value).IsValid;
 
         // Then
         cloudinaryOptions.Should().NotBeNull();

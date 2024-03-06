@@ -2,20 +2,20 @@
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 using RecipeSocialMediaAPI.Application.Handlers.Images.Queries;
-using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Images.Queries;
 public class GetCloudinarySignatureHandlerTests
 {
-    private readonly Mock<IImageHostingQueryRepository> _imageHostingQueryRepositoryMock;
+    private readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
 
     private readonly GetCloudinarySignatureHandler _getCloudinarySignatureHandlerSUT;
 
     public GetCloudinarySignatureHandlerTests()
     {
-        _imageHostingQueryRepositoryMock = new Mock<IImageHostingQueryRepository>();
-        _getCloudinarySignatureHandlerSUT = new GetCloudinarySignatureHandler(_imageHostingQueryRepositoryMock.Object);
+        _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
+        _getCloudinarySignatureHandlerSUT = new GetCloudinarySignatureHandler(_cloudinaryWebClientMock.Object);
     }
 
     [Fact]
@@ -24,7 +24,7 @@ public class GetCloudinarySignatureHandlerTests
     public async Task Handle_GenerateSignatureWorks_ReturnSignatureDTO()
     {
         // Given
-        _imageHostingQueryRepositoryMock
+        _cloudinaryWebClientMock
             .Setup(x => x.GenerateSignature(null))
             .Returns(new CloudinarySignatureDTO("sig", 1000));
 
@@ -42,7 +42,7 @@ public class GetCloudinarySignatureHandlerTests
     public async Task Handle_NoSignatureGenerated_ThrowsException()
     {
         // Given
-        _imageHostingQueryRepositoryMock
+        _cloudinaryWebClientMock
             .Setup(x => x.GenerateSignature(null))
             .Returns((CloudinarySignatureDTO?)null);
 

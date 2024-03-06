@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Application.Repositories.Images;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
 
@@ -8,16 +8,16 @@ public record class RemoveImageCommand(string PublicId) : IRequest;
 
 internal class RemoveImageHandler : IRequestHandler<RemoveImageCommand>
 {
-    private readonly IImageHostingPersistenceRepository _imageHostingPersistenceRepository;
+    private readonly ICloudinaryWebClient _cloudinaryWebClient;
 
-    public RemoveImageHandler(IImageHostingPersistenceRepository imageHostingPersistenceRepository)
+    public RemoveImageHandler(ICloudinaryWebClient cloudinaryWebClient)
     {
-        _imageHostingPersistenceRepository = imageHostingPersistenceRepository;
+        _cloudinaryWebClient = cloudinaryWebClient;
     }
 
     public Task Handle(RemoveImageCommand request, CancellationToken cancellationToken)
     {
-        bool isSuccessful = _imageHostingPersistenceRepository.RemoveHostedImage(request.PublicId);
+        bool isSuccessful = _cloudinaryWebClient.RemoveHostedImage(request.PublicId);
 
         return isSuccessful
             ? Task.CompletedTask
