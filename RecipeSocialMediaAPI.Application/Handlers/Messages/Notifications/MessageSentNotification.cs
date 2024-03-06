@@ -16,6 +16,6 @@ internal class MessageCreatedHandler : INotificationHandler<MessageSentNotificat
 
     public async Task Handle(MessageSentNotification notification, CancellationToken cancellationToken)
     {
-        await _messageNotificationService.NotifyMessageSent(notification.SentMessage, notification.ConversationId, cancellationToken);
+        await _messageNotificationService.NotifyMessageSentAsync(notification.SentMessage, notification.ConversationId, cancellationToken);
     }
 }

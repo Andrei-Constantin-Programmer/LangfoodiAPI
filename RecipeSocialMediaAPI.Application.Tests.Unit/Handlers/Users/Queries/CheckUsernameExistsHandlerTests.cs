@@ -40,7 +40,7 @@ public class CheckUsernameExistsHandlerTests
             Password = "TestPassword"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.Account.UserName), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(username => username == testUser.Account.UserName), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser);
 
         // When
@@ -58,7 +58,7 @@ public class CheckUsernameExistsHandlerTests
         // Given
         IUserCredentials? nullUser = null;
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByUsernameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullUser);
 
         // When

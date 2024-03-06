@@ -62,7 +62,7 @@ public class MessageDocumentToModelMapperTests
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testSender.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testSender.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         TestTextMessage textMessage = new(
@@ -86,7 +86,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(textMessage);
 
         // When
-        var result = await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().BeEquivalentTo(textMessage);
@@ -126,7 +126,7 @@ public class MessageDocumentToModelMapperTests
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testSender.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testSender.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         TestImageMessage imageMessage = new(
@@ -152,7 +152,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(imageMessage);
 
         // When
-        var result = (TestImageMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = (TestImageMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().Be(imageMessage);
@@ -192,7 +192,7 @@ public class MessageDocumentToModelMapperTests
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testSender.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testSender.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
         List<RecipeAggregate> recipes = new()
@@ -226,7 +226,7 @@ public class MessageDocumentToModelMapperTests
             new() { testSender });
 
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string id, CancellationToken _) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         _messageFactoryMock
             .Setup(factory => factory.CreateRecipeMessage(
@@ -241,7 +241,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(recipeMessage);
 
         // When
-        var result = (TestRecipeMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = (TestRecipeMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().Be(recipeMessage);
@@ -292,7 +292,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(textMessage);
 
         // When
-        var result = (TestTextMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = (TestTextMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().Be(textMessage);
@@ -349,11 +349,11 @@ public class MessageDocumentToModelMapperTests
             null);
 
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string id, CancellationToken _) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         
         // When
-        var testAction = async () => await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var testAction = async () => await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         await testAction.Should().ThrowAsync<MalformedMessageDocumentException>();
@@ -422,7 +422,7 @@ public class MessageDocumentToModelMapperTests
             null);
 
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string id, CancellationToken _) => recipes.FirstOrDefault(recipe => recipe.Id == id));
         _messageFactoryMock
             .Setup(factory => factory.CreateRecipeMessage(
@@ -437,7 +437,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(recipeMessage);
         
         // When
-        var result = (TestRecipeMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var result = (TestRecipeMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().Be(recipeMessage);
@@ -490,7 +490,7 @@ public class MessageDocumentToModelMapperTests
             null);
 
         // When
-        var action = async () => await _messageDocumentToModelMapperSUT.MapMessageFromDocument(testDocument, testSender, null);
+        var action = async () => await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         await action.Should().ThrowAsync<MalformedMessageDocumentException>();

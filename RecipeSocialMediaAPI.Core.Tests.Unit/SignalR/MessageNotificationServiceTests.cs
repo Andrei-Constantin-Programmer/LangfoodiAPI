@@ -41,7 +41,7 @@ public class MessageNotificationServiceTests
         MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageSent(message, conversationId, CancellationToken.None);
+        await _messageNotificationServiceSUT.NotifyMessageSentAsync(message, conversationId, CancellationToken.None);
 
         // Then
         _hubContextMock
@@ -62,7 +62,7 @@ public class MessageNotificationServiceTests
             .Throws(new OperationCanceledException());
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageSent(message, conversationId, new CancellationToken(true));
+        await _messageNotificationServiceSUT.NotifyMessageSentAsync(message, conversationId, new CancellationToken(true));
 
         // Then
         _loggerMock
@@ -84,7 +84,7 @@ public class MessageNotificationServiceTests
         MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageUpdated(message, CancellationToken.None);
+        await _messageNotificationServiceSUT.NotifyMessageUpdatedAsync(message, CancellationToken.None);
 
         // Then
         _hubContextMock
@@ -104,7 +104,7 @@ public class MessageNotificationServiceTests
             .Throws(new OperationCanceledException());
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageUpdated(message, new CancellationToken(true));
+        await _messageNotificationServiceSUT.NotifyMessageUpdatedAsync(message, new CancellationToken(true));
 
         // Then
         _loggerMock
@@ -126,7 +126,7 @@ public class MessageNotificationServiceTests
         string messageId = "m1";
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageDeleted(messageId, CancellationToken.None);
+        await _messageNotificationServiceSUT.NotifyMessageDeletedAsync(messageId, CancellationToken.None);
 
         // Then
         _hubContextMock
@@ -146,7 +146,7 @@ public class MessageNotificationServiceTests
             .Throws(new OperationCanceledException());
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageDeleted(messageId, new CancellationToken(true));
+        await _messageNotificationServiceSUT.NotifyMessageDeletedAsync(messageId, new CancellationToken(true));
 
         // Then
         _loggerMock
@@ -169,7 +169,7 @@ public class MessageNotificationServiceTests
         string messageId = "m1";
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageMarkedAsRead(userId, messageId, CancellationToken.None);
+        await _messageNotificationServiceSUT.NotifyMessageMarkedAsReadAsync(userId, messageId, CancellationToken.None);
 
         // Then
         _hubContextMock
@@ -190,7 +190,7 @@ public class MessageNotificationServiceTests
             .Throws(new OperationCanceledException());
 
         // When
-        await _messageNotificationServiceSUT.NotifyMessageMarkedAsRead(userId, messageId, new CancellationToken(true));
+        await _messageNotificationServiceSUT.NotifyMessageMarkedAsReadAsync(userId, messageId, new CancellationToken(true));
 
         // Then
         _loggerMock

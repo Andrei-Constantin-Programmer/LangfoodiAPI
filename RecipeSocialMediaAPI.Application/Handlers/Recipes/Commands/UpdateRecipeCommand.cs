@@ -30,7 +30,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
     public async Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate existingRecipe = (await _recipeQueryRepository.GetRecipeById(request.Contract.Id, cancellationToken))
+        RecipeAggregate existingRecipe = (await _recipeQueryRepository.GetRecipeByIdAsync(request.Contract.Id, cancellationToken))
             ?? throw new RecipeNotFoundException(request.Contract.Id);
 
         RecipeAggregate updatedRecipe = new(
@@ -57,7 +57,7 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             request.Contract.ThumbnailId
         );
 
-        bool isSuccessful = await _recipePersistenceRepository.UpdateRecipe(updatedRecipe, cancellationToken);
+        bool isSuccessful = await _recipePersistenceRepository.UpdateRecipeAsync(updatedRecipe, cancellationToken);
 
         if (!isSuccessful)
         {

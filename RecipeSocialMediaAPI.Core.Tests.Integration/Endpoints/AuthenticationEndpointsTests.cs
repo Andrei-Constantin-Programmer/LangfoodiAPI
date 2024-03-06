@@ -22,7 +22,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
         var userInDb = await _fakeUserRepository
-            .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Email, userToCreate.Password));
@@ -49,7 +49,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
         _ = await _fakeUserRepository
-            .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract("Inexistant user", userToCreate.Password));
@@ -66,7 +66,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
         _ = await _fakeUserRepository
-            .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Email, string.Empty));

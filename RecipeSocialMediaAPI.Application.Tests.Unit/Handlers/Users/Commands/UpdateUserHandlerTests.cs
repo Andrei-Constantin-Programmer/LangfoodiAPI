@@ -50,7 +50,7 @@ public class UpdateUserHandlerTests
 
         IUserCredentials? nullUser = null;
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullUser);
 
         UpdateUserCommand command = new(contract);
@@ -63,7 +63,7 @@ public class UpdateUserHandlerTests
             .ThrowAsync<UserNotFoundException>()
             .WithMessage("No user found*");
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateUser(It.IsAny<IUserCredentials>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(repo => repo.UpdateUserAsync(It.IsAny<IUserCredentials>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class UpdateUserHandlerTests
         DateTimeOffset creationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero);
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials
             {
                 Account = new TestUserAccount
@@ -99,7 +99,7 @@ public class UpdateUserHandlerTests
             });
 
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateUser(It.IsAny<IUserCredentials>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.UpdateUserAsync(It.IsAny<IUserCredentials>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         var encryptedPassword = _cryptoServiceFake.Encrypt(contract.Password!);
@@ -138,7 +138,7 @@ public class UpdateUserHandlerTests
         // Then
         await action.Should().NotThrowAsync();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.UpdateUser(It.Is<IUserCredentials>(user =>
+            .Verify(repo => repo.UpdateUserAsync(It.Is<IUserCredentials>(user =>
                 user.Account.Id == contract.Id
                 && user.Account.Handler == existingHandler
                 && user.Account.AccountCreationDate == creationDate
@@ -162,7 +162,7 @@ public class UpdateUserHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials
             {
                 Account = new TestUserAccount
@@ -176,7 +176,7 @@ public class UpdateUserHandlerTests
                 Password = contract.Password!
             });
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateUser(It.IsAny<IUserCredentials>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.UpdateUserAsync(It.IsAny<IUserCredentials>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         UpdateUserCommand command = new(contract);

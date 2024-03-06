@@ -13,18 +13,18 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
         _collection = new();
     }
 
-    public async Task<IConnection?> GetConnection(string connectionId, CancellationToken cancellationToken = default) => await Task.FromResult(_collection.FirstOrDefault(conn => conn.ConnectionId == connectionId));
+    public async Task<IConnection?> GetConnectionAsync(string connectionId, CancellationToken cancellationToken = default) => await Task.FromResult(_collection.FirstOrDefault(conn => conn.ConnectionId == connectionId));
 
-    public async Task<IConnection?> GetConnection(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default) => 
+    public async Task<IConnection?> GetConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default) => 
         await Task.FromResult(_collection.FirstOrDefault(conn => (conn.Account1.Id == userAccount1.Id && conn.Account2.Id == userAccount2.Id)
                                               || (conn.Account1.Id == userAccount2.Id && conn.Account2.Id == userAccount1.Id)));
 
-    public Task<List<IConnection>> GetConnectionsForUser(IUserAccount userAccount, CancellationToken cancellationToken = default) =>
+    public Task<List<IConnection>> GetConnectionsForUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) =>
         Task.FromResult(_collection
             .Where(conn => conn.Account1.Id == userAccount.Id || conn.Account2.Id == userAccount.Id)
             .ToList());
 
-    public async Task<IConnection> CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
+    public async Task<IConnection> CreateConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         Connection newConnection = new(id, userAccount1, userAccount2, connectionStatus);
@@ -33,7 +33,7 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
         return await Task.FromResult(newConnection);
     }
 
-    public async Task<bool> UpdateConnection(IConnection connection, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateConnectionAsync(IConnection connection, CancellationToken cancellationToken = default)
     {
         IConnection? existingConnection = _collection.FirstOrDefault(x => x.ConnectionId == connection.ConnectionId);
         if (existingConnection is null)
@@ -49,12 +49,12 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
         return await Task.FromResult(true);
     }
 
-    public async Task<bool> DeleteConnection(IConnection connection, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteConnectionAsync(IConnection connection, CancellationToken cancellationToken = default) 
         => await Task.FromResult(_collection.Remove(connection));
 
-    public async Task<bool> DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default)
     {
-        var connection = await GetConnection(userAccount1, userAccount2, cancellationToken);
+        var connection = await GetConnectionAsync(userAccount1, userAccount2, cancellationToken);
 
         return connection is not null && _collection.Remove(connection);
     }

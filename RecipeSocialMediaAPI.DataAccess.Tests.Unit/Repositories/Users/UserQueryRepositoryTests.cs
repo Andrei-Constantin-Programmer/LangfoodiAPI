@@ -50,7 +50,7 @@ public class UserQueryRepositoryTests
             .ReturnsAsync(existingUsers);
 
         // When
-        var result = await _userQueryRepositorySUT.GetAllUsers();
+        var result = await _userQueryRepositorySUT.GetAllUsersAsync();
 
         // Then
         result.Should().BeEmpty();
@@ -81,7 +81,7 @@ public class UserQueryRepositoryTests
             .ReturnsAsync(existingUsers);
 
         // When
-        var result = await _userQueryRepositorySUT.GetAllUsers();
+        var result = await _userQueryRepositorySUT.GetAllUsersAsync();
 
         // Then
         result.Should().HaveCount(numberOfUsers);
@@ -103,7 +103,7 @@ public class UserQueryRepositoryTests
             .ReturnsAsync(nullUserDocument);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserById(id);
+        var result = await _userQueryRepositorySUT.GetUserByIdAsync(id);
 
         // Then
         result.Should().BeNull();
@@ -141,7 +141,7 @@ public class UserQueryRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserById(id);
+        var result = await _userQueryRepositorySUT.GetUserByIdAsync(id);
 
         // Then
         result.Should().Be(testUser);
@@ -179,7 +179,7 @@ public class UserQueryRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserById(id);
+        var result = await _userQueryRepositorySUT.GetUserByIdAsync(id);
 
         // Then
         result.Should().BeNull();
@@ -210,7 +210,7 @@ public class UserQueryRepositoryTests
             .ReturnsAsync(nullUserDocument);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserByEmail(email);
+        var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
 
         // Then
         result.Should().BeNull();
@@ -248,7 +248,7 @@ public class UserQueryRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserByEmail(email);
+        var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
 
         // Then
         result.Should().Be(testUser);
@@ -286,7 +286,7 @@ public class UserQueryRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserByEmail(email);
+        var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
 
         // Then
         result.Should().BeNull();
@@ -317,7 +317,7 @@ public class UserQueryRepositoryTests
             .ReturnsAsync(nullUserDocument);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserByUsername(username);
+        var result = await _userQueryRepositorySUT.GetUserByUsernameAsync(username);
 
         // Then
         result.Should().BeNull();
@@ -355,7 +355,7 @@ public class UserQueryRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserByUsername(username);
+        var result = await _userQueryRepositorySUT.GetUserByUsernameAsync(username);
 
         // Then
         result.Should().Be(testUser);
@@ -393,7 +393,7 @@ public class UserQueryRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserById(username);
+        var result = await _userQueryRepositorySUT.GetUserByIdAsync(username);
 
         // Then
         result.Should().BeNull();
@@ -420,7 +420,7 @@ public class UserQueryRepositoryTests
             .ReturnsAsync(Enumerable.Empty<UserDocument>());
 
         // When
-        var result = await _userQueryRepositorySUT.GetAllUserAccountsContaining(containedString);
+        var result = await _userQueryRepositorySUT.GetAllUserAccountsContainingAsync(containedString);
 
         // Then
         result.Should().NotBeNull();
@@ -482,7 +482,7 @@ public class UserQueryRepositoryTests
             .Returns(testUser2);
 
         // When
-        var result = await _userQueryRepositorySUT.GetAllUserAccountsContaining(containedString);
+        var result = await _userQueryRepositorySUT.GetAllUserAccountsContainingAsync(containedString);
 
         // Then
         result.Should().NotBeNull();

@@ -19,12 +19,12 @@ internal class RemoveGroupHandler : IRequestHandler<RemoveGroupCommand>
 
     public async Task Handle(RemoveGroupCommand request, CancellationToken cancellationToken)
     {
-        if (await _groupQueryRepository.GetGroupById(request.GroupId, cancellationToken) is null)
+        if (await _groupQueryRepository.GetGroupByIdAsync(request.GroupId, cancellationToken) is null)
         {
             throw new GroupNotFoundException(request.GroupId);
         }
 
-        bool isSuccessful = await _groupPersistenceRepository.DeleteGroup(request.GroupId, cancellationToken);
+        bool isSuccessful = await _groupPersistenceRepository.DeleteGroupAsync(request.GroupId, cancellationToken);
 
         if (!isSuccessful)
         {

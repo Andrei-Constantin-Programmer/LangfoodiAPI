@@ -15,27 +15,27 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
         _collection = new();
     }
 
-    public async Task<ConnectionConversation?> GetConversationByConnection(string connectionId, CancellationToken cancellationToken = default) 
+    public async Task<ConnectionConversation?> GetConversationByConnectionAsync(string connectionId, CancellationToken cancellationToken = default) 
         => await Task.FromResult(_collection
             .FirstOrDefault(conversation => conversation is ConnectionConversation connConvo 
                                          && connConvo.Connection.ConnectionId == connectionId) as ConnectionConversation);
 
-    public async Task<GroupConversation?> GetConversationByGroup(string groupId, CancellationToken cancellationToken = default) 
+    public async Task<GroupConversation?> GetConversationByGroupAsync(string groupId, CancellationToken cancellationToken = default) 
         => await Task.FromResult(_collection
             .FirstOrDefault(conversation => conversation is GroupConversation groupConvo
                                      && groupConvo.Group.GroupId == groupId) as GroupConversation);
 
-    public async Task<Conversation?> GetConversationById(string id, CancellationToken cancellationToken = default) => await Task.FromResult(_collection
+    public async Task<Conversation?> GetConversationByIdAsync(string id, CancellationToken cancellationToken = default) => await Task.FromResult(_collection
         .FirstOrDefault(conversation => conversation.ConversationId == id));
 
-    public Task<List<Conversation>> GetConversationsByUser(IUserAccount userAccount, CancellationToken cancellationToken = default) => Task.FromResult(_collection
+    public Task<List<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) => Task.FromResult(_collection
         .Where(conversation => (conversation is ConnectionConversation connConvo 
                                 && (connConvo.Connection.Account1.Id == userAccount.Id || connConvo.Connection.Account2.Id == userAccount.Id))
                             || (conversation is GroupConversation groupConvo
                                 && groupConvo.Group.Users.Any(user => user.Id == userAccount.Id)))
         .ToList());
 
-    public async Task<Conversation> CreateConnectionConversation(IConnection connection, CancellationToken cancellationToken = default)
+    public async Task<Conversation> CreateConnectionConversationAsync(IConnection connection, CancellationToken cancellationToken = default)
     {
         var id = NextId();
         ConnectionConversation conversation = new(connection, id);
@@ -53,7 +53,7 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
         return await Task.FromResult(conversation);
     }
 
-    public async Task<bool> UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateConversationAsync(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default)
     {
         Conversation? existingConversation = _collection.FirstOrDefault(convo => convo.ConversationId == conversation.ConversationId);
         if (existingConversation is null)

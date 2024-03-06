@@ -85,11 +85,11 @@ public class MessagePersistenceRepositoryTests
             null);
 
         _messageDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(It.IsAny<MessageDocument>(), testSender, null, It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapMessageFromDocumentAsync(It.IsAny<MessageDocument>(), testSender, null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedMessage);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.CreateMessage(
+        var result = await _messagePersistenceRepositorySUT.CreateMessageAsync(
             testSender,
             expectedMessage.Text,
             expectedMessage.Recipes.Select(r => r.Id).ToList(),
@@ -139,7 +139,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeTrue();
@@ -192,7 +192,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeTrue();
@@ -240,7 +240,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeTrue();
@@ -283,7 +283,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeFalse();
@@ -322,7 +322,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeFalse();
@@ -350,7 +350,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.DeleteMessage(message);
+        var result = await _messagePersistenceRepositorySUT.DeleteMessageAsync(message);
 
         // Then
         result.Should().BeTrue();
@@ -378,7 +378,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.DeleteMessage(message);
+        var result = await _messagePersistenceRepositorySUT.DeleteMessageAsync(message);
 
         // Then
         result.Should().BeFalse();
@@ -397,7 +397,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.DeleteMessage("TestId");
+        var result = await _messagePersistenceRepositorySUT.DeleteMessageAsync("TestId");
 
         // Then
         result.Should().BeTrue();
@@ -416,7 +416,7 @@ public class MessagePersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _messagePersistenceRepositorySUT.DeleteMessage("TestId");
+        var result = await _messagePersistenceRepositorySUT.DeleteMessageAsync("TestId");
 
         // Then
         result.Should().BeFalse();

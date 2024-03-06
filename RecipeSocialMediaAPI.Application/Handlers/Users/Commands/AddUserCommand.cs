@@ -37,24 +37,24 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
 
     public async Task<SuccessfulAuthenticationDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if ((await _userQueryRepository.GetUserByHandler(request.Contract.Handler, cancellationToken)) is not null)
+        if ((await _userQueryRepository.GetUserByHandlerAsync(request.Contract.Handler, cancellationToken)) is not null)
         {
             throw new HandlerAlreadyInUseException(request.Contract.Handler);
         }
 
-        if ((await _userQueryRepository.GetUserByUsername(request.Contract.UserName, cancellationToken)) is not null)
+        if ((await _userQueryRepository.GetUserByUsernameAsync(request.Contract.UserName, cancellationToken)) is not null)
         {
             throw new UsernameAlreadyInUseException(request.Contract.UserName);
         }
 
-        if ((await _userQueryRepository.GetUserByEmail(request.Contract.Email, cancellationToken)) is not null)
+        if ((await _userQueryRepository.GetUserByEmailAsync(request.Contract.Email, cancellationToken)) is not null)
         {
             throw new EmailAlreadyInUseException(request.Contract.Email);
         }
 
         var encryptedPassword = _cryptoService.Encrypt(request.Contract.Password);
         IUserCredentials insertedUser = await _userPersistenceRepository
-            .CreateUser(
+            .CreateUserAsync(
                 request.Contract.Handler,
                 request.Contract.UserName,
                 request.Contract.Email,

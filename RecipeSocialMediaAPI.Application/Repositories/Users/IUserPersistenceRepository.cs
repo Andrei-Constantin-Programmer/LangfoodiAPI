@@ -4,7 +4,7 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Users;
 
 public interface IUserPersistenceRepository
 {
-    Task<IUserCredentials> CreateUser(
+    Task<IUserCredentials> CreateUserAsync(
         string handler,
         string username,
         string email,
@@ -12,7 +12,7 @@ public interface IUserPersistenceRepository
         DateTimeOffset accountCreationDate,
         UserRole userRole = UserRole.User,
         CancellationToken cancellationToken = default);
-    Task<bool> UpdateUser(IUserCredentials user, CancellationToken cancellationToken = default);
-    Task<bool> DeleteUser(IUserCredentials user, CancellationToken cancellationToken = default);
-    Task<bool> DeleteUser(string id, CancellationToken cancellationToken = default);
+    Task<bool> UpdateUserAsync(IUserCredentials user, CancellationToken cancellationToken = default);
+    Task<bool> DeleteUserAsync(IUserCredentials user, CancellationToken cancellationToken = default);
+    Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken = default);
 }

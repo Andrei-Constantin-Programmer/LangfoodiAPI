@@ -16,6 +16,6 @@ internal class MessageUpdatedHandler : INotificationHandler<MessageUpdatedNotifi
 
     public async Task Handle(MessageUpdatedNotification notification, CancellationToken cancellationToken)
     {
-        await _messageNotificationService.NotifyMessageUpdated(notification.UpdatedMessage, cancellationToken);
+        await _messageNotificationService.NotifyMessageUpdatedAsync(notification.UpdatedMessage, cancellationToken);
     }
 }

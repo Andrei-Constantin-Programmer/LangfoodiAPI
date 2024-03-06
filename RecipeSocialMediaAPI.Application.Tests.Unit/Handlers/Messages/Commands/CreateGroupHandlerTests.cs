@@ -56,13 +56,13 @@ public class CreateGroupHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount1.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(userAccount1.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials() { Account = userAccount1, Email = "test1@mail.com", Password = "TestPass" });
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount2.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(userAccount2.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials() { Account = userAccount2, Email = "test2@mail.com", Password = "TestPass" });
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount3.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(userAccount3.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials() { Account = userAccount3, Email = "test3@mail.com", Password = "TestPass" });
 
         List<string> userIds = new() { userAccount1.Id, userAccount2.Id, userAccount3.Id };
@@ -72,7 +72,7 @@ public class CreateGroupHandlerTests
         Group testGroup = new("1","name","description", users);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.CreateGroup("name", "description", users, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.CreateGroupAsync("name", "description", users, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testGroup);
 
         // When
@@ -123,21 +123,21 @@ public class CreateGroupHandlerTests
         if (user1Exists)
         {
             _userQueryRepositoryMock
-                .Setup(repo => repo.GetUserById(userAccount1.Id, It.IsAny<CancellationToken>()))
+                .Setup(repo => repo.GetUserByIdAsync(userAccount1.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new TestUserCredentials() { Account = userAccount1, Email = "test1@mail.com", Password = "TestPass" });
         }
 
         if (user2Exists) 
         {
             _userQueryRepositoryMock
-                .Setup(repo => repo.GetUserById(userAccount2.Id, It.IsAny<CancellationToken>()))
+                .Setup(repo => repo.GetUserByIdAsync(userAccount2.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new TestUserCredentials() { Account = userAccount2, Email = "test2@mail.com", Password = "TestPass" });
         }
 
         if (user3Exists)
         {
             _userQueryRepositoryMock
-                .Setup(repo => repo.GetUserById(userAccount3.Id, It.IsAny<CancellationToken>()))
+                .Setup(repo => repo.GetUserByIdAsync(userAccount3.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new TestUserCredentials() { Account = userAccount3, Email = "test3@mail.com", Password = "TestPass" });
         }
 
@@ -148,7 +148,7 @@ public class CreateGroupHandlerTests
         Group testGroup = new("1", "name", "description", users);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.CreateGroup("name", "description", users, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.CreateGroupAsync("name", "description", users, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testGroup);
 
         // When

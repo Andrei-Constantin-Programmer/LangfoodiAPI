@@ -23,14 +23,14 @@ internal class UnpinConversationHandler : IRequestHandler<UnpinConversationComma
 
     public async Task Handle(UnpinConversationCommand request, CancellationToken cancellationToken)
     {
-        IUserCredentials user = await _userQueryRepository.GetUserById(request.UserId, cancellationToken)
+        IUserCredentials user = await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken)
             ?? throw new UserNotFoundException($"User with id {request.UserId} does not exist");
-        Conversation conversation = (await _conversationQueryRepository.GetConversationById(request.ConversationId, cancellationToken))
+        Conversation conversation = (await _conversationQueryRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken))
             ?? throw new ConversationNotFoundException($"Conversation with id {request.ConversationId} does not exist");
 
         if (user.Account.RemovePin(conversation.ConversationId))
         {
-            await _userPersistenceRepository.UpdateUser(user, cancellationToken);
+            await _userPersistenceRepository.UpdateUserAsync(user, cancellationToken);
         }
     }
 }

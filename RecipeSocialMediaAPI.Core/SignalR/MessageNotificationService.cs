@@ -15,7 +15,7 @@ public class MessageNotificationService : IMessageNotificationService
         _logger = logger;
     }
 
-    public async Task NotifyMessageSent(MessageDTO sentMessage, string conversationId, CancellationToken cancellationToken)
+    public async Task NotifyMessageSentAsync(MessageDTO sentMessage, string conversationId, CancellationToken cancellationToken)
     {
         try
         {
@@ -27,7 +27,7 @@ public class MessageNotificationService : IMessageNotificationService
         }
     }
 
-    public async Task NotifyMessageUpdated(MessageDTO updatedMessage, CancellationToken cancellationToken)
+    public async Task NotifyMessageUpdatedAsync(MessageDTO updatedMessage, CancellationToken cancellationToken)
     {
         try
         {
@@ -38,7 +38,7 @@ public class MessageNotificationService : IMessageNotificationService
             _logger.LogWarning(ex, "SignalR notification for Message Updated has been cancelled for message with id {MessageId}", updatedMessage.Id);
         }
     }
-    public async Task NotifyMessageDeleted(string messageId, CancellationToken cancellationToken)
+    public async Task NotifyMessageDeletedAsync(string messageId, CancellationToken cancellationToken)
     {
         try
         {
@@ -50,7 +50,7 @@ public class MessageNotificationService : IMessageNotificationService
         }
     }
 
-    public async Task NotifyMessageMarkedAsRead(string userId, string messageId, CancellationToken cancellationToken)
+    public async Task NotifyMessageMarkedAsReadAsync(string userId, string messageId, CancellationToken cancellationToken)
     {
         try
         {

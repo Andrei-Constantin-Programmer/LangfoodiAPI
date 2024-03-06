@@ -21,7 +21,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         _messageCollection = mongoCollectionFactory.CreateCollection<MessageDocument>();
     }
 
-    public async Task<Message> CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
+    public async Task<Message> CreateMessageAsync(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
     {
         MessageDocument messageDocument = await _messageCollection.Insert(new MessageDocument(
             SenderId: sender.Id,
@@ -31,10 +31,10 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
             MessageRepliedToId: messageRepliedTo?.Id
         ), cancellationToken);
 
-        return await _mapper.MapMessageFromDocument(messageDocument, sender, messageRepliedTo, cancellationToken);
+        return await _mapper.MapMessageFromDocumentAsync(messageDocument, sender, messageRepliedTo, cancellationToken);
     }
 
-    public async Task<bool> UpdateMessage(Message message, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateMessageAsync(Message message, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -64,9 +64,9 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         }
     }
 
-    public async Task<bool> DeleteMessage(Message message, CancellationToken cancellationToken = default) 
-        => await DeleteMessage(message.Id, cancellationToken);
+    public async Task<bool> DeleteMessageAsync(Message message, CancellationToken cancellationToken = default) 
+        => await DeleteMessageAsync(message.Id, cancellationToken);
 
-    public async Task<bool> DeleteMessage(string messageId, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteMessageAsync(string messageId, CancellationToken cancellationToken = default) 
         => await _messageCollection.Delete(messageDoc => messageDoc.Id == messageId, cancellationToken);
 }

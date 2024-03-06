@@ -68,14 +68,14 @@ public class ConnectionDocumentToModelMapperTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser1.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testUser1.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser2.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testUser2.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser2);
 
         // When
-        var result = await _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+        var result = await _connectionDocumentToModelMapperSUT.MapConnectionFromDocumentAsync(testDocument);
 
         // Then
         result.Account1.Should().Be(testUser1.Account);
@@ -128,14 +128,14 @@ public class ConnectionDocumentToModelMapperTests
         ConnectionDocument testDocument = new(userId1, userId2, "Pending");
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userId1, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(userId1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userId2, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(userId2, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser2);
 
         // When
-        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocumentAsync(testDocument);
 
         // Then
         await testAction.Should().ThrowAsync<UserDocumentNotFoundException>();
@@ -176,14 +176,14 @@ public class ConnectionDocumentToModelMapperTests
         ConnectionDocument testDocument = new(testUser1.Account.Id, testUser2.Account.Id, "MalformedStatus");
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser1.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testUser1.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser2.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testUser2.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser2);
 
         // When
-        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocumentAsync(testDocument);
 
         // Then
         await testAction.Should().ThrowAsync<InvalidConnectionStatusException>();
@@ -211,11 +211,11 @@ public class ConnectionDocumentToModelMapperTests
         ConnectionDocument testDocument = new(testUser.Account.Id, testUser.Account.Id, "Pending");
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testUser.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser);
 
         // When
-        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocument(testDocument);
+        var testAction = async () => await _connectionDocumentToModelMapperSUT.MapConnectionFromDocumentAsync(testDocument);
 
         // Then
         await testAction.Should().ThrowAsync<Exception>();

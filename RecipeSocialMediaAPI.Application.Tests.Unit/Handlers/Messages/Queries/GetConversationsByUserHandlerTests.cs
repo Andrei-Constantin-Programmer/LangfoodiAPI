@@ -52,11 +52,11 @@ public class GetConversationsByUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationsByUser(user.Account, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConversationsByUserAsync(user.Account, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Conversation>());
 
         GetConversationsByUserQuery query = new(user.Account.Id);
@@ -109,7 +109,7 @@ public class GetConversationsByUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user1);
 
         Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Connected);
@@ -131,7 +131,7 @@ public class GetConversationsByUserHandlerTests
             .Returns(convo2Dto);
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationsByUser(user1.Account, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConversationsByUserAsync(user1.Account, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversations);
 
         GetConversationsByUserQuery query = new(user1.Account.Id);
@@ -152,7 +152,7 @@ public class GetConversationsByUserHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((IUserCredentials?)null);
 
         GetConversationsByUserQuery query = new("u1");

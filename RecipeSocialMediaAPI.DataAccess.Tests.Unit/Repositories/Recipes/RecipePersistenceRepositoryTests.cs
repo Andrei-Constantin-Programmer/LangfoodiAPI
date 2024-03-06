@@ -88,7 +88,7 @@ public class RecipePersistenceRepositoryTests
             .Returns(expectedResult);
 
         // When
-        var result = await _recipePersistenceRepositorySUT.CreateRecipe(
+        var result = await _recipePersistenceRepositorySUT.CreateRecipeAsync(
             expectedResult.Title,
             expectedResult.Recipe,
             expectedResult.Description,
@@ -153,7 +153,7 @@ public class RecipePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _recipePersistenceRepositorySUT.UpdateRecipe(recipe);
+        var result = await _recipePersistenceRepositorySUT.UpdateRecipeAsync(recipe);
 
         // Then
         result.Should().BeTrue();
@@ -216,7 +216,7 @@ public class RecipePersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _recipePersistenceRepositorySUT.UpdateRecipe(recipe);
+        var result = await _recipePersistenceRepositorySUT.UpdateRecipeAsync(recipe);
 
         // Then
         result.Should().BeFalse();
@@ -238,7 +238,7 @@ public class RecipePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _recipePersistenceRepositorySUT.DeleteRecipe(id);
+        var result = await _recipePersistenceRepositorySUT.DeleteRecipeAsync(id);
 
         // Then
         result.Should().BeTrue();
@@ -282,7 +282,7 @@ public class RecipePersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _recipePersistenceRepositorySUT.DeleteRecipe(recipe);
+        var result = await _recipePersistenceRepositorySUT.DeleteRecipeAsync(recipe);
 
         // Then
         result.Should().BeTrue();
@@ -309,7 +309,7 @@ public class RecipePersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _recipePersistenceRepositorySUT.DeleteRecipe(id);
+        var result = await _recipePersistenceRepositorySUT.DeleteRecipeAsync(id);
 
         // Then
         result.Should().BeFalse();
@@ -353,7 +353,7 @@ public class RecipePersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _recipePersistenceRepositorySUT.DeleteRecipe(recipe);
+        var result = await _recipePersistenceRepositorySUT.DeleteRecipeAsync(recipe);
 
         // Then
         result.Should().BeFalse();

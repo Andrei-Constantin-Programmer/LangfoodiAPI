@@ -20,11 +20,11 @@ public class UserQueryRepository : IUserQueryRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public async Task<IEnumerable<IUserCredentials>> GetAllUsers(CancellationToken cancellationToken = default) => (await _userCollection
+    public async Task<IEnumerable<IUserCredentials>> GetAllUsersAsync(CancellationToken cancellationToken = default) => (await _userCollection
         .GetAll((_) => true, cancellationToken))
         .Select(_mapper.MapUserDocumentToUser);
 
-    public async Task<IUserCredentials?> GetUserById(string id, CancellationToken cancellationToken = default)
+    public async Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
@@ -44,7 +44,7 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public async Task<IUserCredentials?> GetUserByEmail(string email, CancellationToken cancellationToken = default)
+    public async Task<IUserCredentials?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
         try
@@ -63,7 +63,7 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public async Task<IUserCredentials?> GetUserByHandler(string handler, CancellationToken cancellationToken = default)
+    public async Task<IUserCredentials?> GetUserByHandlerAsync(string handler, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
@@ -83,7 +83,7 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public async Task<IUserCredentials?> GetUserByUsername(string username, CancellationToken cancellationToken = default)
+    public async Task<IUserCredentials?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
@@ -103,8 +103,8 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContaining(string containedString, CancellationToken cancellationToken = default) => 
-        (await _userCollection
+    public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default) 
+        => (await _userCollection
             .GetAll(userDoc => userDoc.Handler.Contains(containedString.ToLower())
                             || userDoc.UserName.Contains(containedString.ToLower()), cancellationToken))
             .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);

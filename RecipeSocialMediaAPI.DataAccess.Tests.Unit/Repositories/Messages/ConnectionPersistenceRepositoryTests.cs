@@ -63,11 +63,11 @@ public class ConnectionPersistenceRepositoryTests
             .Setup(collection => collection.Insert(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument, It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocument, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testConnection);
 
         // When
-        var result = await _connectionPersistenceRepositorySUT.CreateConnection(testUser1, testUser2, testConnection.Status);
+        var result = await _connectionPersistenceRepositorySUT.CreateConnectionAsync(testUser1, testUser2, testConnection.Status);
 
         // Then
         result.Should().Be(testConnection);
@@ -119,7 +119,7 @@ public class ConnectionPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _connectionPersistenceRepositorySUT.UpdateConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.UpdateConnectionAsync(testConnection);
 
         // Then
         result.Should().BeTrue();
@@ -163,7 +163,7 @@ public class ConnectionPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _connectionPersistenceRepositorySUT.UpdateConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.UpdateConnectionAsync(testConnection);
 
         // Then
         result.Should().BeFalse();
@@ -202,7 +202,7 @@ public class ConnectionPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _connectionPersistenceRepositorySUT.DeleteConnection(testUser1, testUser2);
+        var result = await _connectionPersistenceRepositorySUT.DeleteConnectionAsync(testUser1, testUser2);
 
         // Then
         result.Should().BeTrue();
@@ -241,7 +241,7 @@ public class ConnectionPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _connectionPersistenceRepositorySUT.DeleteConnection(testUser1, testUser2);
+        var result = await _connectionPersistenceRepositorySUT.DeleteConnectionAsync(testUser1, testUser2);
 
         // Then
         result.Should().BeFalse();
@@ -282,7 +282,7 @@ public class ConnectionPersistenceRepositoryTests
         Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         // When
-        var result = await _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.DeleteConnectionAsync(testConnection);
 
         // Then
         result.Should().BeTrue();
@@ -323,7 +323,7 @@ public class ConnectionPersistenceRepositoryTests
         Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         // When
-        var result = await _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.DeleteConnectionAsync(testConnection);
 
         // Then
         result.Should().BeFalse();

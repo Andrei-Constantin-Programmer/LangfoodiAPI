@@ -84,11 +84,11 @@ public class GroupPersistenceRepositoryTests
         Group expectedGroup = new(insertedDocument.Id!, insertedDocument.GroupName, insertedDocument.GroupDescription, users);
 
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(insertedDocument, It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapGroupFromDocumentAsync(insertedDocument, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedGroup);
 
         // When
-        var result = await _groupPersistenceRepositorySUT.CreateGroup(groupName, groupDesc, users);
+        var result = await _groupPersistenceRepositorySUT.CreateGroupAsync(groupName, groupDesc, users);
 
         // Then
         result.Should().Be(expectedGroup);
@@ -134,7 +134,7 @@ public class GroupPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _groupPersistenceRepositorySUT.UpdateGroup(group);
+        var result = await _groupPersistenceRepositorySUT.UpdateGroupAsync(group);
 
         // Then
         result.Should().BeTrue();
@@ -180,7 +180,7 @@ public class GroupPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _groupPersistenceRepositorySUT.UpdateGroup(group);
+        var result = await _groupPersistenceRepositorySUT.UpdateGroupAsync(group);
 
         // Then
         result.Should().BeFalse();
@@ -201,7 +201,7 @@ public class GroupPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _groupPersistenceRepositorySUT.DeleteGroup(group);
+        var result = await _groupPersistenceRepositorySUT.DeleteGroupAsync(group);
 
         // Then
         result.Should().BeTrue();
@@ -222,7 +222,7 @@ public class GroupPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _groupPersistenceRepositorySUT.DeleteGroup(group);
+        var result = await _groupPersistenceRepositorySUT.DeleteGroupAsync(group);
 
         // Then
         result.Should().BeFalse();
@@ -241,7 +241,7 @@ public class GroupPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _groupPersistenceRepositorySUT.DeleteGroup("g1");
+        var result = await _groupPersistenceRepositorySUT.DeleteGroupAsync("g1");
 
         // Then
         result.Should().BeTrue();
@@ -260,7 +260,7 @@ public class GroupPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _groupPersistenceRepositorySUT.DeleteGroup("g1");
+        var result = await _groupPersistenceRepositorySUT.DeleteGroupAsync("g1");
 
         // Then
         result.Should().BeFalse();

@@ -53,7 +53,7 @@ public class GetConversationByGroupHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user1.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials()
             {
                 Account = user1,
@@ -65,7 +65,7 @@ public class GetConversationByGroupHandlerTests
         GroupConversation conversation = new(group, "convo1", new List<Message>());
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationByGroup(group.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConversationByGroupAsync(group.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
 
         ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, null, new() { user1.Id, user2.Id });
@@ -113,7 +113,7 @@ public class GetConversationByGroupHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user1.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials()
             {
                 Account = user1,
@@ -141,7 +141,7 @@ public class GetConversationByGroupHandlerTests
             .Returns(conversationDto);
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationByGroup(group.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConversationByGroupAsync(group.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
 
         GetConversationByGroupQuery query = new(user1.Id, group.GroupId);
@@ -170,7 +170,7 @@ public class GetConversationByGroupHandlerTests
             UserName = "User 1"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user1.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials()
             {
                 Account = user1,
@@ -180,7 +180,7 @@ public class GetConversationByGroupHandlerTests
 
         string groupId = "group1";
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationByGroup(groupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConversationByGroupAsync(groupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((GroupConversation?)null);
 
         GetConversationByGroupQuery query = new(user1.Id, groupId);

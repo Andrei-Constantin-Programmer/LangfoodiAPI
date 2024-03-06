@@ -76,7 +76,7 @@ public class GetRecipesFromUserIdHandlerTests
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipesByChefId(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetRecipesByChefIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<RecipeAggregate> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
         _recipeMapperMock
             .Setup(x => x.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()))

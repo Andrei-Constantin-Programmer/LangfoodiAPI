@@ -19,11 +19,11 @@ internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
 
     public async Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
     {
-        var userId = ((await _userQueryRepository.GetUserById(request.EmailOrId, cancellationToken))
-            ?? (await _userQueryRepository.GetUserByEmail(request.EmailOrId, cancellationToken))
+        var userId = ((await _userQueryRepository.GetUserByIdAsync(request.EmailOrId, cancellationToken))
+            ?? (await _userQueryRepository.GetUserByEmailAsync(request.EmailOrId, cancellationToken))
             ?? throw new UserNotFoundException($"No user found with email/id {request.EmailOrId}")).Account.Id;
 
-        bool isSuccessful = await _userPersistenceRepository.DeleteUser(userId, cancellationToken);
+        bool isSuccessful = await _userPersistenceRepository.DeleteUserAsync(userId, cancellationToken);
 
         if (!isSuccessful)
         {

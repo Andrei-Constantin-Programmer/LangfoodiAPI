@@ -25,12 +25,12 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
 
     public async Task Handle(UpdateConnectionCommand request, CancellationToken cancellationToken)
     {
-        IUserAccount user1 = (await _userQueryRepository.GetUserById(request.Contract.UserId1, cancellationToken))?.Account
+        IUserAccount user1 = (await _userQueryRepository.GetUserByIdAsync(request.Contract.UserId1, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId1}");
-        IUserAccount user2 = (await _userQueryRepository.GetUserById(request.Contract.UserId2, cancellationToken))?.Account
+        IUserAccount user2 = (await _userQueryRepository.GetUserByIdAsync(request.Contract.UserId2, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId2}");
 
-        IConnection? connection = await _connectionQueryRepository.GetConnection(user1, user2, cancellationToken)
+        IConnection? connection = await _connectionQueryRepository.GetConnectionAsync(user1, user2, cancellationToken)
             ?? throw new ConnectionNotFoundException($"No connection found between users with ids {user1.Id} and {user2.Id}");
 
         var isValidConnectionStatus = Enum.TryParse(request.Contract.NewConnectionStatus, out ConnectionStatus newStatus);
@@ -46,7 +46,7 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
 
         connection.Status = newStatus;
 
-        var isSuccessful = await _connectionPersistenceRepository.UpdateConnection(connection, cancellationToken);
+        var isSuccessful = await _connectionPersistenceRepository.UpdateConnectionAsync(connection, cancellationToken);
 
         if (!isSuccessful)
         {

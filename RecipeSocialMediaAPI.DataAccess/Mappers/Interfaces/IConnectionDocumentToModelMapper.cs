@@ -4,5 +4,5 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 namespace RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 public interface IConnectionDocumentToModelMapper
 {
-    Task<IConnection> MapConnectionFromDocument(ConnectionDocument connectionDocument, CancellationToken cancellationToken = default);
+    Task<IConnection> MapConnectionFromDocumentAsync(ConnectionDocument connectionDocument, CancellationToken cancellationToken = default);
 }

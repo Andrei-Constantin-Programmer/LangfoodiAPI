@@ -25,14 +25,14 @@ internal class CreateConnectionHandler : IRequestHandler<CreateConnectionCommand
     public async Task<ConnectionDTO> Handle(CreateConnectionCommand request, CancellationToken cancellationToken)
     {
         IUserAccount user1 = (await _userQueryRepository
-            .GetUserById(request.Contract.UserId1, cancellationToken))?.Account
+            .GetUserByIdAsync(request.Contract.UserId1, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId1}");
         IUserAccount user2 = (await _userQueryRepository
-            .GetUserById(request.Contract.UserId2, cancellationToken))?.Account
+            .GetUserByIdAsync(request.Contract.UserId2, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.UserId2}");
 
         IConnection createdConnection = await _connectionPersistenceRepository
-            .CreateConnection(user1, user2, ConnectionStatus.Pending, cancellationToken);
+            .CreateConnectionAsync(user1, user2, ConnectionStatus.Pending, cancellationToken);
 
         return await Task.FromResult(new ConnectionDTO(
             createdConnection.ConnectionId,

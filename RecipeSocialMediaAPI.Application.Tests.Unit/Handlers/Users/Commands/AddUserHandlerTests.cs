@@ -72,7 +72,7 @@ public class AddUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByHandlerAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingUser);
         AddUserCommand command = new(
             new NewUserContract(
@@ -88,7 +88,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<HandlerAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class AddUserHandlerTests
         };
             
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByUsernameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingUser);
         AddUserCommand command = new(
             new NewUserContract(
@@ -127,7 +127,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<UsernameAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public class AddUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingUser);
         NewUserContract contract = new("TestHandler", "NewUser", existingUser.Email,"NewPass");
 
@@ -160,7 +160,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<EmailAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class AddUserHandlerTests
         NewUserContract contract = new("NewHandler", "NewUser", "NewEmail", "NewPass");
         
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string handler, string user, string email, string password, DateTimeOffset creationDate, UserRole userRole, CancellationToken _) 
                 => new TestUserCredentials
                 {

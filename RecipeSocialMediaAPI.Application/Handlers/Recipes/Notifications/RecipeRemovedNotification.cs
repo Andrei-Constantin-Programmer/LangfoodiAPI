@@ -19,14 +19,14 @@ internal class RecipeRemovedHandler : INotificationHandler<RecipeRemovedNotifica
 
     public async Task Handle(RecipeRemovedNotification notification, CancellationToken cancellationToken)
     {
-        var messages = await _messageQueryRepository.GetMessagesWithRecipe(notification.RecipeId, cancellationToken);
+        var messages = await _messageQueryRepository.GetMessagesWithRecipeAsync(notification.RecipeId, cancellationToken);
 
         foreach (var message in messages.Cast<RecipeMessage>())
         {
             if (message.Recipes.Count == 1
                 && string.IsNullOrWhiteSpace(message.TextContent))
             {
-                await _messagePersistenceRepository.DeleteMessage(message, cancellationToken);
+                await _messagePersistenceRepository.DeleteMessageAsync(message, cancellationToken);
             }
         }
     }

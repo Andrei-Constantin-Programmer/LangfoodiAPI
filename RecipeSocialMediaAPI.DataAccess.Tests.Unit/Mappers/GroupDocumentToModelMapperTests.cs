@@ -55,10 +55,10 @@ public class GroupDocumentToModelMapperTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser1.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testUser1.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser2.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(testUser2.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser2);
 
         GroupDocument testDocument = new(
@@ -69,7 +69,7 @@ public class GroupDocumentToModelMapperTests
         );
 
         // When
-        var result = await _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
+        var result = await _groupDocumentToModelMapperSUT.MapGroupFromDocumentAsync(testDocument);
 
         // Then
         result.Should().NotBeNull();
@@ -129,14 +129,14 @@ public class GroupDocumentToModelMapperTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userId1, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(userId1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userId2, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(userId2, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser2);
 
         // When
-        var result = async () => await _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
+        var result = async () => await _groupDocumentToModelMapperSUT.MapGroupFromDocumentAsync(testDocument);
 
         // Then
         await result.Should().ThrowAsync<UserDocumentNotFoundException>();
@@ -156,7 +156,7 @@ public class GroupDocumentToModelMapperTests
         );
 
         // When
-        var result = await _groupDocumentToModelMapperSUT.MapGroupFromDocument(testDocument);
+        var result = await _groupDocumentToModelMapperSUT.MapGroupFromDocumentAsync(testDocument);
 
         // Then
         result.Should().NotBeNull();

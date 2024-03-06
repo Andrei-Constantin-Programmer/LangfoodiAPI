@@ -27,11 +27,11 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
 
     public async Task<List<UserAccountDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount queryingUser = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
+        IUserAccount queryingUser = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
-        var allUsers = await _userQueryRepository.GetAllUserAccountsContaining(request.ContainedString, cancellationToken);
-        var connections = await _connectionQueryRepository.GetConnectionsForUser(queryingUser, cancellationToken);
+        var allUsers = await _userQueryRepository.GetAllUserAccountsContainingAsync(request.ContainedString, cancellationToken);
+        var connections = await _connectionQueryRepository.GetConnectionsForUserAsync(queryingUser, cancellationToken);
         var usersFound = GetFilteredUsers(queryingUser, allUsers, request.QueryOptions, connections);
 
         return usersFound

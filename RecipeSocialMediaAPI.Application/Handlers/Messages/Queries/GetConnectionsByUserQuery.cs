@@ -22,11 +22,11 @@ internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUse
 
     public async Task<IEnumerable<ConnectionDTO>> Handle(GetConnectionsByUserQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount user = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
+        IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
         return (await _connectionQueryRepository
-            .GetConnectionsForUser(user, cancellationToken))
+            .GetConnectionsForUserAsync(user, cancellationToken))
             .Select(connection => new ConnectionDTO(
                 connection.ConnectionId,
                 connection.Account1.Id,

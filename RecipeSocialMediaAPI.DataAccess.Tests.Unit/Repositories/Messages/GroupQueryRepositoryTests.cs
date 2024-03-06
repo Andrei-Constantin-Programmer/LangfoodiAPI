@@ -89,11 +89,11 @@ public class GroupQueryRepositoryTests
         Group expectedGroup = new(groupDoc.Id!, groupDoc.GroupName, groupDoc.GroupDescription, users);
 
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc, It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapGroupFromDocumentAsync(groupDoc, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedGroup);
 
         // When
-        var result = await _groupQueryRepositorySUT.GetGroupById("1");
+        var result = await _groupQueryRepositorySUT.GetGroupByIdAsync("1");
 
         // Then
         result.Should().Be(expectedGroup);
@@ -110,7 +110,7 @@ public class GroupQueryRepositoryTests
             .ReturnsAsync((GroupDocument?)null);
 
         // When
-        var result = await _groupQueryRepositorySUT.GetGroupById("1");
+        var result = await _groupQueryRepositorySUT.GetGroupByIdAsync("1");
 
         // Then
         result.Should().BeNull();
@@ -128,7 +128,7 @@ public class GroupQueryRepositoryTests
             .ThrowsAsync(testException);
 
         // When
-        var result = await _groupQueryRepositorySUT.GetGroupById("1");
+        var result = await _groupQueryRepositorySUT.GetGroupByIdAsync("1");
 
         // Then
         result.Should().BeNull();
@@ -214,14 +214,14 @@ public class GroupQueryRepositoryTests
         Group group2 = new(groupDoc2.Id!, groupDoc2.GroupName, groupDoc2.GroupDescription, users.Take(1).Concat(users.Skip(3)).ToList());
 
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc1, It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapGroupFromDocumentAsync(groupDoc1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(group1);
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(groupDoc2, It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapGroupFromDocumentAsync(groupDoc2, It.IsAny<CancellationToken>()))
             .ReturnsAsync(group2);
 
         // When
-        var result = await _groupQueryRepositorySUT.GetGroupsByUser(users[0]);
+        var result = await _groupQueryRepositorySUT.GetGroupsByUserAsync(users[0]);
 
         // Then
         result.Should().HaveCount(2);
@@ -248,7 +248,7 @@ public class GroupQueryRepositoryTests
             .ReturnsAsync(new List<GroupDocument>());
 
         // When
-        var result = await _groupQueryRepositorySUT.GetGroupsByUser(testUser);
+        var result = await _groupQueryRepositorySUT.GetGroupsByUserAsync(testUser);
 
         // Then
         result.Should().BeEmpty();
@@ -274,7 +274,7 @@ public class GroupQueryRepositoryTests
             .ThrowsAsync(testException);
 
         // When
-        var result = await _groupQueryRepositorySUT.GetGroupsByUser(testUser);
+        var result = await _groupQueryRepositorySUT.GetGroupsByUserAsync(testUser);
 
         // Then
         result.Should().BeEmpty();

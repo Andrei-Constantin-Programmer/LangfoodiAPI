@@ -19,7 +19,7 @@ internal class GetGroupHandler : IRequestHandler<GetGroupQuery, GroupDTO>
 
     public async Task<GroupDTO> Handle(GetGroupQuery request, CancellationToken cancellationToken)
     {
-        Group group = await _groupQueryRepository.GetGroupById(request.GroupId, cancellationToken)
+        Group group = await _groupQueryRepository.GetGroupByIdAsync(request.GroupId, cancellationToken)
             ?? throw new GroupNotFoundException(request.GroupId);
 
         return new GroupDTO(

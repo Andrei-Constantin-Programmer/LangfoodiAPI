@@ -25,14 +25,14 @@ internal class MarkMessageAsReadHandler : IRequestHandler<MarkMessageAsReadComma
 
     public async Task Handle(MarkMessageAsReadCommand request, CancellationToken cancellationToken)
     {
-        var user = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
+        var user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No User found with id {request.UserId}");
-        var message = (await _messageQueryRepository.GetMessage(request.MessageId, cancellationToken))
+        var message = (await _messageQueryRepository.GetMessageAsync(request.MessageId, cancellationToken))
             ?? throw new MessageNotFoundException($"No Message found with id {request.MessageId}");
 
         message.MarkAsSeenBy(user);
 
-        await _messagePersistenceRepository.UpdateMessage(message, cancellationToken);
+        await _messagePersistenceRepository.UpdateMessageAsync(message, cancellationToken);
 
         await _publisher.Publish(new MessageMarkedAsReadNotification(user.Id, message.Id), cancellationToken);
     }

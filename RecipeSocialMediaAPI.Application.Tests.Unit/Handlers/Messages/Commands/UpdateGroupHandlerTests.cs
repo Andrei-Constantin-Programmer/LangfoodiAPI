@@ -93,16 +93,16 @@ public class UpdateGroupHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[0]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[1]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[2]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[3]);
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
 
@@ -113,11 +113,11 @@ public class UpdateGroupHandlerTests
             _testUsers.Select(user => user.Account.Id).ToList()));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(
+            .Setup(repo => repo.UpdateGroupAsync(
                 It.Is<Group>(group => group.GroupId == existingGroup.GroupId
                                    && group.GroupName == command.Contract.GroupName
                                    && group.GroupDescription == command.Contract.GroupDescription
@@ -147,11 +147,11 @@ public class UpdateGroupHandlerTests
             new List<string>()));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(
+            .Setup(repo => repo.UpdateGroupAsync(
                 It.Is<Group>(
                     group => group.GroupId == existingGroup.GroupId
                           && group.GroupName == command.Contract.GroupName
@@ -174,16 +174,16 @@ public class UpdateGroupHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[0]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[1]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[2]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[3]);
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
 
@@ -194,11 +194,11 @@ public class UpdateGroupHandlerTests
             _testUsers.Select(user => user.Account.Id).ToList()));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(It.IsAny<Group>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.UpdateGroupAsync(It.IsAny<Group>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // When
@@ -215,16 +215,16 @@ public class UpdateGroupHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[0]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[1]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[2]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[3]);
 
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
@@ -240,11 +240,11 @@ public class UpdateGroupHandlerTests
             }));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(
+            .Setup(repo => repo.UpdateGroupAsync(
                 It.Is<Group>(
                     group => group.GroupId == existingGroup.GroupId
                           && group.GroupName == existingGroup.GroupName
@@ -269,16 +269,16 @@ public class UpdateGroupHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[0]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[1]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[2]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[3]);
 
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
@@ -290,11 +290,11 @@ public class UpdateGroupHandlerTests
             new List<string>()));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteGroup(
+            .Setup(repo => repo.DeleteGroupAsync(
                 It.Is<Group>(
                     group => group.GroupId == existingGroup.GroupId
                           && group.GroupName == existingGroup.GroupName
@@ -325,16 +325,16 @@ public class UpdateGroupHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[0]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[1]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[2]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[3]);
 
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Take(3).Select(user => user.Account));
@@ -352,11 +352,11 @@ public class UpdateGroupHandlerTests
             }));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(
+            .Setup(repo => repo.UpdateGroupAsync(
                 It.Is<Group>(
                     group => group.GroupId == existingGroup.GroupId
                           && group.GroupName == existingGroup.GroupName
@@ -383,16 +383,16 @@ public class UpdateGroupHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[0].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[0]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[1].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[1]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[2].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[2]);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(_testUsers[3].Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(_testUsers[3]);
 
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Take(3).Select(user => user.Account));
@@ -408,11 +408,11 @@ public class UpdateGroupHandlerTests
             }));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.UpdateGroup(
+            .Setup(repo => repo.UpdateGroupAsync(
                 It.Is<Group>(
                     group => group.GroupId == existingGroup.GroupId
                           && group.GroupName == existingGroup.GroupName
@@ -443,7 +443,7 @@ public class UpdateGroupHandlerTests
             new List<string>()));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Group?)null);
 
         // When
@@ -468,7 +468,7 @@ public class UpdateGroupHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((IUserCredentials?)null);
 
         Group existingGroup = new("1", "Group", "Group Desc");
@@ -483,7 +483,7 @@ public class UpdateGroupHandlerTests
             }));
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingGroup);
 
         // When

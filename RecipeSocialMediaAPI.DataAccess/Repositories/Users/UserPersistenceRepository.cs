@@ -17,7 +17,7 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public async Task<IUserCredentials> CreateUser(
+    public async Task<IUserCredentials> CreateUserAsync(
         string handler,
         string username,
         string email,
@@ -33,7 +33,7 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         return _mapper.MapUserDocumentToUser(newUserDocument);
     }
 
-    public async Task<bool> UpdateUser(IUserCredentials user, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateUserAsync(IUserCredentials user, CancellationToken cancellationToken = default)
     {
         var userDocument = await _userCollection.Find(userDoc => userDoc.Id == user.Account.Id, cancellationToken);
 
@@ -56,9 +56,9 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         return await _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id, cancellationToken);
     }
 
-    public async Task<bool> DeleteUser(IUserCredentials user, CancellationToken cancellationToken = default) 
-        => await DeleteUser(user.Account.Id, cancellationToken);
+    public async Task<bool> DeleteUserAsync(IUserCredentials user, CancellationToken cancellationToken = default) 
+        => await DeleteUserAsync(user.Account.Id, cancellationToken);
 
-    public async Task<bool> DeleteUser(string id, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken = default) 
         => await _userCollection.Delete(userDoc => userDoc.Id == id, cancellationToken);
 }

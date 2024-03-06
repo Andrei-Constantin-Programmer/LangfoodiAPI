@@ -52,7 +52,7 @@ public class UserPersistenceRepositoryTests
             .ThrowsAsync(new DocumentAlreadyExistsException<UserDocument>(testDocument));
 
         // When
-        var action = async () => await _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
+        var action = async () => await _userPersistenceRepositorySUT.CreateUserAsync(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
 
         // Then
         await action.Should().ThrowAsync<DocumentAlreadyExistsException<UserDocument>>();
@@ -94,7 +94,7 @@ public class UserPersistenceRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = await _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
+        var result = await _userPersistenceRepositorySUT.CreateUserAsync(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
 
         // Then
         result.Should().Be(testUser);
@@ -155,7 +155,7 @@ public class UserPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _userPersistenceRepositorySUT.UpdateUser(updatedUser);
+        var result = await _userPersistenceRepositorySUT.UpdateUserAsync(updatedUser);
 
         // Then
         result.Should().BeTrue();
@@ -203,7 +203,7 @@ public class UserPersistenceRepositoryTests
             .ReturnsAsync(nullUserDocument);
 
         // When
-        var result = await _userPersistenceRepositorySUT.UpdateUser(updatedUser);
+        var result = await _userPersistenceRepositorySUT.UpdateUserAsync(updatedUser);
 
         // Then
         result.Should().BeFalse();
@@ -240,7 +240,7 @@ public class UserPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _userPersistenceRepositorySUT.UpdateUser(updatedUser);
+        var result = await _userPersistenceRepositorySUT.UpdateUserAsync(updatedUser);
 
         // Then
         result.Should().BeFalse();
@@ -261,7 +261,7 @@ public class UserPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _userPersistenceRepositorySUT.DeleteUser(testDocument.Id!);
+        var result = await _userPersistenceRepositorySUT.DeleteUserAsync(testDocument.Id!);
 
         // Then
         result.Should().BeTrue();
@@ -300,7 +300,7 @@ public class UserPersistenceRepositoryTests
         };
 
         // When
-        var result = await _userPersistenceRepositorySUT.DeleteUser(userCredentials);
+        var result = await _userPersistenceRepositorySUT.DeleteUserAsync(userCredentials);
 
         // Then
         result.Should().BeTrue();
@@ -324,7 +324,7 @@ public class UserPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _userPersistenceRepositorySUT.DeleteUser("1");
+        var result = await _userPersistenceRepositorySUT.DeleteUserAsync("1");
 
         // Then
         result.Should().BeFalse();
@@ -356,7 +356,7 @@ public class UserPersistenceRepositoryTests
         };
 
         // When
-        var result = await _userPersistenceRepositorySUT.DeleteUser(userCredentials);
+        var result = await _userPersistenceRepositorySUT.DeleteUserAsync(userCredentials);
 
         // Then
         result.Should().BeFalse();

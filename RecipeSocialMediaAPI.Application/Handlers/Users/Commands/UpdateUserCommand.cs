@@ -30,7 +30,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 
     public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        IUserCredentials existingUser = await _userQueryRepository.GetUserById(request.Contract.Id, cancellationToken)
+        IUserCredentials existingUser = await _userQueryRepository.GetUserByIdAsync(request.Contract.Id, cancellationToken)
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.Id}");
 
         var newPassword = request.Contract.Password is not null
@@ -47,7 +47,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             existingUser.Account.AccountCreationDate
         );
 
-        bool isSuccessful = await _userPersistenceRepository.UpdateUser(updatedUser, cancellationToken);
+        bool isSuccessful = await _userPersistenceRepository.UpdateUserAsync(updatedUser, cancellationToken);
 
         if (!isSuccessful)
         {

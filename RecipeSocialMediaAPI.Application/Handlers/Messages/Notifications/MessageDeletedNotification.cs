@@ -15,6 +15,6 @@ internal class MessageDeletedHandler : INotificationHandler<MessageDeletedNotifi
 
     public async Task Handle(MessageDeletedNotification notification, CancellationToken cancellationToken)
     {
-        await _messageNotificationService.NotifyMessageDeleted(notification.MessageId, cancellationToken);
+        await _messageNotificationService.NotifyMessageDeletedAsync(notification.MessageId, cancellationToken);
     }
 }

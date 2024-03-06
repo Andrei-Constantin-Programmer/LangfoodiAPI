@@ -15,7 +15,7 @@ public class GroupDocumentToModelMapper : IGroupDocumentToModelMapper
         _userQueryRepository = userQueryRepository;  
     }
 
-    public async Task<Group> MapGroupFromDocument(GroupDocument groupDocument, CancellationToken cancellationToken = default)
+    public async Task<Group> MapGroupFromDocumentAsync(GroupDocument groupDocument, CancellationToken cancellationToken = default)
     {
         if (groupDocument.Id is null)
         {
@@ -23,7 +23,7 @@ public class GroupDocumentToModelMapper : IGroupDocumentToModelMapper
         }
 
         var users = await Task.WhenAll(groupDocument.UserIds
-            .Select(async userId => (await _userQueryRepository.GetUserById(userId, cancellationToken))?.Account
+            .Select(async userId => (await _userQueryRepository.GetUserByIdAsync(userId, cancellationToken))?.Account
                                     ?? throw new UserDocumentNotFoundException(userId)));
         
         return new Group(groupDocument.Id, groupDocument.GroupName, groupDocument.GroupDescription, users);

@@ -33,13 +33,13 @@ internal class CreateConnectionConversationHandler : IRequestHandler<CreateConne
 
     public async Task<ConversationDTO> Handle(CreateConnectionConversationCommand request, CancellationToken cancellationToken)
     {
-        IUserAccount user = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
+        IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
-        IConnection connection = (await _connectionQueryRepository.GetConnection(request.ConnectionId, cancellationToken))
+        IConnection connection = (await _connectionQueryRepository.GetConnectionAsync(request.ConnectionId, cancellationToken))
                                     ?? throw new ConnectionNotFoundException($"Connection with id {request.ConnectionId} was not found");
 
-        Conversation newConversation = await _conversationPersistenceRepository.CreateConnectionConversation(connection, cancellationToken);
+        Conversation newConversation = await _conversationPersistenceRepository.CreateConnectionConversationAsync(connection, cancellationToken);
 
         return await Task.FromResult(_conversationMapper.MapConversationToConnectionConversationDTO(user, (ConnectionConversation)newConversation));
     }

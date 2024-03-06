@@ -42,7 +42,7 @@ public class GetUsersHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((IUserCredentials?)null);
 
         GetUsersQuery query = new("userId", "StringNotFound", options);
@@ -76,12 +76,12 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", options);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Enumerable.Empty<IUserAccount>());
 
         // When
@@ -110,7 +110,7 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.All);
@@ -132,7 +132,7 @@ public class GetUsersHandlerTests
         UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<IUserAccount>() { account1, account2, queryingUser.Account });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
@@ -170,7 +170,7 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.All);
@@ -191,7 +191,7 @@ public class GetUsersHandlerTests
         UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<IUserAccount> { account1, account2 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
@@ -226,7 +226,7 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NonSelf);
@@ -248,7 +248,7 @@ public class GetUsersHandlerTests
         UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<IUserAccount> { account1, account2, queryingUser.Account });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
@@ -286,7 +286,7 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NonSelf);
@@ -307,7 +307,7 @@ public class GetUsersHandlerTests
         UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
         
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<IUserAccount> { account1, account2 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
@@ -342,7 +342,7 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.Connected);
@@ -372,7 +372,7 @@ public class GetUsersHandlerTests
         };
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnectionsForUser(queryingUser.Account, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConnectionsForUserAsync(queryingUser.Account, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<IConnection>
             {
                 new Connection("conn1", queryingUser.Account, account1, ConnectionStatus.Connected),
@@ -386,7 +386,7 @@ public class GetUsersHandlerTests
         UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<IUserAccount> { account1, account2, queryingUser.Account, account3, account4 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
@@ -430,7 +430,7 @@ public class GetUsersHandlerTests
             Password = "Test@123"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryingUser);
 
         GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", UserQueryOptions.NotConnected);
@@ -459,7 +459,7 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString.ToUpper()}"
         };
 
-        _connectionQueryRepositoryMock.Setup(repo => repo.GetConnectionsForUser(queryingUser.Account, It.IsAny<CancellationToken>()))
+        _connectionQueryRepositoryMock.Setup(repo => repo.GetConnectionsForUserAsync(queryingUser.Account, It.IsAny<CancellationToken>()))
         .ReturnsAsync(new List<IConnection>
             {
                 new Connection("conn1", queryingUser.Account, account1, ConnectionStatus.Connected),
@@ -473,7 +473,7 @@ public class GetUsersHandlerTests
         UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetAllUserAccountsContaining(query.ContainedString, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<IUserAccount> { account1, account2, queryingUser.Account, account3, account4 });
         _userMapperMock
             .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))

@@ -69,11 +69,11 @@ public class ConnectionQueryRepositoryTests
 
         Connection testConnection = new("0", testAccount1, testAccount2, ConnectionStatus.Pending);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument, It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocument, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testConnection);
 
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnection(connectionId);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(connectionId);
 
         // Then
         result.Should().Be(testConnection);
@@ -96,12 +96,12 @@ public class ConnectionQueryRepositoryTests
             .ReturnsAsync((ConnectionDocument?)null);
 
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnection(connectionId);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(connectionId);
 
         // Then
         result.Should().BeNull();
         _connectionDocumentToModelMapperMock
-            .Verify(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class ConnectionQueryRepositoryTests
             .ThrowsAsync(testException);
 
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnection(connectionId);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(connectionId);
 
         // Then
         result.Should().BeNull();
@@ -151,11 +151,11 @@ public class ConnectionQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
             .Throws(testException);
 
         // When
-        var testAction = async () => await _connectionQueryRepositorySUT.GetConnection(connectionId);
+        var testAction = async () => await _connectionQueryRepositorySUT.GetConnectionAsync(connectionId);
 
         // Then
         await testAction.Should().ThrowAsync<Exception>().WithMessage(testException.Message);
@@ -194,11 +194,11 @@ public class ConnectionQueryRepositoryTests
 
         Connection testConnection = new("0", testAccount1, testAccount2, ConnectionStatus.Pending);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument, It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocument, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testConnection);
 
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(testAccount1, testAccount2);
 
         // Then
         result.Should().Be(testConnection);
@@ -236,12 +236,12 @@ public class ConnectionQueryRepositoryTests
             .ReturnsAsync((ConnectionDocument?)null);
 
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(testAccount1, testAccount2);
 
         // Then
         result.Should().BeNull();
         _connectionDocumentToModelMapperMock
-            .Verify(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -271,7 +271,7 @@ public class ConnectionQueryRepositoryTests
             .ThrowsAsync(testException);
 
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(testAccount1, testAccount2);
 
         // Then
         result.Should().BeNull();
@@ -318,11 +318,11 @@ public class ConnectionQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
             .Throws(testException);
 
         // When
-        var testAction = async () => await _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+        var testAction = async () => await _connectionQueryRepositorySUT.GetConnectionAsync(testAccount1, testAccount2);
 
         // Then
         await testAction.Should().ThrowAsync<Exception>().WithMessage(testException.Message);
@@ -378,14 +378,14 @@ public class ConnectionQueryRepositoryTests
             .ReturnsAsync(testDocuments);
 
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocuments[0], It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocuments[0], It.IsAny<CancellationToken>()))
             .ReturnsAsync(testConnections[0]);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocuments[1], It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocuments[1], It.IsAny<CancellationToken>()))
             .ReturnsAsync(testConnections[1]);
 
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+        var result = await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
         result.Should().NotBeNull();
@@ -413,7 +413,7 @@ public class ConnectionQueryRepositoryTests
             .ReturnsAsync(new List<ConnectionDocument>());
 
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+        var result = await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
         result.Should().NotBeNull();
@@ -453,11 +453,11 @@ public class ConnectionQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
             .Throws(testException);
 
         // When
-        var testAction = async () => await _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+        var testAction = async () => await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
         await testAction.Should().ThrowAsync<Exception>().WithMessage(testException.Message);
@@ -490,7 +490,7 @@ public class ConnectionQueryRepositoryTests
             .ThrowsAsync(testException);
     
         // When
-        var result = await _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+        var result = await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
         result.Should().NotBeNull();

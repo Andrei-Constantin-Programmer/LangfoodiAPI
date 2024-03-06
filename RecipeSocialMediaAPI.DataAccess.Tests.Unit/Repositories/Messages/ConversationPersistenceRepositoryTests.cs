@@ -101,7 +101,7 @@ public partial class ConversationPersistenceRepositoryTests
             .Returns(mappedConversation);
 
         // When
-        var result = (await _conversationPersistenceRepositorySUT.CreateConnectionConversation(testConnection)) as ConnectionConversation;
+        var result = (await _conversationPersistenceRepositorySUT.CreateConnectionConversationAsync(testConnection)) as ConnectionConversation;
 
         // Then
         result.Should().NotBeNull();
@@ -138,7 +138,7 @@ public partial class ConversationPersistenceRepositoryTests
             .ReturnsAsync((ConnectionDocument?)null);
 
         // When
-        var testAction = () => _conversationPersistenceRepositorySUT.CreateConnectionConversation(testConnection);
+        var testAction = () => _conversationPersistenceRepositorySUT.CreateConnectionConversationAsync(testConnection);
 
         // Then
         await testAction.Should().ThrowAsync<ConnectionDocumentNotFoundException>();
@@ -247,7 +247,7 @@ public partial class ConversationPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
+        var result = await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation, testConnection);
 
         // Then
         result.Should().BeTrue();
@@ -303,7 +303,7 @@ public partial class ConversationPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
+        var result = await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation, testConnection);
 
         // Then
         result.Should().BeFalse();
@@ -343,7 +343,7 @@ public partial class ConversationPersistenceRepositoryTests
         });
 
         // When
-        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, testConnection);
+        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation, testConnection);
 
         // Then
         await testAction.Should()
@@ -397,7 +397,7 @@ public partial class ConversationPersistenceRepositoryTests
         });
 
         // When
-        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
+        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation);
 
         // Then
         await testAction.Should()
@@ -452,7 +452,7 @@ public partial class ConversationPersistenceRepositoryTests
             .ReturnsAsync(true);
 
         // When
-        var result = await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null, testGroup);
+        var result = await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation, null, testGroup);
 
         // Then
         result.Should().BeTrue();
@@ -499,7 +499,7 @@ public partial class ConversationPersistenceRepositoryTests
             .ReturnsAsync(false);
 
         // When
-        var result = await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null, testGroup);
+        var result = await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation, null, testGroup);
 
         // Then
         result.Should().BeFalse();
@@ -533,7 +533,7 @@ public partial class ConversationPersistenceRepositoryTests
         });
 
         // When
-        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation, null);
+        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation, null);
 
         // Then
         await testAction.Should()
@@ -556,7 +556,7 @@ public partial class ConversationPersistenceRepositoryTests
         TestConversation testConversation = new("ConvoId", new List<Message>());
         
         // When
-        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversation(testConversation);
+        var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation);
 
         // Then
         await testAction.Should()

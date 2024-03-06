@@ -57,7 +57,7 @@ public class RemoveRecipeHandlerTests
             .WithMessage("The recipe with the id 1 was not found");
 
         _recipePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(repo => repo.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class RemoveRecipeHandlerTests
         string recipeId = "1";
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new RecipeAggregate(
                 "1", 
                 "title",
@@ -87,7 +87,7 @@ public class RemoveRecipeHandlerTests
             ));
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // When
@@ -99,7 +99,7 @@ public class RemoveRecipeHandlerTests
             .WithMessage($"*{recipeId}*");
 
         _recipePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(repo => repo.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class RemoveRecipeHandlerTests
         string recipeId = "1";
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new RecipeAggregate(
                 "1", 
                 "title",
@@ -130,7 +130,7 @@ public class RemoveRecipeHandlerTests
             ));
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // When
@@ -140,7 +140,7 @@ public class RemoveRecipeHandlerTests
         await action.Should().NotThrowAsync();
 
         _recipePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(repo => repo.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -173,11 +173,11 @@ public class RemoveRecipeHandlerTests
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testRecipe);
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _imageHostingPersistenceRepositoryMock
@@ -191,7 +191,7 @@ public class RemoveRecipeHandlerTests
         await action.Should().NotThrowAsync();
 
         _recipePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(repo => repo.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _imageHostingPersistenceRepositoryMock
             .Verify(repo => repo.BulkRemoveHostedImages(new() { "step1_img_id", "thumbnail_id_1" }), Times.Once);
@@ -236,11 +236,11 @@ public class RemoveRecipeHandlerTests
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testRecipe);
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _imageHostingPersistenceRepositoryMock
@@ -254,7 +254,7 @@ public class RemoveRecipeHandlerTests
         await action.Should().NotThrowAsync();
 
         _recipePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(repo => repo.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _imageHostingPersistenceRepositoryMock
             .Verify(repo => repo.BulkRemoveHostedImages(new() { "step1_img_id", "thumbnail_id_1" }), Times.Once);
@@ -278,7 +278,7 @@ public class RemoveRecipeHandlerTests
         string recipeId = "1";
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new RecipeAggregate(
                 "1",
                 "title",
@@ -297,7 +297,7 @@ public class RemoveRecipeHandlerTests
             ));
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.DeleteRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // When

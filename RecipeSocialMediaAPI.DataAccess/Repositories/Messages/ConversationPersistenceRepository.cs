@@ -22,9 +22,9 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public async Task<Conversation> CreateConnectionConversation(IConnection connection, CancellationToken cancellationToken = default)
+    public async Task<Conversation> CreateConnectionConversationAsync(IConnection connection, CancellationToken cancellationToken = default)
     {
-        ConnectionDocument connectionDocument = await GetConnectionDocument(connection, cancellationToken)
+        ConnectionDocument connectionDocument = await GetConnectionDocumentAsync(connection, cancellationToken)
             ?? throw new ConnectionDocumentNotFoundException(connection.Account1, connection.Account2);
 
         ConversationDocument conversationDocument = await _conversationCollection.Insert(new(
@@ -45,13 +45,13 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         return _mapper.MapConversationFromDocument(conversationDocument, null, group, new());
     }
 
-    public async Task<bool> UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateConversationAsync(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default)
     {
         (string? connectionId, string? groupId) = conversation switch
         {
             ConnectionConversation connectionConversation =>
                 (connection is not null 
-                ? await GetConnectionId(connection, cancellationToken) 
+                ? await GetConnectionIdAsync(connection, cancellationToken) 
                     ?? throw new InvalidConversationException($"No connection found for ConnectionConversation with id {conversation.ConversationId}")
                 : throw new ArgumentException($"No connection provided when updating ConnectionConversation with id {conversation.ConversationId}"),
                 (string?)null),
@@ -73,12 +73,12 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
             cancellationToken);
     }
 
-    private async Task<string?> GetConnectionId(IConnection connection, CancellationToken cancellationToken = default) => 
+    private async Task<string?> GetConnectionIdAsync(IConnection connection, CancellationToken cancellationToken = default) => 
         connection is not null 
-        ? (await GetConnectionDocument(connection, cancellationToken))?.Id 
+        ? (await GetConnectionDocumentAsync(connection, cancellationToken))?.Id 
         : null;
 
-    private async Task<ConnectionDocument?> GetConnectionDocument(IConnection connection, CancellationToken cancellationToken = default) =>
+    private async Task<ConnectionDocument?> GetConnectionDocumentAsync(IConnection connection, CancellationToken cancellationToken = default) =>
         await _connectionCollection.Find(conn => (conn.AccountId1 == connection.Account1.Id 
                                                                   && conn.AccountId2 == connection.Account2.Id) 
                                               || (conn.AccountId1 == connection.Account2.Id 

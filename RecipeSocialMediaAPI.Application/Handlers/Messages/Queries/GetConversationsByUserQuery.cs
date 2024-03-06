@@ -26,11 +26,11 @@ internal class GetConversationsByUserHandler : IRequestHandler<GetConversationsB
 
     public async Task<List<ConversationDTO>> Handle(GetConversationsByUserQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount user = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
+        IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No User with id {request.UserId} was found");
 
         return (await _conversationQueryRepository
-            .GetConversationsByUser(user, cancellationToken))
+            .GetConversationsByUserAsync(user, cancellationToken))
             .Select(conversation => conversation switch
             {
                 ConnectionConversation connConvo => _conversationMapper.MapConversationToConnectionConversationDTO(user, connConvo),

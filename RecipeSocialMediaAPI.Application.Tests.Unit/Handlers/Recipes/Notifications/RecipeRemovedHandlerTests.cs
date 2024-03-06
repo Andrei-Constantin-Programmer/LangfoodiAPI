@@ -40,7 +40,7 @@ public class RecipeRemovedHandlerTests
     {
         // Given
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessagesWithRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetMessagesWithRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Enumerable.Empty<Message>());
 
         // When
@@ -48,7 +48,7 @@ public class RecipeRemovedHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(repo => repo.DeleteMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class RecipeRemovedHandlerTests
             );
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessagesWithRecipe(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetMessagesWithRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Message> { message1, message2, message3 });
 
         // When
@@ -118,8 +118,8 @@ public class RecipeRemovedHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(repo => repo.DeleteMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Once);
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.Is<Message>(m => m == message3), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(repo => repo.DeleteMessageAsync(It.Is<Message>(m => m == message3), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

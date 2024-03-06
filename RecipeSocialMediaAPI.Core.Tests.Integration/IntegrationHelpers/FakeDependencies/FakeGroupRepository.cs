@@ -13,13 +13,13 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
         _collection = new();
     }
 
-    public async Task<Group?> GetGroupById(string groupId, CancellationToken cancellationToken = default) 
+    public async Task<Group?> GetGroupByIdAsync(string groupId, CancellationToken cancellationToken = default) 
         => await Task.FromResult(_collection.FirstOrDefault(group => group.GroupId == groupId));
 
-    public Task<IEnumerable<Group>> GetGroupsByUser(IUserAccount userAccount, CancellationToken cancellationToken = default) => Task.FromResult(_collection
+    public Task<IEnumerable<Group>> GetGroupsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) => Task.FromResult(_collection
         .Where(group => group.Users.Any(user => user.Id == userAccount.Id)));
 
-    public async Task<Group> CreateGroup(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default)
+    public async Task<Group> CreateGroupAsync(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         Group group = new(id, groupName, groupDescription, users);
@@ -28,7 +28,7 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
         return await Task.FromResult(group);
     }
 
-    public async Task<bool> UpdateGroup(Group group, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateGroupAsync(Group group, CancellationToken cancellationToken = default)
     {
         Group? existingGroup = _collection.FirstOrDefault(g => g.GroupId == group.GroupId);
         if (existingGroup is null)
@@ -43,12 +43,12 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
         return await Task.FromResult(true);
     }
 
-    public async Task<bool> DeleteGroup(Group group, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteGroupAsync(Group group, CancellationToken cancellationToken = default) 
         => await Task.FromResult(_collection.Remove(group));
 
-    public async Task<bool> DeleteGroup(string groupId, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteGroupAsync(string groupId, CancellationToken cancellationToken = default)
     {
-        var group = await GetGroupById(groupId, cancellationToken);
+        var group = await GetGroupByIdAsync(groupId, cancellationToken);
 
         return group is not null && _collection.Remove(group);
     }

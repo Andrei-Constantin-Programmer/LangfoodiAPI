@@ -79,10 +79,10 @@ public class RemoveMessageHandlerTests
             null);
         
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.DeleteMessage(testCommand.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.DeleteMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // When
@@ -112,10 +112,10 @@ public class RemoveMessageHandlerTests
             null);
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.DeleteMessage(testCommand.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.DeleteMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // When
@@ -145,10 +145,10 @@ public class RemoveMessageHandlerTests
             null);
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.DeleteMessage(testCommand.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.DeleteMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // When
@@ -186,10 +186,10 @@ public class RemoveMessageHandlerTests
             new(2023, 10, 24, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.DeleteMessage(testCommand.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.DeleteMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // When

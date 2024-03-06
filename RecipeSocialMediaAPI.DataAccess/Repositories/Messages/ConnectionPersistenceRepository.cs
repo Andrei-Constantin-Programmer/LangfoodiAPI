@@ -18,7 +18,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public async Task<IConnection> CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
+    public async Task<IConnection> CreateConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
     {
         ConnectionDocument connectionDocument = await _connectionCollection.Insert(new ConnectionDocument(
             AccountId1: userAccount1.Id,
@@ -26,10 +26,10 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
             ConnectionStatus: connectionStatus.ToString()
         ), cancellationToken);
 
-        return await _mapper.MapConnectionFromDocument(connectionDocument, cancellationToken);
+        return await _mapper.MapConnectionFromDocumentAsync(connectionDocument, cancellationToken);
     }
 
-    public async Task<bool> UpdateConnection(IConnection connection, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateConnectionAsync(IConnection connection, CancellationToken cancellationToken = default)
     {
         return await _connectionCollection.UpdateRecord(
             new ConnectionDocument(
@@ -42,10 +42,10 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
             cancellationToken);
     }
 
-    public async Task<bool> DeleteConnection(IConnection connection, CancellationToken cancellationToken = default) 
-        => await DeleteConnection(connection.Account1, connection.Account2, cancellationToken);
+    public async Task<bool> DeleteConnectionAsync(IConnection connection, CancellationToken cancellationToken = default) 
+        => await DeleteConnectionAsync(connection.Account1, connection.Account2, cancellationToken);
 
-    public async Task<bool> DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default) 
         => await _connectionCollection.Delete(
             doc => (doc.AccountId1 == userAccount1.Id && doc.AccountId2 == userAccount2.Id)
                 || (doc.AccountId1 == userAccount2.Id && doc.AccountId2 == userAccount1.Id), 

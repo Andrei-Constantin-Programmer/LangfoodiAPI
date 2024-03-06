@@ -57,16 +57,16 @@ public class GetConnectionHandlerTests
             Password = "TestPass"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user2.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user2.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user2);
 
         Connection existingConnection = new("0", user1.Account, user2.Account, ConnectionStatus.Connected);
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(
+            .Setup(repo => repo.GetConnectionAsync(
                 It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account), 
                 It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account), 
                 It.IsAny<CancellationToken>()))
@@ -120,16 +120,16 @@ public class GetConnectionHandlerTests
             Password = "TestPass"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user1Exists ? user1 : null);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user2.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user2.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user2Exists ? user2 : null);
 
         Connection existingConnection = new("0", user1.Account, user2.Account, ConnectionStatus.Connected);
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(
+            .Setup(repo => repo.GetConnectionAsync(
                 It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account),
                 It.Is<IUserAccount>(acc => acc == user1.Account || acc == user2.Account), 
                 It.IsAny<CancellationToken>()))
@@ -177,14 +177,14 @@ public class GetConnectionHandlerTests
             Password = "TestPass"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user1);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user2.Account.Id, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByIdAsync(user2.Account.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user2);
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(
+            .Setup(repo => repo.GetConnectionAsync(
                 It.IsAny<IUserAccount>(),
                 It.IsAny<IUserAccount>(), 
                 It.IsAny<CancellationToken>()))

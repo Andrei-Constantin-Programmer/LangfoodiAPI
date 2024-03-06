@@ -34,7 +34,7 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 
     public async Task Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate? recipeToRemove = await _recipeQueryRepository.GetRecipeById(request.Id, cancellationToken) 
+        RecipeAggregate? recipeToRemove = await _recipeQueryRepository.GetRecipeByIdAsync(request.Id, cancellationToken) 
             ?? throw new RecipeNotFoundException(request.Id);
 
         var imageIds = recipeToRemove.Recipe.Steps
@@ -49,7 +49,7 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 
         await _publisher.Publish(new RecipeRemovedNotification(recipeToRemove.Id), cancellationToken);
 
-        bool isRecipeRemoved = await _recipePersistenceRepository.DeleteRecipe(request.Id, cancellationToken);
+        bool isRecipeRemoved = await _recipePersistenceRepository.DeleteRecipeAsync(request.Id, cancellationToken);
         bool areImagesRemoved = imageIds.Count <= 0 || _imageHostingPersistenceRepository.BulkRemoveHostedImages(imageIds);
 
         if (!areImagesRemoved)

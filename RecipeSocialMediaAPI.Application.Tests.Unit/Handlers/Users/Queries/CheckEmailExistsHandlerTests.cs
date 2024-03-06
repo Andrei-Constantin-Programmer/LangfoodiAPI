@@ -40,7 +40,7 @@ public class CheckEmailExistsHandlerTests
             Password = "TestPassword"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByEmailAsync(It.Is<string>(email => email == testUser.Email), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testUser);
 
         // When
@@ -58,7 +58,7 @@ public class CheckEmailExistsHandlerTests
         // Given
         IUserCredentials? nullUser = null;
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetUserByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullUser);
 
         // When

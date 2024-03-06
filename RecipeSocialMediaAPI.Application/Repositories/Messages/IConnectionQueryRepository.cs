@@ -5,8 +5,8 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 public interface IConnectionQueryRepository
 {
-    Task<IConnection?> GetConnection(string connectionId, CancellationToken cancellationToken = default);
-    Task<IConnection?> GetConnection(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default);
+    Task<IConnection?> GetConnectionAsync(string connectionId, CancellationToken cancellationToken = default);
+    Task<IConnection?> GetConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default);
 
-    Task<List<IConnection>> GetConnectionsForUser(IUserAccount userAccount, CancellationToken cancellationToken = default);
+    Task<List<IConnection>> GetConnectionsForUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default);
 }

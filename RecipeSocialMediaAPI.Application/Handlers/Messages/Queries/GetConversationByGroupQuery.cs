@@ -24,10 +24,10 @@ internal class GetConversationByGroupHandler : IRequestHandler<GetConversationBy
 
     public async Task<ConversationDTO> Handle(GetConversationByGroupQuery request, CancellationToken cancellationToken)
     {
-        var user = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))?.Account
+        var user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No User found with id {request.UserId}");
 
-        var conversation = await _conversationQueryRepository.GetConversationByGroup(request.GroupId, cancellationToken)
+        var conversation = await _conversationQueryRepository.GetConversationByGroupAsync(request.GroupId, cancellationToken)
             ?? throw new ConversationNotFoundException($"No Conversation found for Connection with id {request.GroupId}");
 
         return _conversationMapper.MapConversationToGroupConversationDTO(user, conversation);

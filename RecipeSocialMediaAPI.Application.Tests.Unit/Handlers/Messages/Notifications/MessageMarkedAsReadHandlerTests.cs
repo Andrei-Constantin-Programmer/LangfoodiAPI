@@ -33,7 +33,7 @@ public class MessageMarkedAsReadHandlerTests
 
         // Then
         _messageNotificationServiceMock
-            .Verify(service => service.NotifyMessageMarkedAsRead(userId, messageId, It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(service => service.NotifyMessageMarkedAsReadAsync(userId, messageId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class MessageMarkedAsReadHandlerTests
         MessageMarkedAsReadNotification notification = new(userId, messageId);
 
         _messageNotificationServiceMock
-            .Setup(service => service.NotifyMessageMarkedAsRead(userId, messageId, It.IsAny<CancellationToken>()))
+            .Setup(service => service.NotifyMessageMarkedAsReadAsync(userId, messageId, It.IsAny<CancellationToken>()))
             .Throws(new OperationCanceledException());
 
         // When

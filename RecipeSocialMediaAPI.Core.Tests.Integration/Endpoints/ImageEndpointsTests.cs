@@ -24,7 +24,7 @@ public class ImageEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinarySignatureServiceMock
             .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), null))
         .Returns(_signatureTestData);
@@ -67,7 +67,7 @@ public class ImageEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(
                 It.IsAny<CloudinarySignatureDTO>(),
@@ -92,7 +92,7 @@ public class ImageEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(
                 It.IsAny<CloudinarySignatureDTO>(),
@@ -137,7 +137,7 @@ public class ImageEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.BulkRemoveHostedImages(
                 It.IsAny<List<string>>(),
@@ -162,7 +162,7 @@ public class ImageEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.BulkRemoveHostedImages(
                 It.IsAny<List<string>>(),

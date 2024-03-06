@@ -50,7 +50,7 @@ public class GetMessagesByConversationHandlerTests
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Connected);
         ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
 
         GetMessagesByConversationQuery query = new(conversation.ConversationId);
@@ -112,7 +112,7 @@ public class GetMessagesByConversationHandlerTests
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Connected);
         ConnectionConversation conversation = new(connection, "convo1", messages);
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
 
         GetMessagesByConversationQuery query = new(conversation.ConversationId);
@@ -132,7 +132,7 @@ public class GetMessagesByConversationHandlerTests
     {
         // Given
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetConversationByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Conversation?)null);
 
         GetMessagesByConversationQuery query = new("convo0");

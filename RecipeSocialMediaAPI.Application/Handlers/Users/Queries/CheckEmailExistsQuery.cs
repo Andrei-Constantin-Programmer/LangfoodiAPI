@@ -16,6 +16,6 @@ internal class CheckEmailExistsHandler : IRequestHandler<CheckEmailExistsQuery, 
 
     public async Task<bool> Handle(CheckEmailExistsQuery request, CancellationToken cancellationToken)
     {
-        return await _userQueryRepository.GetUserByEmail(request.Email, cancellationToken) is not null;
+        return await _userQueryRepository.GetUserByEmailAsync(request.Email, cancellationToken) is not null;
     }
 }

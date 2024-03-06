@@ -24,7 +24,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         _logger = logger;
     }
 
-    public async Task<RecipeAggregate?> GetRecipeById(string id, CancellationToken cancellationToken = default)
+    public async Task<RecipeAggregate?> GetRecipeByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         RecipeDocument? recipeDocument;
         try
@@ -43,7 +43,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
             return null;
         }
 
-        IUserAccount? chef = (await _userQueryRepository.GetUserById(recipeDocument.ChefId, cancellationToken))?.Account;
+        IUserAccount? chef = (await _userQueryRepository.GetUserByIdAsync(recipeDocument.ChefId, cancellationToken))?.Account;
 
         if (chef is null)
         {
@@ -54,7 +54,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChef(IUserAccount? chef, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefAsync(IUserAccount? chef, CancellationToken cancellationToken = default)
     {
         if (chef is null)
         {
@@ -75,15 +75,15 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         return recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
     }
 
-    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefId(string chefId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefIdAsync(string chefId, CancellationToken cancellationToken = default)
     {
-        IUserAccount? chef = (await _userQueryRepository.GetUserById(chefId, cancellationToken))?.Account;
-        return await GetRecipesByChef(chef, cancellationToken);
+        IUserAccount? chef = (await _userQueryRepository.GetUserByIdAsync(chefId, cancellationToken))?.Account;
+        return await GetRecipesByChefAsync(chef, cancellationToken);
     }
 
-    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefName(string chefName, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefNameAsync(string chefName, CancellationToken cancellationToken = default)
     {
-        IUserAccount? chef = (await _userQueryRepository.GetUserByUsername(chefName, cancellationToken))?.Account;
-        return await GetRecipesByChef(chef, cancellationToken);
+        IUserAccount? chef = (await _userQueryRepository.GetUserByUsernameAsync(chefName, cancellationToken))?.Account;
+        return await GetRecipesByChefAsync(chef, cancellationToken);
     }
 }

@@ -22,14 +22,14 @@ internal class BlockConnectionHandler : IRequestHandler<BlockConnectionCommand>
     }
 
     public async Task Handle(BlockConnectionCommand request, CancellationToken cancellationToken) {
-        IUserCredentials user = (await _userQueryRepository.GetUserById(request.UserId, cancellationToken))
+        IUserCredentials user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))
             ?? throw new UserNotFoundException($"User with id {request.UserId} does not exist");
-        IConnection connection = (await _connectionQueryRepository.GetConnection(request.ConnectionId, cancellationToken))
+        IConnection connection = (await _connectionQueryRepository.GetConnectionAsync(request.ConnectionId, cancellationToken))
             ?? throw new ConnectionNotFoundException($"Connection with id {request.ConnectionId} does not exist");
 
         if (user.Account.BlockConnection(connection.ConnectionId))
         {
-            await _userPersistenceRepository.UpdateUser(user, cancellationToken);
+            await _userPersistenceRepository.UpdateUserAsync(user, cancellationToken);
         }
     }
 }

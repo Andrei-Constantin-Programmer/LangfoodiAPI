@@ -21,7 +21,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public async Task<IConnection?> GetConnection(string connectionId, CancellationToken cancellationToken = default)
+    public async Task<IConnection?> GetConnectionAsync(string connectionId, CancellationToken cancellationToken = default)
     {
         ConnectionDocument? connectionDocument;
         try
@@ -35,11 +35,11 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         }
 
         return connectionDocument is not null
-            ? await _mapper.MapConnectionFromDocument(connectionDocument, cancellationToken)
+            ? await _mapper.MapConnectionFromDocumentAsync(connectionDocument, cancellationToken)
             : null;
     }
 
-    public async Task<IConnection?> GetConnection(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default)
+    public async Task<IConnection?> GetConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default)
     {
         ConnectionDocument? connectionDocument;
         try
@@ -55,11 +55,11 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         }
 
         return connectionDocument is not null
-            ? await _mapper.MapConnectionFromDocument(connectionDocument, cancellationToken) 
+            ? await _mapper.MapConnectionFromDocumentAsync(connectionDocument, cancellationToken) 
             : null;
     }
 
-    public async Task<List<IConnection>> GetConnectionsForUser(IUserAccount userAccount, CancellationToken cancellationToken = default)
+    public async Task<List<IConnection>> GetConnectionsForUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
         IEnumerable<ConnectionDocument> connections = Enumerable.Empty<ConnectionDocument>();
 
@@ -75,7 +75,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         }
 
         return (await Task.WhenAll(connections
-            .Select(async connection => await _mapper.MapConnectionFromDocument(connection, cancellationToken))))
+            .Select(async connection => await _mapper.MapConnectionFromDocumentAsync(connection, cancellationToken))))
             .ToList();
     }
 }

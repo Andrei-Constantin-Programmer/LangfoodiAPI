@@ -18,23 +18,23 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
         _mapper = mapper;
     }
 
-    public async Task<Group> CreateGroup(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default)
+    public async Task<Group> CreateGroupAsync(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default)
     {
         GroupDocument groupDocument = await _groupCollection.Insert(new(groupName, groupDescription, users.Select(user => user.Id).ToList()), cancellationToken);
 
-        return await _mapper.MapGroupFromDocument(groupDocument, cancellationToken);
+        return await _mapper.MapGroupFromDocumentAsync(groupDocument, cancellationToken);
     }
 
-    public async Task<bool> UpdateGroup(Group group, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateGroupAsync(Group group, CancellationToken cancellationToken = default)
     {
         return await _groupCollection.UpdateRecord(
             new GroupDocument(group.GroupName, group.GroupDescription, group.Users.Select(user => user.Id).ToList(), group.GroupId),
             groupDoc => groupDoc.Id == group.GroupId, cancellationToken);
     }
 
-    public async Task<bool> DeleteGroup(Group group, CancellationToken cancellationToken = default) 
-        => await DeleteGroup(group.GroupId, cancellationToken);
+    public async Task<bool> DeleteGroupAsync(Group group, CancellationToken cancellationToken = default) 
+        => await DeleteGroupAsync(group.GroupId, cancellationToken);
 
-    public async Task<bool> DeleteGroup(string groupId, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteGroupAsync(string groupId, CancellationToken cancellationToken = default) 
         => await _groupCollection.Delete(groupDoc => groupDoc.Id == groupId, cancellationToken);
 }

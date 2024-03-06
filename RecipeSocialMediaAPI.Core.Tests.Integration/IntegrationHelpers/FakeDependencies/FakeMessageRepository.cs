@@ -23,13 +23,13 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         _collection = new();
     }
 
-    public async Task<Message?> GetMessage(string id, CancellationToken cancellationToken = default) => await Task.FromResult(_collection.FirstOrDefault(m => m.Id == id));
+    public async Task<Message?> GetMessageAsync(string id, CancellationToken cancellationToken = default) => await Task.FromResult(_collection.FirstOrDefault(m => m.Id == id));
 
-    public async Task<IEnumerable<Message>> GetMessagesWithRecipe(string recipeId, CancellationToken cancellationToken = default) => await Task.FromResult(_collection
+    public async Task<IEnumerable<Message>> GetMessagesWithRecipeAsync(string recipeId, CancellationToken cancellationToken = default) => await Task.FromResult(_collection
         .Where(m => m is RecipeMessage message 
                  && message.Recipes.Any(r => r.Id == recipeId)));
 
-    public async Task<Message> CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
+    public async Task<Message> CreateMessageAsync(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         Message message;
@@ -37,7 +37,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         if (recipeIds?.Count > 0)
         {
             var recipes = (await Task.WhenAll(recipeIds
-                .Select(async id => await _recipeQueryRepository.GetRecipeById(id, cancellationToken)!)))
+                .Select(async id => await _recipeQueryRepository.GetRecipeByIdAsync(id, cancellationToken)!)))
                 .OfType<RecipeAggregate>();
 
             message = _messageFactory
@@ -56,7 +56,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         return message;
     }
 
-    public async Task<bool> UpdateMessage(Message message, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateMessageAsync(Message message, CancellationToken cancellationToken = default)
     {
         Message? existingMessage = _collection.FirstOrDefault(x => x.Id == message.Id);
         if (existingMessage is null)
@@ -70,12 +70,12 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         return await Task.FromResult(true);
     }
 
-    public async Task<bool> DeleteMessage(Message message, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteMessageAsync(Message message, CancellationToken cancellationToken = default) 
         => await Task.FromResult(_collection.Remove(message));
 
-    public async Task<bool> DeleteMessage(string messageId, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteMessageAsync(string messageId, CancellationToken cancellationToken = default)
     {
-        var message = await GetMessage(messageId, cancellationToken);
+        var message = await GetMessageAsync(messageId, cancellationToken);
 
         return message is not null && _collection.Remove(message);
     }

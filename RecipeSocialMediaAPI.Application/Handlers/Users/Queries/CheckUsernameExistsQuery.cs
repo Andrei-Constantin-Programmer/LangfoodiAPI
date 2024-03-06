@@ -16,6 +16,6 @@ internal class CheckUsernameExistsHandler : IRequestHandler<CheckUsernameExistsQ
 
     public async Task<bool> Handle(CheckUsernameExistsQuery request, CancellationToken cancellationToken)
     {
-        return await _userQueryRepository.GetUserByUsername(request.Username, cancellationToken) is not null;
+        return await _userQueryRepository.GetUserByUsernameAsync(request.Username, cancellationToken) is not null;
     }
 }

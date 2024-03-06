@@ -96,7 +96,7 @@ public class AddRecipeHandlerTests
         testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
 
         _userQueryRepositoryMock
-            .Setup(x => x.GetUserById(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials
             {
                 Account = new TestUserAccount
@@ -111,7 +111,7 @@ public class AddRecipeHandlerTests
             });
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.CreateRecipe(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
+            .Setup(x => x.CreateRecipeAsync(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
                 It.IsAny<IUserAccount>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
                 It.IsAny<DateTimeOffset>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken _) 
