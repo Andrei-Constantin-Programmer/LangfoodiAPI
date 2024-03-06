@@ -100,15 +100,16 @@ public class MessagePersistenceRepositoryTests
 
         // Then
         _messageCollectionMock
-            .Verify(collection => collection.Insert(It.Is<MessageDocument>(doc =>
+            .Verify(collection => collection.Insert(
+                It.Is<MessageDocument>(doc =>
                     doc.Id == null
                     && doc.MessageContent.Text == expectedMessage.Text
                     && doc.MessageContent.RecipeIds!.SequenceEqual(expectedMessage.Recipes.Select(r => r.Id))
                     && doc.MessageContent.ImageURLs!.SequenceEqual(expectedMessage.ImageURLs)
                     && doc.SentDate == expectedMessage.SentDate
                     && doc.LastUpdatedDate == expectedMessage.UpdatedDate
-                    && doc.MessageRepliedToId == null
-                )), Times.Once);
+                    && doc.MessageRepliedToId == null), 
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

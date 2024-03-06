@@ -62,8 +62,8 @@ public class CreateGroupConversationHandlerTests
         GroupConversation expectedConversation = new(group, "conversation1");
 
         _groupConversationPersistenceRepositoryMock
-            .Setup(repo => repo.CreateGroupConversation(group))
-            .Returns(expectedConversation);
+            .Setup(repo => repo.CreateGroupConversationAsync(group, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedConversation);
 
         ConversationDTO conversationDto = new(expectedConversation.ConversationId, group.GroupId, true, group.GroupName, null, null, new() { userAccount1.Id });
         _conversationMapperMock
@@ -121,8 +121,8 @@ public class CreateGroupConversationHandlerTests
         GroupConversation expectedConversation = new(group, "conversation1");
 
         _groupConversationPersistenceRepositoryMock
-            .Setup(repo => repo.CreateGroupConversation(group))
-            .Returns(expectedConversation);
+            .Setup(repo => repo.CreateGroupConversationAsync(group, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedConversation);
 
         // When
         var testAction = async () => await _groupConversationHandlerSUT.Handle(new CreateGroupConversationCommand(userAccount1.Id, "invalidId"), CancellationToken.None);

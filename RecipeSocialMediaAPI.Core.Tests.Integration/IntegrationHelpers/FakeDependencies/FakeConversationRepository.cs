@@ -44,13 +44,13 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
         return await Task.FromResult(conversation);
     }
 
-    public Conversation CreateGroupConversation(Group group)
+    public async Task<Conversation> CreateGroupConversationAsync(Group group, CancellationToken cancellationToken = default)
     {
         var id = NextId();
         GroupConversation conversation = new(group, id);
         _collection.Add(conversation);
 
-        return conversation;
+        return await Task.FromResult(conversation);
     }
 
     public async Task<bool> UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default)

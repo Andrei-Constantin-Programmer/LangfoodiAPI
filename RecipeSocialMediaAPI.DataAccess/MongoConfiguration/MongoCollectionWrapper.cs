@@ -31,11 +31,11 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
             .ToEnumerable(cancellationToken: cancellationToken) ?? Enumerable.Empty<TDocument>();
     }
 
-    public TDocument Insert(TDocument doc)
+    public async Task<TDocument> Insert(TDocument doc, CancellationToken cancellationToken = default)
     {
         try
         {
-            _collection?.InsertOne(doc);
+            await _collection.InsertOneAsync(doc, cancellationToken: cancellationToken);
             return doc;
         }
         catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)

@@ -53,13 +53,14 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
         }
 
         var encryptedPassword = _cryptoService.Encrypt(request.Contract.Password);
-        IUserCredentials insertedUser = _userPersistenceRepository
+        IUserCredentials insertedUser = await _userPersistenceRepository
             .CreateUser(
                 request.Contract.Handler,
                 request.Contract.UserName,
                 request.Contract.Email,
                 encryptedPassword,
-                _dateTimeProvider.Now);
+                _dateTimeProvider.Now,
+                cancellationToken: cancellationToken);
 
         var token = _bearerTokenGeneratorService.GenerateToken(insertedUser);
 

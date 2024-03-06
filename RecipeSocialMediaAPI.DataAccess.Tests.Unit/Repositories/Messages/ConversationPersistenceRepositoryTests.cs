@@ -89,8 +89,10 @@ public partial class ConversationPersistenceRepositoryTests
         );
 
         _conversationCollectionMock
-            .Setup(collection => collection.Insert(It.Is<ConversationDocument>(doc => doc.ConnectionId == connectionDoc.Id && doc.GroupId == null)))
-            .Returns(conversationDocument);
+            .Setup(collection => collection.Insert(
+                It.Is<ConversationDocument>(doc => doc.ConnectionId == connectionDoc.Id && doc.GroupId == null), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversationDocument);
 
         ConnectionConversation mappedConversation = new(testConnection, conversationDocument.Id!);
 
@@ -145,7 +147,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateGroupConversation_CreatesConversationAndReturnsIt()
+    public async Task CreateGroupConversation_CreatesConversationAndReturnsItAsync()
     {
         // Given
         TestUserAccount user1 = new()
@@ -173,8 +175,10 @@ public partial class ConversationPersistenceRepositoryTests
         );
 
         _conversationCollectionMock
-            .Setup(collection => collection.Insert(It.Is<ConversationDocument>(doc => doc.GroupId == testGroup.GroupId && doc.ConnectionId == null)))
-            .Returns(conversationDocument);
+            .Setup(collection => collection.Insert(
+                It.Is<ConversationDocument>(doc => doc.GroupId == testGroup.GroupId && doc.ConnectionId == null), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversationDocument);
 
         GroupConversation mappedConversation = new(testGroup, conversationDocument.Id!, new List<Message>());
 
@@ -183,7 +187,7 @@ public partial class ConversationPersistenceRepositoryTests
             .Returns(mappedConversation);
 
         // When
-        var result = _conversationPersistenceRepositorySUT.CreateGroupConversation(testGroup) as GroupConversation;
+        var result = (await _conversationPersistenceRepositorySUT.CreateGroupConversationAsync(testGroup)) as GroupConversation;
 
         // Then
         result.Should().NotBeNull();

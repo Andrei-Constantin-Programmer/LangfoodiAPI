@@ -27,20 +27,20 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         ConnectionDocument connectionDocument = await GetConnectionDocument(connection, cancellationToken)
             ?? throw new ConnectionDocumentNotFoundException(connection.Account1, connection.Account2);
 
-        ConversationDocument conversationDocument = _conversationCollection.Insert(new(
+        ConversationDocument conversationDocument = await _conversationCollection.Insert(new(
             ConnectionId: connectionDocument.Id,
             Messages: new()
-        ));
+        ), cancellationToken);
 
         return _mapper.MapConversationFromDocument(conversationDocument, connection, null, new());
     }
 
-    public Conversation CreateGroupConversation(Group group)
+    public async Task<Conversation> CreateGroupConversationAsync(Group group, CancellationToken cancellationToken = default)
     {
-        ConversationDocument conversationDocument = _conversationCollection.Insert(new(
+        ConversationDocument conversationDocument = await _conversationCollection.Insert(new(
             GroupId: group.GroupId,
             Messages: new()
-        ));
+        ), cancellationToken);
 
         return _mapper.MapConversationFromDocument(conversationDocument, null, group, new());
     }

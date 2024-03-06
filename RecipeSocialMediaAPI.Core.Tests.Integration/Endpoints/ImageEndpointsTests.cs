@@ -23,7 +23,7 @@ public class ImageEndpointsTests : EndpointTestBase
     public async void GetCloudinarySignature_SignatureGenerated_ReturnGeneratedCloudinarySignature()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinarySignatureServiceMock
             .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), null))
@@ -66,7 +66,7 @@ public class ImageEndpointsTests : EndpointTestBase
     public async void ImageSingleDelete_GivenPublicIdAndNoError_ReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(
@@ -91,7 +91,7 @@ public class ImageEndpointsTests : EndpointTestBase
     public async void ImageSingleDelete_GivenPublicIdAndError_ReturnNotOk()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(
@@ -136,7 +136,7 @@ public class ImageEndpointsTests : EndpointTestBase
     public async void ImageBulkDelete_GivenPublicIdsAndNoError_ReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.BulkRemoveHostedImages(
@@ -161,7 +161,7 @@ public class ImageEndpointsTests : EndpointTestBase
     public async void ImageBulkDelete_GivenPublicIdsAndError_ReturnNotOk()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.BulkRemoveHostedImages(

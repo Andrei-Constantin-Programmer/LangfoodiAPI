@@ -38,7 +38,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
 
-        RecipeAggregate insertedRecipe = _recipePersistenceRepository.CreateRecipe(
+        RecipeAggregate insertedRecipe = await _recipePersistenceRepository.CreateRecipe(
             request.Contract.Title,
             new Recipe(
                 request.Contract.Ingredients
@@ -58,7 +58,8 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             request.Contract.Tags,
             dateOfCreation,
             dateOfCreation,
-            request.Contract.ThumbnailId
+            request.Contract.ThumbnailId,
+            cancellationToken
         );
 
         return _mapper.MapRecipeAggregateToRecipeDetailedDto(insertedRecipe);

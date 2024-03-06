@@ -20,7 +20,7 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
 
     public async Task<Group> CreateGroup(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default)
     {
-        GroupDocument groupDocument = _groupCollection.Insert(new(groupName, groupDescription, users.Select(user => user.Id).ToList()));
+        GroupDocument groupDocument = await _groupCollection.Insert(new(groupName, groupDescription, users.Select(user => user.Id).ToList()), cancellationToken);
 
         return await _mapper.MapGroupFromDocument(groupDocument, cancellationToken);
     }

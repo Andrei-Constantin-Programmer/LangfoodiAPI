@@ -13,7 +13,7 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         _collection = new List<IUserCredentials>();
     }
 
-    public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate, UserRole userRole = UserRole.User)
+    public async Task<IUserCredentials> CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate, UserRole userRole = UserRole.User, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         IUserCredentials newUser = new TestUserCredentials
@@ -31,7 +31,7 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         };
         _collection.Add(newUser);
 
-        return newUser;
+        return await Task.FromResult(newUser);
     }
 
     public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);

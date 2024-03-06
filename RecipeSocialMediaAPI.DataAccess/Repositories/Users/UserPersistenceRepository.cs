@@ -17,17 +17,18 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public IUserCredentials CreateUser(
+    public async Task<IUserCredentials> CreateUser(
         string handler,
         string username,
         string email,
         string password,
         DateTimeOffset accountCreationDate,
-        UserRole userRole = UserRole.User)
+        UserRole userRole = UserRole.User, 
+        CancellationToken cancellationToken = default)
     {
         UserDocument newUserDocument = new(handler, username, email, password, (int)userRole, null, accountCreationDate);
         
-        newUserDocument = _userCollection.Insert(newUserDocument);
+        newUserDocument = await _userCollection.Insert(newUserDocument, cancellationToken);
 
         return _mapper.MapUserDocumentToUser(newUserDocument);
     }

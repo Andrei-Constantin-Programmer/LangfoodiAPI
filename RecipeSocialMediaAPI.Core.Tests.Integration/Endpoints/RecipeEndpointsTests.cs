@@ -85,7 +85,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
 
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _ = _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
@@ -124,7 +124,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
 
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -165,7 +165,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string userid = "0";
 
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _ = _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
@@ -209,9 +209,9 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async void RecipesGetFromUserId_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeRecipeRepository
+        _ = await _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -241,7 +241,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async Task RecipesGetFromUserId_WhenNoRecipesExist_ReturnEmptyList()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -264,9 +264,9 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async void RecipesGetFromUserId_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeRecipeRepository
+        _ = await _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         // When
@@ -282,11 +282,11 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async Task RecipesGetFromUsername_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        await _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
-        _fakeRecipeRepository
+        await _fakeRecipeRepository
             .CreateRecipe(_secondTestRecipe.Title, _secondTestRecipe.Recipe, _secondTestRecipe.Description, _secondTestRecipe.Chef, _secondTestRecipe.Tags, _secondTestRecipe.CreationDate, _secondTestRecipe.LastUpdatedDate, _secondTestRecipe.ThumbnailId);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -326,9 +326,9 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async Task RecipesGetFromUserName_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        await _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -358,7 +358,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async Task RecipesGetFromUsername_WhenNoRecipesExist_ReturnEmptyList()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -381,9 +381,9 @@ public class RecipeEndpointsTests : EndpointTestBase
     public async Task RecipesGetFromUserName_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        await _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         // When
@@ -442,7 +442,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         string recipeId = "0";
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -535,9 +535,9 @@ public class RecipeEndpointsTests : EndpointTestBase
             Tags: new HashSet<string>()
         );
 
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        await _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -586,7 +586,7 @@ public class RecipeEndpointsTests : EndpointTestBase
             Tags: new HashSet<string>()
         );
 
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -623,9 +623,9 @@ public class RecipeEndpointsTests : EndpointTestBase
             Tags: new HashSet<string>()
         );
 
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        await _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         // When
@@ -642,9 +642,9 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         string recipeId = "0";
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
+        await _fakeRecipeRepository
             .CreateRecipe(_testRecipe.Title, _testRecipe.Recipe, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -668,7 +668,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
 
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -689,7 +689,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
 
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When

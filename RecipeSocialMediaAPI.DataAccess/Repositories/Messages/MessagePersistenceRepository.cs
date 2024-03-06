@@ -23,13 +23,13 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
 
     public async Task<Message> CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
     {
-        MessageDocument messageDocument = _messageCollection.Insert(new MessageDocument(
+        MessageDocument messageDocument = await _messageCollection.Insert(new MessageDocument(
             SenderId: sender.Id,
             MessageContent: new(text, recipeIds, imageURLs),
             SeenByUserIds: seenByUserIds,
             SentDate: sentDate,
             MessageRepliedToId: messageRepliedTo?.Id
-        ));
+        ), cancellationToken);
 
         return await _mapper.MapMessageFromDocument(messageDocument, sender, messageRepliedTo, cancellationToken);
     }

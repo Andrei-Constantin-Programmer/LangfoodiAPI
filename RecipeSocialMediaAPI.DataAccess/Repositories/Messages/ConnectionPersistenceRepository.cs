@@ -21,11 +21,11 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
 
     public async Task<IConnection> CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
     {
-        ConnectionDocument connectionDocument = _connectionCollection.Insert(new ConnectionDocument(
+        ConnectionDocument connectionDocument = await _connectionCollection.Insert(new ConnectionDocument(
             AccountId1: userAccount1.Id,
             AccountId2: userAccount2.Id,
             ConnectionStatus: connectionStatus.ToString()
-        ));
+        ), cancellationToken);
 
         return await _mapper.MapConnectionFromDocument(connectionDocument, cancellationToken);
     }

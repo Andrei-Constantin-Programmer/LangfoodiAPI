@@ -124,7 +124,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
 
     private async Task<List<IUserAccount>> GetSeenByUsers(MessageDocument messageDocument, CancellationToken cancellationToken = default) 
         => (await Task.WhenAll(messageDocument.SeenByUserIds
-            .Select(async userId => await _userQueryRepository.GetUserById(userId))))
+            .Select(async userId => await _userQueryRepository.GetUserById(userId, cancellationToken))))
             .Where(user => user is not null)
             .Select(user => user!.Account)
             .ToList();

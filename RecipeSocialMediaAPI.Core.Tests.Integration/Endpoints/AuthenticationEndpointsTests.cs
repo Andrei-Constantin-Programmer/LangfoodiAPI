@@ -21,7 +21,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
-        var userInDb = _fakeUserRepository
+        var userInDb = await _fakeUserRepository
             .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
@@ -48,7 +48,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
@@ -65,7 +65,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When

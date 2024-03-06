@@ -35,7 +35,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateException()
+    public async Task CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateExceptionAsync()
     {
         // Given
         UserDocument testDocument = new( 
@@ -48,20 +48,20 @@ public class UserPersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument)))
-            .Throws(new DocumentAlreadyExistsException<UserDocument>(testDocument));
+            .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new DocumentAlreadyExistsException<UserDocument>(testDocument));
 
         // When
-        var action = () => _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
+        var action = async () => await _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
 
         // Then
-        action.Should().Throw<DocumentAlreadyExistsException<UserDocument>>();
+        await action.Should().ThrowAsync<DocumentAlreadyExistsException<UserDocument>>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateUser_CreatesUserAndReturnsNewlyCreatedUser()
+    public async Task CreateUser_CreatesUserAndReturnsNewlyCreatedUserAsync()
     {
         // Given
         UserDocument testDocument = new(
@@ -87,19 +87,21 @@ public class UserPersistenceRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument)))
-            .Returns(testDocument);
+            .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(It.Is<UserDocument>(doc => doc == testDocument)))
             .Returns(testUser);
 
         // When
-        var result = _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
+        var result = await _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
 
         // Then
         result.Should().Be(testUser);
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument)), Times.Once);
+            .Verify(collection => collection.Insert(
+                It.Is<UserDocument>(doc => doc == testDocument), 
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

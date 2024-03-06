@@ -34,11 +34,10 @@ public class RecipePersistenceRepositoryTests
             _mongoCollectionFactoryMock.Object);
     }
 
-
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipe()
+    public async Task CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipeAsync()
     {
         // Given
         IUserAccount testChef = new TestUserAccount() 
@@ -81,23 +80,29 @@ public class RecipePersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.IsAny<RecipeDocument>()))
-            .Returns(newRecipeDocument);
+            .Setup(collection => collection.Insert(It.IsAny<RecipeDocument>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(newRecipeDocument);
 
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(newRecipeDocument, testChef))
             .Returns(expectedResult);
 
         // When
-        var result = _recipePersistenceRepositorySUT.CreateRecipe(
-            expectedResult.Title, expectedResult.Recipe,
-            expectedResult.Description, testChef, expectedResult.Tags,
-            expectedResult.CreationDate, expectedResult.LastUpdatedDate, expectedResult.ThumbnailId);
+        var result = await _recipePersistenceRepositorySUT.CreateRecipe(
+            expectedResult.Title,
+            expectedResult.Recipe,
+            expectedResult.Description,
+            testChef,
+            expectedResult.Tags,
+            expectedResult.CreationDate,
+            expectedResult.LastUpdatedDate,
+            expectedResult.ThumbnailId);
 
         // Then
         result.Should().Be(expectedResult);
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Insert(It.Is<RecipeDocument>(doc =>
+            .Verify(collection => collection.Insert(
+                It.Is<RecipeDocument>(doc =>
                     doc.Id == null
                     && doc.Title == expectedResult.Title
                     && doc.Description == expectedResult.Description
@@ -108,8 +113,8 @@ public class RecipePersistenceRepositoryTests
                     && doc.Steps.Count == 0
                     && doc.Tags.Contains(testTag) && doc.Tags.Count == 1
                     && doc.ServingSize!.Value.Quantity == expectedResult.Recipe.ServingSize.Quantity
-                    && doc.ServingSize!.Value.UnitOfMeasurement == expectedResult.Recipe.ServingSize.UnitOfMeasurement
-                )), Times.Once);
+                    && doc.ServingSize!.Value.UnitOfMeasurement == expectedResult.Recipe.ServingSize.UnitOfMeasurement), 
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

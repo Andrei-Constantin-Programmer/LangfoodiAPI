@@ -13,7 +13,7 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         _collection = new List<RecipeAggregate>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
+    public async Task<RecipeAggregate> CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         RecipeAggregate newRecipe = new(
@@ -23,7 +23,7 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         );
         _collection.Add(newRecipe);
 
-        return newRecipe;
+        return await Task.FromResult(newRecipe);
     }
 
     public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);

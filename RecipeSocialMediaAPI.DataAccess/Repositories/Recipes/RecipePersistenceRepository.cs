@@ -18,9 +18,9 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
+    public async Task<RecipeAggregate> CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
     {
-        var recipeDocument = _recipeCollection
+        var recipeDocument = await _recipeCollection
             .Insert(new RecipeDocument(
                 Title: title,
                 Ingredients: recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
@@ -35,7 +35,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 CookingTimeInSeconds: recipe.CookingTimeInSeconds,
                 KiloCalories: recipe.KiloCalories,
                 ServingSize: recipe.ServingSize is not null ? (recipe.ServingSize.Quantity, recipe.ServingSize.UnitOfMeasurement) : null
-            ));
+            ), cancellationToken);
 
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }

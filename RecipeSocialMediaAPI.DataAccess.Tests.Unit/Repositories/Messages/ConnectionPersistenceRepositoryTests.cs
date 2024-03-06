@@ -60,8 +60,8 @@ public class ConnectionPersistenceRepositoryTests
         Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Insert(It.IsAny<ConnectionDocument>()))
-            .Returns(testDocument);
+            .Setup(collection => collection.Insert(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _connectionDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConnectionFromDocument(testDocument, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testConnection);
@@ -72,10 +72,12 @@ public class ConnectionPersistenceRepositoryTests
         // Then
         result.Should().Be(testConnection);
         _connectionCollectionMock
-            .Verify(collection => collection.Insert(It.Is<ConnectionDocument>(document
-                => document.AccountId1 == testUser1.Id
-                   && document.AccountId2 == testUser2.Id
-                   && document.ConnectionStatus == "Pending")), 
+            .Verify(collection => collection.Insert(
+                    It.Is<ConnectionDocument>(document 
+                        => document.AccountId1 == testUser1.Id
+                        && document.AccountId2 == testUser2.Id
+                        && document.ConnectionStatus == "Pending"),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 

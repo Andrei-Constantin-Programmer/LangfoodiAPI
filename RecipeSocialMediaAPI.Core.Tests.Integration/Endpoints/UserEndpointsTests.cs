@@ -64,7 +64,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser(contract.Handler, contract.UserName, contract.Email, _fakeCryptoService.Encrypt(contract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
@@ -103,7 +103,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser(contract.Handler, contract.UserName, contract.Email, _fakeCryptoService.Encrypt(contract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
@@ -140,7 +140,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
            .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var oldUsername = user.Account.UserName;
 
@@ -204,7 +204,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
            .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -225,7 +225,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
            .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         UpdateUserContract updateContract = new(user.Account.Id, "TestImageId", "NewUsername", user.Email, user.Password);
@@ -243,7 +243,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
            .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -265,7 +265,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
            .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -343,7 +343,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void UserRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
            .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
@@ -361,7 +361,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList(bool containSelf)
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -384,11 +384,11 @@ public class UserEndpointsTests : EndpointTestBase
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
+        var user1 = await _fakeUserRepository
             .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
+        var user2 = await _fakeUserRepository
             .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var _ = _fakeUserRepository
+        var _ = await _fakeUserRepository
             .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
@@ -419,11 +419,11 @@ public class UserEndpointsTests : EndpointTestBase
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
+        var user1 = await _fakeUserRepository
             .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
+        var user2 = await _fakeUserRepository
             .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
@@ -449,7 +449,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void GetConnected_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -472,14 +472,14 @@ public class UserEndpointsTests : EndpointTestBase
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
+        var user1 = await _fakeUserRepository
             .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
+        var user2 = await _fakeUserRepository
             .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
+        _ = await _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
@@ -506,14 +506,14 @@ public class UserEndpointsTests : EndpointTestBase
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
+        var user1 = await _fakeUserRepository
             .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
+        var user2 = await _fakeUserRepository
             .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
+        _ = await _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         // When
@@ -529,7 +529,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async void GetUnconnected_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
-        var user = _fakeUserRepository
+        var user = await _fakeUserRepository
             .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -552,14 +552,14 @@ public class UserEndpointsTests : EndpointTestBase
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
+        var user1 = await _fakeUserRepository
             .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
+        var user2 = await _fakeUserRepository
             .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
+        var user3 = await _fakeUserRepository
             .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
+        _ = await _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
@@ -586,14 +586,14 @@ public class UserEndpointsTests : EndpointTestBase
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
+        var user1 = await _fakeUserRepository
             .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
+        var user2 = await _fakeUserRepository
             .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeUserRepository
+        _ = await _fakeUserRepository
             .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
+        _ = await _fakeConnectionRepository
             .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         // When

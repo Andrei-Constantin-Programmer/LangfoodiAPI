@@ -88,13 +88,13 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Insert_AddsDocumentToTheDatabaseAndReturnsDocument()
+    public async Task Insert_AddsDocumentToTheDatabaseAndReturnsDocumentAsync()
     {
         // Given
         TestDocument testDocument = new("Test 1");
 
         // When
-        var document = _mongoCollectionWrapperSUT.Insert(testDocument);
+        var document = await _mongoCollectionWrapperSUT.Insert(testDocument);
 
         // Then
         document.Should().Be(testDocument);
@@ -105,17 +105,17 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsException()
+    public async Task Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsExceptionAsync()
     {
         // Given
         TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var action = () => _mongoCollectionWrapperSUT.Insert(testDocument);
+        var action = async () => await _mongoCollectionWrapperSUT.Insert(testDocument);
 
         // Then
-        action.Should().Throw<DocumentAlreadyExistsException<TestDocument>>();
+        await action.Should().ThrowAsync<DocumentAlreadyExistsException<TestDocument>>();
     }
 
     [Fact]

@@ -72,12 +72,14 @@ public class GroupPersistenceRepositoryTests
         );
 
         _groupCollectionMock
-            .Setup(collection => collection.Insert(It.Is<GroupDocument>(
-                groupDoc => groupDoc.Id == null
+            .Setup(collection => collection.Insert(
+                It.Is<GroupDocument>(
+                    groupDoc => groupDoc.Id == null
                          && groupDoc.GroupName == groupName
                          && groupDoc.GroupDescription == groupDesc
-                         && groupDoc.UserIds.SequenceEqual(userIds))))
-            .Returns(insertedDocument);
+                         && groupDoc.UserIds.SequenceEqual(userIds)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(insertedDocument);
 
         Group expectedGroup = new(insertedDocument.Id!, insertedDocument.GroupName, insertedDocument.GroupDescription, users);
 

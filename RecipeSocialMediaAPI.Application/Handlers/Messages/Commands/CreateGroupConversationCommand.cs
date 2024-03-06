@@ -39,7 +39,7 @@ internal class CreateGroupConversationHandler : IRequestHandler<CreateGroupConve
         Group group = (await _groupQueryRepository.GetGroupById(request.GroupId, cancellationToken))
             ?? throw new GroupNotFoundException(request.GroupId);
 
-        Conversation newConversation = _conversationPersistenceRepository.CreateGroupConversation(group);
+        Conversation newConversation = await _conversationPersistenceRepository.CreateGroupConversationAsync(group, cancellationToken);
 
         return _conversationMapper.MapConversationToGroupConversationDTO(user, (GroupConversation)newConversation);
     }
