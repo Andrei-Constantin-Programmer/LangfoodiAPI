@@ -23,7 +23,7 @@ public class ConversationDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapConversationFromDocument_WhenDocumentIsValidAndIsConnectionConversation_ReturnMappedConversation()
     {
         // Given
@@ -70,7 +70,7 @@ public class ConversationDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapConversationFromDocument_WhenDocumentIsValidAndIsGroupConversation_ReturnMappedConversation()
     {
         // Given
@@ -121,7 +121,7 @@ public class ConversationDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapConversationFromDocument_WhenConversationDocumentIdIsNull_ThrowsArgumentException()
     {
         // Given
@@ -143,7 +143,7 @@ public class ConversationDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapConversationFromDocument_WhenConnectionAndGroupAreNull_ThrowsMalformedConversationDocumentException()
     {
         // Given
@@ -163,7 +163,7 @@ public class ConversationDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapConversationFromDocument_WhenConnectionAndGroupAreNotNull_ThrowsMalformedConversationDocumentException()
     {
         // Given

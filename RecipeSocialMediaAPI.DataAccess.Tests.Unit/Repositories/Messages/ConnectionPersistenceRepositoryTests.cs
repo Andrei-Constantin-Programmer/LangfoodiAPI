@@ -35,7 +35,7 @@ public class ConnectionPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task CreateConnection_WhenConnectionIsValid_AddConnectionToCollectionAndReturnMappedConnection()
     {
         // Given
@@ -83,7 +83,7 @@ public class ConnectionPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateConnection_WhenUpdateIsSuccessful_ReturnTrue()
     {
         // Given
@@ -127,7 +127,7 @@ public class ConnectionPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateConnection_WhenUpdateIsUnsuccessful_ReturnFalse()
     {
         // Given
@@ -171,7 +171,7 @@ public class ConnectionPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteConnectionByAccounts_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
@@ -210,7 +210,7 @@ public class ConnectionPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteConnectionByAccounts_WhenDeleteIsUnuccessful_ReturnFalse()
     {
         // Given
@@ -249,7 +249,7 @@ public class ConnectionPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteConnection_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
@@ -290,7 +290,7 @@ public class ConnectionPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteConnection_WhenDeleteIsUnuccessful_ReturnFalse()
     {
         // Given

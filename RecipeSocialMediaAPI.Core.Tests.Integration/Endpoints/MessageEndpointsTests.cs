@@ -104,7 +104,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageById_WhenTextMessageFound_ReturnMessage()
     {
         // Given
@@ -137,7 +137,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageById_WhenRecipeMessageFound_ReturnMessage()
     {
         // Given
@@ -178,7 +178,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageById_WhenImageMessageFound_ReturnMessage()
     {
         // Given
@@ -211,7 +211,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageById_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -230,7 +230,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageById_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -248,7 +248,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessagesByConversation_WhenConversationDoesExist_ReturnMessages()
     {
         // Given
@@ -305,7 +305,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessagesByConversation_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -324,7 +324,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessagesByConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -355,7 +355,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task SendMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
     {
         // Given
@@ -391,7 +391,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task SendMessage_WhenContractIsValidForImageMessage_ReturnCreatedMessage()
     {
         // Given
@@ -427,7 +427,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task SendMessage_WhenContractIsValidForRecipeMessage_ReturnCreatedMessage()
     {
         // Given
@@ -472,7 +472,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task SendMessage_WhenContractContainsNoMessageContent_ReturnBadRequest()
     {
         // Given
@@ -495,7 +495,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task SendMessage_WhenContractIsInvalid_ReturnBadRequest()
     {
         // Given
@@ -518,7 +518,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task SendMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -538,7 +538,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task SendMessage_WhenConnectionIsBlocked_ReturnBadRequest()
     {
         // Given
@@ -568,7 +568,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateMessage_WhenTextMessageExists_ReturnOk()
     {
         // Given
@@ -600,7 +600,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateMessage_WhenRecipeMessageExists_ReturnOk()
     {
         // Given
@@ -637,7 +637,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateMessage_WhenImageMessageExists_ReturnOk()
     {
         // Given
@@ -670,7 +670,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateMessage_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -690,7 +690,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -710,7 +710,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageDetailed_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -729,7 +729,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageDetailed_WhenTextMessageFound_ReturnMessage()
     {
         // Given
@@ -760,7 +760,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageDetailed_WhenRecipeMessageFound_ReturnMessage()
     {
         // Given
@@ -801,7 +801,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageDetailed_WhenImageMessageFound_ReturnMessage()
     {
         // Given
@@ -832,7 +832,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetMessageDetailed_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -850,7 +850,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task DeleteMessage_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -870,7 +870,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task DeleteMessage_WhenMessageExists_ReturnOk()
     {
         // Given
@@ -892,7 +892,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task DeleteMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given

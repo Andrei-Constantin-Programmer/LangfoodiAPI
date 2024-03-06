@@ -40,7 +40,7 @@ public class ImageHostingQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void GenerateClientSignature_WhenPublicIdIsNullAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
     {
         // Given
@@ -59,7 +59,7 @@ public class ImageHostingQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void GenerateClientSignature_WhenPublicIdIsNotNullAndNoExceptionThrown_ReturnCloudinarySignatureDTO()
     {
         // Given
@@ -78,7 +78,7 @@ public class ImageHostingQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void GenerateClientSignature_WhenPublicIdIsNotNullAndExceptionThrownForAnyReason_LogInformationAndReturnNull()
     {
         // Given
@@ -105,7 +105,7 @@ public class ImageHostingQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void GenerateClientSignature_WhenPublicIdIsNullAndExceptionThrownForAnyReason_LogInformationAndReturnNull()
     {
         // Given

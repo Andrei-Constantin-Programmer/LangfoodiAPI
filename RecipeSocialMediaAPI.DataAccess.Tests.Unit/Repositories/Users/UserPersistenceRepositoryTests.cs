@@ -34,7 +34,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateException()
     {
         // Given
@@ -60,7 +60,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task CreateUser_CreatesUserAndReturnsNewlyCreatedUser()
     {
         // Given
@@ -106,7 +106,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
@@ -178,7 +178,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
@@ -211,7 +211,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateUser_WhenCollectionCantUpdate_ReturnFalse()
     {
         // Given
@@ -248,7 +248,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
     {
         // Given
@@ -274,7 +274,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
     {
         // Given
@@ -313,7 +313,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteUser_WhenUserWithIdDoesNotExist_ReturnFalse()
     {
         // Given
@@ -332,7 +332,7 @@ public class UserPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given

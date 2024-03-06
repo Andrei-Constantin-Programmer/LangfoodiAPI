@@ -36,7 +36,7 @@ public class RecipePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipe()
     {
         // Given
@@ -119,7 +119,7 @@ public class RecipePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateRecipe_WhenRecipeIsSuccessfullyUpdated_ReturnTrue()
     {
         // Given
@@ -182,7 +182,7 @@ public class RecipePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateRecipe_WhenRecipeIsNotUpdated_ReturnFalse()
     {
         // Given
@@ -224,7 +224,7 @@ public class RecipePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteRecipeById_WhenRecipeIsDeleted_ReturnTrue()
     {
         // Given
@@ -251,7 +251,7 @@ public class RecipePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteRecipeByRecipe_WhenRecipeIsDeleted_ReturnTrue()
     {
         // Given
@@ -295,7 +295,7 @@ public class RecipePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteRecipeById_WhenRecipeIsNotDeleted_ReturnFalse()
     {
         // Given
@@ -322,7 +322,7 @@ public class RecipePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteRecipeByRecipe_WhenRecipeIsNotDeleted_ReturnFalse()
     {
         // Given

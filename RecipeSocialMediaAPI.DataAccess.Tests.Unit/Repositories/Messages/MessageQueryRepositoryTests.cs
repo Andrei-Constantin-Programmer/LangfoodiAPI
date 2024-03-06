@@ -48,7 +48,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetMessage_WhenMessageWithIdNotFound_ReturnNull()
     {
         // Given
@@ -69,7 +69,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetMessage_WhenMessageIsFoundButSenderIsNotFound_LogWarningAndReturnNull()
     {
         // Given
@@ -125,7 +125,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetMessage_WhenOnlyTextIsPresent_ReturnTextMessage()
     {
         // Given
@@ -182,7 +182,7 @@ public class MessageQueryRepositoryTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(true)]
     [InlineData(false)]
     public async Task GetMessage_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
@@ -248,7 +248,7 @@ public class MessageQueryRepositoryTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(true)]
     [InlineData(false)]
     public async Task GetMessage_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessage(bool hasText)
@@ -334,7 +334,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetMessage_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessage()
     {
         // Given
@@ -420,7 +420,7 @@ public class MessageQueryRepositoryTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(1)]
     [InlineData(2)]
     [InlineData(3)]
@@ -512,7 +512,7 @@ public class MessageQueryRepositoryTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(true, true, true)]
     [InlineData(false, false, false)]
     [InlineData(true, false, false)]
@@ -577,7 +577,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
@@ -604,7 +604,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetMessagesWithRecipe_WhenNoMessagesFoundWithRecipeId_ReturnEmptyCollection()
     {
         // Given
@@ -652,7 +652,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetMessagesWithRecipe_WhenMessagesFoundWithRecipeId_ReturnMappedMessages()
     {
         // Given
@@ -721,7 +721,7 @@ public class MessageQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetMessagesWithRecipe_WhenUserNotFound_ThrowUserDocumentNotFoundException()
     {
         // Given

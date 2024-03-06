@@ -19,7 +19,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetCloudinarySignature_SignatureGenerated_ReturnGeneratedCloudinarySignature()
     {
         // Given
@@ -45,7 +45,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetCloudinarySignature_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -62,7 +62,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task ImageSingleDelete_GivenPublicIdAndNoError_ReturnOk()
     {
         // Given
@@ -87,7 +87,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task ImageSingleDelete_GivenPublicIdAndError_ReturnNotOk()
     {
         // Given
@@ -112,7 +112,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task ImageSingleDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -132,7 +132,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task ImageBulkDelete_GivenPublicIdsAndNoError_ReturnOk()
     {
         // Given
@@ -157,7 +157,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task ImageBulkDelete_GivenPublicIdsAndError_ReturnNotOk()
     {
         // Given
@@ -182,7 +182,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task ImageBulkDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given

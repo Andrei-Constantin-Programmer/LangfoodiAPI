@@ -16,7 +16,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Authenticate_WhenValidUserWithEmail_ReturnUserFromDBWithBearerToken()
     {
         // Given
@@ -43,7 +43,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Authenticate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -60,7 +60,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
     {
         // Given

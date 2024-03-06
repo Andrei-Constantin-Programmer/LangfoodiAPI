@@ -9,7 +9,7 @@ public class CoreLayerTests
 {
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void CoreLayer_EndpointsShouldNotHaveDependenciesOnDomainOrDataAccess()
     {
         // When
@@ -27,7 +27,7 @@ public class CoreLayerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void CoreLayer_EndpointsShouldHaveDependencyOnMediatR()
     {
         // When

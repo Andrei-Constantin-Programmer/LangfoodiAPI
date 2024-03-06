@@ -37,7 +37,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnectionById_WhenConnectionIsFound_ReturnMappedConnection()
     {
         // Given
@@ -81,7 +81,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnectionById_WhenConnectionIsNotFound_ReturnNullAndDontMap()
     {
         // Given
@@ -106,7 +106,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnectionById_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
@@ -134,7 +134,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnectionById_WhenMapperThrowsException_ThrowException()
     {
         // Given
@@ -163,7 +163,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnection_WhenConnectionIsFound_ReturnMappedConnection()
     {
         // Given
@@ -206,7 +206,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnection_WhenConnectionIsNotFound_ReturnNullAndDontMap()
     {
         // Given
@@ -246,7 +246,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnection_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
@@ -287,7 +287,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnection_WhenMapperThrowsException_ThrowException()
     {
         // Given
@@ -330,7 +330,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnectionsForUser_WhenConnectionsExist_ReturnMappedConnections()
     {
         // Given
@@ -396,7 +396,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnectionsForUser_WhenNoConnectionsForUserExist_ReturnEmptyList()
     {
         // Given
@@ -422,7 +422,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnectionsForUser_WhenMapperThrowsException_ThrowException()
     {
         // Given
@@ -465,7 +465,7 @@ public class ConnectionQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConnectionsForUser_WhenMongoThrowsAnException_LogExceptionAndReturnEmptyList()
     {
         // Given

@@ -18,7 +18,7 @@ public class RecipeDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapRecipeDocumentToRecipeAggregate_WhenIdIsNull_ThrowArgumentException()
     {
         // Given
@@ -52,7 +52,7 @@ public class RecipeDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapRecipeDocumentToRecipeAggregate_WhenDocumentIsValid_ReturnMappedRecipeModel()
     {
         // Given

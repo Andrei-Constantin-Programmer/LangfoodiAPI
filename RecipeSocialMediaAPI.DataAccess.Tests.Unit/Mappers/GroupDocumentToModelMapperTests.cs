@@ -25,7 +25,7 @@ public class GroupDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task MapGroupFromDocument_WhenGroupDocumentIsValid_ReturnsMappedGroup()
     {
         // Given
@@ -81,7 +81,7 @@ public class GroupDocumentToModelMapperTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(false, false)]
@@ -144,7 +144,7 @@ public class GroupDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task MapGroupFromDocument_WhenListOfUsersIsEmpty_ShouldNotThrowUserDocumentNotFoundException()
     {
         // Given

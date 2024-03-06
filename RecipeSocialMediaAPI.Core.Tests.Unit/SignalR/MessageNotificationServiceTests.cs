@@ -33,7 +33,7 @@ public class MessageNotificationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task NotifyMessageSent_WhenCancellationIsNotTriggered_NotifyAllClientsOfNewMessage()
     {
         // Given
@@ -50,7 +50,7 @@ public class MessageNotificationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task NotifyMessageSent_WhenCancellationIsTriggered_LogsWarning()
     {
         // Given
@@ -77,7 +77,7 @@ public class MessageNotificationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task NotifyMessageUpdated_WhenCancellationIsNotTriggered_NotifyAllClientsOfMessageUpdate()
     {
         // Given
@@ -93,7 +93,7 @@ public class MessageNotificationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task NotifyMessageUpdated_WhenCancellationIsTriggered_LogsWarning()
     {
         // Given
@@ -119,7 +119,7 @@ public class MessageNotificationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task NotifyMessageDeleted_WhenCancellationIsNotTriggered_NotifyAllClientsOfMessageDeletion()
     {
         // Given
@@ -135,7 +135,7 @@ public class MessageNotificationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task NotifyMessageDeleted_WhenCancellationIsTriggered_LogsWarning()
     {
         // Given
@@ -161,7 +161,7 @@ public class MessageNotificationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task NotifyMessageMarkedAsRead_WhenCancellationIsNotTriggered_NotifyAllClientsOfMessageMarkedAsRead()
     {
         // Given
@@ -178,7 +178,7 @@ public class MessageNotificationServiceTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task NotifyMessageMarkedAsRead_WhenCancellationIsTriggered_LogsWarning()
     {
         // Given

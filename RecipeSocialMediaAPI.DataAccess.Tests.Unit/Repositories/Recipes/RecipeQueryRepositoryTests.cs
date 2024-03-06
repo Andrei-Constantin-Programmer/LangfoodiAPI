@@ -46,7 +46,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipeById_WhenRecipeWithIdNotFound_ReturnNull()
     {
         // Given
@@ -68,7 +68,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipeById_WhenRecipeIsFound_ReturnRecipe()
     {
         // Given
@@ -133,7 +133,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipeById_WhenRecipeIsFoundButChefIsNotFound_LogWarningAndReturnNull()
     {
         // Given
@@ -199,7 +199,7 @@ public class RecipeQueryRepositoryTests
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipeById_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
@@ -273,7 +273,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChefId_WhenChefExistsAndNoRecipesWithIdExist_ReturnEmptyList()
     {
         // Given
@@ -315,7 +315,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChefId_WhenChefExistsAndRecipesWithIdExist_ReturnRelatedRecipes()
     {
         // Given
@@ -375,7 +375,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChefId_WhenChefDoesNotExist_ReturnEmptyList()
     {
         // Given
@@ -414,7 +414,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChefId_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
@@ -484,7 +484,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChefUsername_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
     {
         // Given
@@ -545,7 +545,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChefUsername_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
     {
         // Given
@@ -584,7 +584,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChefUsername_WhenChefDoesNotExist_ReturnEmptyList()
     {
         // Given
@@ -622,7 +622,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChefUsername_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
@@ -696,7 +696,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChef_WhenChefIsNull_ReturnEmptyList()
     {
         // Given
@@ -715,7 +715,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChef_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
     {
         // Given
@@ -771,7 +771,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChef_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
     {
         // Given
@@ -800,7 +800,7 @@ public class RecipeQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetRecipesByChef_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given

@@ -79,7 +79,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeGetById_WhenRecipeExists_ReturnRecipe()
     {
         // Given
@@ -118,7 +118,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeGetById_WhenRecipeDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -139,7 +139,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeGetById_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -159,7 +159,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipesGetFromUserId_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
     {
         // Given
@@ -205,7 +205,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipesGetFromUserId_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
@@ -237,7 +237,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipesGetFromUserId_WhenNoRecipesExist_ReturnEmptyList()
     {
         // Given
@@ -260,7 +260,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipesGetFromUserId_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -278,7 +278,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipesGetFromUsername_WhenAtLeastOneRecipeExists_ReturnAllRelatedRecipes()
     {
         // Given
@@ -322,7 +322,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipesGetFromUserName_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
@@ -354,7 +354,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipesGetFromUsername_WhenNoRecipesExist_ReturnEmptyList()
     {
         // Given
@@ -377,7 +377,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipesGetFromUserName_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -395,7 +395,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeCreate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -437,7 +437,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeCreate_WhenUserExists_ReturnCreatedRecipe()
     {
         // Given
@@ -486,7 +486,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeCreate_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -516,7 +516,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeUpdate_WhenRecipeExists_UpdateTheRecipe()
     {
         // Given
@@ -567,7 +567,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeUpdate_WhenRecipeDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -604,7 +604,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -637,7 +637,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeRemove_WhenRecipeDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -662,7 +662,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeRemove_WhenRecipeExists_RemoveRecipe()
     {
         // Given
@@ -683,7 +683,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task RecipeRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given

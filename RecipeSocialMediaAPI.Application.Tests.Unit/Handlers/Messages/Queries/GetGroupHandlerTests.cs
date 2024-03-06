@@ -25,7 +25,7 @@ public class GetGroupHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Handle_WhenGroupIsFound_ReturnGroupDTO()
     {
         // Given
@@ -66,7 +66,7 @@ public class GetGroupHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Handle_WhenGroupIsNotFound_ThrowGroupNotFoundException()
     {
         // Given

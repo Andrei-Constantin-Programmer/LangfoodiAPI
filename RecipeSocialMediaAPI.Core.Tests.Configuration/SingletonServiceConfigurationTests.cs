@@ -27,7 +27,7 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void DateTimeProvider_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -39,7 +39,7 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void UserValidationService_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -51,7 +51,7 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void RecipeValidationService_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -63,7 +63,7 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void RecipeMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -75,7 +75,7 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void UserMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -87,7 +87,7 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MessageMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -99,7 +99,7 @@ public class SingletonServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ConversationMapper_ShouldBeConfiguredCorrectly()
     {
         // Given

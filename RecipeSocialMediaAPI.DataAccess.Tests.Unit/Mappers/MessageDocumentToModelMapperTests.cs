@@ -38,7 +38,7 @@ public class MessageDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task MapMessageFromDocument_WhenOnlyTextIsPresent_ReturnTextMessage()
     {
         // Given
@@ -94,7 +94,7 @@ public class MessageDocumentToModelMapperTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(true)]
     [InlineData(false)]
     public async Task MapMessageFromDocument_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
@@ -160,7 +160,7 @@ public class MessageDocumentToModelMapperTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(true)]
     [InlineData(false)]
     public async Task MapMessageFromDocument_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessage(bool hasText)
@@ -249,7 +249,7 @@ public class MessageDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFound_ReturnTextMessageAndLogError()
     {
         // Given
@@ -308,7 +308,7 @@ public class MessageDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFoundAndNoText_ThrowMalformedMessageDocumentException()
     {
         // Given
@@ -361,7 +361,7 @@ public class MessageDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task MapMessageFromDocument_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAndLogWarningForRecipesNotFound()
     {
         // Given
@@ -453,7 +453,7 @@ public class MessageDocumentToModelMapperTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(false, false, false)]
     [InlineData(true, false, false)]
     public async Task MapMessageFromDocument_WhenMessageContentIsMalformed_ThrowMalformedMessageDocumentException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)

@@ -26,7 +26,7 @@ public class UserDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapUserDocumentToUser_WhenDocumentIdIsNull_ThrowArgumentException()
     {
         // Given
@@ -62,7 +62,7 @@ public class UserDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapUserDocumentToUser_WhenDocumentIsValid_ReturnMappedUser()
     {
         // Given
@@ -115,7 +115,7 @@ public class UserDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void MapDocumentToUser_WhenPinnedConversationsExist_ReturnMappedUserWithPinnedConversations()
     {
         // Given

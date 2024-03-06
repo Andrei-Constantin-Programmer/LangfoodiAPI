@@ -19,7 +19,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserCreate_WhenValidUser_ReturnUserWithId()
     {
         // Given
@@ -40,7 +40,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     [InlineData("", "test@mail.com", "Test@123")]
     [InlineData("TestUsername", "test.com", "Test@123")]
     [InlineData("TestUsername", "test@mail.com", "test")]
@@ -58,7 +58,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserUsernameExists_WhenUsernameExists_ReturnTrue()
     {
         // Given
@@ -79,7 +79,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
     {
         // Given
@@ -97,7 +97,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserEmailExists_WhenEmailExists_ReturnTrue()
     {
         // Given
@@ -118,7 +118,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
     {
         // Given
@@ -136,7 +136,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
@@ -164,7 +164,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
     {
         // Given
@@ -197,7 +197,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     [InlineData("", "test@mail.com", "Test@123")]
     [InlineData("TestUsername", "test.com", "Test@123")]
     [InlineData("TestUsername", "test@mail.com", "test")]
@@ -221,7 +221,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -239,7 +239,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
     {
         // Given
@@ -261,7 +261,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
     {
         // Given
@@ -283,7 +283,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserRemove_WhenUserEmailDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -311,7 +311,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserRemove_WhenUserIdDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -339,7 +339,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UserRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -355,7 +355,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     [InlineData(true)]
     [InlineData(false)]
     public async Task GetAll_WhenThereAreNoUsers_ReturnEmptyList(bool containSelf)
@@ -379,7 +379,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetAll_WhenThereAreUsersAndChoseSelf_ReturnUsersWithSelf()
     {
         // Given
@@ -414,7 +414,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetAll_WhenThereAreUsersAndChoseNonSelf_ReturnUsersWithoutQueryingUser()
     {
         // Given
@@ -445,7 +445,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnected_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
@@ -467,7 +467,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnected_WhenThereAreUsers_ReturnOnlyConnectedUsers()
     {
         // Given
@@ -501,7 +501,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnected_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -525,7 +525,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetUnconnected_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
@@ -547,7 +547,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetUnconnected_WhenThereAreUsers_ReturnOnlyUnconnectedUsers()
     {
         // Given
@@ -581,7 +581,7 @@ public class UserEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetUnconnected_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given

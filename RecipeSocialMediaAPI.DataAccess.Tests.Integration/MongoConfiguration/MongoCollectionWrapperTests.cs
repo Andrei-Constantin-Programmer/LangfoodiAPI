@@ -30,7 +30,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
     {
         // Given
@@ -52,7 +52,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetAll_WhenNoDocumentsMatch_ReturnEmptyList()
     {
         // Given
@@ -73,7 +73,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetAll_WhenThereAreNoDocuments_ReturnEmptyList()
     {
         // Given
@@ -87,7 +87,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Insert_AddsDocumentToTheDatabaseAndReturnsDocument()
     {
         // Given
@@ -104,7 +104,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsException()
     {
         // Given
@@ -120,7 +120,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrue()
     {
         // Given
@@ -137,7 +137,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Delete_WhenMultipleDocumentsWithConditionExist_DeleteFirstFittingDocumentAndReturnTrue()
     {
         // Given
@@ -162,7 +162,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Delete_WhenNoDocumentWithConditionExists_ReturnFalse()
     {
         // Given
@@ -179,7 +179,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Delete_WhenNoDocumentExists_ReturnFalse()
     {
         // Given
@@ -193,7 +193,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Find_WhenNoDocumentWithConditionExists_ReturnNull()
     {
         // Given
@@ -209,7 +209,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Find_WhenNoDocumentExists_ReturnNull()
     {
         // Given
@@ -223,7 +223,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Find_WhenDocumentWithConditionExists_ReturnDocument()
     {
         // Given
@@ -239,7 +239,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task Find_WhenMultipleDocumentsWithConditionExist_ReturnTheFirstOne()
     {
         // Given
@@ -261,7 +261,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdate()
     {
         // Given
@@ -281,7 +281,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdate()
     {
         // Given
@@ -297,7 +297,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdate()
     {
         // Given

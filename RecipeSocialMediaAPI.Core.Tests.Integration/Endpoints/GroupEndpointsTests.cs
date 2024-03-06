@@ -58,7 +58,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateGroup_WhenUsersExist_ReturnNewGroup()
     {
         // Given
@@ -89,7 +89,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     [InlineData(true, false, true)]
     [InlineData(false, true, true)]
     [InlineData(true, true, false)]
@@ -136,7 +136,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -159,7 +159,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetGroup_WhenGroupExists_ReturnGroup()
     {
         // Given
@@ -190,7 +190,7 @@ public class GroupEndpointsTests : EndpointTestBase
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -209,7 +209,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -232,7 +232,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetGroupsByUser_WhenGroupsExist_ReturnGroups()
     {
         // Given
@@ -274,7 +274,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetGroupsByUser_WhenNoGroupsForUserExist_ReturnEmptyCollection()
     {
         // Given
@@ -303,7 +303,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetGroupsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -331,7 +331,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetGroupsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -358,7 +358,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateGroup_WhenGroupExists_ReturnOk()
     {
         // Given
@@ -392,7 +392,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -415,7 +415,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateGroup_WhenUserDoesNotExist_ReturnOk()
     {
         // Given
@@ -441,7 +441,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -466,7 +466,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task DeleteGroup_WhenGroupExists_ReturnOk()
     {
         // Given
@@ -493,7 +493,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task DeleteGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -522,7 +522,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task DeleteGroup_WhenUserIsNotDeveloper_ReturnForbidden()
     {
         // Given
@@ -551,7 +551,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task DeleteGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given

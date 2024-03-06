@@ -48,7 +48,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationsByUser_WhenConversationsExist_ReturnConversations()
     {
         // Given
@@ -88,7 +88,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationsByUser_WhenNoConversationsExistForUser_ReturnEmptyList()
     {
         // Given
@@ -109,7 +109,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -137,7 +137,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -165,7 +165,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByConnection_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
     {
         // Given
@@ -196,7 +196,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByConnection_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
     {
         // Given
@@ -240,7 +240,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByConnection_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -264,7 +264,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -283,7 +283,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -306,7 +306,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByGroup_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
     {
         // Given
@@ -337,7 +337,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByGroup_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
     {
         // Given
@@ -382,7 +382,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByGroup_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -406,7 +406,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -425,7 +425,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConversationByGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -449,7 +449,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateConnectionConversation_WhenConnectionIsValid_ReturnCreatedConnectionConversation()
     {
         // Given
@@ -480,7 +480,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateConnectionConversation_WhenConnectionIsNotFound_ReturnNotFound()
     {
         // Given
@@ -499,7 +499,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateConnectionConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -520,7 +520,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateGroupConversation_WhenGroupIsValid_ReturnCreatedGroupConversation()
     {
         // Given        
@@ -551,7 +551,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
     {
         // Given
@@ -570,7 +570,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateGroupConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given        
@@ -591,7 +591,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task MarkConversationAsRead_WhenConversationExists_MarkAllConversationsAsRead()
     {
         // Given
@@ -632,7 +632,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task MarkConversationAsRead_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given

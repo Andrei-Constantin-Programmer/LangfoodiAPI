@@ -39,7 +39,7 @@ public class GroupQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetGroupById_WhenDocumentExists_ReturnMappedDocument()
     {
         // Given
@@ -101,7 +101,7 @@ public class GroupQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetGroupById_WhenDocumentIsNotInTheDatabase_ReturnNull()
     {
         // Given
@@ -118,7 +118,7 @@ public class GroupQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetGroupById_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
@@ -145,7 +145,7 @@ public class GroupQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetGroupsByUser_WhenUserHasGroups_ReturnMappedGroups()
     {
         // Given
@@ -231,7 +231,7 @@ public class GroupQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetGroupsByUser_WhenUserHasNoGroups_ReturnEmptyCollection()
     {
         // Given
@@ -256,7 +256,7 @@ public class GroupQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetGroupsByUser_WhenMongoThrowsAnException_LogErrorAndReturnEmptyCollection()
     {
         // Given

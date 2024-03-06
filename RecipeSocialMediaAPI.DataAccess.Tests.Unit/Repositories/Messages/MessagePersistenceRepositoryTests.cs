@@ -52,7 +52,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task CreateMessage_WhenMessageIsValid_AddMessageToCollectionAndReturnMappedMessage()
     {
         // Given
@@ -114,7 +114,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateMessage_WhenMessageIsTextMessage_UpdatesAndReturnsTrue()
     {
         // Given
@@ -160,7 +160,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateMessage_WhenMessageIsRecipeMessage_UpdatesAndReturnsTrue()
     {
         // Given
@@ -213,7 +213,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateMessage_WhenMessageIsImageMessage_UpdatesAndReturnsTrue()
     {
         // Given
@@ -261,7 +261,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateMessage_WhenMessageIsOfUnexpectedType_LogErrorAndReturnFalse()
     {
         // Given
@@ -299,7 +299,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateMessage_WhenUpdateIsUnsuccessful_ReturnFalse()
     {
         // Given
@@ -330,7 +330,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteMessage_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
@@ -358,7 +358,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteMessage_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
@@ -386,7 +386,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteMessageById_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
@@ -405,7 +405,7 @@ public class MessagePersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteMessageById_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given

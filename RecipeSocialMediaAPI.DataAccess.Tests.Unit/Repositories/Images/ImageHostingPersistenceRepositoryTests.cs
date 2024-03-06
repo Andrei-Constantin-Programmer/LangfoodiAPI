@@ -55,7 +55,7 @@ public class ImageHostingPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void RemoveHostedImage_RemovalWorks_ReturnsTrue()
     {
         // Given
@@ -76,7 +76,7 @@ public class ImageHostingPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void RemoveHostedImage_RemovalFailsNoExceptionThrown_ReturnsFalse()
     {
         // Given
@@ -97,7 +97,7 @@ public class ImageHostingPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void RemoveHostedImage_RemovalFailsBecauseExceptionIsThrown_ExceptionPropagated()
     {
         // Given
@@ -124,7 +124,7 @@ public class ImageHostingPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void BulkRemoveHostedImages_RemovalWorks_ReturnsTrue()
     {
         // Given
@@ -145,7 +145,7 @@ public class ImageHostingPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void BulkRemoveHostedImages_RemovalFailsNoExceptionThrown_ReturnsFalse()
     {
         // Given
@@ -166,7 +166,7 @@ public class ImageHostingPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void BulkRemoveHostedImages_RemovalFailsBecauseExceptionIsThrown_ExceptionPropagated()
     {
         // Given

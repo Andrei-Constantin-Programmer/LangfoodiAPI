@@ -26,7 +26,7 @@ public class ConnectionDocumentToModelMapperTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(ConnectionStatus.Blocked)]
     [InlineData(ConnectionStatus.Muted)]
     [InlineData(ConnectionStatus.Pending)]
@@ -85,7 +85,7 @@ public class ConnectionDocumentToModelMapperTests
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(false, false)]
@@ -143,7 +143,7 @@ public class ConnectionDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task MapConnectionFromDocument_WhenConnectionStatusCantBeMapped_ThrowInvalidConnectionStatusException()
     {
         // Given
@@ -191,7 +191,7 @@ public class ConnectionDocumentToModelMapperTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task MapConnectionFromDocument_WhenTheAccountsAreTheSame_ThrowException()
     {
         // Given

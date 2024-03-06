@@ -20,7 +20,7 @@ public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Prog
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MongoDatabaseOptions_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -37,7 +37,7 @@ public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Prog
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void CloudinaryApiOptions_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -54,7 +54,7 @@ public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Prog
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void DataDogOptions_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -71,7 +71,7 @@ public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Prog
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void JwtOptions_ShouldBeConfiguredCorrectly()
     {
         // Given

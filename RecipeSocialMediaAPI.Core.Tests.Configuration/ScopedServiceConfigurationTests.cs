@@ -30,7 +30,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void UserDocumentToModelMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -43,7 +43,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void RecipeDocumentToModelMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -56,7 +56,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MessageDocumentToModelMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -69,7 +69,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ConnectionDocumentToModelMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -82,7 +82,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void GroupDocumentToModelMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -95,7 +95,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void RecipeQueryRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -108,7 +108,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void RecipePersistenceRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -121,7 +121,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MessageQueryRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -134,7 +134,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MessagePersistenceRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -147,7 +147,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ConnectionQueryRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -160,7 +160,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ConnectionPersistenceRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -173,7 +173,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void UserQueryRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -186,7 +186,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void UserPersistenceRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -199,7 +199,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ImageHostingQueryRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -212,7 +212,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ImageHostingPersistenceRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -225,7 +225,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MongoCollectionFactory_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -238,7 +238,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ConversationDocumentToModelMapper_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -251,7 +251,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ConversationQueryRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -264,7 +264,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void ConversationPersistenceRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -277,7 +277,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void GroupPersistenceRepository_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -290,7 +290,7 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void GroupQueryRepository_ShouldBeConfiguredCorrectly()
     {
         // Given

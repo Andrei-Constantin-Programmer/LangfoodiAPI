@@ -10,7 +10,7 @@ public class GlobalTests
 {
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void Exceptions_ShouldBePublicAndFormattedCorrectly()
     {
         // When

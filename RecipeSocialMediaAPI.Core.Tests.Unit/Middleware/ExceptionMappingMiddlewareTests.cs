@@ -27,7 +27,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsValidationException_WriteMessageAndSetStatusCodeToBadRequest()
     {
         // Given
@@ -56,7 +56,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsInvalidCredentialsException_SetStatusCodeToBadRequest()
     {
         // Given
@@ -78,7 +78,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsHandlerAlreadyInUseException_WriteMessageAndSetStatusCodeToBadRequest()
     {
         // Given
@@ -104,7 +104,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsUsernameAlreadyInUseException_WriteMessageAndSetStatusCodeToBadRequest()
     {
         // Given
@@ -130,7 +130,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsEmailAlreadyInUseException_WriteMessageAndSetStatusCodeToBadRequest()
     {
         // Given
@@ -156,7 +156,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsUserNotFoundException_SetStatusCodeToNotFound()
     {
         // Given
@@ -178,7 +178,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsRecipeNotFoundException_SetStatusCodeToNotFound()
     {
         // Given
@@ -201,7 +201,7 @@ public class ExceptionMappingMiddlewareTests
     
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsOperationCanceledException_SetStatusCodeToInternalServerError()
     {
         // Given
@@ -223,7 +223,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestThrowsGenericException_SetStatusCodeToInternalServerError()
     {
         // Given
@@ -245,7 +245,7 @@ public class ExceptionMappingMiddlewareTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task InvokeAsync_WhenRequestDoesNotThrow_DoNotWriteMessageOrChangeStatusCodeFromOk()
     {
         // Given

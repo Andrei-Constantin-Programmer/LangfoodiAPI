@@ -27,7 +27,7 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void HttpClientFactory_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -40,7 +40,7 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void CryptoService_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -53,7 +53,7 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MessageFactory_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -66,7 +66,7 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void UserFactory_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -79,7 +79,7 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void CloudinarySignatureService_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -92,7 +92,7 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void CloudinaryWebClient_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -105,7 +105,7 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MessageNotificationService_ShouldBeConfiguredCorrectly()
     {
         // Given
@@ -118,7 +118,7 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void BearerTokenService_ShouldBeConfiguredCorrectly()
     {
         // Given

@@ -54,7 +54,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationById_WhenConnectionConversationExists_ReturnMappedConversation()
     {
         // Given
@@ -112,7 +112,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationById_WhenGroupConversationExists_ReturnMappedConversation()
     {
         // Given
@@ -170,7 +170,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationById_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
@@ -192,7 +192,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationById_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
@@ -224,7 +224,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationByConnection_WhenConversationExists_ReturnMappedConversation()
     {
         // Given
@@ -284,7 +284,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationByConnection_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
@@ -306,7 +306,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationByConnection_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
@@ -338,7 +338,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationByGroup_WhenConversationExists_ReturnMappedConversation()
     {
         // Given
@@ -398,7 +398,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationByGroup_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
@@ -420,7 +420,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationByGroup_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
@@ -452,7 +452,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationsByUser_WhenConversationsExist_ReturnMappedConversations()
     {
         // Given
@@ -555,7 +555,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationsByUser_WhenNoConversationsExist_ReturnEmptyList()
     {
         // Given
@@ -587,7 +587,7 @@ public class ConversationQueryRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationsByUser_WhenMongoThrowsException_ReturnEmptyListAndLogException()
     {
         // Given

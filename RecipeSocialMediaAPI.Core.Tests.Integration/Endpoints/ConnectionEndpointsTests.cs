@@ -59,7 +59,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnection_WhenUsersExist_ReturnConnection()
     {
         // Given
@@ -90,7 +90,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -111,7 +111,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
@@ -151,7 +151,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -172,7 +172,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnectionsByUser_WhenConnectionsFound_ReturnConnections()
     {
         // Given
@@ -215,7 +215,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnectionsByUser_WhenNoConnectionsFound_ReturnEmptyCollection()
     {
         // Given
@@ -236,7 +236,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnectionsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -264,7 +264,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task GetConnectionsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -291,7 +291,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateConnection_WhenUsersExist_ReturnNewConnection()
     {
         // Given
@@ -319,7 +319,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
@@ -361,7 +361,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task CreateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
@@ -381,7 +381,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     [InlineData(ConnectionStatus.Connected)]
     [InlineData(ConnectionStatus.Blocked)]
     public async Task UpdateConnection_WhenConnectionExists_UpdateTheConnection(ConnectionStatus connectionStatus)
@@ -412,7 +412,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
@@ -435,7 +435,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
@@ -501,7 +501,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateConnection_WhenConnectionStatusIsNotSupported_ReturnBadRequest()
     {
         // Given
@@ -526,7 +526,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task UpdateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given

@@ -35,7 +35,7 @@ public class GroupPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task CreateGroup_WhenGroupIsInsertedSuccessfully_ReturnsMappedGroup()
     {
         // Given
@@ -96,7 +96,7 @@ public class GroupPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateGroup_WhenUpdateIsSuccessful_ReturnTrue()
     {
         // Given
@@ -142,7 +142,7 @@ public class GroupPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task UpdateGroup_WhenUpdateIsUnsuccessful_ReturnFalse()
     {
         // Given
@@ -188,7 +188,7 @@ public class GroupPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteGroup_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
@@ -209,7 +209,7 @@ public class GroupPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteGroup_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
@@ -230,7 +230,7 @@ public class GroupPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteGroupById_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
@@ -249,7 +249,7 @@ public class GroupPersistenceRepositoryTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task DeleteGroupById_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given

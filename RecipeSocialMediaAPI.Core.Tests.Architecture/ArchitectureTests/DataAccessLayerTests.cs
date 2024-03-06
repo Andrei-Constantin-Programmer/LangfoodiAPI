@@ -10,7 +10,7 @@ public class DataAccessLayerTests
 {
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void DataAccessLayer_ShouldNotHaveDependenciesOnCore()
     {
         // When
@@ -26,7 +26,7 @@ public class DataAccessLayerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void DataAccessLayer_RepositoriesShouldDependOnBothApplicationAndDomain()
     {
         // When
@@ -46,7 +46,7 @@ public class DataAccessLayerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void DataAccessLayer_MongoDocumentsShouldInheritFromMongoDocumentClass()
     {
         // When
@@ -66,7 +66,7 @@ public class DataAccessLayerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
-    [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public void DataAccessLayer_RepositoryInterfacesShouldNotExist()
     {
         // When
