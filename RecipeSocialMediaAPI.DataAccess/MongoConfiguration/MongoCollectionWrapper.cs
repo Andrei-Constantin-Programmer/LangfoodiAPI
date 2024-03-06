@@ -20,6 +20,11 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         _collection = _database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
     }
 
+    public async Task<TDocument?> Find(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
+    {
+        return (await _collection.FindAsync(expr, cancellationToken: cancellationToken)).FirstOrDefault(cancellationToken: cancellationToken);
+    }
+
     public async Task<IEnumerable<TDocument>> GetAll(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
         return (await _collection.FindAsync(expr, cancellationToken: cancellationToken))
@@ -47,11 +52,6 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
     public bool Contains(Expression<Func<TDocument, bool>> expr)
     {
         return _collection?.Find(expr).Any() ?? false;
-    }
-
-    public async Task<TDocument?> Find(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
-    {
-        return (await _collection.FindAsync(expr)).FirstOrDefault();
     }
 
     public bool UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr)
