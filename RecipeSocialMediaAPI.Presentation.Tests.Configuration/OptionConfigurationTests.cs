@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using Microsoft.Extensions.Options;
-using RecipeSocialMediaAPI.DataAccess.Helpers;
+using RecipeSocialMediaAPI.Infrastructure.Helpers;
 using FluentAssertions;
 using RecipeSocialMediaAPI.Presentation.Options;
 using RecipeSocialMediaAPI.Presentation.OptionValidation;

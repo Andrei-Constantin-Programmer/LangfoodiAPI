@@ -16,7 +16,7 @@ public class ApplicationLayerTests
         var testResult = Types
             .InAssembly(Assemblies.ApplicationAssembly)
             .ShouldNot()
-            .HaveDependencyOnAny(Assemblies.DATA_ACCESS, Assemblies.PRESENTATION)
+            .HaveDependencyOnAny(Assemblies.INFRASTRUCTURE, Assemblies.PRESENTATION)
             .GetResult();
 
         // Then

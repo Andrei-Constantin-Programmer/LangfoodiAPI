@@ -16,7 +16,7 @@ public class DomainLayerTests
         var testResult = Types
             .InAssembly(Assemblies.DomainAssembly)
             .ShouldNot()
-            .HaveDependencyOnAny(Assemblies.APPLICATION, Assemblies.DATA_ACCESS, Assemblies.PRESENTATION)
+            .HaveDependencyOnAny(Assemblies.APPLICATION, Assemblies.INFRASTRUCTURE, Assemblies.PRESENTATION)
             .GetResult();
 
         // Then

@@ -14,9 +14,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Presen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Presentation.Tests.Unit", "RecipeSocialMediaAPI.Presentation.Tests.Unit\RecipeSocialMediaAPI.Presentation.Tests.Unit.csproj", "{848B8822-0EE9-4CD4-A547-5164F50E6D1C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccess", "DataAccess", "{0E16065C-8FE1-4AA4-94B8-3C8087AED945}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{0E16065C-8FE1-4AA4-94B8-3C8087AED945}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.DataAccess", "RecipeSocialMediaAPI.DataAccess\RecipeSocialMediaAPI.DataAccess.csproj", "{82A03BEF-1D22-47A1-87FA-C539D5501A50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Infrastructure", "RecipeSocialMediaAPI.Infrastructure\RecipeSocialMediaAPI.Infrastructure.csproj", "{82A03BEF-1D22-47A1-87FA-C539D5501A50}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{ABD1D235-E80E-4E44-98CE-6A596EA1B397}"
 EndProject
@@ -24,11 +24,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Domain
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{6D1828D2-EB76-4815-BBF5-ACD54B7F8A57}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.DataAccess.Tests.Integration", "RecipeSocialMediaAPI.DataAccess.Tests.Integration\RecipeSocialMediaAPI.DataAccess.Tests.Integration.csproj", "{6287601E-4876-4CC3-A57F-390F286D2044}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Infrastructure.Tests.Integration", "RecipeSocialMediaAPI.Infrastructure.Tests.Integration\RecipeSocialMediaAPI.Infrastructure.Tests.Integration.csproj", "{6287601E-4876-4CC3-A57F-390F286D2044}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.DataAccess.Tests.Shared", "RecipeSocialMediaAPI.DataAccess.Tests.Shared\RecipeSocialMediaAPI.DataAccess.Tests.Shared.csproj", "{69462261-D288-46DA-8CD0-B3E326F522D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Infrastructure.Tests.Shared", "RecipeSocialMediaAPI.Infrastructure.Tests.Shared\RecipeSocialMediaAPI.Infrastructure.Tests.Shared.csproj", "{69462261-D288-46DA-8CD0-B3E326F522D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.DataAccess.Tests.Unit", "RecipeSocialMediaAPI.DataAccess.Tests.Unit\RecipeSocialMediaAPI.DataAccess.Tests.Unit.csproj", "{4DB228D1-83AD-459D-8033-E3CCD2B7608E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Infrastructure.Tests.Unit", "RecipeSocialMediaAPI.Infrastructure.Tests.Unit\RecipeSocialMediaAPI.Infrastructure.Tests.Unit.csproj", "{4DB228D1-83AD-459D-8033-E3CCD2B7608E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestInfrastructure", "TestInfrastructure", "{1B334E79-32C1-4299-8D86-E61E9FF10159}"
 EndProject
@@ -50,7 +50,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Presentation.Tests.Configuration", "RecipeSocialMediaAPI.Presentation.Tests.Configuration\RecipeSocialMediaAPI.Presentation.Tests.Configuration.csproj", "{B268D24E-CC4B-40AF-A791-D4AE89BB205A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeSocialMediaAPI.Presentation.Tests.Architecture", "RecipeSocialMediaAPI.Presentation.Tests.Architecture\RecipeSocialMediaAPI.Presentation.Tests.Architecture.csproj", "{0D18D413-57F9-4628-8E47-C1F174C484BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeSocialMediaAPI.Presentation.Tests.Architecture", "RecipeSocialMediaAPI.Presentation.Tests.Architecture\RecipeSocialMediaAPI.Presentation.Tests.Architecture.csproj", "{0D18D413-57F9-4628-8E47-C1F174C484BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

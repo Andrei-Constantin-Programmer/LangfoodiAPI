@@ -29,7 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RecipeSocialMediaAPI.Application.Tests.Unit\RecipeSocialMediaAPI.Application.Tests.Unit.csproj" />
     <ProjectReference Include="..\RecipeSocialMediaAPI.Presentation\RecipeSocialMediaAPI.Presentation.csproj" />
-    <ProjectReference Include="..\RecipeSocialMediaAPI.DataAccess\RecipeSocialMediaAPI.DataAccess.csproj" />
+    <ProjectReference Include="..\RecipeSocialMediaAPI.Infrastructure\RecipeSocialMediaAPI.Infrastructure.csproj" />
     <ProjectReference Include="..\RecipeSocialMediaAPI.Domain.Tests.Shared\RecipeSocialMediaAPI.Domain.Tests.Shared.csproj" />
     <ProjectReference Include="..\RecipeSocialMediaAPI.TestInfrastructure\RecipeSocialMediaAPI.TestInfrastructure.csproj" />
   </ItemGroup>

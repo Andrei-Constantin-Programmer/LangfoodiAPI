@@ -27,7 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RecipeSocialMediaAPI.Application\RecipeSocialMediaAPI.Application.csproj" />
     <ProjectReference Include="..\RecipeSocialMediaAPI.Presentation\RecipeSocialMediaAPI.Presentation.csproj" />
-    <ProjectReference Include="..\RecipeSocialMediaAPI.DataAccess\RecipeSocialMediaAPI.DataAccess.csproj" />
+    <ProjectReference Include="..\RecipeSocialMediaAPI.Infrastructure\RecipeSocialMediaAPI.Infrastructure.csproj" />
     <ProjectReference Include="..\RecipeSocialMediaAPI.Domain\RecipeSocialMediaAPI.Domain.csproj" />
     <ProjectReference Include="..\RecipeSocialMediaAPI.TestInfrastructure\RecipeSocialMediaAPI.TestInfrastructure.csproj" />
   </ItemGroup>

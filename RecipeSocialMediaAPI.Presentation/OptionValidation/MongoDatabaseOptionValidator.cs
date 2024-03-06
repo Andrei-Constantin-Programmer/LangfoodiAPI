@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using RecipeSocialMediaAPI.DataAccess.Helpers;
+using RecipeSocialMediaAPI.Infrastructure.Helpers;
 using System.Text.RegularExpressions;
 
 namespace RecipeSocialMediaAPI.Presentation.OptionValidation;

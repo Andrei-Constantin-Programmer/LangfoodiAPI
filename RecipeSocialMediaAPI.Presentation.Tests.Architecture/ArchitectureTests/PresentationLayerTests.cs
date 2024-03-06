@@ -10,7 +10,7 @@ public class PresentationLayerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
     [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
-    public void PresentationLayer_EndpointsShouldNotHaveDependenciesOnDomainOrDataAccess()
+    public void PresentationLayer_EndpointsShouldNotHaveDependenciesOnDomainOrInfrastructure()
     {
         // When
         var testResult = Types
@@ -18,7 +18,7 @@ public class PresentationLayerTests
             .That()
             .HaveNameEndingWith("Endpoints")
             .ShouldNot()
-            .HaveDependencyOnAny(Assemblies.DOMAIN, Assemblies.DATA_ACCESS)
+            .HaveDependencyOnAny(Assemblies.DOMAIN, Assemblies.INFRASTRUCTURE)
             .GetResult();
 
         // Then

@@ -2,20 +2,20 @@
 using RecipeSocialMediaAPI.TestInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using FluentAssertions;
-using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
-using RecipeSocialMediaAPI.DataAccess.Mappers;
+using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Infrastructure.Mappers;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Recipes;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
-using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
-using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
-using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.ImageHosting;
+using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
+using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
 using RecipeSocialMediaAPI.Application.Repositories.Images;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Images;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.Images;
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Configuration;
 

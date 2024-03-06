@@ -1,21 +1,21 @@
 ﻿using FluentAssertions;
 using NetArchTest.Rules;
 using RecipeSocialMediaAPI.Presentation.Tests.Architecture.TestHelpers;
-using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
+using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Architecture.ArchitectureTests;
 
-public class DataAccessLayerTests
+public class InfrastructureLayerTests
 {
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public void DataAccessLayer_ShouldNotHaveDependenciesOnPresentation()
+    public void InfrastructureLayer_ShouldNotHaveDependenciesOnPresentation()
     {
         // When
         var testResult = Types
-            .InAssembly(Assemblies.DataAccessAssembly)
+            .InAssembly(Assemblies.InfrastructureAssembly)
             .ShouldNot()
             .HaveDependencyOnAny(Assemblies.PRESENTATION)
             .GetResult();
@@ -27,11 +27,11 @@ public class DataAccessLayerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public void DataAccessLayer_RepositoriesShouldDependOnBothApplicationAndDomain()
+    public void InfrastructureLayer_RepositoriesShouldDependOnBothApplicationAndDomain()
     {
         // When
         var testResult = Types
-            .InAssembly(Assemblies.DataAccessAssembly)
+            .InAssembly(Assemblies.InfrastructureAssembly)
             .That()
             .HaveNameEndingWith("Repository")
             .And()
@@ -47,11 +47,11 @@ public class DataAccessLayerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public void DataAccessLayer_MongoDocumentsShouldInheritFromMongoDocumentClass()
+    public void InfrastructureLayer_MongoDocumentsShouldInheritFromMongoDocumentClass()
     {
         // When
         var testResult = Types
-            .InAssembly(Assemblies.DataAccessAssembly)
+            .InAssembly(Assemblies.InfrastructureAssembly)
             .That()
             .HaveNameEndingWith("Document")
             .And()
@@ -67,11 +67,11 @@ public class DataAccessLayerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.ARCHITECTURE)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public void DataAccessLayer_RepositoryInterfacesShouldNotExist()
+    public void InfrastructureLayer_RepositoryInterfacesShouldNotExist()
     {
         // When
         var testResult = Types
-            .InAssembly(Assemblies.DataAccessAssembly)
+            .InAssembly(Assemblies.InfrastructureAssembly)
             .That()
             .AreInterfaces()
             .And()

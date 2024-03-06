@@ -19,7 +19,7 @@ public class GlobalTests
             {
                 Assemblies.DomainAssembly, 
                 Assemblies.ApplicationAssembly,
-                Assemblies.DataAccessAssembly,
+                Assemblies.InfrastructureAssembly,
                 Assemblies.PresentationAssembly
             })
             .That()
