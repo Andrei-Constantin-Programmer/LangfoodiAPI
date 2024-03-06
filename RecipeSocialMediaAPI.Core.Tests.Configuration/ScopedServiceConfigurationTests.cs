@@ -10,12 +10,8 @@ using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.DataAccess.Repositories.Users;
-using RecipeSocialMediaAPI.Application.Repositories.ImageHosting;
-using RecipeSocialMediaAPI.DataAccess.Repositories.ImageHosting;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration;
-using RecipeSocialMediaAPI.Application.Repositories.Images;
-using RecipeSocialMediaAPI.DataAccess.Repositories.Images;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 
@@ -195,32 +191,6 @@ public class ScopedServiceConfigurationTests : IClassFixture<WebApplicationFacto
 
         // Then
         userPersistenceRepository.Should().NotBeNull();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void ImageHostingQueryRepository_ShouldBeConfiguredCorrectly()
-    {
-        // Given
-        using var scope = _factory.Services.CreateScope();
-        var imageHostingQueryRepository = scope.ServiceProvider.GetService(typeof(IImageHostingQueryRepository)) as ImageHostingQueryRepository;
-
-        // Then
-        imageHostingQueryRepository.Should().NotBeNull();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void ImageHostingPersistenceRepository_ShouldBeConfiguredCorrectly()
-    {
-        // Given
-        using var scope = _factory.Services.CreateScope();
-        var imageHostingQueryRepository = scope.ServiceProvider.GetService(typeof(IImageHostingPersistenceRepository)) as ImageHostingPersistenceRepository;
-
-        // Then
-        imageHostingQueryRepository.Should().NotBeNull();
     }
 
     [Fact]

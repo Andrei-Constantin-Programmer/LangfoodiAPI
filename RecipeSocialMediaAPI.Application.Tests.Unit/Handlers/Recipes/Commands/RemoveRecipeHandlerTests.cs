@@ -5,17 +5,18 @@ using Moq;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Notifications;
-using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
+
 public class RemoveRecipeHandlerTests
 {
     private readonly Mock<ILogger<RemoveRecipeCommand>> _loggerMock;
-    private readonly Mock<IImageHostingPersistenceRepository> _imageHostingPersistenceRepositoryMock;
+    private readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
     private readonly Mock<IRecipePersistenceRepository> _recipePersistenceRepositoryMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
     private readonly Mock<IPublisher> _publisherMock;
@@ -29,13 +30,13 @@ public class RemoveRecipeHandlerTests
         _loggerMock = new Mock<ILogger<RemoveRecipeCommand>>();
         _recipePersistenceRepositoryMock = new Mock<IRecipePersistenceRepository>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
-        _imageHostingPersistenceRepositoryMock = new Mock<IImageHostingPersistenceRepository>();
+        _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
         _publisherMock = new Mock<IPublisher>();
 
         _removeRecipeHandler = new RemoveRecipeHandler(
             _recipePersistenceRepositoryMock.Object,
             _recipeQueryRepositoryMock.Object,
-            _imageHostingPersistenceRepositoryMock.Object,
+            _cloudinaryWebClientMock.Object,
             _loggerMock.Object,
             _publisherMock.Object);
     }
@@ -180,7 +181,7 @@ public class RemoveRecipeHandlerTests
             .Setup(x => x.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        _imageHostingPersistenceRepositoryMock
+        _cloudinaryWebClientMock
             .Setup(x => x.BulkRemoveHostedImages(It.IsAny<List<string>>()))
             .Returns(true);
 
@@ -193,7 +194,7 @@ public class RemoveRecipeHandlerTests
         _recipePersistenceRepositoryMock
             .Verify(repo => repo.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        _imageHostingPersistenceRepositoryMock
+        _cloudinaryWebClientMock
             .Verify(repo => repo.BulkRemoveHostedImages(new() { "step1_img_id", "thumbnail_id_1" }), Times.Once);
 
         _loggerMock.Verify(logger =>
@@ -243,7 +244,7 @@ public class RemoveRecipeHandlerTests
             .Setup(x => x.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        _imageHostingPersistenceRepositoryMock
+        _cloudinaryWebClientMock
             .Setup(x => x.BulkRemoveHostedImages(It.IsAny<List<string>>()))
             .Returns(false);
 
@@ -256,7 +257,7 @@ public class RemoveRecipeHandlerTests
         _recipePersistenceRepositoryMock
             .Verify(repo => repo.DeleteRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        _imageHostingPersistenceRepositoryMock
+        _cloudinaryWebClientMock
             .Verify(repo => repo.BulkRemoveHostedImages(new() { "step1_img_id", "thumbnail_id_1" }), Times.Once);
 
         _loggerMock.Verify(logger =>

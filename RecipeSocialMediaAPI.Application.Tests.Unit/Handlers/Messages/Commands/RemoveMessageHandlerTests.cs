@@ -4,8 +4,8 @@ using Moq;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
-using RecipeSocialMediaAPI.Application.Repositories.Images;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
@@ -20,7 +20,7 @@ public class RemoveMessageHandlerTests
     private readonly Mock<IMessagePersistenceRepository> _messagePersistenceRepositoryMock;
     private readonly Mock<IMessageQueryRepository> _messageQueryRepositoryMock;
     private readonly Mock<IPublisher> _publisherMock;
-    private readonly Mock<IImageHostingPersistenceRepository> _imageHostingPersistenceRepositoryMock;
+    private readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
 
     private readonly IMessageFactory _messageFactory;
@@ -32,7 +32,7 @@ public class RemoveMessageHandlerTests
         _messagePersistenceRepositoryMock = new Mock<IMessagePersistenceRepository>();
         _messageQueryRepositoryMock = new Mock<IMessageQueryRepository>();
         _publisherMock = new Mock<IPublisher>();
-        _imageHostingPersistenceRepositoryMock = new Mock<IImageHostingPersistenceRepository>();
+        _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
 
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
         _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
@@ -41,7 +41,7 @@ public class RemoveMessageHandlerTests
             _messagePersistenceRepositoryMock.Object,
             _messageQueryRepositoryMock.Object,
             _publisherMock.Object,
-            _imageHostingPersistenceRepositoryMock.Object);
+            _cloudinaryWebClientMock.Object);
     }
 
     [Fact]
@@ -197,7 +197,7 @@ public class RemoveMessageHandlerTests
 
         // Then
         await testAction.Should().NotThrowAsync();
-        _imageHostingPersistenceRepositoryMock
+        _cloudinaryWebClientMock
             .Verify(repo => repo.BulkRemoveHostedImages(images), Times.Once);
     }
 }

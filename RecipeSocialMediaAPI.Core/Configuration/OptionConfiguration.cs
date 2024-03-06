@@ -14,13 +14,8 @@ internal static class OptionConfiguration
             .ValidateOptions()
             .ValidateOnStart();
         
-        builder.Services.AddOptions<CloudinaryApiOptions>()
-            .BindConfiguration(CloudinaryApiOptions.CONFIGURATION_SECTION)
-            .ValidateOptions()
-            .ValidateOnStart();
-
-        builder.Services.AddOptions<CloudinaryEndpointOptions>()
-            .BindConfiguration(CloudinaryEndpointOptions.CONFIGURATION_SECTION)
+        builder.Services.AddOptions<CloudinaryOptions>()
+            .BindConfiguration(CloudinaryOptions.CONFIGURATION_SECTION)
             .ValidateOptions()
             .ValidateOnStart();
 

@@ -80,19 +80,6 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void CloudinarySignatureService_ShouldBeConfiguredCorrectly()
-    {
-        // Given
-        using var scope = _factory.Services.CreateScope();
-        var signatureService = scope.ServiceProvider.GetService(typeof(ICloudinarySignatureService)) as CloudinarySignatureService;
-
-        // Then
-        signatureService.Should().NotBeNull();
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
     public void CloudinaryWebClient_ShouldBeConfiguredCorrectly()
     {
         // Given

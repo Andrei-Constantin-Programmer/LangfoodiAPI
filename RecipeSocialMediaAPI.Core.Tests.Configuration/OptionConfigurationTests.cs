@@ -38,13 +38,13 @@ public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Prog
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public void CloudinaryApiOptions_ShouldBeConfiguredCorrectly()
+    public void CloudinaryOptions_ShouldBeConfiguredCorrectly()
     {
         // Given
-        var cloudinaryOptions = _serviceProvider.GetService(typeof(IOptions<CloudinaryApiOptions>)) as IOptions<CloudinaryApiOptions>;
+        var cloudinaryOptions = _serviceProvider.GetService(typeof(IOptions<CloudinaryOptions>)) as IOptions<CloudinaryOptions>;
 
         // When
-        var validationResult = new CloudinaryApiOptionValidator().Validate(cloudinaryOptions!.Value).IsValid;
+        var validationResult = new CloudinaryOptionValidator().Validate(cloudinaryOptions!.Value).IsValid;
 
         // Then
         cloudinaryOptions.Should().NotBeNull();
