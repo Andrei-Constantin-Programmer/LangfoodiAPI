@@ -33,7 +33,7 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
     public async Task<SuccessfulAuthenticationDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
         IUserCredentials user = await _userQueryRepository.GetUserByEmailAsync(request.Email, cancellationToken)
-                    ?? throw new UserNotFoundException($"No user found with handler/email {request.Email}");
+                    ?? throw new UserNotFoundException($"No user found with email {request.Email}");
 
         var successfulLogin = _cryptoService.ArePasswordsTheSame(request.Password, user.Password ?? string.Empty);
         if (!successfulLogin)
