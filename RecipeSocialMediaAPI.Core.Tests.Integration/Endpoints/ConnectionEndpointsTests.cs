@@ -60,7 +60,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnection_WhenUsersExist_ReturnConnection()
+    public async Task GetConnection_WhenUsersExist_ReturnConnection()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -91,7 +91,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnection_WhenConnectionDoesNotExist_ReturnNotFound()
+    public async Task GetConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -115,7 +115,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
-    public async void GetConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
+    public async Task GetConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
     {
         // Given
         TestUserCredentials user = new()
@@ -152,7 +152,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -173,7 +173,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnectionsByUser_WhenConnectionsFound_ReturnConnections()
+    public async Task GetConnectionsByUser_WhenConnectionsFound_ReturnConnections()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -216,7 +216,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnectionsByUser_WhenNoConnectionsFound_ReturnEmptyCollection()
+    public async Task GetConnectionsByUser_WhenNoConnectionsFound_ReturnEmptyCollection()
     {
         // Given
         var user = await _fakeUserRepository
@@ -237,7 +237,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnectionsByUser_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task GetConnectionsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -265,7 +265,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnectionsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConnectionsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -292,7 +292,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnection_WhenUsersExist_ReturnNewConnection()
+    public async Task CreateConnection_WhenUsersExist_ReturnNewConnection()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -323,7 +323,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
-    public async void CreateConnection_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
+    public async Task CreateConnection_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
     {
         // Given
         TestUserCredentials user = new()
@@ -362,7 +362,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task CreateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -384,7 +384,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData(ConnectionStatus.Connected)]
     [InlineData(ConnectionStatus.Blocked)]
-    public async void UpdateConnection_WhenConnectionExists_UpdateTheConnection(ConnectionStatus connectionStatus)
+    public async Task UpdateConnection_WhenConnectionExists_UpdateTheConnection(ConnectionStatus connectionStatus)
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -413,7 +413,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateConnection_WhenConnectionDoesNotExist_ReturnNotFound()
+    public async Task UpdateConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -439,7 +439,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
-    public async void UpdateConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
+    public async Task UpdateConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
     {
         // Given
         TestUserCredentials user = new()
@@ -502,7 +502,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateConnection_WhenConnectionStatusIsNotSupported_ReturnBadRequest()
+    public async Task UpdateConnection_WhenConnectionStatusIsNotSupported_ReturnBadRequest()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -527,7 +527,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UpdateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository

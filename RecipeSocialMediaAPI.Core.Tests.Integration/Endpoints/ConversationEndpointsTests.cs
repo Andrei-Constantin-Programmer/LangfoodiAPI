@@ -49,7 +49,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationsByUser_WhenConversationsExist_ReturnConversations()
+    public async Task GetConversationsByUser_WhenConversationsExist_ReturnConversations()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -89,7 +89,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationsByUser_WhenNoConversationsExistForUser_ReturnEmptyList()
+    public async Task GetConversationsByUser_WhenNoConversationsExistForUser_ReturnEmptyList()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -110,7 +110,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationsByUser_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task GetConversationsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -138,7 +138,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConversationsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -166,7 +166,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
+    public async Task GetConversationByConnection_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -197,7 +197,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
+    public async Task GetConversationByConnection_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -241,7 +241,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConversationDoesNotExist_ReturnNotFound()
+    public async Task GetConversationByConnection_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -265,7 +265,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConnectionDoesNotExist_ReturnNotFound()
+    public async Task GetConversationByConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -284,7 +284,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConversationByConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -307,7 +307,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
+    public async Task GetConversationByGroup_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -338,7 +338,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
+    public async Task GetConversationByGroup_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -383,7 +383,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenConversationDoesNotExist_ReturnNotFound()
+    public async Task GetConversationByGroup_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -407,7 +407,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    public async Task GetConversationByGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -426,7 +426,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConversationByGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -450,7 +450,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnectionConversation_WhenConnectionIsValid_ReturnCreatedConnectionConversation()
+    public async Task CreateConnectionConversation_WhenConnectionIsValid_ReturnCreatedConnectionConversation()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -481,7 +481,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnectionConversation_WhenConnectionIsNotFound_ReturnNotFound()
+    public async Task CreateConnectionConversation_WhenConnectionIsNotFound_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -500,7 +500,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnectionConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task CreateConnectionConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -521,7 +521,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroupConversation_WhenGroupIsValid_ReturnCreatedGroupConversation()
+    public async Task CreateGroupConversation_WhenGroupIsValid_ReturnCreatedGroupConversation()
     {
         // Given        
         var user1 = await _fakeUserRepository
@@ -552,7 +552,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
+    public async Task CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -571,7 +571,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroupConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task CreateGroupConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given        
         var user1 = await _fakeUserRepository
@@ -592,7 +592,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void MarkConversationAsRead_WhenConversationExists_MarkAllConversationsAsRead()
+    public async Task MarkConversationAsRead_WhenConversationExists_MarkAllConversationsAsRead()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -633,7 +633,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void MarkConversationAsRead_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task MarkConversationAsRead_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository

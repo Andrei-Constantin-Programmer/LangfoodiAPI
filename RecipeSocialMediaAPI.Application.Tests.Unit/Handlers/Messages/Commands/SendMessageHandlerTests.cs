@@ -78,7 +78,7 @@ public class SendMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void Handle_WhenTextMessageIsCreated_ReturnsMappedMessage(bool withGroupConversation)
+    public async Task Handle_WhenTextMessageIsCreated_ReturnsMappedMessage(bool withGroupConversation)
     {
         // Given
         TestUserCredentials user1 = new()
@@ -154,7 +154,7 @@ public class SendMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void Handle_WhenImageMessageIsCreated_ReturnsMappedMessage(bool withGroupConversation)
+    public async Task Handle_WhenImageMessageIsCreated_ReturnsMappedMessage(bool withGroupConversation)
     {
         // Given
         TestUserCredentials user1 = new()
@@ -229,7 +229,7 @@ public class SendMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void Handle_WhenRecipeMessageIsCreated_ReturnsMappedMessage(bool withGroupConversation)
+    public async Task Handle_WhenRecipeMessageIsCreated_ReturnsMappedMessage(bool withGroupConversation)
     {
         // Given
         TestUserCredentials user1 = new()
@@ -312,7 +312,7 @@ public class SendMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async void Handle_WhenRecipeMessageIsCreatedWithNonexistentRecipes_ThrowsRecipeNotFoundException()
+    public async Task Handle_WhenRecipeMessageIsCreatedWithNonexistentRecipes_ThrowsRecipeNotFoundException()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -393,7 +393,7 @@ public class SendMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async void Handle_WhenUserIsNotFound_ThrowsUserNotFoundException()
+    public async Task Handle_WhenUserIsNotFound_ThrowsUserNotFoundException()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -441,7 +441,7 @@ public class SendMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async void Handle_WhenConversationIsNotFound_ThrowsConversationNotFoundException()
+    public async Task Handle_WhenConversationIsNotFound_ThrowsConversationNotFoundException()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -491,7 +491,7 @@ public class SendMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void Handle_WhenMessageIsReply_ReturnsMappedMessage(bool withGroupConversation)
+    public async Task Handle_WhenMessageIsReply_ReturnsMappedMessage(bool withGroupConversation)
     {
         // Given
         TestUserCredentials user1 = new()
@@ -571,7 +571,7 @@ public class SendMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void Handle_WhenMessageIsReplyButMessageNotFound_ThrowsMessageNotFound(bool withGroupConversation)
+    public async Task Handle_WhenMessageIsReplyButMessageNotFound_ThrowsMessageNotFound(bool withGroupConversation)
     {
         // Given
         TestUserCredentials user1 = new()
@@ -649,7 +649,7 @@ public class SendMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async void Handle_WhenMessageIsCreated_PublishMessageCreatedNotification()
+    public async Task Handle_WhenMessageIsCreated_PublishMessageCreatedNotification()
     {
         // Given
         TestUserCredentials user1 = new()
@@ -727,7 +727,7 @@ public class SendMessageHandlerTests
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void Handle_WhenConnectionIsBlocked_ThrowAttemptedToSendMessageToBlockedConnectionException(bool isBlocker)
+    public async Task Handle_WhenConnectionIsBlocked_ThrowAttemptedToSendMessageToBlockedConnectionException(bool isBlocker)
     {
         // Given
         string connectionId = "conn1";

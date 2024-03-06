@@ -20,7 +20,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_SignatureGenerated_ReturnGeneratedCloudinarySignature()
+    public async Task GetCloudinarySignature_SignatureGenerated_ReturnGeneratedCloudinarySignature()
     {
         // Given
         var user = await _fakeUserRepository
@@ -46,7 +46,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetCloudinarySignature_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _cloudinarySignatureServiceMock
@@ -63,7 +63,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageSingleDelete_GivenPublicIdAndNoError_ReturnOk()
+    public async Task ImageSingleDelete_GivenPublicIdAndNoError_ReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -88,7 +88,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageSingleDelete_GivenPublicIdAndError_ReturnNotOk()
+    public async Task ImageSingleDelete_GivenPublicIdAndError_ReturnNotOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -113,7 +113,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageSingleDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task ImageSingleDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _cloudinaryWebClientMock
@@ -133,7 +133,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageBulkDelete_GivenPublicIdsAndNoError_ReturnOk()
+    public async Task ImageBulkDelete_GivenPublicIdsAndNoError_ReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -158,7 +158,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageBulkDelete_GivenPublicIdsAndError_ReturnNotOk()
+    public async Task ImageBulkDelete_GivenPublicIdsAndError_ReturnNotOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -183,7 +183,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageBulkDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task ImageBulkDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _cloudinaryWebClientMock

@@ -17,7 +17,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenValidUserWithEmail_ReturnUserFromDBWithBearerToken()
+    public async Task Authenticate_WhenValidUserWithEmail_ReturnUserFromDBWithBearerToken()
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
@@ -44,7 +44,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task Authenticate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
@@ -61,7 +61,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
+    public async Task Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");

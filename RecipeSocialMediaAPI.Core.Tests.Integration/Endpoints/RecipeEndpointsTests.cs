@@ -119,7 +119,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeGetById_WhenRecipeDoesNotExist_ReturnNotFound()
+    public async Task RecipeGetById_WhenRecipeDoesNotExist_ReturnNotFound()
     {
         // Given
         string recipeId = "0";
@@ -206,7 +206,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUserId_WhenOneRecipeExists_ReturnFoundRecipe()
+    public async Task RecipesGetFromUserId_WhenOneRecipeExists_ReturnFoundRecipe()
     {
         // Given
         var user = await _fakeUserRepository
@@ -261,7 +261,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipesGetFromUserId_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task RecipesGetFromUserId_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user = await _fakeUserRepository
@@ -638,7 +638,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeRemove_WhenRecipeDoesNotExist_ReturnNotFound()
+    public async Task RecipeRemove_WhenRecipeDoesNotExist_ReturnNotFound()
     {
         // Given
         string recipeId = "0";
@@ -663,7 +663,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeRemove_WhenRecipeExists_RemoveRecipe()
+    public async Task RecipeRemove_WhenRecipeExists_RemoveRecipe()
     {
         // Given
         string recipeId = "0";
@@ -684,7 +684,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void RecipeRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task RecipeRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         string recipeId = "0";

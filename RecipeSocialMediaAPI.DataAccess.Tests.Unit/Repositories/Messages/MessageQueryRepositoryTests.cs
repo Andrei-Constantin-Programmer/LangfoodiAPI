@@ -126,7 +126,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async void GetMessage_WhenOnlyTextIsPresent_ReturnTextMessage()
+    public async Task GetMessage_WhenOnlyTextIsPresent_ReturnTextMessage()
     {
         // Given
         string messageId = "1";

@@ -59,7 +59,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroup_WhenUsersExist_ReturnNewGroup()
+    public async Task CreateGroup_WhenUsersExist_ReturnNewGroup()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -93,7 +93,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [InlineData(true, false, true)]
     [InlineData(false, true, true)]
     [InlineData(true, true, false)]
-    public async void CreateGroup_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists, bool user3Exists)
+    public async Task CreateGroup_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists, bool user3Exists)
     {
         // Given
         TestUserCredentials user = new()
@@ -137,7 +137,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task CreateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -160,7 +160,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroup_WhenGroupExists_ReturnGroup()
+    public async Task GetGroup_WhenGroupExists_ReturnGroup()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -191,7 +191,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    public async Task GetGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -210,7 +210,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = (await _fakeUserRepository
@@ -233,7 +233,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroupsByUser_WhenGroupsExist_ReturnGroups()
+    public async Task GetGroupsByUser_WhenGroupsExist_ReturnGroups()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -275,7 +275,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroupsByUser_WhenNoGroupsForUserExist_ReturnEmptyCollection()
+    public async Task GetGroupsByUser_WhenNoGroupsForUserExist_ReturnEmptyCollection()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -304,7 +304,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroupsByUser_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task GetGroupsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -332,7 +332,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroupsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetGroupsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = (await _fakeUserRepository
@@ -359,7 +359,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateGroup_WhenGroupExists_ReturnOk()
+    public async Task UpdateGroup_WhenGroupExists_ReturnOk()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -393,7 +393,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    public async Task UpdateGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -416,7 +416,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateGroup_WhenUserDoesNotExist_ReturnOk()
+    public async Task UpdateGroup_WhenUserDoesNotExist_ReturnOk()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -442,7 +442,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UpdateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = (await _fakeUserRepository
@@ -467,7 +467,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteGroup_WhenGroupExists_ReturnOk()
+    public async Task DeleteGroup_WhenGroupExists_ReturnOk()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -494,7 +494,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    public async Task DeleteGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -523,7 +523,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteGroup_WhenUserIsNotDeveloper_ReturnForbidden()
+    public async Task DeleteGroup_WhenUserIsNotDeveloper_ReturnForbidden()
     {
         // Given
         TestUserCredentials user = new()
@@ -552,7 +552,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task DeleteGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = (await _fakeUserRepository

@@ -20,7 +20,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserCreate_WhenValidUser_ReturnUserWithId()
+    public async Task UserCreate_WhenValidUser_ReturnUserWithId()
     {
         // Given
         NewUserContract contract = new("TestHandler", "TestUsername", "test@mail.com", "Test@123");
@@ -44,7 +44,7 @@ public class UserEndpointsTests : EndpointTestBase
     [InlineData("", "test@mail.com", "Test@123")]
     [InlineData("TestUsername", "test.com", "Test@123")]
     [InlineData("TestUsername", "test@mail.com", "test")]
-    public async void UserCreate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
+    public async Task UserCreate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
         NewUserContract contract = new("handler", username, email, password);
@@ -59,7 +59,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUsernameExists_WhenUsernameExists_ReturnTrue()
+    public async Task UserUsernameExists_WhenUsernameExists_ReturnTrue()
     {
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
@@ -80,7 +80,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
+    public async Task UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
     {
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
@@ -98,7 +98,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserEmailExists_WhenEmailExists_ReturnTrue()
+    public async Task UserEmailExists_WhenEmailExists_ReturnTrue()
     {
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
@@ -119,7 +119,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
+    public async Task UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
     {
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
@@ -137,7 +137,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
+    public async Task UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -165,7 +165,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
+    public async Task UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -201,7 +201,7 @@ public class UserEndpointsTests : EndpointTestBase
     [InlineData("", "test@mail.com", "Test@123")]
     [InlineData("TestUsername", "test.com", "Test@123")]
     [InlineData("TestUsername", "test@mail.com", "test")]
-    public async void UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
+    public async Task UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
         var user = await _fakeUserRepository
@@ -222,7 +222,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UserUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user = await _fakeUserRepository
@@ -240,7 +240,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
+    public async Task UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -262,7 +262,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
+    public async Task UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -284,7 +284,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenUserEmailDoesNotExist_ReturnNotFound()
+    public async Task UserRemove_WhenUserEmailDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -312,7 +312,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenUserIdDoesNotExist_ReturnNotFound()
+    public async Task UserRemove_WhenUserIdDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -340,7 +340,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UserRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user = await _fakeUserRepository
@@ -358,7 +358,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList(bool containSelf)
+    public async Task GetAll_WhenThereAreNoUsers_ReturnEmptyList(bool containSelf)
     {
         // Given
         var user = await _fakeUserRepository
@@ -380,7 +380,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenThereAreUsersAndChoseSelf_ReturnUsersWithSelf()
+    public async Task GetAll_WhenThereAreUsersAndChoseSelf_ReturnUsersWithSelf()
     {
         // Given
         string containedString = "test";
@@ -415,7 +415,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenThereAreUsersAndChoseNonSelf_ReturnUsersWithoutQueryingUser()
+    public async Task GetAll_WhenThereAreUsersAndChoseNonSelf_ReturnUsersWithoutQueryingUser()
     {
         // Given
         string containedString = "test";
@@ -446,7 +446,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnected_WhenThereAreNoUsers_ReturnEmptyList()
+    public async Task GetConnected_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
         var user = await _fakeUserRepository
@@ -468,7 +468,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnected_WhenThereAreUsers_ReturnOnlyConnectedUsers()
+    public async Task GetConnected_WhenThereAreUsers_ReturnOnlyConnectedUsers()
     {
         // Given
         string containedString = "test";
@@ -502,7 +502,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnected_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConnected_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         string containedString = "test";
@@ -526,7 +526,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetUnconnected_WhenThereAreNoUsers_ReturnEmptyList()
+    public async Task GetUnconnected_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
         var user = await _fakeUserRepository
@@ -548,7 +548,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetUnconnected_WhenThereAreUsers_ReturnOnlyUnconnectedUsers()
+    public async Task GetUnconnected_WhenThereAreUsers_ReturnOnlyUnconnectedUsers()
     {
         // Given
         string containedString = "test";
@@ -582,7 +582,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetUnconnected_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetUnconnected_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         string containedString = "test";

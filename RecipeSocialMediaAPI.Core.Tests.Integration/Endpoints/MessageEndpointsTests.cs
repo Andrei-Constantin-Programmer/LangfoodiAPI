@@ -105,7 +105,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenTextMessageFound_ReturnMessage()
+    public async Task GetMessageById_WhenTextMessageFound_ReturnMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -138,7 +138,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenRecipeMessageFound_ReturnMessage()
+    public async Task GetMessageById_WhenRecipeMessageFound_ReturnMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -179,7 +179,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenImageMessageFound_ReturnMessage()
+    public async Task GetMessageById_WhenImageMessageFound_ReturnMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -212,7 +212,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenMessageDoesNotExist_ReturnNotFound()
+    public async Task GetMessageById_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -231,7 +231,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetMessageById_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _ = _fakeUserRepository
@@ -249,7 +249,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessagesByConversation_WhenConversationDoesExist_ReturnMessages()
+    public async Task GetMessagesByConversation_WhenConversationDoesExist_ReturnMessages()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -306,7 +306,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessagesByConversation_WhenConversationDoesNotExist_ReturnNotFound()
+    public async Task GetMessagesByConversation_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -325,7 +325,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessagesByConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetMessagesByConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user1 = await _fakeUserRepository
@@ -356,7 +356,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
+    public async Task SendMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -392,7 +392,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractIsValidForImageMessage_ReturnCreatedMessage()
+    public async Task SendMessage_WhenContractIsValidForImageMessage_ReturnCreatedMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -428,7 +428,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractIsValidForRecipeMessage_ReturnCreatedMessage()
+    public async Task SendMessage_WhenContractIsValidForRecipeMessage_ReturnCreatedMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -473,7 +473,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractContainsNoMessageContent_ReturnBadRequest()
+    public async Task SendMessage_WhenContractContainsNoMessageContent_ReturnBadRequest()
     {
         // Given
         var user = await _fakeUserRepository
@@ -496,7 +496,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractIsInvalid_ReturnBadRequest()
+    public async Task SendMessage_WhenContractIsInvalid_ReturnBadRequest()
     {
         // Given
         var user = await _fakeUserRepository
@@ -519,7 +519,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task SendMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         var user = await _fakeUserRepository
@@ -539,7 +539,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenConnectionIsBlocked_ReturnBadRequest()
+    public async Task SendMessage_WhenConnectionIsBlocked_ReturnBadRequest()
     {
         // Given
         string connectionId = "conn1";
@@ -569,7 +569,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenTextMessageExists_ReturnOk()
+    public async Task UpdateMessage_WhenTextMessageExists_ReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -601,7 +601,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenRecipeMessageExists_ReturnOk()
+    public async Task UpdateMessage_WhenRecipeMessageExists_ReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -638,7 +638,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenImageMessageExists_ReturnOk()
+    public async Task UpdateMessage_WhenImageMessageExists_ReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -671,7 +671,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenMessageDoesNotExist_ReturnNotFound()
+    public async Task UpdateMessage_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -691,7 +691,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UpdateMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _ = await _fakeUserRepository
@@ -711,7 +711,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenMessageDoesNotExist_ReturnNotFound()
+    public async Task GetMessageDetailed_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -730,7 +730,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenTextMessageFound_ReturnMessage()
+    public async Task GetMessageDetailed_WhenTextMessageFound_ReturnMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -761,7 +761,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenRecipeMessageFound_ReturnMessage()
+    public async Task GetMessageDetailed_WhenRecipeMessageFound_ReturnMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -802,7 +802,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenImageMessageFound_ReturnMessage()
+    public async Task GetMessageDetailed_WhenImageMessageFound_ReturnMessage()
     {
         // Given
         var user = await _fakeUserRepository
@@ -833,7 +833,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetMessageDetailed_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _ = await _fakeUserRepository
@@ -851,7 +851,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteMessage_WhenMessageDoesNotExist_ReturnNotFound()
+    public async Task DeleteMessage_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
         var user = await _fakeUserRepository
@@ -871,7 +871,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteMessage_WhenMessageExists_ReturnOk()
+    public async Task DeleteMessage_WhenMessageExists_ReturnOk()
     {
         // Given
         var user = await _fakeUserRepository
@@ -893,7 +893,7 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task DeleteMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _ = _fakeUserRepository

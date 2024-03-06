@@ -333,7 +333,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async void DeleteUser_WhenUserDoesNotExist_ReturnFalse()
+    public async Task DeleteUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
         _mongoCollectionWrapperMock
