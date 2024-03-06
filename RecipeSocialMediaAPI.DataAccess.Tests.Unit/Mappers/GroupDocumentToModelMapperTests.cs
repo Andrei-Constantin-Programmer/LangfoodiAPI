@@ -26,7 +26,7 @@ public class GroupDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task MapGroupFromDocument_WhenGroupDocumentIsValid_ReturnsMappedGroupAsync()
+    public async Task MapGroupFromDocument_WhenGroupDocumentIsValid_ReturnsMappedGroup()
     {
         // Given
         TestUserCredentials testUser1 = new()
@@ -85,7 +85,7 @@ public class GroupDocumentToModelMapperTests
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(false, false)]
-    public async Task MapGroupFromDocument_WhenUsersDontExist_ThrowsUserDocumentNotFoundExceptionAsync(bool firstUserExists, bool secondUserExists)
+    public async Task MapGroupFromDocument_WhenUsersDontExist_ThrowsUserDocumentNotFoundException(bool firstUserExists, bool secondUserExists)
     {
         // Given
         TestUserCredentials? testUser1 =
@@ -145,7 +145,7 @@ public class GroupDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task MapGroupFromDocument_WhenListOfUsersIsEmpty_ShouldNotThrowUserDocumentNotFoundExceptionAsync()
+    public async Task MapGroupFromDocument_WhenListOfUsersIsEmpty_ShouldNotThrowUserDocumentNotFoundException()
     {
         // Given
         GroupDocument testDocument = new(

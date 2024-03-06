@@ -55,7 +55,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationById_WhenConnectionConversationExists_ReturnMappedConversationAsync()
+    public async Task GetConversationById_WhenConnectionConversationExists_ReturnMappedConversation()
     {
         // Given
         TestUserAccount user1 = new()
@@ -113,7 +113,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationById_WhenGroupConversationExists_ReturnMappedConversationAsync()
+    public async Task GetConversationById_WhenGroupConversationExists_ReturnMappedConversation()
     {
         // Given
         TestUserAccount user1 = new()
@@ -171,7 +171,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationById_WhenConversationDoesNotExist_ReturnNullAsync()
+    public async Task GetConversationById_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
         string conversationId = "convo1";
@@ -193,7 +193,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationById_WhenMongoThrowsAnException_ReturnNullAndLogExceptionAsync()
+    public async Task GetConversationById_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
         string conversationId = "convo1";
@@ -225,7 +225,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationByConnection_WhenConversationExists_ReturnMappedConversationAsync()
+    public async Task GetConversationByConnection_WhenConversationExists_ReturnMappedConversation()
     {
         // Given
         TestUserAccount user1 = new()
@@ -285,7 +285,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationByConnection_WhenConversationDoesNotExist_ReturnNullAsync()
+    public async Task GetConversationByConnection_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
         string connectionId = "conn1";
@@ -307,7 +307,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationByConnection_WhenMongoThrowsAnException_ReturnNullAndLogExceptionAsync()
+    public async Task GetConversationByConnection_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
         string connectionId = "conn1";
@@ -339,7 +339,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationByGroup_WhenConversationExists_ReturnMappedConversationAsync()
+    public async Task GetConversationByGroup_WhenConversationExists_ReturnMappedConversation()
     {
         // Given
         TestUserAccount user1 = new()
@@ -399,7 +399,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationByGroup_WhenConversationDoesNotExist_ReturnNullAsync()
+    public async Task GetConversationByGroup_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
         string groupId = "g1";
@@ -421,7 +421,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationByGroup_WhenMongoThrowsAnException_ReturnNullAndLogExceptionAsync()
+    public async Task GetConversationByGroup_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
         string connectionId = "conn1";
@@ -453,7 +453,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationsByUser_WhenConversationsExist_ReturnMappedConversationsAsync()
+    public async Task GetConversationsByUser_WhenConversationsExist_ReturnMappedConversations()
     {
         // Given
         TestUserAccount user1 = new()
@@ -556,7 +556,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationsByUser_WhenNoConversationsExist_ReturnEmptyListAsync()
+    public async Task GetConversationsByUser_WhenNoConversationsExist_ReturnEmptyList()
     {
         // Given
         TestUserAccount user = new()
@@ -588,7 +588,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConversationsByUser_WhenMongoThrowsException_ReturnEmptyListAndLogExceptionAsync()
+    public async Task GetConversationsByUser_WhenMongoThrowsException_ReturnEmptyListAndLogException()
     {
         // Given
         TestUserAccount user = new()

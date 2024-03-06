@@ -31,7 +31,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithPropertyAsync()
+    public async Task GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
     {
         // Given
         List<TestDocument> existingDocuments = new();
@@ -53,7 +53,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetAll_WhenNoDocumentsMatch_ReturnEmptyListAsync()
+    public async Task GetAll_WhenNoDocumentsMatch_ReturnEmptyList()
     {
         // Given
         List<TestDocument> existingDocuments = new();
@@ -74,7 +74,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetAll_WhenThereAreNoDocuments_ReturnEmptyListAsync()
+    public async Task GetAll_WhenThereAreNoDocuments_ReturnEmptyList()
     {
         // Given
 
@@ -88,7 +88,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Insert_AddsDocumentToTheDatabaseAndReturnsDocumentAsync()
+    public async Task Insert_AddsDocumentToTheDatabaseAndReturnsDocument()
     {
         // Given
         TestDocument testDocument = new("Test 1");
@@ -105,7 +105,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsExceptionAsync()
+    public async Task Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsException()
     {
         // Given
         TestDocument testDocument = new("Test 1");
@@ -121,7 +121,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrueAsync()
+    public async Task Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrue()
     {
         // Given
         TestDocument testDocument = new("Test 1");
@@ -138,7 +138,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Delete_WhenMultipleDocumentsWithConditionExist_DeleteFirstFittingDocumentAndReturnTrueAsync()
+    public async Task Delete_WhenMultipleDocumentsWithConditionExist_DeleteFirstFittingDocumentAndReturnTrue()
     {
         // Given
         List<TestDocument> testDocuments = new()
@@ -163,7 +163,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Delete_WhenNoDocumentWithConditionExists_ReturnFalseAsync()
+    public async Task Delete_WhenNoDocumentWithConditionExists_ReturnFalse()
     {
         // Given
         TestDocument testDocument = new("Test 1");
@@ -180,7 +180,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Delete_WhenNoDocumentExists_ReturnFalseAsync()
+    public async Task Delete_WhenNoDocumentExists_ReturnFalse()
     {
         // Given
         
@@ -194,7 +194,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Find_WhenNoDocumentWithConditionExists_ReturnNullAsync()
+    public async Task Find_WhenNoDocumentWithConditionExists_ReturnNull()
     {
         // Given
         TestDocument testDocument = new("Test 1");
@@ -210,7 +210,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Find_WhenNoDocumentExists_ReturnNullAsync()
+    public async Task Find_WhenNoDocumentExists_ReturnNull()
     {
         // Given
         
@@ -224,7 +224,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Find_WhenDocumentWithConditionExists_ReturnDocumentAsync()
+    public async Task Find_WhenDocumentWithConditionExists_ReturnDocument()
     {
         // Given
         TestDocument testDocument = new("Test 1");
@@ -240,7 +240,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task Find_WhenMultipleDocumentsWithConditionExist_ReturnTheFirstOneAsync()
+    public async Task Find_WhenMultipleDocumentsWithConditionExist_ReturnTheFirstOne()
     {
         // Given
         List<TestDocument> testDocuments = new()
@@ -262,7 +262,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdateAsync()
+    public async Task UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdate()
     {
         // Given
         TestDocument testDocument = new("Test");
@@ -282,7 +282,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdateAsync()
+    public async Task UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdate()
     {
         // Given
         TestDocument updatedDocument = new("Updated");
@@ -298,7 +298,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdateAsync()
+    public async Task UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdate()
     {
         // Given
         TestDocument testDocument = new("Test");

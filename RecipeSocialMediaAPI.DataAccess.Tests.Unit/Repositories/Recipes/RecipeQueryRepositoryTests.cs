@@ -47,7 +47,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipeById_WhenRecipeWithIdNotFound_ReturnNullAsync()
+    public async Task GetRecipeById_WhenRecipeWithIdNotFound_ReturnNull()
     {
         // Given
         string id = "1";
@@ -69,7 +69,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipeById_WhenRecipeIsFound_ReturnRecipeAsync()
+    public async Task GetRecipeById_WhenRecipeIsFound_ReturnRecipe()
     {
         // Given
         string id = "1";
@@ -134,7 +134,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipeById_WhenRecipeIsFoundButChefIsNotFound_LogWarningAndReturnNullAsync()
+    public async Task GetRecipeById_WhenRecipeIsFoundButChefIsNotFound_LogWarningAndReturnNull()
     {
         // Given
         string id = "1";
@@ -200,7 +200,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipeById_WhenMongoThrowsException_LogExceptionAndReturnNullAsync()
+    public async Task GetRecipeById_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         string id = "1";
@@ -274,7 +274,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChefId_WhenChefExistsAndNoRecipesWithIdExist_ReturnEmptyListAsync()
+    public async Task GetRecipesByChefId_WhenChefExistsAndNoRecipesWithIdExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -316,7 +316,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChefId_WhenChefExistsAndRecipesWithIdExist_ReturnRelatedRecipesAsync()
+    public async Task GetRecipesByChefId_WhenChefExistsAndRecipesWithIdExist_ReturnRelatedRecipes()
     {
         // Given
         string chefId = "1";
@@ -376,7 +376,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChefId_WhenChefDoesNotExist_ReturnEmptyListAsync()
+    public async Task GetRecipesByChefId_WhenChefDoesNotExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -415,7 +415,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChefId_WhenMongoThrowsException_LogExceptionAndReturnEmptyListAsync()
+    public async Task GetRecipesByChefId_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -485,7 +485,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChefUsername_WhenChefExistsAndRecipesExist_ReturnRelatedRecipesAsync()
+    public async Task GetRecipesByChefUsername_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
     {
         // Given
         string chefId = "1";
@@ -546,7 +546,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChefUsername_WhenChefExistsAndNoRecipesExist_ReturnEmptyListAsync()
+    public async Task GetRecipesByChefUsername_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -585,7 +585,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChefUsername_WhenChefDoesNotExist_ReturnEmptyListAsync()
+    public async Task GetRecipesByChefUsername_WhenChefDoesNotExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -623,7 +623,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChefUsername_WhenMongoThrowsException_LogExceptionAndReturnEmptyListAsync()
+    public async Task GetRecipesByChefUsername_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -697,7 +697,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChef_WhenChefIsNull_ReturnEmptyListAsync()
+    public async Task GetRecipesByChef_WhenChefIsNull_ReturnEmptyList()
     {
         // Given
         IUserAccount? chef = null;
@@ -716,7 +716,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChef_WhenChefExistsAndRecipesExist_ReturnRelatedRecipesAsync()
+    public async Task GetRecipesByChef_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
     {
         // Given
         string chefId = "1";
@@ -772,7 +772,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChef_WhenChefExistsAndNoRecipesExist_ReturnEmptyListAsync()
+    public async Task GetRecipesByChef_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -801,7 +801,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetRecipesByChef_WhenMongoThrowsException_LogExceptionAndReturnEmptyListAsync()
+    public async Task GetRecipesByChef_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
         string chefId = "1";

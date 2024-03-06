@@ -40,7 +40,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetGroupById_WhenDocumentExists_ReturnMappedDocumentAsync()
+    public async Task GetGroupById_WhenDocumentExists_ReturnMappedDocument()
     {
         // Given
         List<IUserAccount> users = new()
@@ -102,7 +102,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetGroupById_WhenDocumentIsNotInTheDatabase_ReturnNullAsync()
+    public async Task GetGroupById_WhenDocumentIsNotInTheDatabase_ReturnNull()
     {
         // Given
         _groupCollectionMock
@@ -119,7 +119,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetGroupById_WhenMongoThrowsException_LogExceptionAndReturnNullAsync()
+    public async Task GetGroupById_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         Exception testException = new("Test Exception");
@@ -146,7 +146,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetGroupsByUser_WhenUserHasGroups_ReturnMappedGroupsAsync()
+    public async Task GetGroupsByUser_WhenUserHasGroups_ReturnMappedGroups()
     {
         // Given
         List<IUserAccount> users = new()
@@ -232,7 +232,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetGroupsByUser_WhenUserHasNoGroups_ReturnEmptyCollectionAsync()
+    public async Task GetGroupsByUser_WhenUserHasNoGroups_ReturnEmptyCollection()
     {
         // Given
         TestUserAccount testUser = new()
@@ -257,7 +257,7 @@ public class GroupQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetGroupsByUser_WhenMongoThrowsAnException_LogErrorAndReturnEmptyCollectionAsync()
+    public async Task GetGroupsByUser_WhenMongoThrowsAnException_LogErrorAndReturnEmptyCollection()
     {
         // Given
         TestUserAccount testUser = new()

@@ -37,7 +37,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetAllUsers_WhenNoUsersExist_ReturnsEmptyEnumerableAsync()
+    public async Task GetAllUsers_WhenNoUsersExist_ReturnsEmptyEnumerable()
     {
         // Given
         Expression<Func<UserDocument, bool>> expectedExpression = (_) => true;
@@ -64,7 +64,7 @@ public class UserQueryRepositoryTests
     [InlineData(1)]
     [InlineData(5)]
     [InlineData(10)]
-    public async Task GetAllUsers_WhenUsersExist_ReturnsAllUsersAsync(int numberOfUsers)
+    public async Task GetAllUsers_WhenUsersExist_ReturnsAllUsers(int numberOfUsers)
     {
         // Given
         Expression<Func<UserDocument, bool>> expectedExpression = (_) => true;
@@ -90,7 +90,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserById_WhenUserIsNotFound_ReturnNullAsync()
+    public async Task GetUserById_WhenUserIsNotFound_ReturnNull()
     {
         // Given
         string id = "1";
@@ -112,7 +112,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserById_WhenUserIsFound_ReturnUserAsync()
+    public async Task GetUserById_WhenUserIsFound_ReturnUser()
     {
         // Given
         string id = "1";
@@ -150,7 +150,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserById_WhenMongoThrowsException_LogExceptionAndReturnNullAsync()
+    public async Task GetUserById_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         string id = "1";
@@ -197,7 +197,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserByEmail_WhenUserIsNotFound_ReturnNullAsync()
+    public async Task GetUserByEmail_WhenUserIsNotFound_ReturnNull()
     {
         // Given
         string email = "test@mail.com";
@@ -219,7 +219,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserByEmail_WhenUserIsFound_ReturnUserAsync()
+    public async Task GetUserByEmail_WhenUserIsFound_ReturnUser()
     {
         // Given
         string email = "test@mail.com";
@@ -257,7 +257,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserByEmail_WhenMongoThrowsException_LogExceptionAndReturnNullAsync()
+    public async Task GetUserByEmail_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         string email = "test@mail.com";
@@ -304,7 +304,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserByUsername_WhenUserIsNotFound_ReturnNullAsync()
+    public async Task GetUserByUsername_WhenUserIsNotFound_ReturnNull()
     {
         // Given
         string username = "TestUsername";
@@ -326,7 +326,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserByUsername_WhenUserIsFound_ReturnUserAsync()
+    public async Task GetUserByUsername_WhenUserIsFound_ReturnUser()
     {
         // Given
         string username = "WrongUsername";
@@ -364,7 +364,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetUserByUsername_WhenMongoThrowsException_LogExceptionAndReturnNullAsync()
+    public async Task GetUserByUsername_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         string username = "TestUsername";
@@ -411,7 +411,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetAllUserAccountsContaining_WhenThereAreNoMatchingUsers_ReturnEmptyEnumerableAsync()
+    public async Task GetAllUserAccountsContaining_WhenThereAreNoMatchingUsers_ReturnEmptyEnumerable()
     {
         // Given
         string containedString = "test";
@@ -430,7 +430,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetAllUserAccountsContaining_WhenThereAreMatchingUsers_ReturnUsersAsync()
+    public async Task GetAllUserAccountsContaining_WhenThereAreMatchingUsers_ReturnUsers()
     {
         // Given
         string containedString = "test";

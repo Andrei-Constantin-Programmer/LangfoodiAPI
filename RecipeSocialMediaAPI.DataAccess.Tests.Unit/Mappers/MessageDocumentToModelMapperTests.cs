@@ -39,7 +39,7 @@ public class MessageDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task MapMessageFromDocument_WhenOnlyTextIsPresent_ReturnTextMessageAsync()
+    public async Task MapMessageFromDocument_WhenOnlyTextIsPresent_ReturnTextMessage()
     {
         // Given
         string messageId = "1";
@@ -97,7 +97,7 @@ public class MessageDocumentToModelMapperTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void MapMessageFromDocument_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
+    public async Task MapMessageFromDocument_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
     {
         // Given
         string messageId = "1";
@@ -163,7 +163,7 @@ public class MessageDocumentToModelMapperTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task MapMessageFromDocument_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessageAsync(bool hasText)
+    public async Task MapMessageFromDocument_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessage(bool hasText)
     {
         // Given
         string messageId = "1";
@@ -250,7 +250,7 @@ public class MessageDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFound_ReturnTextMessageAndLogErrorAsync()
+    public async Task MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFound_ReturnTextMessageAndLogError()
     {
         // Given
         string messageId = "1";
@@ -309,7 +309,7 @@ public class MessageDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFoundAndNoText_ThrowMalformedMessageDocumentExceptionAsync()
+    public async Task MapMessageFromDocument_WhenRecipeMessageHasNoRecipesFoundAndNoText_ThrowMalformedMessageDocumentException()
     {
         // Given
         string messageId = "1";
@@ -362,7 +362,7 @@ public class MessageDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task MapMessageFromDocument_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAndLogWarningForRecipesNotFoundAsync()
+    public async Task MapMessageFromDocument_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAndLogWarningForRecipesNotFound()
     {
         // Given
         string messageId = "1";
@@ -456,7 +456,7 @@ public class MessageDocumentToModelMapperTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(false, false, false)]
     [InlineData(true, false, false)]
-    public async Task MapMessageFromDocument_WhenMessageContentIsMalformed_ThrowMalformedMessageDocumentExceptionAsync(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
+    public async Task MapMessageFromDocument_WhenMessageContentIsMalformed_ThrowMalformedMessageDocumentException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
     {
         // Given
         string messageId = "1";

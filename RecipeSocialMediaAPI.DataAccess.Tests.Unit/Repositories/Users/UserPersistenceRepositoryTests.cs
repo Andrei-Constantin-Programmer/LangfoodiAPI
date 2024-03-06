@@ -35,7 +35,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateExceptionAsync()
+    public async Task CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateException()
     {
         // Given
         UserDocument testDocument = new( 
@@ -61,7 +61,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task CreateUser_CreatesUserAndReturnsNewlyCreatedUserAsync()
+    public async Task CreateUser_CreatesUserAndReturnsNewlyCreatedUser()
     {
         // Given
         UserDocument testDocument = new(
@@ -107,7 +107,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrueAsync()
+    public async Task UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
         UserDocument testDocument = new(
@@ -179,7 +179,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateUser_WhenUserDoesNotExist_ReturnFalseAsync()
+    public async Task UpdateUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
         UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password", (int)UserRole.User);
@@ -212,7 +212,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateUser_WhenCollectionCantUpdate_ReturnFalseAsync()
+    public async Task UpdateUser_WhenCollectionCantUpdate_ReturnFalse()
     {
         // Given
         UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password", (int)UserRole.User);
@@ -249,7 +249,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrueAsync()
+    public async Task DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
     {
         // Given
         UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
@@ -275,7 +275,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteUser_WhenUserExists_DeleteUserAndReturnTrueAsync()
+    public async Task DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
     {
         // Given
         UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
@@ -314,7 +314,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteUser_WhenUserWithIdDoesNotExist_ReturnFalseAsync()
+    public async Task DeleteUser_WhenUserWithIdDoesNotExist_ReturnFalse()
     {
         // Given
         _mongoCollectionWrapperMock

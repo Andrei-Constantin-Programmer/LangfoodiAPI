@@ -38,7 +38,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnectionById_WhenConnectionIsFound_ReturnMappedConnectionAsync()
+    public async Task GetConnectionById_WhenConnectionIsFound_ReturnMappedConnection()
     {
         // Given
         string connectionId = "conn1";
@@ -82,7 +82,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnectionById_WhenConnectionIsNotFound_ReturnNullAndDontMapAsync()
+    public async Task GetConnectionById_WhenConnectionIsNotFound_ReturnNullAndDontMap()
     {
         // Given
         string connectionId = "conn1";
@@ -107,7 +107,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnectionById_WhenMongoThrowsAnException_LogExceptionAndReturnNullAsync()
+    public async Task GetConnectionById_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
         string connectionId = "conn1";
@@ -135,7 +135,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnectionById_WhenMapperThrowsException_ThrowExceptionAsync()
+    public async Task GetConnectionById_WhenMapperThrowsException_ThrowException()
     {
         // Given
         string connectionId = "conn1";
@@ -164,7 +164,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnection_WhenConnectionIsFound_ReturnMappedConnectionAsync()
+    public async Task GetConnection_WhenConnectionIsFound_ReturnMappedConnection()
     {
         // Given
         TestUserAccount testAccount1 = new()
@@ -207,7 +207,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnection_WhenConnectionIsNotFound_ReturnNullAndDontMapAsync()
+    public async Task GetConnection_WhenConnectionIsNotFound_ReturnNullAndDontMap()
     {
         // Given
         TestUserAccount testAccount1 = new()
@@ -247,7 +247,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnection_WhenMongoThrowsAnException_LogExceptionAndReturnNullAsync()
+    public async Task GetConnection_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
         TestUserAccount testAccount1 = new()
@@ -288,7 +288,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnection_WhenMapperThrowsException_ThrowExceptionAsync()
+    public async Task GetConnection_WhenMapperThrowsException_ThrowException()
     {
         // Given
         TestUserAccount testAccount1 = new()
@@ -331,7 +331,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnectionsForUser_WhenConnectionsExist_ReturnMappedConnectionsAsync()
+    public async Task GetConnectionsForUser_WhenConnectionsExist_ReturnMappedConnections()
     {
         // Given
         TestUserAccount testAccount = new()
@@ -397,7 +397,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnectionsForUser_WhenNoConnectionsForUserExist_ReturnEmptyListAsync()
+    public async Task GetConnectionsForUser_WhenNoConnectionsForUserExist_ReturnEmptyList()
     {
         // Given
         TestUserAccount testAccount = new()
@@ -423,7 +423,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnectionsForUser_WhenMapperThrowsException_ThrowExceptionAsync()
+    public async Task GetConnectionsForUser_WhenMapperThrowsException_ThrowException()
     {
         // Given
         TestUserAccount testAccount = new()
@@ -466,7 +466,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetConnectionsForUser_WhenMongoThrowsAnException_LogExceptionAndReturnEmptyListAsync()
+    public async Task GetConnectionsForUser_WhenMongoThrowsAnException_LogExceptionAndReturnEmptyList()
     {
         // Given
         TestUserAccount testAccount = new()

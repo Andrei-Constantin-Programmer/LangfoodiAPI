@@ -37,7 +37,7 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipeAsync()
+    public async Task CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipe()
     {
         // Given
         IUserAccount testChef = new TestUserAccount() 
@@ -120,7 +120,7 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateRecipe_WhenRecipeIsSuccessfullyUpdated_ReturnTrueAsync()
+    public async Task UpdateRecipe_WhenRecipeIsSuccessfullyUpdated_ReturnTrue()
     {
         // Given
         IUserAccount testChef = new TestUserAccount()
@@ -183,7 +183,7 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateRecipe_WhenRecipeIsNotUpdated_ReturnFalseAsync()
+    public async Task UpdateRecipe_WhenRecipeIsNotUpdated_ReturnFalse()
     {
         // Given
         IUserAccount testChef = new TestUserAccount()
@@ -225,7 +225,7 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteRecipeById_WhenRecipeIsDeleted_ReturnTrueAsync()
+    public async Task DeleteRecipeById_WhenRecipeIsDeleted_ReturnTrue()
     {
         // Given
         string id = "1";
@@ -252,7 +252,7 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteRecipeByRecipe_WhenRecipeIsDeleted_ReturnTrueAsync()
+    public async Task DeleteRecipeByRecipe_WhenRecipeIsDeleted_ReturnTrue()
     {
         // Given
         string id = "1";
@@ -296,7 +296,7 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteRecipeById_WhenRecipeIsNotDeleted_ReturnFalseAsync()
+    public async Task DeleteRecipeById_WhenRecipeIsNotDeleted_ReturnFalse()
     {
         // Given
         string id = "1";
@@ -323,7 +323,7 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteRecipeByRecipe_WhenRecipeIsNotDeleted_ReturnFalseAsync()
+    public async Task DeleteRecipeByRecipe_WhenRecipeIsNotDeleted_ReturnFalse()
     {
         // Given
         string id = "1";

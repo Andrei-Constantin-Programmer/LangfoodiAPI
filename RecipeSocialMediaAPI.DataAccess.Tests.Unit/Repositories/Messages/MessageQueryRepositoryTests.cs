@@ -49,7 +49,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetMessage_WhenMessageWithIdNotFound_ReturnNullAsync()
+    public async Task GetMessage_WhenMessageWithIdNotFound_ReturnNull()
     {
         // Given
         string messageId = "1";
@@ -70,7 +70,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetMessage_WhenMessageIsFoundButSenderIsNotFound_LogWarningAndReturnNullAsync()
+    public async Task GetMessage_WhenMessageIsFoundButSenderIsNotFound_LogWarningAndReturnNull()
     {
         // Given
         string messageId = "1";
@@ -185,7 +185,7 @@ public class MessageQueryRepositoryTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task GetMessage_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessageAsync(bool hasText)
+    public async Task GetMessage_WhenImagesArePresentAndRecipesAreNot_ReturnImageMessage(bool hasText)
     {
         // Given
         string messageId = "1";
@@ -251,7 +251,7 @@ public class MessageQueryRepositoryTests
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task GetMessage_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessageAsync(bool hasText)
+    public async Task GetMessage_WhenRecipesArePresentAndImagesAreNot_ReturnRecipeMessage(bool hasText)
     {
         // Given
         string messageId = "1";
@@ -335,7 +335,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetMessage_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessageAsync()
+    public async Task GetMessage_WhenOnlyRecipesAndRecipeIdDoesNotExist_ReturnRecipeMessage()
     {
         // Given
         string messageId = "1";
@@ -426,7 +426,7 @@ public class MessageQueryRepositoryTests
     [InlineData(3)]
     [InlineData(5)]
     [InlineData(10)]
-    public async Task GetMessage_WhenMessageIsReply_ReturnMessageWithRepliedToMessageAsync(int nestingLevel)
+    public async Task GetMessage_WhenMessageIsReply_ReturnMessageWithRepliedToMessage(int nestingLevel)
     {
         // Given
         string messageId = "1";
@@ -516,7 +516,7 @@ public class MessageQueryRepositoryTests
     [InlineData(true, true, true)]
     [InlineData(false, false, false)]
     [InlineData(true, false, false)]
-    public async Task GetMessage_WhenMapperThrowsException_ThrowExceptionAsync(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
+    public async Task GetMessage_WhenMapperThrowsException_ThrowException(bool isTextNull, bool isRecipeListNull, bool isImageListNull)
     {
         // Given
         string messageId = "1";
@@ -578,7 +578,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNullAsync()
+    public async Task GetMessage_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
         string messageId = "1";
@@ -605,7 +605,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetMessagesWithRecipe_WhenNoMessagesFoundWithRecipeId_ReturnEmptyCollectionAsync()
+    public async Task GetMessagesWithRecipe_WhenNoMessagesFoundWithRecipeId_ReturnEmptyCollection()
     {
         // Given
         string senderId = "50";
@@ -653,7 +653,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetMessagesWithRecipe_WhenMessagesFoundWithRecipeId_ReturnMappedMessagesAsync()
+    public async Task GetMessagesWithRecipe_WhenMessagesFoundWithRecipeId_ReturnMappedMessages()
     {
         // Given
         string senderId = "50";
@@ -722,7 +722,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetMessagesWithRecipe_WhenUserNotFound_ThrowUserDocumentNotFoundExceptionAsync()
+    public async Task GetMessagesWithRecipe_WhenUserNotFound_ThrowUserDocumentNotFoundException()
     {
         // Given
         string senderId = "50";

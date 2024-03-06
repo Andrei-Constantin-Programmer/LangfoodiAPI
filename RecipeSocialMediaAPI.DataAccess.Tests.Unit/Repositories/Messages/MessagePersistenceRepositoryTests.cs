@@ -53,7 +53,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task CreateMessage_WhenMessageIsValid_AddMessageToCollectionAndReturnMappedMessageAsync()
+    public async Task CreateMessage_WhenMessageIsValid_AddMessageToCollectionAndReturnMappedMessage()
     {
         // Given
         IUserAccount testSender = new TestUserAccount()
@@ -115,7 +115,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateMessage_WhenMessageIsTextMessage_UpdatesAndReturnsTrueAsync()
+    public async Task UpdateMessage_WhenMessageIsTextMessage_UpdatesAndReturnsTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -161,7 +161,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateMessage_WhenMessageIsRecipeMessage_UpdatesAndReturnsTrueAsync()
+    public async Task UpdateMessage_WhenMessageIsRecipeMessage_UpdatesAndReturnsTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -214,7 +214,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateMessage_WhenMessageIsImageMessage_UpdatesAndReturnsTrueAsync()
+    public async Task UpdateMessage_WhenMessageIsImageMessage_UpdatesAndReturnsTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -262,7 +262,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateMessage_WhenMessageIsOfUnexpectedType_LogErrorAndReturnFalseAsync()
+    public async Task UpdateMessage_WhenMessageIsOfUnexpectedType_LogErrorAndReturnFalse()
     {
         // Given
         TestUserAccount testSender = new()
@@ -300,7 +300,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateMessage_WhenUpdateIsUnsuccessful_ReturnFalseAsync()
+    public async Task UpdateMessage_WhenUpdateIsUnsuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testSender = new()
@@ -331,7 +331,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteMessage_WhenDeleteIsSuccessful_ReturnTrueAsync()
+    public async Task DeleteMessage_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -359,7 +359,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteMessage_WhenDeleteIsUnsuccessful_ReturnFalseAsync()
+    public async Task DeleteMessage_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testSender = new()
@@ -387,7 +387,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteMessageById_WhenDeleteIsSuccessful_ReturnTrueAsync()
+    public async Task DeleteMessageById_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         _messageCollectionMock
@@ -406,7 +406,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteMessageById_WhenDeleteIsUnsuccessful_ReturnFalseAsync()
+    public async Task DeleteMessageById_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
         _messageCollectionMock

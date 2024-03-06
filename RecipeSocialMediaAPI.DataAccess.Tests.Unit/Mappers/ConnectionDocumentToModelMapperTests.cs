@@ -32,7 +32,7 @@ public class ConnectionDocumentToModelMapperTests
     [InlineData(ConnectionStatus.Pending)]
     [InlineData(ConnectionStatus.Connected)]
     [InlineData(ConnectionStatus.Favourite)]
-    public async Task MapConnectionFromDocument_WhenDocumentIsValid_ReturnCorrectlyMappedDocumentAsync(ConnectionStatus connectionStatus)
+    public async Task MapConnectionFromDocument_WhenDocumentIsValid_ReturnCorrectlyMappedDocument(ConnectionStatus connectionStatus)
     {
         // Given
         TestUserCredentials testUser1 = new()
@@ -89,7 +89,7 @@ public class ConnectionDocumentToModelMapperTests
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(false, false)]
-    public async Task MapConnectionFromDocument_WhenUsersDontExist_ThrowUserDocumentNotFoundExceptionAsync(bool firstUserExists, bool secondUserExists)
+    public async Task MapConnectionFromDocument_WhenUsersDontExist_ThrowUserDocumentNotFoundException(bool firstUserExists, bool secondUserExists)
     {
         // Given
         TestUserCredentials? testUser1 = 
@@ -144,7 +144,7 @@ public class ConnectionDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task MapConnectionFromDocument_WhenConnectionStatusCantBeMapped_ThrowInvalidConnectionStatusExceptionAsync()
+    public async Task MapConnectionFromDocument_WhenConnectionStatusCantBeMapped_ThrowInvalidConnectionStatusException()
     {
         // Given
         TestUserCredentials testUser1 = new()
@@ -192,7 +192,7 @@ public class ConnectionDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task MapConnectionFromDocument_WhenTheAccountsAreTheSame_ThrowExceptionAsync()
+    public async Task MapConnectionFromDocument_WhenTheAccountsAreTheSame_ThrowException()
     {
         // Given
         TestUserCredentials testUser = new()

@@ -45,7 +45,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task CreateConnectionConversation_WhenConnectionExists_CreatesConversationAndReturnsItAsync()
+    public async Task CreateConnectionConversation_WhenConnectionExists_CreatesConversationAndReturnsIt()
     {
         // Given
         TestUserAccount user1 = new()
@@ -111,7 +111,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async void CreateConnectionConversation_WhenConnectionDoesNotExist_ThrowsConnectionDocumentNotFoundException()
+    public async Task CreateConnectionConversation_WhenConnectionDoesNotExist_ThrowsConnectionDocumentNotFoundException()
     {
         // Given
         TestUserAccount user1 = new()
@@ -147,7 +147,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task CreateGroupConversation_CreatesConversationAndReturnsItAsync()
+    public async Task CreateGroupConversation_CreatesConversationAndReturnsIt()
     {
         // Given
         TestUserAccount user1 = new()
@@ -197,7 +197,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConversation_WhenConversationIsConnectionConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrueAsync()
+    public async Task UpdateConversation_WhenConversationIsConnectionConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrue()
     {
         // Given
         TestUserAccount user1 = new()
@@ -258,7 +258,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConversation_WhenConversationIsConnectionConversationButUpdateIsUnsuccessful_ReturnsFalseAsync()
+    public async Task UpdateConversation_WhenConversationIsConnectionConversationButUpdateIsUnsuccessful_ReturnsFalse()
     {
         // Given
         TestUserAccount user1 = new()
@@ -312,7 +312,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConversation_WhenConversationIsConnectionConversationButConnectionIsNotFoundInTheDatabase_DoesNotUpdateAndThrowsInvalidConversationExceptionAsync()
+    public async Task UpdateConversation_WhenConversationIsConnectionConversationButConnectionIsNotFoundInTheDatabase_DoesNotUpdateAndThrowsInvalidConversationException()
     {
         // Given
         TestUserAccount user1 = new()
@@ -360,7 +360,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConversation_WhenConversationIsConnectionConversationButNoConnectionSupplied_DoesNotUpdateConversationAndThrowsArgumentExceptionAsync()
+    public async Task UpdateConversation_WhenConversationIsConnectionConversationButNoConnectionSupplied_DoesNotUpdateConversationAndThrowsArgumentException()
     {
         // Given
         TestUserAccount user1 = new()
@@ -414,7 +414,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConversation_WhenConversationIsGroupConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrueAsync()
+    public async Task UpdateConversation_WhenConversationIsGroupConversationAndUpdateIsSuccessful_UpdatesConversationAndReturnsTrue()
     {
         // Given
         TestUserAccount user1 = new()
@@ -467,7 +467,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConversation_WhenConversationIsGroupConversationButUpdateIsUnsuccessful_ReturnsFalseAsync()
+    public async Task UpdateConversation_WhenConversationIsGroupConversationButUpdateIsUnsuccessful_ReturnsFalse()
     {
         // Given
         TestUserAccount user1 = new()
@@ -508,7 +508,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConversation_WhenConversationIsGroupConversationButNoGroupIsProvided_DoesNotUpdateConversationAndThrowsArgumentExceptionAsync()
+    public async Task UpdateConversation_WhenConversationIsGroupConversationButNoGroupIsProvided_DoesNotUpdateConversationAndThrowsArgumentException()
     {
         // Given
         TestUserAccount user1 = new()
@@ -550,7 +550,7 @@ public partial class ConversationPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConversation_WhenConversationIsOfUnknownType_DoesNotUpdateConversationAndThrowsInvalidConversationExceptionAsync()
+    public async Task UpdateConversation_WhenConversationIsOfUnknownType_DoesNotUpdateConversationAndThrowsInvalidConversationException()
     {
         // Given
         TestConversation testConversation = new("ConvoId", new List<Message>());

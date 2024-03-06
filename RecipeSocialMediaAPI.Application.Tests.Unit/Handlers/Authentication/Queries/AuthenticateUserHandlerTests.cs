@@ -11,7 +11,6 @@ using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
-using System.Threading;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 

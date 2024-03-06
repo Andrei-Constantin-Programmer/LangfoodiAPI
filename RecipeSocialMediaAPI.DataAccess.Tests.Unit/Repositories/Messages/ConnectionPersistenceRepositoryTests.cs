@@ -36,7 +36,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task CreateConnection_WhenConnectionIsValid_AddConnectionToCollectionAndReturnMappedConnectionAsync()
+    public async Task CreateConnection_WhenConnectionIsValid_AddConnectionToCollectionAndReturnMappedConnection()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -84,7 +84,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConnection_WhenUpdateIsSuccessful_ReturnTrueAsync()
+    public async Task UpdateConnection_WhenUpdateIsSuccessful_ReturnTrue()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -128,7 +128,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task UpdateConnection_WhenUpdateIsUnsuccessful_ReturnFalseAsync()
+    public async Task UpdateConnection_WhenUpdateIsUnsuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -172,7 +172,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteConnectionByAccounts_WhenDeleteIsSuccessful_ReturnTrueAsync()
+    public async Task DeleteConnectionByAccounts_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -211,7 +211,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteConnectionByAccounts_WhenDeleteIsUnuccessful_ReturnFalseAsync()
+    public async Task DeleteConnectionByAccounts_WhenDeleteIsUnuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -250,7 +250,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteConnection_WhenDeleteIsSuccessful_ReturnTrueAsync()
+    public async Task DeleteConnection_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -291,7 +291,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task DeleteConnection_WhenDeleteIsUnuccessful_ReturnFalseAsync()
+    public async Task DeleteConnection_WhenDeleteIsUnuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testUser1 = new()

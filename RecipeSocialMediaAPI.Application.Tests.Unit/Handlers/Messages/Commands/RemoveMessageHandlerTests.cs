@@ -128,7 +128,7 @@ public class RemoveMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenDeleteIsSuccessful_PublishMessageDeletedNotificationAsync()
+    public async Task Handle_WhenDeleteIsSuccessful_PublishMessageDeletedNotification()
     {
         // Given
         RemoveMessageCommand testCommand = new("MessageId");
