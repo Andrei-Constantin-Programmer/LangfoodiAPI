@@ -23,7 +23,7 @@ internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
             ?? (await _userQueryRepository.GetUserByEmail(request.EmailOrId, cancellationToken))
             ?? throw new UserNotFoundException($"No user found with email/id {request.EmailOrId}")).Account.Id;
 
-        bool isSuccessful = _userPersistenceRepository.DeleteUser(userId);
+        bool isSuccessful = await _userPersistenceRepository.DeleteUser(userId, cancellationToken);
 
         if (!isSuccessful)
         {

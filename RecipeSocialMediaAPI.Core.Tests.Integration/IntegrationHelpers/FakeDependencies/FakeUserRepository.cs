@@ -34,9 +34,11 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         return await Task.FromResult(newUser);
     }
 
-    public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);
+    public async Task<bool> DeleteUser(IUserCredentials user, CancellationToken cancellationToken = default) 
+        => await DeleteUser(user.Account.Id, cancellationToken);
 
-    public bool DeleteUser(string id) => _collection.RemoveAll(user => user.Account.Id == id) > 0;
+    public async Task<bool> DeleteUser(string id, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.RemoveAll(user => user.Account.Id == id) > 0);
 
     public async Task<IEnumerable<IUserCredentials>> GetAllUsers(CancellationToken cancellationToken = default) => await Task.FromResult(_collection);
 

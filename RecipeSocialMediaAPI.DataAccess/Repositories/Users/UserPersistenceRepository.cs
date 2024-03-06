@@ -56,7 +56,9 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         return await _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id, cancellationToken);
     }
 
-    public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);
+    public async Task<bool> DeleteUser(IUserCredentials user, CancellationToken cancellationToken = default) 
+        => await DeleteUser(user.Account.Id, cancellationToken);
 
-    public bool DeleteUser(string id) => _userCollection.Delete(userDoc => userDoc.Id == id);
+    public async Task<bool> DeleteUser(string id, CancellationToken cancellationToken = default) 
+        => await _userCollection.Delete(userDoc => userDoc.Id == id, cancellationToken);
 }

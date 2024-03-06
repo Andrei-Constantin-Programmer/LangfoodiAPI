@@ -49,11 +49,12 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
         return await Task.FromResult(true);
     }
 
-    public bool DeleteConnection(IConnection connection) => _collection.Remove(connection);
+    public async Task<bool> DeleteConnection(IConnection connection, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Remove(connection));
 
-    public bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2)
+    public async Task<bool> DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default)
     {
-        var connection = GetConnection(userAccount1, userAccount2).Result;
+        var connection = await GetConnection(userAccount1, userAccount2, cancellationToken);
 
         return connection is not null && _collection.Remove(connection);
     }

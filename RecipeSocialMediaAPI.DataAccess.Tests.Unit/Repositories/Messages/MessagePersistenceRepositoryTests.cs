@@ -331,7 +331,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteMessage_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task DeleteMessage_WhenDeleteIsSuccessful_ReturnTrueAsync()
     {
         // Given
         TestUserAccount testSender = new()
@@ -344,11 +344,13 @@ public class MessagePersistenceRepositoryTests
         TestMessage message = new("TestId", testSender, _dateTimeProviderMock.Object.Now, null);
 
         _messageCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.Delete(
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _messagePersistenceRepositorySUT.DeleteMessage(message);
+        var result = await _messagePersistenceRepositorySUT.DeleteMessage(message);
 
         // Then
         result.Should().BeTrue();
@@ -357,7 +359,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteMessage_WhenDeleteIsUnsuccessful_ReturnFalse()
+    public async Task DeleteMessage_WhenDeleteIsUnsuccessful_ReturnFalseAsync()
     {
         // Given
         TestUserAccount testSender = new()
@@ -370,11 +372,13 @@ public class MessagePersistenceRepositoryTests
         TestMessage message = new("TestId", testSender, _dateTimeProviderMock.Object.Now, null);
 
         _messageCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.Delete(
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _messagePersistenceRepositorySUT.DeleteMessage(message);
+        var result = await _messagePersistenceRepositorySUT.DeleteMessage(message);
 
         // Then
         result.Should().BeFalse();
@@ -383,15 +387,17 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteMessageById_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task DeleteMessageById_WhenDeleteIsSuccessful_ReturnTrueAsync()
     {
         // Given
         _messageCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.Delete(
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _messagePersistenceRepositorySUT.DeleteMessage("TestId");
+        var result = await _messagePersistenceRepositorySUT.DeleteMessage("TestId");
 
         // Then
         result.Should().BeTrue();
@@ -400,15 +406,17 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteMessageById_WhenDeleteIsUnsuccessful_ReturnFalse()
+    public async Task DeleteMessageById_WhenDeleteIsUnsuccessful_ReturnFalseAsync()
     {
         // Given
         _messageCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.Delete(
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _messagePersistenceRepositorySUT.DeleteMessage("TestId");
+        var result = await _messagePersistenceRepositorySUT.DeleteMessage("TestId");
 
         // Then
         result.Should().BeFalse();

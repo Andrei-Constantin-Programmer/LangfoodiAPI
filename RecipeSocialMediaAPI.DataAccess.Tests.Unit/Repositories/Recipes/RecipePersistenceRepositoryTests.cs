@@ -225,30 +225,34 @@ public class RecipePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteRecipeById_WhenRecipeIsDeleted_ReturnTrue()
+    public async Task DeleteRecipeById_WhenRecipeIsDeleted_ReturnTrueAsync()
     {
         // Given
         string id = "1";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.Delete(
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _recipePersistenceRepositorySUT.DeleteRecipe(id);
+        var result = await _recipePersistenceRepositorySUT.DeleteRecipe(id);
 
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+            .Verify(collection => collection.Delete(
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteRecipeByRecipe_WhenRecipeIsDeleted_ReturnTrue()
+    public async Task DeleteRecipeByRecipe_WhenRecipeIsDeleted_ReturnTrueAsync()
     {
         // Given
         string id = "1";
@@ -272,46 +276,54 @@ public class RecipePersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.Delete(
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _recipePersistenceRepositorySUT.DeleteRecipe(recipe);
+        var result = await _recipePersistenceRepositorySUT.DeleteRecipe(recipe);
 
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+            .Verify(collection => collection.Delete(
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteRecipeById_WhenRecipeIsNotDeleted_ReturnFalse()
+    public async Task DeleteRecipeById_WhenRecipeIsNotDeleted_ReturnFalseAsync()
     {
         // Given
         string id = "1";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.Delete(
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _recipePersistenceRepositorySUT.DeleteRecipe(id);
+        var result = await _recipePersistenceRepositorySUT.DeleteRecipe(id);
 
         // Then
         result.Should().BeFalse();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+            .Verify(collection => collection.Delete(
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteRecipeByRecipe_WhenRecipeIsNotDeleted_ReturnFalse()
+    public async Task DeleteRecipeByRecipe_WhenRecipeIsNotDeleted_ReturnFalseAsync()
     {
         // Given
         string id = "1";
@@ -335,16 +347,20 @@ public class RecipePersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.Delete(
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _recipePersistenceRepositorySUT.DeleteRecipe(recipe);
+        var result = await _recipePersistenceRepositorySUT.DeleteRecipe(recipe);
 
         // Then
         result.Should().BeFalse();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+            .Verify(collection => collection.Delete(
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 }

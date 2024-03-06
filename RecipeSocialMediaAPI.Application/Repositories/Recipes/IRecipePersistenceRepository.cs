@@ -16,6 +16,6 @@ public interface IRecipePersistenceRepository
         string? thumbnailId,
         CancellationToken cancellationToken = default);
     Task<bool> UpdateRecipe(RecipeAggregate recipe, CancellationToken cancellationToken = default);
-    bool DeleteRecipe(RecipeAggregate recipe);
-    bool DeleteRecipe(string id);
+    Task<bool> DeleteRecipe(RecipeAggregate recipe, CancellationToken cancellationToken = default);
+    Task<bool> DeleteRecipe(string id, CancellationToken cancellationToken = default);
 }

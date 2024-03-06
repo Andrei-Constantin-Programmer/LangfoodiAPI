@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using RecipeSocialMediaAPI.Application.Repositories.Messages;
+﻿using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
@@ -43,10 +42,12 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
             cancellationToken);
     }
 
-    public bool DeleteConnection(IConnection connection) => DeleteConnection(connection.Account1, connection.Account2);
+    public async Task<bool> DeleteConnection(IConnection connection, CancellationToken cancellationToken = default) 
+        => await DeleteConnection(connection.Account1, connection.Account2, cancellationToken);
 
-    public bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2) 
-        => _connectionCollection.Delete(
+    public async Task<bool> DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default) 
+        => await _connectionCollection.Delete(
             doc => (doc.AccountId1 == userAccount1.Id && doc.AccountId2 == userAccount2.Id)
-                || (doc.AccountId1 == userAccount2.Id && doc.AccountId2 == userAccount1.Id));
+                || (doc.AccountId1 == userAccount2.Id && doc.AccountId2 == userAccount1.Id), 
+            cancellationToken);
 }

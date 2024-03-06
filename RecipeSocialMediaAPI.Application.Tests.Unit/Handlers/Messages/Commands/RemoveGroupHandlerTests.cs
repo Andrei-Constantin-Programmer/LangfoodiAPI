@@ -36,8 +36,8 @@ public class RemoveGroupHandlerTests
             .ReturnsAsync(new Group(command.GroupId, "Group", "Group Desc"));
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteGroup(command.GroupId))
-            .Returns(true);
+            .Setup(repo => repo.DeleteGroup(command.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _removeGroupHandlerSUT.Handle(command, CancellationToken.None);
@@ -59,8 +59,8 @@ public class RemoveGroupHandlerTests
             .ReturnsAsync(new Group(command.GroupId, "Group", "Group Desc"));
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteGroup(command.GroupId))
-            .Returns(false);
+            .Setup(repo => repo.DeleteGroup(command.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
         var testAction = async () => await _removeGroupHandlerSUT.Handle(command, CancellationToken.None);

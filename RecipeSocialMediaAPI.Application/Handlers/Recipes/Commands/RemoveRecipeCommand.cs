@@ -49,7 +49,7 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 
         await _publisher.Publish(new RecipeRemovedNotification(recipeToRemove.Id), cancellationToken);
 
-        bool isRecipeRemoved = _recipePersistenceRepository.DeleteRecipe(request.Id);
+        bool isRecipeRemoved = await _recipePersistenceRepository.DeleteRecipe(request.Id, cancellationToken);
         bool areImagesRemoved = imageIds.Count <= 0 || _imageHostingPersistenceRepository.BulkRemoveHostedImages(imageIds);
 
         if (!areImagesRemoved)

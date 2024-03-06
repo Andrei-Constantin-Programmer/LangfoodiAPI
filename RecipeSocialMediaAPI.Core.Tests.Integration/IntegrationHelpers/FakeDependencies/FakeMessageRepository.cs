@@ -70,11 +70,12 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         return await Task.FromResult(true);
     }
 
-    public bool DeleteMessage(Message message) => _collection.Remove(message);
+    public async Task<bool> DeleteMessage(Message message, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Remove(message));
 
-    public bool DeleteMessage(string messageId)
+    public async Task<bool> DeleteMessage(string messageId, CancellationToken cancellationToken = default)
     {
-        var message = GetMessage(messageId).Result;
+        var message = await GetMessage(messageId, cancellationToken);
 
         return message is not null && _collection.Remove(message);
     }

@@ -26,7 +26,7 @@ internal class RecipeRemovedHandler : INotificationHandler<RecipeRemovedNotifica
             if (message.Recipes.Count == 1
                 && string.IsNullOrWhiteSpace(message.TextContent))
             {
-                _messagePersistenceRepository.DeleteMessage(message);
+                await _messagePersistenceRepository.DeleteMessage(message, cancellationToken);
             }
         }
     }

@@ -43,11 +43,12 @@ internal class FakeGroupRepository : IGroupQueryRepository, IGroupPersistenceRep
         return await Task.FromResult(true);
     }
 
-    public bool DeleteGroup(Group group) => _collection.Remove(group);
+    public async Task<bool> DeleteGroup(Group group, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Remove(group));
 
-    public bool DeleteGroup(string groupId)
+    public async Task<bool> DeleteGroup(string groupId, CancellationToken cancellationToken = default)
     {
-        var group = GetGroupById(groupId).Result;
+        var group = await GetGroupById(groupId, cancellationToken);
 
         return group is not null && _collection.Remove(group);
     }

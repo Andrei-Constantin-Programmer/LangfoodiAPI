@@ -39,7 +39,7 @@ internal class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
             imagesToDelete = imgMessage.ImageURLs.ToList();
         }
 
-        bool isSuccessful = _messagePersistenceRepository.DeleteMessage(request.Id);
+        bool isSuccessful = await _messagePersistenceRepository.DeleteMessage(request.Id, cancellationToken);
 
         if (!isSuccessful)
         {

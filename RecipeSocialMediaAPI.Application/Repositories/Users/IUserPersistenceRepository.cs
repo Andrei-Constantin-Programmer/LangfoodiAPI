@@ -12,7 +12,7 @@ public interface IUserPersistenceRepository
         DateTimeOffset accountCreationDate,
         UserRole userRole = UserRole.User,
         CancellationToken cancellationToken = default);
-    bool DeleteUser(IUserCredentials user);
-    bool DeleteUser(string id);
     Task<bool> UpdateUser(IUserCredentials user, CancellationToken cancellationToken = default);
+    Task<bool> DeleteUser(IUserCredentials user, CancellationToken cancellationToken = default);
+    Task<bool> DeleteUser(string id, CancellationToken cancellationToken = default);
 }

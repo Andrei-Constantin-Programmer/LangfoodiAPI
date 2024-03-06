@@ -26,9 +26,11 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         return await Task.FromResult(newRecipe);
     }
 
-    public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);
+    public async Task<bool> DeleteRecipe(RecipeAggregate recipe, CancellationToken cancellationToken = default) 
+        => await DeleteRecipe(recipe.Id, cancellationToken);
 
-    public bool DeleteRecipe(string id) => _collection.RemoveAll(x => x.Id == id) > 0;
+    public async Task<bool> DeleteRecipe(string id, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.RemoveAll(x => x.Id == id) > 0);
 
     public async Task<RecipeAggregate?> GetRecipeById(string id, CancellationToken cancellationToken = default) 
         => await Task.FromResult(_collection.Find(x => x.Id == id));

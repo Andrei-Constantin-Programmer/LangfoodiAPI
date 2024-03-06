@@ -49,7 +49,7 @@ public class RemoveUserHandlerTests
             .ThrowAsync<UserNotFoundException>()
             .WithMessage("No user found*");
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.DeleteUser(It.IsAny<IUserCredentials>()), Times.Never);
+            .Verify(repo => repo.DeleteUser(It.IsAny<IUserCredentials>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -75,8 +75,8 @@ public class RemoveUserHandlerTests
             .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Account.Id), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteUser(It.IsAny<string>()))
-            .Returns(true);
+            .Setup(repo => repo.DeleteUser(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         RemoveUserCommand command = new(user.Account.Id);
 
@@ -86,7 +86,7 @@ public class RemoveUserHandlerTests
         // Then
         await action.Should().NotThrowAsync();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id)), Times.Once);
+            .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -112,8 +112,8 @@ public class RemoveUserHandlerTests
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == user.Email), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteUser(It.IsAny<string>()))
-            .Returns(true);
+            .Setup(repo => repo.DeleteUser(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         RemoveUserCommand command = new(user.Email);
 
@@ -123,7 +123,7 @@ public class RemoveUserHandlerTests
         // Then
         await action.Should().NotThrowAsync();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id)), Times.Once);
+            .Verify(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -149,8 +149,8 @@ public class RemoveUserHandlerTests
             .Setup(repo => repo.GetUserById(It.Is<string>(id => id == user.Account.Id), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id)))
-            .Returns(false);
+            .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         RemoveUserCommand command = new(user.Account.Id);
 
@@ -184,8 +184,8 @@ public class RemoveUserHandlerTests
             .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == user.Email), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id)))
-            .Returns(false);
+            .Setup(repo => repo.DeleteUser(It.Is<string>(id => id == user.Account.Id), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         RemoveUserCommand command = new(user.Email);
 

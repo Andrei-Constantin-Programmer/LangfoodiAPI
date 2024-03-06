@@ -121,14 +121,14 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrue()
+    public async Task Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrueAsync()
     {
         // Given
         TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.Id == testDocument.Id);
+        var wasDeleted = await _mongoCollectionWrapperSUT.Delete(doc => doc.Id == testDocument.Id);
 
         // Then
         wasDeleted.Should().BeTrue();
@@ -138,7 +138,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Delete_WhenMultipleDocumentsWithConditionExist_DeleteFirstFittingDocumentAndReturnTrue()
+    public async Task Delete_WhenMultipleDocumentsWithConditionExist_DeleteFirstFittingDocumentAndReturnTrueAsync()
     {
         // Given
         List<TestDocument> testDocuments = new()
@@ -151,7 +151,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(testDocuments);
 
         // When
-        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty!.Contains("To Delete"));
+        var wasDeleted = await _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty!.Contains("To Delete"));
 
         // Then
         wasDeleted.Should().BeTrue();
@@ -163,14 +163,14 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Delete_WhenNoDocumentWithConditionExists_ReturnFalse()
+    public async Task Delete_WhenNoDocumentWithConditionExists_ReturnFalseAsync()
     {
         // Given
         TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
+        var wasDeleted = await _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
 
         // Then
         wasDeleted.Should().BeFalse();
@@ -180,12 +180,12 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Delete_WhenNoDocumentExists_ReturnFalse()
+    public async Task Delete_WhenNoDocumentExists_ReturnFalseAsync()
     {
         // Given
         
         // When
-        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
+        var wasDeleted = await _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
 
         // Then
         wasDeleted.Should().BeFalse();

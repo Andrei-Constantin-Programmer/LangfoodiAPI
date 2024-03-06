@@ -53,7 +53,7 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
         bool isSuccessful = false;
         if (updatedGroup.Users.Count == 0)
         {
-            isSuccessful = _groupPersistenceRepository.DeleteGroup(updatedGroup);
+            isSuccessful = await _groupPersistenceRepository.DeleteGroup(updatedGroup, cancellationToken);
             _logger.LogInformation("Group with id {GroupId} was deleted due to all users quitting the group", group.GroupId);
         }
         else

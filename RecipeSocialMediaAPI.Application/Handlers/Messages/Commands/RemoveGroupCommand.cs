@@ -24,7 +24,7 @@ internal class RemoveGroupHandler : IRequestHandler<RemoveGroupCommand>
             throw new GroupNotFoundException(request.GroupId);
         }
 
-        bool isSuccessful = _groupPersistenceRepository.DeleteGroup(request.GroupId);
+        bool isSuccessful = await _groupPersistenceRepository.DeleteGroup(request.GroupId, cancellationToken);
 
         if (!isSuccessful)
         {

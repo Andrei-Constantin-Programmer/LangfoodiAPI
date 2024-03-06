@@ -56,9 +56,9 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         }
     }
 
-    public bool Delete(Expression<Func<TDocument, bool>> expr)
+    public async Task<bool> Delete(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
-        return _collection?.DeleteOne(expr).DeletedCount > 0;
+        return (await _collection.DeleteOneAsync(expr, cancellationToken)).DeletedCount > 0;
     }
 
     public bool Contains(Expression<Func<TDocument, bool>> expr)

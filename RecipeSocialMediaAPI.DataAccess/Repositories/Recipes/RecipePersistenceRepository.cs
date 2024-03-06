@@ -61,7 +61,9 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
             cancellationToken
         );
 
-    public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);
+    public async Task<bool> DeleteRecipe(RecipeAggregate recipe, CancellationToken cancellationToken = default) 
+        => await DeleteRecipe(recipe.Id, cancellationToken);
 
-    public bool DeleteRecipe(string id) => _recipeCollection.Delete(recipeDoc => recipeDoc.Id == id);
+    public async Task<bool> DeleteRecipe(string id, CancellationToken cancellationToken = default) 
+        => await _recipeCollection.Delete(recipeDoc => recipeDoc.Id == id, cancellationToken);
 }

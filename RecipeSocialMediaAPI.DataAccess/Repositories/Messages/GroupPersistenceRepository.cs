@@ -32,7 +32,9 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
             groupDoc => groupDoc.Id == group.GroupId, cancellationToken);
     }
 
-    public bool DeleteGroup(Group group) => DeleteGroup(group.GroupId);
+    public async Task<bool> DeleteGroup(Group group, CancellationToken cancellationToken = default) 
+        => await DeleteGroup(group.GroupId, cancellationToken);
 
-    public bool DeleteGroup(string groupId) => _groupCollection.Delete(groupDoc => groupDoc.Id == groupId);
+    public async Task<bool> DeleteGroup(string groupId, CancellationToken cancellationToken = default) 
+        => await _groupCollection.Delete(groupDoc => groupDoc.Id == groupId, cancellationToken);
 }

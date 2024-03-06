@@ -294,12 +294,14 @@ public class UpdateGroupHandlerTests
             .ReturnsAsync(existingGroup);
 
         _groupPersistenceRepositoryMock
-            .Setup(repo => repo.DeleteGroup(It.Is<Group>(
-                group => group.GroupId == existingGroup.GroupId
-                      && group.GroupName == existingGroup.GroupName
-                      && group.GroupDescription == existingGroup.GroupDescription
-                      && group.Users.Count == 0)))
-            .Returns(true);
+            .Setup(repo => repo.DeleteGroup(
+                It.Is<Group>(
+                    group => group.GroupId == existingGroup.GroupId
+                          && group.GroupName == existingGroup.GroupName
+                          && group.GroupDescription == existingGroup.GroupDescription
+                          && group.Users.Count == 0), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateGroupHandlerSUT.Handle(command, CancellationToken.None);

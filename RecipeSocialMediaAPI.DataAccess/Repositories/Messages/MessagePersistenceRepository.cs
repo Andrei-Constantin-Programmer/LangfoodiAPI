@@ -64,7 +64,9 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         }
     }
 
-    public bool DeleteMessage(Message message) => DeleteMessage(message.Id);
+    public async Task<bool> DeleteMessage(Message message, CancellationToken cancellationToken = default) 
+        => await DeleteMessage(message.Id, cancellationToken);
 
-    public bool DeleteMessage(string messageId) => _messageCollection.Delete(messageDoc => messageDoc.Id == messageId);
+    public async Task<bool> DeleteMessage(string messageId, CancellationToken cancellationToken = default) 
+        => await _messageCollection.Delete(messageDoc => messageDoc.Id == messageId, cancellationToken);
 }

@@ -48,7 +48,7 @@ public class RecipeRemovedHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.DeleteMessage(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -118,8 +118,8 @@ public class RecipeRemovedHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.IsAny<Message>()), Times.Once);
+            .Verify(repo => repo.DeleteMessage(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Once);
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.Is<Message>(m => m == message3)), Times.Once);
+            .Verify(repo => repo.DeleteMessage(It.Is<Message>(m => m == message3), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
