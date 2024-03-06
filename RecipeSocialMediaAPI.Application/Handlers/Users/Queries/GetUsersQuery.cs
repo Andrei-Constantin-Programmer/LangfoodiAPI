@@ -31,7 +31,7 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
         var allUsers = await _userQueryRepository.GetAllUserAccountsContainingAsync(request.ContainedString, cancellationToken);
-        var connections = await _connectionQueryRepository.GetConnectionsForUserAsync(queryingUser, cancellationToken);
+        var connections = (await _connectionQueryRepository.GetConnectionsForUserAsync(queryingUser, cancellationToken)).ToList();
         var usersFound = GetFilteredUsers(queryingUser, allUsers, request.QueryOptions, connections);
 
         return usersFound

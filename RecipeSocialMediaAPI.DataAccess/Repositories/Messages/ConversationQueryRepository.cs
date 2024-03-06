@@ -108,7 +108,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
             : null;
     }
 
-    public async Task<List<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
         IEnumerable<ConversationDocument> conversations = Enumerable.Empty<ConversationDocument>();
 
@@ -134,7 +134,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
             _logger.LogError(ex, "There was an error trying to get the conversations for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
         }
 
-        return (await Task.WhenAll(conversations
+        return await Task.WhenAll(conversations
             .Select(async conversationDoc => 
             {
                 IConnection? connection = await GetConnectionAsync(conversationDoc, cancellationToken);
@@ -142,8 +142,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
                 List<Message> messages = await GetMessagesAsync(conversationDoc);
 
                 return _mapper.MapConversationFromDocument(conversationDoc, connection, group, messages);
-            })))
-            .ToList();
+            }));
     }
 
     private async Task<List<Message>> GetMessagesAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default) 

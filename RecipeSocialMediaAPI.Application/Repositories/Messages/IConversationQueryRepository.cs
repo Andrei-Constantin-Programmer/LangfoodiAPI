@@ -10,5 +10,5 @@ public interface IConversationQueryRepository
     Task<ConnectionConversation?> GetConversationByConnectionAsync(string connectionId, CancellationToken cancellationToken = default);
     Task<GroupConversation?> GetConversationByGroupAsync(string groupId, CancellationToken cancellationToken = default);
 
-    Task<List<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default);
 }

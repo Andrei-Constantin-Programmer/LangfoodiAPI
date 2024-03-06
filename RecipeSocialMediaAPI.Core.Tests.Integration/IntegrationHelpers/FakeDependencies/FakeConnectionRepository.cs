@@ -19,10 +19,9 @@ internal class FakeConnectionRepository : IConnectionQueryRepository, IConnectio
         await Task.FromResult(_collection.FirstOrDefault(conn => (conn.Account1.Id == userAccount1.Id && conn.Account2.Id == userAccount2.Id)
                                               || (conn.Account1.Id == userAccount2.Id && conn.Account2.Id == userAccount1.Id)));
 
-    public Task<List<IConnection>> GetConnectionsForUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) =>
+    public Task<IEnumerable<IConnection>> GetConnectionsForUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) =>
         Task.FromResult(_collection
-            .Where(conn => conn.Account1.Id == userAccount.Id || conn.Account2.Id == userAccount.Id)
-            .ToList());
+            .Where(conn => conn.Account1.Id == userAccount.Id || conn.Account2.Id == userAccount.Id));
 
     public async Task<IConnection> CreateConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
     {

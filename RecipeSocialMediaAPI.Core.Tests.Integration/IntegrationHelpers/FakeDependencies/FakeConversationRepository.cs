@@ -28,12 +28,12 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
     public async Task<Conversation?> GetConversationByIdAsync(string id, CancellationToken cancellationToken = default) => await Task.FromResult(_collection
         .FirstOrDefault(conversation => conversation.ConversationId == id));
 
-    public Task<List<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) => Task.FromResult(_collection
+    public async Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection
         .Where(conversation => (conversation is ConnectionConversation connConvo 
                                 && (connConvo.Connection.Account1.Id == userAccount.Id || connConvo.Connection.Account2.Id == userAccount.Id))
                             || (conversation is GroupConversation groupConvo
-                                && groupConvo.Group.Users.Any(user => user.Id == userAccount.Id)))
-        .ToList());
+                                && groupConvo.Group.Users.Any(user => user.Id == userAccount.Id))));
 
     public async Task<Conversation> CreateConnectionConversationAsync(IConnection connection, CancellationToken cancellationToken = default)
     {

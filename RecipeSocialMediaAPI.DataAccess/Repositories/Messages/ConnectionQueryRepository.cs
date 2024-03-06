@@ -59,7 +59,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
             : null;
     }
 
-    public async Task<List<IConnection>> GetConnectionsForUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<IConnection>> GetConnectionsForUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
         IEnumerable<ConnectionDocument> connections = Enumerable.Empty<ConnectionDocument>();
 
@@ -75,7 +75,6 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         }
 
         return (await Task.WhenAll(connections
-            .Select(async connection => await _mapper.MapConnectionFromDocumentAsync(connection, cancellationToken))))
-            .ToList();
+            .Select(async connection => await _mapper.MapConnectionFromDocumentAsync(connection, cancellationToken))));
     }
 }
