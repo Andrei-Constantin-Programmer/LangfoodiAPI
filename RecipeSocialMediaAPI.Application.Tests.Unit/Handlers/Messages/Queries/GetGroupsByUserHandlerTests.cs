@@ -29,7 +29,7 @@ public class GetGroupsByUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Handle_WhenGroupsExist_ReturnGroupDTOs()
     {
         // Given
@@ -100,7 +100,7 @@ public class GetGroupsByUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Handle_WhenGroupsDoNotExist_ReturnEmptyCollection()
     {
         // Given
@@ -136,7 +136,7 @@ public class GetGroupsByUserHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Handle_WhenUserDoesNotExist_ThrowUserNotFoundException()
     {
         // Given
