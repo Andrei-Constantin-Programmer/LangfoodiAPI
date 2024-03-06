@@ -49,23 +49,23 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationsByUser_WhenConversationsExist_ReturnConversations()
+    public async Task GetConversationsByUser_WhenConversationsExist_ReturnConversations()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
-        var conversation1 = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2, ConnectionStatus.Connected);
+        var conversation1 = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
-        var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
-        var conversation2 = _fakeConversationRepository
-            .CreateGroupConversation(group);
+        var group = await _fakeGroupRepository
+            .CreateGroupAsync("Group", "Group Desc", new() { user1.Account, user2 });
+        var conversation2 = await _fakeConversationRepository
+            .CreateGroupConversationAsync(group);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -89,11 +89,11 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationsByUser_WhenNoConversationsExistForUser_ReturnEmptyList()
+    public async Task GetConversationsByUser_WhenNoConversationsExistForUser_ReturnEmptyList()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -110,7 +110,7 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationsByUser_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task GetConversationsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -138,23 +138,23 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConversationsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
-        _ = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2, ConnectionStatus.Connected);
+        _ = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
-        var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
-        _ = _fakeConversationRepository
-            .CreateGroupConversation(group);
+        var group = await _fakeGroupRepository
+            .CreateGroupAsync("Group", "Group Desc", new() { user1.Account, user2 });
+        _ = await _fakeConversationRepository
+            .CreateGroupConversationAsync(group);
 
         // When
         var result = await _client.PostAsync($"conversation/get-by-user/?userId={user1.Account.Id}", null);
@@ -166,19 +166,18 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
+    public async Task GetConversationByConnection_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
-
-        var conversation = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -198,26 +197,25 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
+    public async Task GetConversationByConnection_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
-        var conversation = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
-
-        Message testMessage1 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
-        Message testMessage2 = _fakeMessageRepository
-            .CreateMessage(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
-        Message testMessage3 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
+        Message testMessage1 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
+        Message testMessage2 = await _fakeMessageRepository
+            .CreateMessageAsync(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
+        Message testMessage3 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
         
         conversation.SendMessage(testMessage1);
         conversation.SendMessage(testMessage3);
@@ -243,16 +241,16 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConversationDoesNotExist_ReturnNotFound()
+    public async Task GetConversationByConnection_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2, ConnectionStatus.Connected);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -267,11 +265,11 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenConnectionDoesNotExist_ReturnNotFound()
+    public async Task GetConversationByConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -286,19 +284,18 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConversationByConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2, ConnectionStatus.Connected);
-
-        var conversation = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2, ConnectionStatus.Connected);
+        _ = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
         // When
         var result = await _client.PostAsync($"conversation/get-by-connection/?connectionId={connection.ConnectionId}&userId={user1.Account.Id}", null);
@@ -310,19 +307,18 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
+    public async Task GetConversationByGroup_WhenConversationExistsWithNoMessages_ReturnConversationWithoutLastMessage()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
-
-        var conversation = _fakeConversationRepository
-            .CreateGroupConversation(group);
+        var group = await _fakeGroupRepository
+            .CreateGroupAsync("Group", "Group Desc", new() { user1.Account, user2 });
+        var conversation = await _fakeConversationRepository
+            .CreateGroupConversationAsync(group);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -342,26 +338,26 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
+    public async Task GetConversationByGroup_WhenConversationExistsWithMessages_ReturnConversationWithLastMessage()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
+        var group = await _fakeGroupRepository
+            .CreateGroupAsync("Group", "Group Desc", new() { user1.Account, user2 });
 
-        var conversation = _fakeConversationRepository
-            .CreateGroupConversation(group);
+        var conversation = await _fakeConversationRepository
+            .CreateGroupConversationAsync(group);
 
-        Message testMessage1 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
-        Message testMessage2 = _fakeMessageRepository
-            .CreateMessage(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
-        Message testMessage3 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
+        Message testMessage1 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Oldest message", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
+        Message testMessage2 = await _fakeMessageRepository
+            .CreateMessageAsync(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
+        Message testMessage3 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
 
         conversation.SendMessage(testMessage1);
         conversation.SendMessage(testMessage3);
@@ -387,16 +383,16 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenConversationDoesNotExist_ReturnNotFound()
+    public async Task GetConversationByGroup_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
+        var group = await _fakeGroupRepository
+            .CreateGroupAsync("Group", "Group Desc", new() { user1.Account, user2 });
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -411,11 +407,11 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    public async Task GetConversationByGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -430,19 +426,19 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConversationByGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConversationByGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        var group = _fakeGroupRepository
-            .CreateGroup("Group", "Group Desc", new() { user1.Account, user2 });
+        var group = await _fakeGroupRepository
+            .CreateGroupAsync("Group", "Group Desc", new() { user1.Account, user2 });
 
-        _ = _fakeConversationRepository
-            .CreateGroupConversation(group);
+        _ = await _fakeConversationRepository
+            .CreateGroupConversationAsync(group);
 
         // When
         var result = await _client.PostAsync($"conversation/get-by-group/?groupId={group.GroupId}&userId={user1.Account.Id}", null);
@@ -454,16 +450,16 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnectionConversation_WhenConnectionIsValid_ReturnCreatedConnectionConversation()
+    public async Task CreateConnectionConversation_WhenConnectionIsValid_ReturnCreatedConnectionConversation()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         
-        var user2= _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        IConnection newConnection = _fakeConnectionRepository.CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+        IConnection newConnection = await _fakeConnectionRepository.CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -485,11 +481,11 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnectionConversation_WhenConnectionIsNotFound_ReturnNotFound()
+    public async Task CreateConnectionConversation_WhenConnectionIsNotFound_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -504,16 +500,16 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnectionConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task CreateConnectionConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        IConnection newConnection = _fakeConnectionRepository.CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+        IConnection newConnection = await _fakeConnectionRepository.CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         // When
         var result = await _client.PostAsync($"/conversation/create-by-connection/?userId={user1.Account.Id}&connectionId={newConnection.ConnectionId}", null);
@@ -525,16 +521,16 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroupConversation_WhenGroupIsValid_ReturnCreatedGroupConversation()
+    public async Task CreateGroupConversation_WhenGroupIsValid_ReturnCreatedGroupConversation()
     {
         // Given        
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        Group newGroup = _fakeGroupRepository.CreateGroup("testGroup","This is a test group.",new List<IUserAccount> { user1.Account, user2.Account});
+        Group newGroup = await _fakeGroupRepository.CreateGroupAsync("testGroup","This is a test group.",new List<IUserAccount> { user1.Account, user2.Account});
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -556,11 +552,11 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
+    public async Task CreateGroupConversation_WhenGroupIsNotFound_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -575,16 +571,16 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroupConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task CreateGroupConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given        
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        Group newGroup = _fakeGroupRepository.CreateGroup("testGroup", "This is a test group.", new List<IUserAccount> { user1.Account, user2.Account });
+        Group newGroup = await _fakeGroupRepository.CreateGroupAsync("testGroup", "This is a test group.", new List<IUserAccount> { user1.Account, user2.Account });
 
         // When
         var result = await _client.PostAsync($"/conversation/create-by-group/?userId={user1.Account.Id}&groupId={newGroup.GroupId}", null);
@@ -596,26 +592,26 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void MarkConversationAsRead_WhenConversationExists_MarkAllConversationsAsRead()
+    public async Task MarkConversationAsRead_WhenConversationExists_MarkAllConversationsAsRead()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
-        var conversation = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
-        var message1 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Sent by user", new(), new(), new(2024, 2, 2, 12, 0, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
-        var message2 = _fakeMessageRepository
-            .CreateMessage(user2.Account, "Seen by user", new(), new(), new(2024, 2, 2, 12, 30, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
-        var message3 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Not seen 1", new(), new(), new(2024, 2, 2, 13, 1, 20, TimeSpan.Zero), null, new() { user2.Account.Id });
-        var message4 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Not seen 2", new(), new(), new(2024, 2, 2, 13, 2, 34, TimeSpan.Zero), null, new() { user2.Account.Id });
+        var message1 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Sent by user", new(), new(), new(2024, 2, 2, 12, 0, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
+        var message2 = await _fakeMessageRepository
+            .CreateMessageAsync(user2.Account, "Seen by user", new(), new(), new(2024, 2, 2, 12, 30, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
+        var message3 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Not seen 1", new(), new(), new(2024, 2, 2, 13, 1, 20, TimeSpan.Zero), null, new() { user2.Account.Id });
+        var message4 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Not seen 2", new(), new(), new(2024, 2, 2, 13, 2, 34, TimeSpan.Zero), null, new() { user2.Account.Id });
 
         conversation.SendMessage(message1);
         conversation.SendMessage(message2);
@@ -637,26 +633,26 @@ public class ConversationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void MarkConversationAsRead_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task MarkConversationAsRead_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
-        var conversation = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
-        var message1 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Sent by user", new(), new(), new(2024, 2, 2, 12, 0, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
-        var message2 = _fakeMessageRepository
-            .CreateMessage(user2.Account, "Seen by user", new(), new(), new(2024, 2, 2, 12, 30, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
-        var message3 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Not seen 1", new(), new(), new(2024, 2, 2, 13, 1, 20, TimeSpan.Zero), null, new() { user2.Account.Id });
-        var message4 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Not seen 2", new(), new(), new(2024, 2, 2, 13, 2, 34, TimeSpan.Zero), null, new() { user2.Account.Id });
+        var message1 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Sent by user", new(), new(), new(2024, 2, 2, 12, 0, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
+        var message2 = await _fakeMessageRepository
+            .CreateMessageAsync(user2.Account, "Seen by user", new(), new(), new(2024, 2, 2, 12, 30, 0, TimeSpan.Zero), null, new() { user1.Account.Id, user2.Account.Id });
+        var message3 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Not seen 1", new(), new(), new(2024, 2, 2, 13, 1, 20, TimeSpan.Zero), null, new() { user2.Account.Id });
+        var message4 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Not seen 2", new(), new(), new(2024, 2, 2, 13, 2, 34, TimeSpan.Zero), null, new() { user2.Account.Id });
 
         conversation.SendMessage(message1);
         conversation.SendMessage(message2);

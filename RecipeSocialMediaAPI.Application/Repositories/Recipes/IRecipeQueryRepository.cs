@@ -5,8 +5,8 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 public interface IRecipeQueryRepository
 {
-    RecipeAggregate? GetRecipeById(string id);
-    IEnumerable<RecipeAggregate> GetRecipesByChef(IUserAccount? chef);
-    IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId);
-    IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName);
+    Task<RecipeAggregate?> GetRecipeByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<RecipeAggregate>> GetRecipesByChefAsync(IUserAccount? chef, CancellationToken cancellationToken = default);
+    Task<IEnumerable<RecipeAggregate>> GetRecipesByChefIdAsync(string chefId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<RecipeAggregate>> GetRecipesByChefNameAsync(string chefName, CancellationToken cancellationToken = default);
 }

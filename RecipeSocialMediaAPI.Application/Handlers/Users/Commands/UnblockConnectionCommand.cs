@@ -21,17 +21,15 @@ internal class UnblockConnectionHandler : IRequestHandler<UnblockConnectionComma
         _connectionQueryRepository = connectionQueryRepository;
     }
 
-    public Task Handle(UnblockConnectionCommand request, CancellationToken cancellationToken) {
-        IUserCredentials user = _userQueryRepository.GetUserById(request.UserId)
+    public async Task Handle(UnblockConnectionCommand request, CancellationToken cancellationToken) {
+        IUserCredentials user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))
             ?? throw new UserNotFoundException($"User with id {request.UserId} does not exist");
-        IConnection connection = _connectionQueryRepository.GetConnection(request.ConnectionId)
+        IConnection connection = (await _connectionQueryRepository.GetConnectionAsync(request.ConnectionId, cancellationToken))
             ?? throw new ConnectionNotFoundException($"Connection with id {request.ConnectionId} does not exist");
 
         if (user.Account.UnblockConnection(connection.ConnectionId))
         {
-            _userPersistenceRepository.UpdateUser(user);
+            await _userPersistenceRepository.UpdateUserAsync(user, cancellationToken);
         }
-
-        return Task.CompletedTask;
     }
 }

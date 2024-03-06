@@ -20,18 +20,18 @@ public class UserQueryRepository : IUserQueryRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public IEnumerable<IUserCredentials> GetAllUsers() => _userCollection
-        .GetAll((_) => true)
+    public async Task<IEnumerable<IUserCredentials>> GetAllUsersAsync(CancellationToken cancellationToken = default) => (await _userCollection
+        .GetAllAsync((_) => true, cancellationToken))
         .Select(_mapper.MapUserDocumentToUser);
 
-    public IUserCredentials? GetUserById(string id)
+    public async Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
         try
         {
-            userDocument = _userCollection
-                .Find(userDoc => userDoc.Id == id);
+            userDocument = await _userCollection
+                .GetOneAsync(userDoc => userDoc.Id == id, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -44,13 +44,13 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public IUserCredentials? GetUserByEmail(string email)
+    public async Task<IUserCredentials?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
         try
         {
-            userDocument = _userCollection
-                .Find(userDoc => userDoc.Email == email);
+            userDocument = await _userCollection
+                .GetOneAsync(userDoc => userDoc.Email == email, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -63,14 +63,14 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public IUserCredentials? GetUserByHandler(string handler)
+    public async Task<IUserCredentials?> GetUserByHandlerAsync(string handler, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
         try
         {
-            userDocument = _userCollection
-                .Find(userDoc => userDoc.Handler == handler);
+            userDocument = await _userCollection
+                .GetOneAsync(userDoc => userDoc.Handler == handler, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -83,14 +83,14 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public IUserCredentials? GetUserByUsername(string username)
+    public async Task<IUserCredentials?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
 
         try
         {
-            userDocument = _userCollection
-                .Find(userDoc => userDoc.UserName == username);
+            userDocument = await _userCollection
+                .GetOneAsync(userDoc => userDoc.UserName == username, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -103,8 +103,9 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString) => _userCollection
-        .GetAll(userDoc => userDoc.Handler.Contains(containedString.ToLower())
-                        || userDoc.UserName.Contains(containedString.ToLower()))
-        .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);
+    public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default) 
+        => (await _userCollection
+            .GetAllAsync(userDoc => userDoc.Handler.Contains(containedString.ToLower())
+                            || userDoc.UserName.Contains(containedString.ToLower()), cancellationToken))
+            .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);
 }

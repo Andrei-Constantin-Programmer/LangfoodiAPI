@@ -21,13 +21,13 @@ public class GroupQueryRepository : IGroupQueryRepository
         _groupCollection = mongoCollectionFactory.CreateCollection<GroupDocument>();
     }
 
-    public Group? GetGroupById(string groupId)
+    public async Task<Group?> GetGroupByIdAsync(string groupId, CancellationToken cancellationToken = default)
     {
         GroupDocument? groupDocument;
         try
         {
-            groupDocument = _groupCollection.Find(
-                groupDoc => groupDoc.Id == groupId);
+            groupDocument = await _groupCollection.GetOneAsync(
+                groupDoc => groupDoc.Id == groupId, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -36,17 +36,17 @@ public class GroupQueryRepository : IGroupQueryRepository
         }
         
         return groupDocument is not null
-            ? _mapper.MapGroupFromDocument(groupDocument)
+            ? await _mapper.MapGroupFromDocumentAsync(groupDocument, cancellationToken)
             : null;
     }
 
-    public IEnumerable<Group> GetGroupsByUser(IUserAccount userAccount)
+    public async Task<IEnumerable<Group>> GetGroupsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
         try
         {
-            return _groupCollection
-                .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id))
-                .Select(_mapper.MapGroupFromDocument);
+            return await Task.WhenAll((await _groupCollection
+                .GetAllAsync(groupDoc => groupDoc.UserIds.Contains(userAccount.Id), cancellationToken))
+                .Select(group => _mapper.MapGroupFromDocumentAsync(group, cancellationToken)));
         }
         catch (Exception ex)
         {

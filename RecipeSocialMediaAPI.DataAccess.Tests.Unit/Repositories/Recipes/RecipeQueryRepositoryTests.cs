@@ -47,18 +47,20 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipeById_WhenRecipeWithIdNotFound_ReturnNull()
+    public async Task GetRecipeById_WhenRecipeWithIdNotFound_ReturnNull()
     {
         // Given
         string id = "1";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
         RecipeDocument? nullRecipeDocument = null;
         _recipeCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(nullRecipeDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nullRecipeDocument);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipeById(id);
+        var result = await _recipeQueryRepositorySUT.GetRecipeByIdAsync(id);
 
         // Then
         result.Should().BeNull();
@@ -67,7 +69,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipeById_WhenRecipeIsFound_ReturnRecipe()
+    public async Task GetRecipeById_WhenRecipeIsFound_ReturnRecipe()
     {
         // Given
         string id = "1";
@@ -111,17 +113,19 @@ public class RecipeQueryRepositoryTests
             );
 
         _recipeCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
-            .Returns(testChef);
+            .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testChef);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef.Account))
             .Returns(testRecipe);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipeById(id);
+        var result = await _recipeQueryRepositorySUT.GetRecipeByIdAsync(id);
 
         // Then
         result.Should().Be(testRecipe);
@@ -130,7 +134,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipeById_WhenRecipeIsFoundButChefIsNotFound_LogWarningAndReturnNull()
+    public async Task GetRecipeById_WhenRecipeIsFoundButChefIsNotFound_LogWarningAndReturnNull()
     {
         // Given
         string id = "1";
@@ -170,14 +174,16 @@ public class RecipeQueryRepositoryTests
             );
 
         _recipeCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef))
             .Returns(testRecipe);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipeById(id);
+        var result = await _recipeQueryRepositorySUT.GetRecipeByIdAsync(id);
 
         // Then
         result.Should().BeNull();
@@ -194,7 +200,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipeById_WhenMongoThrowsException_LogExceptionAndReturnNull()
+    public async Task GetRecipeById_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         string id = "1";
@@ -240,17 +246,17 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
-            .Returns(testChef);
+            .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testChef);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef.Account))
             .Returns(testRecipe);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipeById(id);
+        var result = await _recipeQueryRepositorySUT.GetRecipeByIdAsync(id);
 
         // Then
         result.Should().BeNull();
@@ -268,7 +274,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChefId_WhenChefExistsAndNoRecipesWithIdExist_ReturnEmptyList()
+    public async Task GetRecipesByChefId_WhenChefExistsAndNoRecipesWithIdExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -287,15 +293,17 @@ public class RecipeQueryRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(chefId))
-            .Returns(testChef);
+            .Setup(repo => repo.GetUserByIdAsync(chefId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testChef);
 
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(new List<RecipeDocument>());
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<RecipeDocument>());
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChefId(chefId);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefIdAsync(chefId);
 
         // Then
         result.Should().BeEmpty();
@@ -308,7 +316,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChefId_WhenChefExistsAndRecipesWithIdExist_ReturnRelatedRecipes()
+    public async Task GetRecipesByChefId_WhenChefExistsAndRecipesWithIdExist_ReturnRelatedRecipes()
     {
         // Given
         string chefId = "1";
@@ -348,18 +356,16 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
 
-        _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(new List<RecipeDocument>() { chefsRecipe });
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
-            .Returns(testChef);
+            .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testChef);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChefId(chefId);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefIdAsync(chefId);
 
         // Then
         result.Should().HaveCount(1);
@@ -370,7 +376,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChefId_WhenChefDoesNotExist_ReturnEmptyList()
+    public async Task GetRecipesByChefId_WhenChefDoesNotExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -392,11 +398,11 @@ public class RecipeQueryRepositoryTests
         };
 
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocuments);
+            .Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocuments);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChefId(chefId);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefIdAsync(chefId);
 
         // Then
         result.Should().BeEmpty();
@@ -409,7 +415,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChefId_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
+    public async Task GetRecipesByChefId_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -451,17 +457,17 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.Is<string>(x => x == chefId)))
-            .Returns(testChef);
+            .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testChef);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChefId(chefId);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefIdAsync(chefId);
 
         // Then
         result.Should().BeEmpty();
@@ -479,7 +485,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChefUsername_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
+    public async Task GetRecipesByChefUsername_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
     {
         // Given
         string chefId = "1";
@@ -520,18 +526,16 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
 
-        _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(new List<RecipeDocument>() { chefsRecipe });
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.Is<string>(x => x == chefUsername)))
-            .Returns(testChef);
+            .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(x => x == chefUsername), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testChef);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChefName(chefUsername);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefNameAsync(chefUsername);
 
         // Then
         result.Should().HaveCount(1);
@@ -542,7 +546,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChefUsername_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
+    public async Task GetRecipesByChefUsername_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -562,15 +566,13 @@ public class RecipeQueryRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(chefUsername))
-            .Returns(testChef);
+            .Setup(repo => repo.GetUserByUsernameAsync(chefUsername, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testChef);
 
-        _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(new List<RecipeDocument>());
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>());
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChefName(chefUsername);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefNameAsync(chefUsername);
 
         // Then
         result.Should().BeEmpty();
@@ -583,7 +585,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChefUsername_WhenChefDoesNotExist_ReturnEmptyList()
+    public async Task GetRecipesByChefUsername_WhenChefDoesNotExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -605,12 +607,10 @@ public class RecipeQueryRepositoryTests
             )
         };
 
-        _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocuments);
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(testDocuments);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChefName(chefUsername);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefNameAsync(chefUsername);
 
         // Then
         result.Should().BeEmpty();
@@ -623,7 +623,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChefUsername_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
+    public async Task GetRecipesByChefUsername_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -669,17 +669,17 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.Is<string>(x => x == chefUsername)))
-            .Returns(testChef);
+            .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(x => x == chefUsername), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testChef);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChefName(chefUsername);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefNameAsync(chefUsername);
 
         // Then
         result.Should().BeEmpty();
@@ -697,13 +697,13 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenChefIsNull_ReturnEmptyList()
+    public async Task GetRecipesByChef_WhenChefIsNull_ReturnEmptyList()
     {
         // Given
         IUserAccount? chef = null;
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChef(chef);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefAsync(chef);
 
         // Then
         result.Should().BeEmpty();
@@ -716,7 +716,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
+    public async Task GetRecipesByChef_WhenChefExistsAndRecipesExist_ReturnRelatedRecipes()
     {
         // Given
         string chefId = "1";
@@ -755,15 +755,13 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.ThumbnailId
         );
 
-        _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(new List<RecipeDocument>() { chefsRecipe });
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
             .Returns(expectedResult);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChef(testChef);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef);
 
         // Then
         result.Should().HaveCount(1);
@@ -774,7 +772,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
+    public async Task GetRecipesByChef_WhenChefExistsAndNoRecipesExist_ReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -787,12 +785,10 @@ public class RecipeQueryRepositoryTests
         };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(new List<RecipeDocument>());
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>());
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChef(testChef);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef);
 
         // Then
         result.Should().BeEmpty();
@@ -805,7 +801,7 @@ public class RecipeQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetRecipesByChef_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
+    public async Task GetRecipesByChef_WhenMongoThrowsException_LogExceptionAndReturnEmptyList()
     {
         // Given
         string chefId = "1";
@@ -842,14 +838,14 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
             .Returns(expectedResult);
 
         // When
-        var result = _recipeQueryRepositorySUT.GetRecipesByChef(testChef);
+        var result = await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef);
 
         // Then
         result.Should().BeEmpty();

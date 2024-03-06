@@ -32,18 +32,18 @@ internal class CreateGroupHandler : IRequestHandler<CreateGroupCommand, GroupDTO
 
         foreach (string userid in userIds)
         { 
-            userAccounts.Add(_userQueryRepository
-                .GetUserById(userid)?.Account
+            userAccounts.Add((await _userQueryRepository
+                .GetUserByIdAsync(userid, cancellationToken))?.Account
                 ?? throw new UserNotFoundException($"No user found with id {userid}"));
         }
 
-        Group createdGroup = _groupPersistenceRepository
-            .CreateGroup(groupName, groupDesciption, userAccounts);
+        Group createdGroup = await _groupPersistenceRepository
+            .CreateGroupAsync(groupName, groupDesciption, userAccounts, cancellationToken);
 
-        return await Task.FromResult(new GroupDTO(
+        return new GroupDTO(
             createdGroup.GroupId,
             createdGroup.GroupName,
             createdGroup.GroupDescription,
-            createdGroup.Users.Select(user => user.Id).ToList()));
+            createdGroup.Users.Select(user => user.Id).ToList());
     }
 }

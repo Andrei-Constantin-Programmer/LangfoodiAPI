@@ -60,15 +60,15 @@ public class MarkConversationAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
@@ -77,7 +77,7 @@ public class MarkConversationAsReadHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -110,8 +110,8 @@ public class MarkConversationAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         List<Message> messages = new()
         {
@@ -126,8 +126,8 @@ public class MarkConversationAsReadHandlerTests
         ConnectionConversation conversation = new(connection, "convo1", messages);
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
@@ -136,16 +136,20 @@ public class MarkConversationAsReadHandlerTests
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Exactly(2));
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<Message>(message => 
-                    message.Id == messages[3].Id &&
-                    message.SeenBy.Contains(user1.Account))), 
+            .Verify(repo => repo.UpdateMessageAsync(
+                    It.Is<Message>(message => 
+                        message.Id == messages[3].Id &&
+                        message.SeenBy.Contains(user1.Account)), 
+                    It.IsAny<CancellationToken>()), 
                 Times.Once);
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<Message>(message =>
-                    message.Id == messages[4].Id &&
-                    message.SeenBy.Contains(user1.Account))),
+            .Verify(repo => repo.UpdateMessageAsync(
+                    It.Is<Message>(message =>
+                        message.Id == messages[4].Id &&
+                        message.SeenBy.Contains(user1.Account)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
@@ -179,15 +183,15 @@ public class MarkConversationAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>()))
-            .Returns((IUserCredentials?)null);
+            .Setup(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IUserCredentials?)null);
 
         Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns(conversation);
+            .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
 
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
@@ -197,7 +201,7 @@ public class MarkConversationAsReadHandlerTests
         // Then
         await testAction.Should().ThrowAsync<UserNotFoundException>();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -230,15 +234,15 @@ public class MarkConversationAsReadHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(user1.Account.Id))
-            .Returns(user1);
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
 
         Connection connection = new("conn1", user1.Account, user2.Account, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", new List<Message>());
 
         _conversationQueryRepositoryMock
-            .Setup(repo => repo.GetConversationById(conversation.ConversationId))
-            .Returns((Conversation?)null);
+            .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Conversation?)null);
 
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
@@ -248,6 +252,6 @@ public class MarkConversationAsReadHandlerTests
         // Then
         await testAction.Should().ThrowAsync<ConversationNotFoundException>();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

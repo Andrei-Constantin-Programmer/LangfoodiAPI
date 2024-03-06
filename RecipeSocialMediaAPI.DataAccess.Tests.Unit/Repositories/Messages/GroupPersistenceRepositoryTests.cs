@@ -36,7 +36,7 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateGroup_WhenGroupIsInsertedSuccessfully_ReturnsMappedGroup()
+    public async Task CreateGroup_WhenGroupIsInsertedSuccessfully_ReturnsMappedGroup()
     {
         // Given
         var groupName = "Group";
@@ -72,21 +72,23 @@ public class GroupPersistenceRepositoryTests
         );
 
         _groupCollectionMock
-            .Setup(collection => collection.Insert(It.Is<GroupDocument>(
-                groupDoc => groupDoc.Id == null
+            .Setup(collection => collection.InsertAsync(
+                It.Is<GroupDocument>(
+                    groupDoc => groupDoc.Id == null
                          && groupDoc.GroupName == groupName
                          && groupDoc.GroupDescription == groupDesc
-                         && groupDoc.UserIds.SequenceEqual(userIds))))
-            .Returns(insertedDocument);
+                         && groupDoc.UserIds.SequenceEqual(userIds)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(insertedDocument);
 
         Group expectedGroup = new(insertedDocument.Id!, insertedDocument.GroupName, insertedDocument.GroupDescription, users);
 
         _groupDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapGroupFromDocument(insertedDocument))
-            .Returns(expectedGroup);
+            .Setup(mapper => mapper.MapGroupFromDocumentAsync(insertedDocument, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedGroup);
 
         // When
-        var result = _groupPersistenceRepositorySUT.CreateGroup(groupName, groupDesc, users);
+        var result = await _groupPersistenceRepositorySUT.CreateGroupAsync(groupName, groupDesc, users);
 
         // Then
         result.Should().Be(expectedGroup);
@@ -95,7 +97,7 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateGroup_WhenUpdateIsSuccessful_ReturnTrue()
+    public async Task UpdateGroup_WhenUpdateIsSuccessful_ReturnTrue()
     {
         // Given
         List<IUserAccount> users = new()
@@ -121,17 +123,18 @@ public class GroupPersistenceRepositoryTests
         Expression<Func<GroupDocument, bool>> expectedExpression = doc => doc.Id == group.GroupId;
 
         _groupCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.Is<GroupDocument>(
                     groupDoc => groupDoc.Id == group.GroupId
                              && groupDoc.GroupName == group.GroupName
                              && groupDoc.GroupDescription == group.GroupDescription
                              && groupDoc.UserIds.SequenceEqual(users.Select(user => user.Id))),
-                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(true);
+                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _groupPersistenceRepositorySUT.UpdateGroup(group);
+        var result = await _groupPersistenceRepositorySUT.UpdateGroupAsync(group);
 
         // Then
         result.Should().BeTrue();
@@ -140,7 +143,7 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateGroup_WhenUpdateIsUnsuccessful_ReturnFalse()
+    public async Task UpdateGroup_WhenUpdateIsUnsuccessful_ReturnFalse()
     {
         // Given
         List<IUserAccount> users = new()
@@ -166,17 +169,18 @@ public class GroupPersistenceRepositoryTests
         Expression<Func<GroupDocument, bool>> expectedExpression = doc => doc.Id == group.GroupId;
 
         _groupCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.Is<GroupDocument>(
                     groupDoc => groupDoc.Id == group.GroupId
                              && groupDoc.GroupName == group.GroupName
                              && groupDoc.GroupDescription == group.GroupDescription
                              && groupDoc.UserIds.SequenceEqual(users.Select(user => user.Id))),
-                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(false);
+                It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _groupPersistenceRepositorySUT.UpdateGroup(group);
+        var result = await _groupPersistenceRepositorySUT.UpdateGroupAsync(group);
 
         // Then
         result.Should().BeFalse();
@@ -185,17 +189,19 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteGroup_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task DeleteGroup_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         Group group = new("g1", "Group", "Group Description");
 
         _groupCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<GroupDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _groupPersistenceRepositorySUT.DeleteGroup(group);
+        var result = await _groupPersistenceRepositorySUT.DeleteGroupAsync(group);
 
         // Then
         result.Should().BeTrue();
@@ -204,17 +210,19 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteGroup_WhenDeleteIsUnsuccessful_ReturnFalse()
+    public async Task DeleteGroup_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
         Group group = new("g1", "Group", "Group Description");
 
         _groupCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<GroupDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _groupPersistenceRepositorySUT.DeleteGroup(group);
+        var result = await _groupPersistenceRepositorySUT.DeleteGroupAsync(group);
 
         // Then
         result.Should().BeFalse();
@@ -223,15 +231,17 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteGroupById_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task DeleteGroupById_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         _groupCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<GroupDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _groupPersistenceRepositorySUT.DeleteGroup("g1");
+        var result = await _groupPersistenceRepositorySUT.DeleteGroupAsync("g1");
 
         // Then
         result.Should().BeTrue();
@@ -240,15 +250,17 @@ public class GroupPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteGroupById_WhenDeleteIsUnsuccessful_ReturnFalse()
+    public async Task DeleteGroupById_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
         _groupCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<GroupDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<GroupDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _groupPersistenceRepositorySUT.DeleteGroup("g1");
+        var result = await _groupPersistenceRepositorySUT.DeleteGroupAsync("g1");
 
         // Then
         result.Should().BeFalse();

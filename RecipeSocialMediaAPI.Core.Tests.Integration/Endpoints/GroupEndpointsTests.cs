@@ -59,15 +59,15 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroup_WhenUsersExist_ReturnNewGroup()
+    public async Task CreateGroup_WhenUsersExist_ReturnNewGroup()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user3 = await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero));
         
         List<string> userIds = new() { user1.Account.Id, user2.Account.Id, user3.Account.Id};
         NewGroupContract group = new("name", "Desciption", userIds);
@@ -93,7 +93,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [InlineData(true, false, true)]
     [InlineData(false, true, true)]
     [InlineData(true, true, false)]
-    public async void CreateGroup_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists, bool user3Exists)
+    public async Task CreateGroup_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists, bool user3Exists)
     {
         // Given
         TestUserCredentials user = new()
@@ -109,16 +109,16 @@ public class GroupEndpointsTests : EndpointTestBase
         };
 
         var user1 = user1Exists
-            ? _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
+            ? await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
             : null;
         var user2 = user2Exists
-            ? _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
+            ? await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
             : null;
         var user3 = user3Exists
-            ? _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero))
+            ? await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero))
             : null;
 
         List<string> userIds = new() { user1?.Account.Id ?? "u1", user2?.Account.Id ?? "u2", user3?.Account.Id ?? "u3" };
@@ -137,15 +137,15 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task CreateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user3 = await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(3034, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         List<string> userIds = new() { user1.Account.Id, user2.Account.Id, user3.Account.Id };
         NewGroupContract group = new("name", "Desciption", userIds);
@@ -160,18 +160,18 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroup_WhenGroupExists_ReturnGroup()
+    public async Task GetGroup_WhenGroupExists_ReturnGroup()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        Group group = _fakeGroupRepository
-            .CreateGroup("Test Group", "Test Group Description", new() { user1.Account, user2, user3});
+        Group group = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group", "Test Group Description", new() { user1.Account, user2, user3});
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -191,11 +191,11 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    public async Task GetGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -210,18 +210,18 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        Group group = _fakeGroupRepository
-            .CreateGroup("Test Group", "Test Group Description", new() { user1, user2, user3 });
+        Group group = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group", "Test Group Description", new() { user1, user2, user3 });
 
         // When
         var result = await _client.PostAsync($"group/get/?groupId={group.GroupId}", null);
@@ -233,22 +233,22 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroupsByUser_WhenGroupsExist_ReturnGroups()
+    public async Task GetGroupsByUser_WhenGroupsExist_ReturnGroups()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        Group group1 = _fakeGroupRepository
-            .CreateGroup("Test Group 1", "Test Group 1 Description", new() { user1.Account, user2 });
-        Group group2 = _fakeGroupRepository
-            .CreateGroup("Test Group 2", "Test Group 2 Description", new() { user1.Account, user3 });
-        _ = _fakeGroupRepository
-            .CreateGroup("Test Group 3", "Test Group 3 Description", new() { user2, user3 });
+        Group group1 = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group 1", "Test Group 1 Description", new() { user1.Account, user2 });
+        Group group2 = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group 2", "Test Group 2 Description", new() { user1.Account, user3 });
+        _ = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group 3", "Test Group 3 Description", new() { user2, user3 });
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -275,18 +275,18 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroupsByUser_WhenNoGroupsForUserExist_ReturnEmptyCollection()
+    public async Task GetGroupsByUser_WhenNoGroupsForUserExist_ReturnEmptyCollection()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        _ = _fakeGroupRepository
-            .CreateGroup("Test Group", "Test Group Description", new() { user2, user3 });
+        _ = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group", "Test Group Description", new() { user2, user3 });
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -304,7 +304,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroupsByUser_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task GetGroupsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -332,22 +332,22 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetGroupsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetGroupsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        Group group1 = _fakeGroupRepository
-            .CreateGroup("Test Group 1", "Test Group 1 Description", new() { user1, user2 });
-        Group group2 = _fakeGroupRepository
-            .CreateGroup("Test Group 2", "Test Group 2 Description", new() { user1, user3 });
-        _ = _fakeGroupRepository
-            .CreateGroup("Test Group 3", "Test Group 3 Description", new() { user2, user3 });
+        _ = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group 1", "Test Group 1 Description", new() { user1, user2 });
+        _ = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group 2", "Test Group 2 Description", new() { user1, user3 });
+        _ = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group 3", "Test Group 3 Description", new() { user2, user3 });
 
         // When
         var result = await _client.PostAsync($"group/get-by-user/?userId={user1.Id}", null);
@@ -359,18 +359,18 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateGroup_WhenGroupExists_ReturnOk()
+    public async Task UpdateGroup_WhenGroupExists_ReturnOk()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        Group existingGroup = _fakeGroupRepository
-            .CreateGroup("Test Group", "Test Group Description", new() { user1.Account, user2, user3 });
+        Group existingGroup = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group", "Test Group Description", new() { user1.Account, user2, user3 });
 
         UpdateGroupContract contract = new(existingGroup.GroupId, "New Group", "New Group Description", new() { user1.Account.Id, user2.Id });
 
@@ -382,7 +382,8 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var group = _fakeGroupRepository.GetGroupById(existingGroup.GroupId);
+
+        var group = await _fakeGroupRepository.GetGroupByIdAsync(existingGroup.GroupId);
         group.Should().NotBeNull();
         group!.GroupName.Should().Be(contract.GroupName);
         group.GroupDescription.Should().Be(contract.GroupDescription);
@@ -392,13 +393,13 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    public async Task UpdateGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
         
         UpdateGroupContract contract = new("1", "New Group", "New Group Description", new() { user1.Account.Id, user2.Id });
 
@@ -415,16 +416,16 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateGroup_WhenUserDoesNotExist_ReturnOk()
+    public async Task UpdateGroup_WhenUserDoesNotExist_ReturnOk()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
         
-        Group existingGroup = _fakeGroupRepository
-            .CreateGroup("Test Group", "Test Group Description", new() { user1.Account, user2 });
+        Group existingGroup = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group", "Test Group Description", new() { user1.Account, user2 });
 
         UpdateGroupContract contract = new(existingGroup.GroupId, "New Group", "New Group Description", new() { user1.Account.Id, user2.Id, "nonExistentUser" });
 
@@ -441,18 +442,18 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UpdateGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        Group existingGroup = _fakeGroupRepository
-            .CreateGroup("Test Group", "Test Group Description", new() { user1, user2, user3 });
+        Group existingGroup = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group", "Test Group Description", new() { user1, user2, user3 });
 
         UpdateGroupContract contract = new(existingGroup.GroupId, "New Group", "New Group Description", new() { user1.Id, user2.Id });
 
@@ -466,18 +467,18 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteGroup_WhenGroupExists_ReturnOk()
+    public async Task DeleteGroup_WhenGroupExists_ReturnOk()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), UserRole.Developer);
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), UserRole.Developer);
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        Group group = _fakeGroupRepository
-            .CreateGroup("Test Group", "Test Group Description", new() { user1.Account, user2, user3 });
+        Group group = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group", "Test Group Description", new() { user1.Account, user2, user3 });
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -487,13 +488,13 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        _fakeGroupRepository.GetGroupById(group.GroupId).Should().BeNull();
+        (await _fakeGroupRepository.GetGroupByIdAsync(group.GroupId)).Should().BeNull();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteGroup_WhenGroupDoesNotExist_ReturnNotFound()
+    public async Task DeleteGroup_WhenGroupDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -522,7 +523,7 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteGroup_WhenUserIsNotDeveloper_ReturnForbidden()
+    public async Task DeleteGroup_WhenUserIsNotDeveloper_ReturnForbidden()
     {
         // Given
         TestUserCredentials user = new()
@@ -551,18 +552,18 @@ public class GroupEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task DeleteGroup_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero)).Account;
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero)).Account;
+        var user1 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user2 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))).Account;
+        var user3 = (await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser3.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero))).Account;
 
-        Group group = _fakeGroupRepository
-            .CreateGroup("Test Group", "Test Group Description", new() { user1, user2, user3 });
+        Group group = await _fakeGroupRepository
+            .CreateGroupAsync("Test Group", "Test Group Description", new() { user1, user2, user3 });
 
         // When
         var result = await _client.DeleteAsync($"group/delete/?groupId={group.GroupId}");

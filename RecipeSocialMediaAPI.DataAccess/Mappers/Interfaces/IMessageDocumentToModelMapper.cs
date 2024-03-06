@@ -6,5 +6,5 @@ namespace RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 
 public interface IMessageDocumentToModelMapper
 {
-    Message MapMessageFromDocument(MessageDocument messageDocument, IUserAccount sender, Message? repliedToMessage);
+    Task<Message> MapMessageFromDocumentAsync(MessageDocument messageDocument, IUserAccount sender, Message? repliedToMessage, CancellationToken cancellationToken = default);
 }

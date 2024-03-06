@@ -22,62 +22,66 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public Conversation CreateConnectionConversation(IConnection connection)
+    public async Task<Conversation> CreateConnectionConversationAsync(IConnection connection, CancellationToken cancellationToken = default)
     {
-        ConnectionDocument connectionDocument = GetConnectionDocument(connection)
+        ConnectionDocument connectionDocument = await GetConnectionDocumentAsync(connection, cancellationToken)
             ?? throw new ConnectionDocumentNotFoundException(connection.Account1, connection.Account2);
 
-        ConversationDocument conversationDocument = _conversationCollection.Insert(new(
+        ConversationDocument conversationDocument = await _conversationCollection.InsertAsync(new(
             ConnectionId: connectionDocument.Id,
             Messages: new()
-        ));
+        ), cancellationToken);
 
         return _mapper.MapConversationFromDocument(conversationDocument, connection, null, new());
     }
 
-    public Conversation CreateGroupConversation(Group group)
+    public async Task<Conversation> CreateGroupConversationAsync(Group group, CancellationToken cancellationToken = default)
     {
-        ConversationDocument conversationDocument = _conversationCollection.Insert(new(
+        ConversationDocument conversationDocument = await _conversationCollection.InsertAsync(new(
             GroupId: group.GroupId,
             Messages: new()
-        ));
+        ), cancellationToken);
 
         return _mapper.MapConversationFromDocument(conversationDocument, null, group, new());
     }
 
-    public bool UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null)
+    public async Task<bool> UpdateConversationAsync(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default)
     {
         (string? connectionId, string? groupId) = conversation switch
         {
             ConnectionConversation connectionConversation =>
                 (connection is not null 
-                ? GetConnectionId(connection) 
+                ? await GetConnectionIdAsync(connection, cancellationToken) 
                     ?? throw new InvalidConversationException($"No connection found for ConnectionConversation with id {conversation.ConversationId}")
                 : throw new ArgumentException($"No connection provided when updating ConnectionConversation with id {conversation.ConversationId}"),
                 (string?)null),
+
             GroupConversation groupConversation => 
-            (null, 
-            group?.GroupId ?? throw new ArgumentException($"No group provided when updating GroupConversation with id {conversation.ConversationId}")),
+            (null, group?.GroupId 
+                ?? throw new ArgumentException($"No group provided when updating GroupConversation with id {conversation.ConversationId}")),
 
             _ => throw new InvalidConversationException($"Could not update conversation with id {conversation.ConversationId} of unknown type {conversation.GetType()}"),
         };
 
-        return _conversationCollection.UpdateRecord(new ConversationDocument(
+        return await _conversationCollection.UpdateAsync(
+            new ConversationDocument(
                 Id: conversation.ConversationId,
                 ConnectionId: connectionId,
                 GroupId: groupId,
-                Messages: conversation.Messages.Select(message => message.Id).ToList()
-            ),
-            conversationDoc => conversationDoc.Id == conversation.ConversationId);
+                Messages: conversation.Messages.Select(message => message.Id).ToList()),
+            conversationDoc => conversationDoc.Id == conversation.ConversationId,
+            cancellationToken);
     }
 
-    private string? GetConnectionId(IConnection connection) => 
+    private async Task<string?> GetConnectionIdAsync(IConnection connection, CancellationToken cancellationToken = default) => 
         connection is not null 
-        ? (GetConnectionDocument(connection)?.Id) 
+        ? (await GetConnectionDocumentAsync(connection, cancellationToken))?.Id 
         : null;
 
-    private ConnectionDocument? GetConnectionDocument(IConnection connection) =>
-        _connectionCollection.Find(conn => (conn.AccountId1 == connection.Account1.Id && conn.AccountId2 == connection.Account2.Id) 
-                                        || (conn.AccountId1 == connection.Account2.Id && conn.AccountId2 == connection.Account1.Id));
+    private async Task<ConnectionDocument?> GetConnectionDocumentAsync(IConnection connection, CancellationToken cancellationToken = default) =>
+        await _connectionCollection.GetOneAsync(conn => (conn.AccountId1 == connection.Account1.Id 
+                                                                  && conn.AccountId2 == connection.Account2.Id) 
+                                              || (conn.AccountId1 == connection.Account2.Id 
+                                                                  && conn.AccountId2 == connection.Account1.Id), cancellationToken);
 
 }

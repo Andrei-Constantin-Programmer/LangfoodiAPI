@@ -17,28 +17,25 @@ public class UserPersistenceRepository : IUserPersistenceRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public IUserCredentials CreateUser(
+    public async Task<IUserCredentials> CreateUserAsync(
         string handler,
         string username,
         string email,
         string password,
         DateTimeOffset accountCreationDate,
-        UserRole userRole = UserRole.User)
+        UserRole userRole = UserRole.User, 
+        CancellationToken cancellationToken = default)
     {
         UserDocument newUserDocument = new(handler, username, email, password, (int)userRole, null, accountCreationDate);
         
-        newUserDocument = _userCollection.Insert(newUserDocument);
+        newUserDocument = await _userCollection.InsertAsync(newUserDocument, cancellationToken);
 
         return _mapper.MapUserDocumentToUser(newUserDocument);
     }
 
-    public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);
-
-    public bool DeleteUser(string id) => _userCollection.Delete(userDoc => userDoc.Id == id);
-
-    public bool UpdateUser(IUserCredentials user)
+    public async Task<bool> UpdateUserAsync(IUserCredentials user, CancellationToken cancellationToken = default)
     {
-        var userDocument = _userCollection.Find(userDoc => userDoc.Id == user.Account.Id);
+        var userDocument = await _userCollection.GetOneAsync(userDoc => userDoc.Id == user.Account.Id, cancellationToken);
 
         if (userDocument is null)
         {
@@ -56,6 +53,12 @@ public class UserPersistenceRepository : IUserPersistenceRepository
             BlockedConnectionIds = user.Account.BlockedConnectionIds.ToList()
         };
 
-        return _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id);
+        return await _userCollection.UpdateAsync(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id, cancellationToken);
     }
+
+    public async Task<bool> DeleteUserAsync(IUserCredentials user, CancellationToken cancellationToken = default) 
+        => await DeleteUserAsync(user.Account.Id, cancellationToken);
+
+    public async Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken = default) 
+        => await _userCollection.DeleteAsync(userDoc => userDoc.Id == id, cancellationToken);
 }

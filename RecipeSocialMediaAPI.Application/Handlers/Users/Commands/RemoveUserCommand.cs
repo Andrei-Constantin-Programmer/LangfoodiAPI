@@ -17,16 +17,17 @@ internal class RemoveUserHandler : IRequestHandler<RemoveUserCommand>
         _userQueryRepository = userQueryRepository;
     }
 
-    public Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
+    public async Task Handle(RemoveUserCommand request, CancellationToken cancellationToken)
     {
-        var userId = (_userQueryRepository.GetUserById(request.EmailOrId)
-            ?? _userQueryRepository.GetUserByEmail(request.EmailOrId)
+        var userId = ((await _userQueryRepository.GetUserByIdAsync(request.EmailOrId, cancellationToken))
+            ?? (await _userQueryRepository.GetUserByEmailAsync(request.EmailOrId, cancellationToken))
             ?? throw new UserNotFoundException($"No user found with email/id {request.EmailOrId}")).Account.Id;
 
-        bool isSuccessful = _userPersistenceRepository.DeleteUser(userId);
+        bool isSuccessful = await _userPersistenceRepository.DeleteUserAsync(userId, cancellationToken);
 
-        return isSuccessful
-            ? Task.CompletedTask 
-            : throw new UserRemovalException(userId);
+        if (!isSuccessful)
+        {
+            throw new UserRemovalException(userId);
+        }
     }
 }

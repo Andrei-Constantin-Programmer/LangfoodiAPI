@@ -37,23 +37,25 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAllUsers_WhenNoUsersExist_ReturnsEmptyEnumerable()
+    public async Task GetAllUsers_WhenNoUsersExist_ReturnsEmptyEnumerable()
     {
         // Given
         Expression<Func<UserDocument, bool>> expectedExpression = (_) => true;
         List<UserDocument> existingUsers = new();
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(existingUsers);
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUsers);
 
         // When
-        var result = _userQueryRepositorySUT.GetAllUsers();
+        var result = await _userQueryRepositorySUT.GetAllUsersAsync();
 
         // Then
         result.Should().BeEmpty();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.GetAll(It.IsAny<Expression<Func<UserDocument, bool>>>()), Times.Once);
+            .Verify(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Theory]
@@ -62,7 +64,7 @@ public class UserQueryRepositoryTests
     [InlineData(1)]
     [InlineData(5)]
     [InlineData(10)]
-    public void GetAllUsers_WhenUsersExist_ReturnsAllUsers(int numberOfUsers)
+    public async Task GetAllUsers_WhenUsersExist_ReturnsAllUsers(int numberOfUsers)
     {
         // Given
         Expression<Func<UserDocument, bool>> expectedExpression = (_) => true;
@@ -73,11 +75,13 @@ public class UserQueryRepositoryTests
         }
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(existingUsers);
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUsers);
 
         // When
-        var result = _userQueryRepositorySUT.GetAllUsers();
+        var result = await _userQueryRepositorySUT.GetAllUsersAsync();
 
         // Then
         result.Should().HaveCount(numberOfUsers);
@@ -86,18 +90,20 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserById_WhenUserIsNotFound_ReturnNull()
+    public async Task GetUserById_WhenUserIsNotFound_ReturnNull()
     {
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
         UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(nullUserDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nullUserDocument);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserById(id);
+        var result = await _userQueryRepositorySUT.GetUserByIdAsync(id);
 
         // Then
         result.Should().BeNull();
@@ -106,7 +112,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserById_WhenUserIsFound_ReturnUser()
+    public async Task GetUserById_WhenUserIsFound_ReturnUser()
     {
         // Given
         string id = "1";
@@ -126,14 +132,16 @@ public class UserQueryRepositoryTests
         };
             
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserById(id);
+        var result = await _userQueryRepositorySUT.GetUserByIdAsync(id);
 
         // Then
         result.Should().Be(testUser);
@@ -142,7 +150,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserById_WhenMongoThrowsException_LogExceptionAndReturnNull()
+    public async Task GetUserById_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         string id = "1";
@@ -164,14 +172,14 @@ public class UserQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserById(id);
+        var result = await _userQueryRepositorySUT.GetUserByIdAsync(id);
 
         // Then
         result.Should().BeNull();
@@ -189,18 +197,20 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserByEmail_WhenUserIsNotFound_ReturnNull()
+    public async Task GetUserByEmail_WhenUserIsNotFound_ReturnNull()
     {
         // Given
         string email = "test@mail.com";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
         UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(nullUserDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nullUserDocument);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserByEmail(email);
+        var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
 
         // Then
         result.Should().BeNull();
@@ -209,7 +219,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserByEmail_WhenUserIsFound_ReturnUser()
+    public async Task GetUserByEmail_WhenUserIsFound_ReturnUser()
     {
         // Given
         string email = "test@mail.com";
@@ -228,16 +238,17 @@ public class UserQueryRepositoryTests
             Password = testDocument.Password
         };
 
-
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserByEmail(email);
+        var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
 
         // Then
         result.Should().Be(testUser);
@@ -246,7 +257,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserByEmail_WhenMongoThrowsException_LogExceptionAndReturnNull()
+    public async Task GetUserByEmail_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         string email = "test@mail.com";
@@ -268,14 +279,14 @@ public class UserQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserByEmail(email);
+        var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
 
         // Then
         result.Should().BeNull();
@@ -293,18 +304,20 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserByUsername_WhenUserIsNotFound_ReturnNull()
+    public async Task GetUserByUsername_WhenUserIsNotFound_ReturnNull()
     {
         // Given
         string username = "TestUsername";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
         UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(nullUserDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nullUserDocument);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserByUsername(username);
+        var result = await _userQueryRepositorySUT.GetUserByUsernameAsync(username);
 
         // Then
         result.Should().BeNull();
@@ -313,7 +326,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserByUsername_WhenUserIsFound_ReturnUser()
+    public async Task GetUserByUsername_WhenUserIsFound_ReturnUser()
     {
         // Given
         string username = "WrongUsername";
@@ -333,14 +346,16 @@ public class UserQueryRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserByUsername(username);
+        var result = await _userQueryRepositorySUT.GetUserByUsernameAsync(username);
 
         // Then
         result.Should().Be(testUser);
@@ -349,7 +364,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetUserByUsername_WhenMongoThrowsException_LogExceptionAndReturnNull()
+    public async Task GetUserByUsername_WhenMongoThrowsException_LogExceptionAndReturnNull()
     {
         // Given
         string username = "TestUsername";
@@ -371,14 +386,14 @@ public class UserQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
 
         // When
-        var result = _userQueryRepositorySUT.GetUserById(username);
+        var result = await _userQueryRepositorySUT.GetUserByIdAsync(username);
 
         // Then
         result.Should().BeNull();
@@ -396,16 +411,16 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAllUserAccountsContaining_WhenThereAreNoMatchingUsers_ReturnEmptyEnumerable()
+    public async Task GetAllUserAccountsContaining_WhenThereAreNoMatchingUsers_ReturnEmptyEnumerable()
     {
         // Given
         string containedString = "test";
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(Enumerable.Empty<UserDocument>());
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Enumerable.Empty<UserDocument>());
 
         // When
-        var result = _userQueryRepositorySUT.GetAllUserAccountsContaining(containedString);
+        var result = await _userQueryRepositorySUT.GetAllUserAccountsContainingAsync(containedString);
 
         // Then
         result.Should().NotBeNull();
@@ -415,7 +430,7 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAllUserAccountsContaining_WhenThereAreMatchingUsers_ReturnUsers()
+    public async Task GetAllUserAccountsContaining_WhenThereAreMatchingUsers_ReturnUsers()
     {
         // Given
         string containedString = "test";
@@ -455,8 +470,10 @@ public class UserQueryRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(userDocuments);
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(userDocuments);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(userDocuments[0]))
             .Returns(testUser1);
@@ -465,7 +482,7 @@ public class UserQueryRepositoryTests
             .Returns(testUser2);
 
         // When
-        var result = _userQueryRepositorySUT.GetAllUserAccountsContaining(containedString);
+        var result = await _userQueryRepositorySUT.GetAllUserAccountsContainingAsync(containedString);
 
         // Then
         result.Should().NotBeNull();

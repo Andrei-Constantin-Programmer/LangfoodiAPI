@@ -13,7 +13,7 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         _collection = new List<IUserCredentials>();
     }
 
-    public IUserCredentials CreateUser(string handler, string username, string email, string password, DateTimeOffset accountCreationDate, UserRole userRole = UserRole.User)
+    public async Task<IUserCredentials> CreateUserAsync(string handler, string username, string email, string password, DateTimeOffset accountCreationDate, UserRole userRole = UserRole.User, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         IUserCredentials newUser = new TestUserCredentials
@@ -31,24 +31,30 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         };
         _collection.Add(newUser);
 
-        return newUser;
+        return await Task.FromResult(newUser);
     }
 
-    public bool DeleteUser(IUserCredentials user) => DeleteUser(user.Account.Id);
+    public async Task<bool> DeleteUserAsync(IUserCredentials user, CancellationToken cancellationToken = default) 
+        => await DeleteUserAsync(user.Account.Id, cancellationToken);
 
-    public bool DeleteUser(string id) => _collection.RemoveAll(user => user.Account.Id == id) > 0;
+    public async Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.RemoveAll(user => user.Account.Id == id) > 0);
 
-    public IEnumerable<IUserCredentials> GetAllUsers() => _collection;
+    public async Task<IEnumerable<IUserCredentials>> GetAllUsersAsync(CancellationToken cancellationToken = default) => await Task.FromResult(_collection);
 
-    public IUserCredentials? GetUserById(string id) => _collection.Find(user => user.Account.Id == id);
+    public async Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(user => user.Account.Id == id));
 
-    public IUserCredentials? GetUserByEmail(string email) => _collection.Find(user => user.Email == email);
+    public async Task<IUserCredentials?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(user => user.Email == email));
 
-    public IUserCredentials? GetUserByUsername(string username) => _collection.Find(user => user.Account.UserName == username);
+    public async Task<IUserCredentials?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(user => user.Account.UserName == username));
 
-    public IUserCredentials? GetUserByHandler(string handler) => _collection.Find(user => user.Account.Handler == handler);
+    public async Task<IUserCredentials?> GetUserByHandlerAsync(string handler, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(user => user.Account.Handler == handler));
 
-    public bool UpdateUser(IUserCredentials user)
+    public async Task<bool> UpdateUserAsync(IUserCredentials user, CancellationToken cancellationToken = default)
     {
         IUserCredentials? updatedUser = _collection.FirstOrDefault(u => u.Account.Id == user.Account.Id);
         if (updatedUser is null)
@@ -61,11 +67,11 @@ internal class FakeUserRepository : IUserQueryRepository, IUserPersistenceReposi
         updatedUser.Email = user.Email;
         updatedUser.Password = user.Password;
 
-        return true;
+        return await Task.FromResult(true);
     }
 
-    public IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString) => _collection
+    public Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default) => Task.FromResult(_collection
         .Where(user => user.Account.Handler.Contains(containedString, StringComparison.InvariantCultureIgnoreCase)
                     || user.Account.UserName.Contains(containedString, StringComparison.InvariantCultureIgnoreCase))
-        .Select(user => user.Account);
+        .Select(user => user.Account));
 }

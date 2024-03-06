@@ -56,8 +56,8 @@ public class GetGroupsByUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(users[0].Id))
-            .Returns(new TestUserCredentials()
+            .Setup(repo => repo.GetUserByIdAsync(users[0].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials()
             {
                 Account = users[0],
                 Email = "user1@mail.com",
@@ -69,8 +69,8 @@ public class GetGroupsByUserHandlerTests
         Group group3 = new("g3", "Group 3", "Group not involving user 1", new List<IUserAccount>() { users[1], users[2] } );
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupsByUser(users[0]))
-            .Returns(new List<Group>() { group1, group2 });
+            .Setup(repo => repo.GetGroupsByUserAsync(users[0], It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Group>() { group1, group2 });
 
         GetGroupsByUserQuery query = new(users[0].Id);
 
@@ -93,9 +93,9 @@ public class GetGroupsByUserHandlerTests
         resultingGroups[1]!.UserIds.Should().BeEquivalentTo(group2.Users.Select(user => user.Id));
 
         _userQueryRepositoryMock
-            .Verify(repo => repo.GetUserById(It.IsAny<string>()), Times.Once);
+            .Verify(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         _groupQueryRepositoryMock
-            .Verify(repo => repo.GetGroupsByUser(It.IsAny<IUserAccount>()), Times.Once);
+            .Verify(repo => repo.GetGroupsByUserAsync(It.IsAny<IUserAccount>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -112,8 +112,8 @@ public class GetGroupsByUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(testUser.Id))
-            .Returns(new TestUserCredentials()
+            .Setup(repo => repo.GetUserByIdAsync(testUser.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials()
             {
                 Account = testUser,
                 Email = "user@mail.com",
@@ -121,8 +121,8 @@ public class GetGroupsByUserHandlerTests
             });
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupsByUser(testUser))
-            .Returns(new List<Group>());
+            .Setup(repo => repo.GetGroupsByUserAsync(testUser, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Group>());
 
         GetGroupsByUserQuery query = new(testUser.Id);
 
@@ -141,8 +141,8 @@ public class GetGroupsByUserHandlerTests
     {
         // Given
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(It.IsAny<string>()))
-            .Returns((IUserCredentials?)null);
+            .Setup(repo => repo.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IUserCredentials?)null);
 
         GetGroupsByUserQuery query = new("u1");
 

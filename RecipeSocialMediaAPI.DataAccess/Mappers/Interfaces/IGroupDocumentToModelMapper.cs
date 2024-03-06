@@ -4,5 +4,5 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging;
 namespace RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 public interface IGroupDocumentToModelMapper
 {
-    Group MapGroupFromDocument(GroupDocument groupDocument);
+    Task<Group> MapGroupFromDocumentAsync(GroupDocument groupDocument, CancellationToken cancellationToken = default);
 }

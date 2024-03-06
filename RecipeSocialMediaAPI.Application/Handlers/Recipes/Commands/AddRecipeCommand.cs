@@ -33,13 +33,12 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
     public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
-        IUserAccount? chef = 
-            _userQueryRepository.GetUserById(request.Contract.ChefId)?.Account
+        IUserAccount? chef = (await _userQueryRepository.GetUserByIdAsync(request.Contract.ChefId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.ChefId}");
 
         DateTimeOffset dateOfCreation = _dateTimeProvider.Now;
 
-        RecipeAggregate insertedRecipe = _recipePersistenceRepository.CreateRecipe(
+        RecipeAggregate insertedRecipe = await _recipePersistenceRepository.CreateRecipeAsync(
             request.Contract.Title,
             new Recipe(
                 request.Contract.Ingredients
@@ -59,11 +58,11 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             request.Contract.Tags,
             dateOfCreation,
             dateOfCreation,
-            request.Contract.ThumbnailId
+            request.Contract.ThumbnailId,
+            cancellationToken
         );
 
-        return await Task.FromResult(_mapper
-            .MapRecipeAggregateToRecipeDetailedDto(insertedRecipe));
+        return _mapper.MapRecipeAggregateToRecipeDetailedDto(insertedRecipe);
     }
 }
 

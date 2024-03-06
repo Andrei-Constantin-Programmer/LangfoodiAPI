@@ -38,7 +38,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnectionById_WhenConnectionIsFound_ReturnMappedConnection()
+    public async Task GetConnectionById_WhenConnectionIsFound_ReturnMappedConnection()
     {
         // Given
         string connectionId = "conn1";
@@ -62,16 +62,18 @@ public class ConnectionQueryRepositoryTests
 
         ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
 
         Connection testConnection = new("0", testAccount1, testAccount2, ConnectionStatus.Pending);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument))
-            .Returns(testConnection);
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocument, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testConnection);
 
         // When
-        var result = _connectionQueryRepositorySUT.GetConnection(connectionId);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(connectionId);
 
         // Then
         result.Should().Be(testConnection);
@@ -80,7 +82,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnectionById_WhenConnectionIsNotFound_ReturnNullAndDontMap()
+    public async Task GetConnectionById_WhenConnectionIsNotFound_ReturnNullAndDontMap()
     {
         // Given
         string connectionId = "conn1";
@@ -88,33 +90,35 @@ public class ConnectionQueryRepositoryTests
         Expression<Func<ConnectionDocument, bool>> expectedExpression = doc => doc.Id == connectionId;
 
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns((ConnectionDocument?)null);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ConnectionDocument?)null);
 
         // When
-        var result = _connectionQueryRepositorySUT.GetConnection(connectionId);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(connectionId);
 
         // Then
         result.Should().BeNull();
         _connectionDocumentToModelMapperMock
-            .Verify(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()), Times.Never);
+            .Verify(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnectionById_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
+    public async Task GetConnectionById_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
         string connectionId = "conn1";
 
         Exception testException = new("Test Exception");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _connectionQueryRepositorySUT.GetConnection(connectionId);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(connectionId);
 
         // Then
         result.Should().BeNull();
@@ -131,7 +135,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnectionById_WhenMapperThrowsException_ThrowException()
+    public async Task GetConnectionById_WhenMapperThrowsException_ThrowException()
     {
         // Given
         string connectionId = "conn1";
@@ -140,25 +144,27 @@ public class ConnectionQueryRepositoryTests
 
         ConnectionDocument testDocument = new("User1", "User2", "Pending");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
 
         Exception testException = new("Test Exception");
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
             .Throws(testException);
 
         // When
-        var testAction = () => _connectionQueryRepositorySUT.GetConnection(connectionId);
+        var testAction = async () => await _connectionQueryRepositorySUT.GetConnectionAsync(connectionId);
 
         // Then
-        testAction.Should().Throw<Exception>().WithMessage(testException.Message);
+        await testAction.Should().ThrowAsync<Exception>().WithMessage(testException.Message);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnection_WhenConnectionIsFound_ReturnMappedConnection()
+    public async Task GetConnection_WhenConnectionIsFound_ReturnMappedConnection()
     {
         // Given
         TestUserAccount testAccount1 = new()
@@ -181,16 +187,18 @@ public class ConnectionQueryRepositoryTests
 
         ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
 
         Connection testConnection = new("0", testAccount1, testAccount2, ConnectionStatus.Pending);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument))
-            .Returns(testConnection);
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocument, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testConnection);
 
         // When
-        var result = _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(testAccount1, testAccount2);
 
         // Then
         result.Should().Be(testConnection);
@@ -199,7 +207,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnection_WhenConnectionIsNotFound_ReturnNullAndDontMap()
+    public async Task GetConnection_WhenConnectionIsNotFound_ReturnNullAndDontMap()
     {
         // Given
         TestUserAccount testAccount1 = new()
@@ -222,22 +230,24 @@ public class ConnectionQueryRepositoryTests
                 || (doc.AccountId1 == testAccount2.Id && doc.AccountId2 == testAccount1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns((ConnectionDocument?)null);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ConnectionDocument?)null);
 
         // When
-        var result = _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(testAccount1, testAccount2);
 
         // Then
         result.Should().BeNull();
         _connectionDocumentToModelMapperMock
-            .Verify(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()), Times.Never);
+            .Verify(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnection_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
+    public async Task GetConnection_WhenMongoThrowsAnException_LogExceptionAndReturnNull()
     {
         // Given
         TestUserAccount testAccount1 = new()
@@ -257,11 +267,11 @@ public class ConnectionQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+        var result = await _connectionQueryRepositorySUT.GetConnectionAsync(testAccount1, testAccount2);
 
         // Then
         result.Should().BeNull();
@@ -278,7 +288,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnection_WhenMapperThrowsException_ThrowException()
+    public async Task GetConnection_WhenMapperThrowsException_ThrowException()
     {
         // Given
         TestUserAccount testAccount1 = new()
@@ -301,25 +311,27 @@ public class ConnectionQueryRepositoryTests
 
         ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
 
         Exception testException = new("Test Exception");
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
             .Throws(testException);
 
         // When
-        var testAction = () => _connectionQueryRepositorySUT.GetConnection(testAccount1, testAccount2);
+        var testAction = async () => await _connectionQueryRepositorySUT.GetConnectionAsync(testAccount1, testAccount2);
 
         // Then
-        testAction.Should().Throw<Exception>().WithMessage(testException.Message);
+        await testAction.Should().ThrowAsync<Exception>().WithMessage(testException.Message);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnectionsForUser_WhenConnectionsExist_ReturnMappedConnections()
+    public async Task GetConnectionsForUser_WhenConnectionsExist_ReturnMappedConnections()
     {
         // Given
         TestUserAccount testAccount = new()
@@ -360,18 +372,20 @@ public class ConnectionQueryRepositoryTests
         };
 
         _connectionCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(testDocuments);
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocuments);
 
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocuments[0]))
-            .Returns(testConnections[0]);
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocuments[0], It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testConnections[0]);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocuments[1]))
-            .Returns(testConnections[1]);
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocuments[1], It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testConnections[1]);
 
         // When
-        var result = _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+        var result = await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
         result.Should().NotBeNull();
@@ -383,7 +397,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnectionsForUser_WhenNoConnectionsForUserExist_ReturnEmptyList()
+    public async Task GetConnectionsForUser_WhenNoConnectionsForUserExist_ReturnEmptyList()
     {
         // Given
         TestUserAccount testAccount = new()
@@ -395,11 +409,11 @@ public class ConnectionQueryRepositoryTests
         };
 
         _connectionCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Returns(new List<ConnectionDocument>());
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ConnectionDocument>());
 
         // When
-        var result = _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+        var result = await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
         result.Should().NotBeNull();
@@ -409,7 +423,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnectionsForUser_WhenMapperThrowsException_ThrowException()
+    public async Task GetConnectionsForUser_WhenMapperThrowsException_ThrowException()
     {
         // Given
         TestUserAccount testAccount = new()
@@ -432,25 +446,27 @@ public class ConnectionQueryRepositoryTests
         ConnectionDocument testDocument = new(testAccount.Id, testAccount2.Id, "Pending");
 
         _connectionCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(new List<ConnectionDocument>() { testDocument });
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ConnectionDocument>() { testDocument });
 
         Exception testException = new("Test Exception");
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(It.IsAny<ConnectionDocument>()))
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
             .Throws(testException);
 
         // When
-        var testAction = () => _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+        var testAction = async () => await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
-        testAction.Should().Throw<Exception>().WithMessage(testException.Message);
+        await testAction.Should().ThrowAsync<Exception>().WithMessage(testException.Message);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConnectionsForUser_WhenMongoThrowsAnException_LogExceptionAndReturnEmptyList()
+    public async Task GetConnectionsForUser_WhenMongoThrowsAnException_LogExceptionAndReturnEmptyList()
     {
         // Given
         TestUserAccount testAccount = new()
@@ -470,11 +486,11 @@ public class ConnectionQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _connectionCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConnectionDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
     
         // When
-        var result = _connectionQueryRepositorySUT.GetConnectionsForUser(testAccount);
+        var result = await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
         result.Should().NotBeNull();

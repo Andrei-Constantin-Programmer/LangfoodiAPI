@@ -53,7 +53,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateMessage_WhenMessageIsValid_AddMessageToCollectionAndReturnMappedMessage()
+    public async Task CreateMessage_WhenMessageIsValid_AddMessageToCollectionAndReturnMappedMessage()
     {
         // Given
         IUserAccount testSender = new TestUserAccount()
@@ -85,11 +85,11 @@ public class MessagePersistenceRepositoryTests
             null);
 
         _messageDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapMessageFromDocument(It.IsAny<MessageDocument>(), testSender, null))
-            .Returns(expectedMessage);
+            .Setup(mapper => mapper.MapMessageFromDocumentAsync(It.IsAny<MessageDocument>(), testSender, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedMessage);
 
         // When
-        var result = _messagePersistenceRepositorySUT.CreateMessage(
+        var result = await _messagePersistenceRepositorySUT.CreateMessageAsync(
             testSender,
             expectedMessage.Text,
             expectedMessage.Recipes.Select(r => r.Id).ToList(),
@@ -100,21 +100,22 @@ public class MessagePersistenceRepositoryTests
 
         // Then
         _messageCollectionMock
-            .Verify(collection => collection.Insert(It.Is<MessageDocument>(doc =>
+            .Verify(collection => collection.InsertAsync(
+                It.Is<MessageDocument>(doc =>
                     doc.Id == null
                     && doc.MessageContent.Text == expectedMessage.Text
                     && doc.MessageContent.RecipeIds!.SequenceEqual(expectedMessage.Recipes.Select(r => r.Id))
                     && doc.MessageContent.ImageURLs!.SequenceEqual(expectedMessage.ImageURLs)
                     && doc.SentDate == expectedMessage.SentDate
                     && doc.LastUpdatedDate == expectedMessage.UpdatedDate
-                    && doc.MessageRepliedToId == null
-                )), Times.Once);
+                    && doc.MessageRepliedToId == null), 
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateMessage_WhenMessageIsTextMessage_UpdatesAndReturnsTrue()
+    public async Task UpdateMessage_WhenMessageIsTextMessage_UpdatesAndReturnsTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -131,17 +132,20 @@ public class MessagePersistenceRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.UpdateAsync(
+                It.IsAny<MessageDocument>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeTrue();
         _messageCollectionMock
             .Verify(collection => 
-                collection.UpdateRecord(
+                collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
                         && doc.MessageContent.Text == message.TextContent
@@ -149,14 +153,15 @@ public class MessagePersistenceRepositoryTests
                         && doc.MessageContent.ImageURLs == null
                         && doc.SentDate == message.SentDate                    
                     ),
-                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))), 
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()), 
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateMessage_WhenMessageIsRecipeMessage_UpdatesAndReturnsTrue()
+    public async Task UpdateMessage_WhenMessageIsRecipeMessage_UpdatesAndReturnsTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -180,17 +185,20 @@ public class MessagePersistenceRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.UpdateAsync(
+                It.IsAny<MessageDocument>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeTrue();
         _messageCollectionMock
             .Verify(collection =>
-                collection.UpdateRecord(
+                collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
                         && doc.MessageContent.Text == message.TextContent
@@ -198,14 +206,15 @@ public class MessagePersistenceRepositoryTests
                         && doc.MessageContent.ImageURLs == null
                         && doc.SentDate == message.SentDate
                     ),
-                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateMessage_WhenMessageIsImageMessage_UpdatesAndReturnsTrue()
+    public async Task UpdateMessage_WhenMessageIsImageMessage_UpdatesAndReturnsTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -224,17 +233,20 @@ public class MessagePersistenceRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.UpdateAsync(
+                It.IsAny<MessageDocument>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeTrue();
         _messageCollectionMock
             .Verify(collection =>
-                collection.UpdateRecord(
+                collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
                         && doc.MessageContent.Text == message.TextContent
@@ -242,14 +254,15 @@ public class MessagePersistenceRepositoryTests
                         && doc.MessageContent.ImageURLs!.SequenceEqual(imageURLs)
                         && doc.SentDate == message.SentDate
                     ),
-                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))),
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateMessage_WhenMessageIsOfUnexpectedType_LogErrorAndReturnFalse()
+    public async Task UpdateMessage_WhenMessageIsOfUnexpectedType_LogErrorAndReturnFalse()
     {
         // Given
         TestUserAccount testSender = new()
@@ -263,11 +276,14 @@ public class MessagePersistenceRepositoryTests
         TestMessage message = new("MessageId", testSender, _dateTimeProviderMock.Object.Now, null);
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.UpdateAsync(
+                It.IsAny<MessageDocument>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeFalse();
@@ -284,7 +300,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateMessage_WhenUpdateIsUnsuccessful_ReturnFalse()
+    public async Task UpdateMessage_WhenUpdateIsUnsuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testSender = new()
@@ -299,11 +315,14 @@ public class MessagePersistenceRepositoryTests
             .CreateTextMessage("MessageId", testSender, "Test Text", new(), _dateTimeProviderMock.Object.Now);
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<MessageDocument>(), It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.UpdateAsync(
+                It.IsAny<MessageDocument>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _messagePersistenceRepositorySUT.UpdateMessage(message);
+        var result = await _messagePersistenceRepositorySUT.UpdateMessageAsync(message);
 
         // Then
         result.Should().BeFalse();
@@ -312,7 +331,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteMessage_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task DeleteMessage_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         TestUserAccount testSender = new()
@@ -325,11 +344,13 @@ public class MessagePersistenceRepositoryTests
         TestMessage message = new("TestId", testSender, _dateTimeProviderMock.Object.Now, null);
 
         _messageCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _messagePersistenceRepositorySUT.DeleteMessage(message);
+        var result = await _messagePersistenceRepositorySUT.DeleteMessageAsync(message);
 
         // Then
         result.Should().BeTrue();
@@ -338,7 +359,7 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteMessage_WhenDeleteIsUnsuccessful_ReturnFalse()
+    public async Task DeleteMessage_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testSender = new()
@@ -351,11 +372,13 @@ public class MessagePersistenceRepositoryTests
         TestMessage message = new("TestId", testSender, _dateTimeProviderMock.Object.Now, null);
 
         _messageCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _messagePersistenceRepositorySUT.DeleteMessage(message);
+        var result = await _messagePersistenceRepositorySUT.DeleteMessageAsync(message);
 
         // Then
         result.Should().BeFalse();
@@ -364,15 +387,17 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteMessageById_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task DeleteMessageById_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         _messageCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _messagePersistenceRepositorySUT.DeleteMessage("TestId");
+        var result = await _messagePersistenceRepositorySUT.DeleteMessageAsync("TestId");
 
         // Then
         result.Should().BeTrue();
@@ -381,15 +406,17 @@ public class MessagePersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteMessageById_WhenDeleteIsUnsuccessful_ReturnFalse()
+    public async Task DeleteMessageById_WhenDeleteIsUnsuccessful_ReturnFalse()
     {
         // Given
         _messageCollectionMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<MessageDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _messagePersistenceRepositorySUT.DeleteMessage("TestId");
+        var result = await _messagePersistenceRepositorySUT.DeleteMessageAsync("TestId");
 
         // Then
         result.Should().BeFalse();

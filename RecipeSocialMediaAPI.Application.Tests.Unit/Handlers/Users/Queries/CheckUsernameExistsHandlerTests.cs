@@ -40,8 +40,8 @@ public class CheckUsernameExistsHandlerTests
             Password = "TestPassword"
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.Is<string>(username => username == testUser.Account.UserName)))
-            .Returns(testUser);
+            .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(username => username == testUser.Account.UserName), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser);
 
         // When
         var result = await _checkUsernameExistsHandlerSUT.Handle(new CheckUsernameExistsQuery(testUser.Account.UserName), CancellationToken.None);
@@ -58,8 +58,8 @@ public class CheckUsernameExistsHandlerTests
         // Given
         IUserCredentials? nullUser = null;
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
-            .Returns(nullUser);
+            .Setup(repo => repo.GetUserByUsernameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nullUser);
 
         // When
         var result = await _checkUsernameExistsHandlerSUT.Handle(new CheckUsernameExistsQuery("Inexistent username"), CancellationToken.None);

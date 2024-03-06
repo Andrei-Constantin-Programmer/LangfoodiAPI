@@ -40,15 +40,15 @@ public class RecipeRemovedHandlerTests
     {
         // Given
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessagesWithRecipe(It.IsAny<string>()))
-            .Returns(Enumerable.Empty<Message>());
+            .Setup(repo => repo.GetMessagesWithRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Enumerable.Empty<Message>());
 
         // When
         await _recipeRemovedHandlerSUT.Handle(new RecipeRemovedNotification("r1"), CancellationToken.None);
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.DeleteMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -110,16 +110,16 @@ public class RecipeRemovedHandlerTests
             );
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessagesWithRecipe(It.IsAny<string>()))
-            .Returns(new List<Message> { message1, message2, message3 });
+            .Setup(repo => repo.GetMessagesWithRecipeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Message> { message1, message2, message3 });
 
         // When
         await _recipeRemovedHandlerSUT.Handle(new RecipeRemovedNotification(recipeBeingDeleted.Id), CancellationToken.None);
 
         // Then
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.IsAny<Message>()), Times.Once);
+            .Verify(repo => repo.DeleteMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Once);
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.DeleteMessage(It.Is<Message>(m => m == message3)), Times.Once);
+            .Verify(repo => repo.DeleteMessageAsync(It.Is<Message>(m => m == message3), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

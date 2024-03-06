@@ -16,14 +16,12 @@ public class ConnectionDocumentToModelMapper : IConnectionDocumentToModelMapper
         _userQueryRepository = userQueryRepository;
     }
 
-    public IConnection MapConnectionFromDocument(ConnectionDocument connectionDocument)
+    public async Task<IConnection> MapConnectionFromDocumentAsync(ConnectionDocument connectionDocument, CancellationToken cancellationToken = default)
     {
-        IUserAccount user1 = _userQueryRepository
-            .GetUserById(connectionDocument.AccountId1)?.Account
+        IUserAccount user1 = (await _userQueryRepository.GetUserByIdAsync(connectionDocument.AccountId1, cancellationToken))?.Account
             ?? throw new UserDocumentNotFoundException(connectionDocument.AccountId1);
 
-        IUserAccount user2 = _userQueryRepository
-            .GetUserById(connectionDocument.AccountId2)?.Account
+        IUserAccount user2 = (await _userQueryRepository.GetUserByIdAsync(connectionDocument.AccountId2, cancellationToken))?.Account
             ?? throw new UserDocumentNotFoundException(connectionDocument.AccountId2);
 
         return Enum.TryParse(connectionDocument.ConnectionStatus, out ConnectionStatus status)

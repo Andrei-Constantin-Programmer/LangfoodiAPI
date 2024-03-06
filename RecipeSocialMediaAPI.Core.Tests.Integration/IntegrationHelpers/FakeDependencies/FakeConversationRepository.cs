@@ -15,43 +15,45 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
         _collection = new();
     }
 
-    public ConnectionConversation? GetConversationByConnection(string connectionId) => _collection
-        .FirstOrDefault(conversation => conversation is ConnectionConversation connConvo 
-                                     && connConvo.Connection.ConnectionId == connectionId) as ConnectionConversation;
+    public async Task<ConnectionConversation?> GetConversationByConnectionAsync(string connectionId, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection
+            .FirstOrDefault(conversation => conversation is ConnectionConversation connConvo 
+                                         && connConvo.Connection.ConnectionId == connectionId) as ConnectionConversation);
 
-    public GroupConversation? GetConversationByGroup(string groupId) => _collection
-        .FirstOrDefault(conversation => conversation is GroupConversation groupConvo
-                                     && groupConvo.Group.GroupId == groupId) as GroupConversation;
+    public async Task<GroupConversation?> GetConversationByGroupAsync(string groupId, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection
+            .FirstOrDefault(conversation => conversation is GroupConversation groupConvo
+                                     && groupConvo.Group.GroupId == groupId) as GroupConversation);
 
-    public Conversation? GetConversationById(string id) => _collection
-        .FirstOrDefault(conversation => conversation.ConversationId == id);
+    public async Task<Conversation?> GetConversationByIdAsync(string id, CancellationToken cancellationToken = default) => await Task.FromResult(_collection
+        .FirstOrDefault(conversation => conversation.ConversationId == id));
 
-    public List<Conversation> GetConversationsByUser(IUserAccount userAccount) => _collection
+    public async Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection
         .Where(conversation => (conversation is ConnectionConversation connConvo 
                                 && (connConvo.Connection.Account1.Id == userAccount.Id || connConvo.Connection.Account2.Id == userAccount.Id))
                             || (conversation is GroupConversation groupConvo
-                                && groupConvo.Group.Users.Any(user => user.Id == userAccount.Id)))
-        .ToList();
+                                && groupConvo.Group.Users.Any(user => user.Id == userAccount.Id))));
 
-    public Conversation CreateConnectionConversation(IConnection connection)
+    public async Task<Conversation> CreateConnectionConversationAsync(IConnection connection, CancellationToken cancellationToken = default)
     {
         var id = NextId();
         ConnectionConversation conversation = new(connection, id);
         _collection.Add(conversation);
 
-        return conversation;
+        return await Task.FromResult(conversation);
     }
 
-    public Conversation CreateGroupConversation(Group group)
+    public async Task<Conversation> CreateGroupConversationAsync(Group group, CancellationToken cancellationToken = default)
     {
         var id = NextId();
         GroupConversation conversation = new(group, id);
         _collection.Add(conversation);
 
-        return conversation;
+        return await Task.FromResult(conversation);
     }
 
-    public bool UpdateConversation(Conversation conversation, IConnection? connection = null, Group? group = null)
+    public async Task<bool> UpdateConversationAsync(Conversation conversation, IConnection? connection = null, Group? group = null, CancellationToken cancellationToken = default)
     {
         Conversation? existingConversation = _collection.FirstOrDefault(convo => convo.ConversationId == conversation.ConversationId);
         if (existingConversation is null)
@@ -66,7 +68,7 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
         _collection.Remove(existingConversation);
         _collection.Add(updatedConversation);
 
-        return true;
+        return await Task.FromResult(true);
     }
 
     private string NextId()

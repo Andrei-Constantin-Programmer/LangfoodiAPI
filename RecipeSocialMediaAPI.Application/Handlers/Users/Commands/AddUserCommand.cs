@@ -37,33 +37,34 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
 
     public async Task<SuccessfulAuthenticationDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if (_userQueryRepository.GetUserByHandler(request.Contract.Handler) is not null)
+        if ((await _userQueryRepository.GetUserByHandlerAsync(request.Contract.Handler, cancellationToken)) is not null)
         {
             throw new HandlerAlreadyInUseException(request.Contract.Handler);
         }
 
-        if (_userQueryRepository.GetUserByUsername(request.Contract.UserName) is not null)
+        if ((await _userQueryRepository.GetUserByUsernameAsync(request.Contract.UserName, cancellationToken)) is not null)
         {
             throw new UsernameAlreadyInUseException(request.Contract.UserName);
         }
 
-        if (_userQueryRepository.GetUserByEmail(request.Contract.Email) is not null)
+        if ((await _userQueryRepository.GetUserByEmailAsync(request.Contract.Email, cancellationToken)) is not null)
         {
             throw new EmailAlreadyInUseException(request.Contract.Email);
         }
 
         var encryptedPassword = _cryptoService.Encrypt(request.Contract.Password);
-        IUserCredentials insertedUser = _userPersistenceRepository
-            .CreateUser(
+        IUserCredentials insertedUser = await _userPersistenceRepository
+            .CreateUserAsync(
                 request.Contract.Handler,
                 request.Contract.UserName,
                 request.Contract.Email,
                 encryptedPassword,
-                _dateTimeProvider.Now);
+                _dateTimeProvider.Now,
+                cancellationToken: cancellationToken);
 
         var token = _bearerTokenGeneratorService.GenerateToken(insertedUser);
 
-        return await Task.FromResult(new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(insertedUser), token));
+        return new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(insertedUser), token);
     }
 }
 

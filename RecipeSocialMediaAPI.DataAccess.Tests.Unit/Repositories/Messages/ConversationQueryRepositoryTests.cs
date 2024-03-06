@@ -55,7 +55,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationById_WhenConnectionConversationExists_ReturnMappedConversation()
+    public async Task GetConversationById_WhenConnectionConversationExists_ReturnMappedConversation()
     {
         // Given
         TestUserAccount user1 = new()
@@ -78,31 +78,33 @@ public class ConversationQueryRepositoryTests
         };
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(messages[0].Id))
-            .Returns(messages[0]);
+            .Setup(repo => repo.GetMessageAsync(messages[0].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(messages[0]);
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(messages[1].Id))
-            .Returns(messages[1]);
+            .Setup(repo => repo.GetMessageAsync(messages[1].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(messages[1]);
 
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Connected);
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(connection.ConnectionId))
-            .Returns(connection);
+            .Setup(repo => repo.GetConnectionAsync(connection.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connection);
 
         ConnectionConversation conversation = new(connection, "convo1", messages);
         ConversationDocument document = new(messages.Select(message => message.Id).ToList(), connection.ConnectionId, null, conversation.ConversationId);
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversation.ConversationId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(document);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(document);
 
         _conversationDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConversationFromDocument(document, connection, null, messages))
             .Returns(conversation);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationById(conversation.ConversationId) as ConnectionConversation;
+        var result = (await _conversationQueryRepositorySUT.GetConversationByIdAsync(conversation.ConversationId)) as ConnectionConversation;
 
         // Then
         result.Should().Be(conversation);
@@ -111,7 +113,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationById_WhenGroupConversationExists_ReturnMappedConversation()
+    public async Task GetConversationById_WhenGroupConversationExists_ReturnMappedConversation()
     {
         // Given
         TestUserAccount user1 = new()
@@ -134,31 +136,33 @@ public class ConversationQueryRepositoryTests
         };
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(messages[0].Id))
-            .Returns(messages[0]);
+            .Setup(repo => repo.GetMessageAsync(messages[0].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(messages[0]);
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(messages[1].Id))
-            .Returns(messages[1]);
+            .Setup(repo => repo.GetMessageAsync(messages[1].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(messages[1]);
 
         Group group = new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1, user2 });
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(group.GroupId))
-            .Returns(group);
+            .Setup(repo => repo.GetGroupByIdAsync(group.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group);
 
         GroupConversation conversation = new(group, "convo1", messages);
         ConversationDocument document = new(messages.Select(message => message.Id).ToList(), null, group.GroupId, conversation.ConversationId);
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversation.ConversationId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(document);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(document);
 
         _conversationDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConversationFromDocument(document, null, group, messages))
             .Returns(conversation);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationById(conversation.ConversationId) as GroupConversation;
+        var result = (await _conversationQueryRepositorySUT.GetConversationByIdAsync(conversation.ConversationId)) as GroupConversation;
 
         // Then
         result.Should().Be(conversation);
@@ -167,18 +171,20 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationById_WhenConversationDoesNotExist_ReturnNull()
+    public async Task GetConversationById_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
         string conversationId = "convo1";
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversationId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns((ConversationDocument?)null);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ConversationDocument?)null);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationById(conversationId);
+        var result = await _conversationQueryRepositorySUT.GetConversationByIdAsync(conversationId);
 
         // Then
         result.Should().BeNull();
@@ -187,7 +193,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationById_WhenMongoThrowsAnException_ReturnNullAndLogException()
+    public async Task GetConversationById_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
         string conversationId = "convo1";
@@ -196,11 +202,13 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversationId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationById(conversationId);
+        var result = await _conversationQueryRepositorySUT.GetConversationByIdAsync(conversationId);
 
         // Then
         result.Should().BeNull();
@@ -217,7 +225,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationByConnection_WhenConversationExists_ReturnMappedConversation()
+    public async Task GetConversationByConnection_WhenConversationExists_ReturnMappedConversation()
     {
         // Given
         TestUserAccount user1 = new()
@@ -240,53 +248,57 @@ public class ConversationQueryRepositoryTests
         };
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(messages[0].Id))
-            .Returns(messages[0]);
+            .Setup(repo => repo.GetMessageAsync(messages[0].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(messages[0]);
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(messages[1].Id))
-            .Returns(messages[1]);
+            .Setup(repo => repo.GetMessageAsync(messages[1].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(messages[1]);
 
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Connected);
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(connection.ConnectionId))
-            .Returns(connection);
+            .Setup(repo => repo.GetConnectionAsync(connection.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connection);
 
         ConnectionConversation conversation = new(connection, "convo1", messages);
         ConversationDocument document = new(messages.Select(message => message.Id).ToList(), connection.ConnectionId, null, conversation.ConversationId);
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connection.ConnectionId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(document);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(document);
 
         _conversationDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConversationFromDocument(document, connection, null, messages))
             .Returns(conversation);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationByConnection(connection.ConnectionId) as ConnectionConversation;
+        var result = await _conversationQueryRepositorySUT.GetConversationByConnectionAsync(connection.ConnectionId);
 
         // Then
         result.Should().Be(conversation);
         _groupQueryRepositoryMock
-            .Verify(repo => repo.GetGroupById(It.IsAny<string>()), Times.Never);
+            .Verify(repo => repo.GetGroupByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationByConnection_WhenConversationDoesNotExist_ReturnNull()
+    public async Task GetConversationByConnection_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
         string connectionId = "conn1";
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connectionId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns((ConversationDocument?)null);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ConversationDocument?)null);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationByConnection(connectionId);
+        var result = await _conversationQueryRepositorySUT.GetConversationByConnectionAsync(connectionId);
 
         // Then
         result.Should().BeNull();
@@ -295,7 +307,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationByConnection_WhenMongoThrowsAnException_ReturnNullAndLogException()
+    public async Task GetConversationByConnection_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
         string connectionId = "conn1";
@@ -304,11 +316,13 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connectionId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationByConnection(connectionId);
+        var result = await _conversationQueryRepositorySUT.GetConversationByConnectionAsync(connectionId);
 
         // Then
         result.Should().BeNull();
@@ -325,7 +339,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationByGroup_WhenConversationExists_ReturnMappedConversation()
+    public async Task GetConversationByGroup_WhenConversationExists_ReturnMappedConversation()
     {
         // Given
         TestUserAccount user1 = new()
@@ -348,53 +362,57 @@ public class ConversationQueryRepositoryTests
         };
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(messages[0].Id))
-            .Returns(messages[0]);
+            .Setup(repo => repo.GetMessageAsync(messages[0].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(messages[0]);
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(messages[1].Id))
-            .Returns(messages[1]);
+            .Setup(repo => repo.GetMessageAsync(messages[1].Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(messages[1]);
 
         Group group = new("g1", "Group", "Group Desc", new List<IUserAccount>() { user1, user2 });
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(group.GroupId))
-            .Returns(group);
+            .Setup(repo => repo.GetGroupByIdAsync(group.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group);
 
         GroupConversation conversation = new(group, "convo1", messages);
         ConversationDocument document = new(messages.Select(message => message.Id).ToList(), null, group.GroupId, conversation.ConversationId);
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == group.GroupId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(document);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(document);
 
         _conversationDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConversationFromDocument(document, null, group, messages))
             .Returns(conversation);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationByGroup(group.GroupId) as GroupConversation;
+        var result = (await _conversationQueryRepositorySUT.GetConversationByGroupAsync(group.GroupId));
 
         // Then
         result.Should().Be(conversation);
         _connectionQueryRepositoryMock
-            .Verify(repo => repo.GetConnection(It.IsAny<string>()), Times.Never);
+            .Verify(repo => repo.GetConnectionAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationByGroup_WhenConversationDoesNotExist_ReturnNull()
+    public async Task GetConversationByGroup_WhenConversationDoesNotExist_ReturnNull()
     {
         // Given
         string groupId = "g1";
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == groupId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns((ConversationDocument?)null);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ConversationDocument?)null);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationByGroup(groupId);
+        var result = await _conversationQueryRepositorySUT.GetConversationByGroupAsync(groupId);
 
         // Then
         result.Should().BeNull();
@@ -403,7 +421,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationByGroup_WhenMongoThrowsAnException_ReturnNullAndLogException()
+    public async Task GetConversationByGroup_WhenMongoThrowsAnException_ReturnNullAndLogException()
     {
         // Given
         string connectionId = "conn1";
@@ -412,11 +430,13 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == connectionId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Throws(testException);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationByGroup(connectionId);
+        var result = await _conversationQueryRepositorySUT.GetConversationByGroupAsync(connectionId);
 
         // Then
         result.Should().BeNull();
@@ -433,7 +453,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationsByUser_WhenConversationsExist_ReturnMappedConversations()
+    public async Task GetConversationsByUser_WhenConversationsExist_ReturnMappedConversations()
     {
         // Given
         TestUserAccount user1 = new()
@@ -472,32 +492,32 @@ public class ConversationQueryRepositoryTests
         };
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(It.IsAny<string>()))
-            .Returns((string messageId) => messages.First(message => message.Id == messageId));
+            .Setup(repo => repo.GetMessageAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string messageId, CancellationToken _) => messages.First(message => message.Id == messageId));
         
         Connection connection1 = new("conn1", user1, user2, ConnectionStatus.Connected);
         Connection connection2 = new("conn2", user1, user3, ConnectionStatus.Pending);
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(connection1.ConnectionId))
-            .Returns(connection1);
+            .Setup(repo => repo.GetConnectionAsync(connection1.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connection1);
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(connection2.ConnectionId))
-            .Returns(connection2);
+            .Setup(repo => repo.GetConnectionAsync(connection2.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connection2);
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnectionsForUser(user1))
-            .Returns(new List<IConnection>() { connection1, connection2} );
+            .Setup(repo => repo.GetConnectionsForUserAsync(user1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IConnection>() { connection1, connection2} );
 
         Group group1 = new("g1", "Group 1", "Group Description", new List<IUserAccount>() { user1, user2, user3 });
         Group group2 = new("g2", "Group 2", "Group Description", new List<IUserAccount>() { user1, user3, user4 });
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(group1.GroupId))
-            .Returns(group1);
+            .Setup(repo => repo.GetGroupByIdAsync(group1.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group1);
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(group2.GroupId))
-            .Returns(group2);
+            .Setup(repo => repo.GetGroupByIdAsync(group2.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group2);
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupsByUser(user1))
-            .Returns(new List<Group>() { group1, group2 });
+            .Setup(repo => repo.GetGroupsByUserAsync(user1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Group>() { group1, group2 });
 
         ConnectionConversation conversation1 = new(connection1, "convo1", messages.GetRange(0, 2));
         ConnectionConversation conversation2 = new(connection2, "convo2", messages.GetRange(2, 1));
@@ -510,8 +530,8 @@ public class ConversationQueryRepositoryTests
         ConversationDocument document4 = new(conversation4.Messages.Select(message => message.Id).ToList(), null, group2.GroupId, conversation4.ConversationId);
 
         _conversationCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
-            .Returns(new List<ConversationDocument>() { document1, document2, document3, document4 });
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ConversationDocument>() { document1, document2, document3, document4 });
 
         _conversationDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConversationFromDocument(document1, connection1, null, It.Is<List<Message>>(messages => messages.SequenceEqual(conversation1.Messages))))
@@ -527,7 +547,7 @@ public class ConversationQueryRepositoryTests
             .Returns(conversation4);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationsByUser(user1);
+        var result = await _conversationQueryRepositorySUT.GetConversationsByUserAsync(user1);
 
         // Then
         result.Should().BeEquivalentTo(new List<Conversation>() { conversation1, conversation2, conversation3, conversation4});
@@ -536,7 +556,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationsByUser_WhenNoConversationsExist_ReturnEmptyList()
+    public async Task GetConversationsByUser_WhenNoConversationsExist_ReturnEmptyList()
     {
         // Given
         TestUserAccount user = new()
@@ -547,18 +567,18 @@ public class ConversationQueryRepositoryTests
         };
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnectionsForUser(user))
-            .Returns(new List<IConnection>());
+            .Setup(repo => repo.GetConnectionsForUserAsync(user, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IConnection>());
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupsByUser(user))
-            .Returns(new List<Group>());
+            .Setup(repo => repo.GetGroupsByUserAsync(user, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Group>());
 
         _conversationCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
-            .Returns(new List<ConversationDocument>());
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ConversationDocument>());
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationsByUser(user);
+        var result = await _conversationQueryRepositorySUT.GetConversationsByUserAsync(user);
 
         // Then
         result.Should().NotBeNull();
@@ -568,7 +588,7 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetConversationsByUser_WhenMongoThrowsException_ReturnEmptyListAndLogException()
+    public async Task GetConversationsByUser_WhenMongoThrowsException_ReturnEmptyListAndLogException()
     {
         // Given
         TestUserAccount user = new()
@@ -581,18 +601,18 @@ public class ConversationQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnectionsForUser(user))
-            .Returns(new List<IConnection>());
+            .Setup(repo => repo.GetConnectionsForUserAsync(user, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IConnection>());
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupsByUser(user))
-            .Returns(new List<Group>());
+            .Setup(repo => repo.GetGroupsByUserAsync(user, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Group>());
 
         _conversationCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConversationDocument, bool>>>()))
-            .Throws(testException);
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
 
         // When
-        var result = _conversationQueryRepositorySUT.GetConversationsByUser(user);
+        var result = await _conversationQueryRepositorySUT.GetConversationsByUserAsync(user);
 
         // Then
         result.Should().NotBeNull();

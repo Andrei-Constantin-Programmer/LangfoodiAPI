@@ -30,13 +30,14 @@ public class ConversationQueryRepository : IConversationQueryRepository
         _messageQueryRepository = messageQueryRepository;
     }
 
-    public Conversation? GetConversationById(string id)
+    public async Task<Conversation?> GetConversationByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         ConversationDocument? conversationDocument;
         try
         {
-            conversationDocument = _conversationCollection.Find(
-                conversationDoc => conversationDoc.Id == id);
+            conversationDocument = await _conversationCollection.GetOneAsync(
+                conversationDoc => conversationDoc.Id == id, cancellationToken);
+
             if (conversationDocument is null)
             {
                 return null;
@@ -48,20 +49,20 @@ public class ConversationQueryRepository : IConversationQueryRepository
             return null;
         }
 
-        IConnection? connection = GetConnection(conversationDocument);
-        Group? group = GetGroup(conversationDocument);
-        List<Message> messages = GetMessages(conversationDocument);
+        IConnection? connection = await GetConnectionAsync(conversationDocument, cancellationToken);
+        Group? group = await GetGroupAsync(conversationDocument, cancellationToken);
+        List<Message> messages = await GetMessagesAsync(conversationDocument, cancellationToken);
 
         return _mapper.MapConversationFromDocument(conversationDocument, connection, group, messages);
     }
 
-    public ConnectionConversation? GetConversationByConnection(string connectionId)
+    public async Task<ConnectionConversation?> GetConversationByConnectionAsync(string connectionId, CancellationToken cancellationToken = default)
     {
         ConversationDocument? conversationDocument;
         try
         {
-            conversationDocument = _conversationCollection.Find(
-                conversationDoc => conversationDoc.ConnectionId == connectionId);
+            conversationDocument = await _conversationCollection.GetOneAsync(
+                conversationDoc => conversationDoc.ConnectionId == connectionId, cancellationToken);
             if (conversationDocument is null)
             {
                 return null;
@@ -73,21 +74,21 @@ public class ConversationQueryRepository : IConversationQueryRepository
             return null;
         }
 
-        IConnection? connection = GetConnection(conversationDocument);
-        List<Message> messages = GetMessages(conversationDocument);
+        IConnection? connection = await GetConnectionAsync(conversationDocument, cancellationToken);
+        List<Message> messages = await GetMessagesAsync(conversationDocument, cancellationToken);
 
         return conversationDocument is not null
             ? (ConnectionConversation)_mapper.MapConversationFromDocument(conversationDocument, connection, null, messages)
             : null;
     }
 
-    public GroupConversation? GetConversationByGroup(string groupId)
+    public async Task<GroupConversation?> GetConversationByGroupAsync(string groupId, CancellationToken cancellationToken = default)
     {
         ConversationDocument? conversationDocument;
         try
         {
-            conversationDocument = _conversationCollection.Find(
-                conversationDoc => conversationDoc.GroupId == groupId);
+            conversationDocument = await _conversationCollection.GetOneAsync(
+                conversationDoc => conversationDoc.GroupId == groupId, cancellationToken);
             if (conversationDocument is null)
             {
                 return null;
@@ -99,63 +100,63 @@ public class ConversationQueryRepository : IConversationQueryRepository
             return null;
         }
 
-        Group? group = GetGroup(conversationDocument);
-        List<Message> messages = GetMessages(conversationDocument);
+        Group? group = await GetGroupAsync(conversationDocument, cancellationToken);
+        List<Message> messages = await GetMessagesAsync(conversationDocument, cancellationToken);
 
         return conversationDocument is not null
             ? (GroupConversation)_mapper.MapConversationFromDocument(conversationDocument, null, group, messages)
             : null;
     }
 
-    public List<Conversation> GetConversationsByUser(IUserAccount userAccount)
+    public async Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
-        List<ConversationDocument> conversations = new();
+        IEnumerable<ConversationDocument> conversations = Enumerable.Empty<ConversationDocument>();
 
         try
         {
-            var groupIds = _groupQueryRepository
-                .GetGroupsByUser(userAccount)
+            var groupIds = (await _groupQueryRepository
+                .GetGroupsByUserAsync(userAccount, cancellationToken))
                 ?.Select(g => g.GroupId)
                 .ToList() ?? new List<string>();
 
-            var connectionIds = _connectionQueryRepository
-                .GetConnectionsForUser(userAccount)
+            var connectionIds = (await _connectionQueryRepository
+                .GetConnectionsForUserAsync(userAccount, cancellationToken))
                 ?.Select(c => c.ConnectionId)
                 .ToList() ?? new List<string>();
 
-            conversations = _conversationCollection
-                .GetAll(conversationDoc => conversationDoc.ConnectionId == null
+            conversations = (await _conversationCollection
+                .GetAllAsync(conversationDoc => conversationDoc.ConnectionId == null
                     ? groupIds.Any(id => id == conversationDoc.GroupId)
-                    : connectionIds.Any(id => id == conversationDoc.ConnectionId))
-                .ToList();
+                    : connectionIds.Any(id => id == conversationDoc.ConnectionId), cancellationToken));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "There was an error trying to get the conversations for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
         }
 
-        return conversations
-            .Select(conversationDoc => 
+        return await Task.WhenAll(conversations
+            .Select(async conversationDoc => 
             {
-                IConnection? connection = GetConnection(conversationDoc);
-                Group? group = GetGroup(conversationDoc);
-                List<Message> messages = GetMessages(conversationDoc);
+                IConnection? connection = await GetConnectionAsync(conversationDoc, cancellationToken);
+                Group? group = await GetGroupAsync(conversationDoc);
+                List<Message> messages = await GetMessagesAsync(conversationDoc);
 
                 return _mapper.MapConversationFromDocument(conversationDoc, connection, group, messages);
-            })
-            .ToList();
+            }));
     }
 
-    private List<Message> GetMessages(ConversationDocument conversationDocument) => conversationDocument.Messages
-        .Select(_messageQueryRepository.GetMessage)
-        .OfType<Message>()
-        .ToList();
+    private async Task<List<Message>> GetMessagesAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default) 
+        => (await Task.WhenAll(conversationDocument.Messages
+            .Select(async message => await _messageQueryRepository.GetMessageAsync(message, cancellationToken))))
+            .OfType<Message>()
+            .ToList();
     
-    private Group? GetGroup(ConversationDocument conversationDocument) => conversationDocument.GroupId is null
-        ? null
-        : _groupQueryRepository.GetGroupById(conversationDocument.GroupId);
+    private async Task<Group?> GetGroupAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default) 
+        => conversationDocument.GroupId is null
+            ? null
+            : await _groupQueryRepository.GetGroupByIdAsync(conversationDocument.GroupId, cancellationToken);
 
-    private IConnection? GetConnection(ConversationDocument conversationDocument) => conversationDocument.ConnectionId is null
+    private async Task<IConnection?> GetConnectionAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default) => conversationDocument.ConnectionId is null
         ? null
-        : _connectionQueryRepository.GetConnection(conversationDocument.ConnectionId);
+        : await _connectionQueryRepository.GetConnectionAsync(conversationDocument.ConnectionId, cancellationToken);
 }

@@ -18,10 +18,10 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
+    public async Task<RecipeAggregate> CreateRecipeAsync(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
     {
-        var recipeDocument = _recipeCollection
-            .Insert(new RecipeDocument(
+        var recipeDocument = await _recipeCollection
+            .InsertAsync(new RecipeDocument(
                 Title: title,
                 Ingredients: recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
                 Steps: recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
@@ -35,12 +35,13 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 CookingTimeInSeconds: recipe.CookingTimeInSeconds,
                 KiloCalories: recipe.KiloCalories,
                 ServingSize: recipe.ServingSize is not null ? (recipe.ServingSize.Quantity, recipe.ServingSize.UnitOfMeasurement) : null
-            ));
+            ), cancellationToken);
 
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public bool UpdateRecipe(RecipeAggregate recipe) => _recipeCollection.UpdateRecord(
+    public async Task<bool> UpdateRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default) => await 
+        _recipeCollection.UpdateAsync(
             new RecipeDocument(
                 Id: recipe.Id,
                 Title: recipe.Title,
@@ -55,12 +56,14 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 CreationDate: recipe.CreationDate,
                 LastUpdatedDate: recipe.LastUpdatedDate,
                 Tags: recipe.Tags.ToList(),
-                ServingSize: recipe.Recipe.ServingSize is not null ? (recipe.Recipe.ServingSize.Quantity, recipe.Recipe.ServingSize.UnitOfMeasurement) : null
-            ),
-            doc => doc.Id == recipe.Id
+                ServingSize: recipe.Recipe.ServingSize is not null ? (recipe.Recipe.ServingSize.Quantity, recipe.Recipe.ServingSize.UnitOfMeasurement) : null),
+            doc => doc.Id == recipe.Id,
+            cancellationToken
         );
 
-    public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);
+    public async Task<bool> DeleteRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default) 
+        => await DeleteRecipeAsync(recipe.Id, cancellationToken);
 
-    public bool DeleteRecipe(string id) => _recipeCollection.Delete(recipeDoc => recipeDoc.Id == id);
+    public async Task<bool> DeleteRecipeAsync(string id, CancellationToken cancellationToken = default) 
+        => await _recipeCollection.DeleteAsync(recipeDoc => recipeDoc.Id == id, cancellationToken);
 }

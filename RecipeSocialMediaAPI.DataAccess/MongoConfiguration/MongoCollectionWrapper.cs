@@ -20,16 +20,22 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         _collection = _database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
     }
 
-    public IEnumerable<TDocument> GetAll(Expression<Func<TDocument, bool>> expr)
+    public async Task<TDocument?> GetOneAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
-        return _collection?.Find(expr).ToEnumerable() ?? Enumerable.Empty<TDocument>();
+        return (await _collection.FindAsync(expr, cancellationToken: cancellationToken)).FirstOrDefault(cancellationToken: cancellationToken);
     }
 
-    public TDocument Insert(TDocument doc)
+    public async Task<IEnumerable<TDocument>> GetAllAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
+    {
+        return (await _collection.FindAsync(expr, cancellationToken: cancellationToken))
+            .ToEnumerable(cancellationToken: cancellationToken) ?? Enumerable.Empty<TDocument>();
+    }
+
+    public async Task<TDocument> InsertAsync(TDocument doc, CancellationToken cancellationToken = default)
     {
         try
         {
-            _collection?.InsertOne(doc);
+            await _collection.InsertOneAsync(doc, cancellationToken: cancellationToken);
             return doc;
         }
         catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
@@ -38,31 +44,21 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         }
     }
 
-    public bool Delete(Expression<Func<TDocument, bool>> expr)
-    {
-        return _collection?.DeleteOne(expr).DeletedCount > 0;
-    }
-
-    public bool Contains(Expression<Func<TDocument, bool>> expr)
-    {
-        return _collection?.Find(expr).Any() ?? false;
-    }
-
-    public TDocument? Find(Expression<Func<TDocument, bool>> expr)
-    {
-        return _collection?.Find(expr).FirstOrDefault();
-    }
-
-    public bool UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr)
+    public async Task<bool> UpdateAsync(TDocument record, Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
         try
         {
-            return _collection?.ReplaceOne(expr, record).ModifiedCount > 0;
+            return (await _collection.ReplaceOneAsync(expr, record, cancellationToken: cancellationToken)).ModifiedCount > 0;
         }
         catch (Exception)
         {
             return false;
         }
+    }
+
+    public async Task<bool> DeleteAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
+    {
+        return (await _collection.DeleteOneAsync(expr, cancellationToken)).DeletedCount > 0;
     }
 
     private protected static string GetCollectionName(Type documentType) =>

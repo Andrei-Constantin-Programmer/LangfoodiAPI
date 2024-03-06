@@ -22,18 +22,16 @@ internal class PinConversationHandler : IRequestHandler<PinConversationCommand>
         _conversationQueryRepository = conversationQueryRepository;
     }
 
-    public Task Handle(PinConversationCommand request, CancellationToken cancellationToken)
+    public async Task Handle(PinConversationCommand request, CancellationToken cancellationToken)
     {
-        IUserCredentials user = _userQueryRepository.GetUserById(request.UserId)
+        IUserCredentials user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))
             ?? throw new UserNotFoundException($"User with id {request.UserId} does not exist");
-        Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId)
+        Conversation conversation = (await _conversationQueryRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken))
             ?? throw new ConversationNotFoundException($"Conversation with id {request.ConversationId} does not exist");
 
         if (user.Account.AddPin(conversation.ConversationId))
         {
-            _userPersistenceRepository.UpdateUser(user);
+            await _userPersistenceRepository.UpdateUserAsync(user, cancellationToken);
         }
-
-        return Task.CompletedTask;
     }
 }

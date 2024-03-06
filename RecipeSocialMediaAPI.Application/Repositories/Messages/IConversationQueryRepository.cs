@@ -5,10 +5,10 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 public interface IConversationQueryRepository
 {
-    Conversation? GetConversationById(string id);
+    Task<Conversation?> GetConversationByIdAsync(string id, CancellationToken cancellationToken = default);
 
-    ConnectionConversation? GetConversationByConnection(string connectionId);
-    GroupConversation? GetConversationByGroup(string groupId);
+    Task<ConnectionConversation?> GetConversationByConnectionAsync(string connectionId, CancellationToken cancellationToken = default);
+    Task<GroupConversation?> GetConversationByGroupAsync(string groupId, CancellationToken cancellationToken = default);
 
-    List<Conversation> GetConversationsByUser(IUserAccount userAccount);
+    Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default);
 }

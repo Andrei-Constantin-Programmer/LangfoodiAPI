@@ -60,16 +60,16 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnection_WhenUsersExist_ReturnConnection()
+    public async Task GetConnection_WhenUsersExist_ReturnConnection()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
-        var existingConnection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+        var existingConnection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -91,13 +91,13 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnection_WhenConnectionDoesNotExist_ReturnNotFound()
+    public async Task GetConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -115,7 +115,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
-    public async void GetConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
+    public async Task GetConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
     {
         // Given
         TestUserCredentials user = new()
@@ -132,11 +132,11 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         _ = user1Exists 
             ? _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
             : null;
         _ = user2Exists
             ? _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
             : null;
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -152,16 +152,16 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
-        var existingConnection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+        _ = _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         // When
         var result = await _client.PostAsync($"connection/get/?userId1={user1.Account.Id}&userId2={user2.Account.Id}", null);
@@ -173,22 +173,22 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnectionsByUser_WhenConnectionsFound_ReturnConnections()
+    public async Task GetConnectionsByUser_WhenConnectionsFound_ReturnConnections()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user3 = await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        var connection1 = _fakeConnectionRepository
-            .CreateConnection(_testUser1.Account, _testUser2.Account, ConnectionStatus.Pending);
-        var connection2 = _fakeConnectionRepository
-            .CreateConnection(_testUser1.Account, _testUser3.Account, ConnectionStatus.Connected);
+        var connection1 = await _fakeConnectionRepository
+            .CreateConnectionAsync(_testUser1.Account, _testUser2.Account, ConnectionStatus.Pending);
+        var connection2 = await _fakeConnectionRepository
+            .CreateConnectionAsync(_testUser1.Account, _testUser3.Account, ConnectionStatus.Connected);
         _ = _fakeConnectionRepository
-            .CreateConnection(_testUser3.Account, _testUser2.Account, ConnectionStatus.Blocked);
+            .CreateConnectionAsync(_testUser3.Account, _testUser2.Account, ConnectionStatus.Blocked);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -198,6 +198,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
+
         var data = await result.Content.ReadFromJsonAsync<List<ConnectionDTO>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(2);
@@ -215,11 +216,11 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnectionsByUser_WhenNoConnectionsFound_ReturnEmptyCollection()
+    public async Task GetConnectionsByUser_WhenNoConnectionsFound_ReturnEmptyCollection()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -236,7 +237,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnectionsByUser_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task GetConnectionsByUser_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -264,22 +265,22 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnectionsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConnectionsByUser_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
-            .CreateUser(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync(_testUser3.Account.Handler, _testUser3.Account.UserName, _testUser3.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        var connection1 = _fakeConnectionRepository
-            .CreateConnection(_testUser1.Account, _testUser2.Account, ConnectionStatus.Pending);
-        var connection2 = _fakeConnectionRepository
-            .CreateConnection(_testUser1.Account, _testUser3.Account, ConnectionStatus.Connected);
-        _ = _fakeConnectionRepository
-            .CreateConnection(_testUser3.Account, _testUser2.Account, ConnectionStatus.Blocked);
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(_testUser1.Account, _testUser2.Account, ConnectionStatus.Pending);
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(_testUser1.Account, _testUser3.Account, ConnectionStatus.Connected);
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(_testUser3.Account, _testUser2.Account, ConnectionStatus.Blocked);
 
         // When
         var result = await _client.PostAsync($"connection/get-by-user/?userId={user1.Account.Id}", null);
@@ -291,13 +292,13 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnection_WhenUsersExist_ReturnNewConnection()
+    public async Task CreateConnection_WhenUsersExist_ReturnNewConnection()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
         NewConnectionContract newConnection = new(user1.Account.Id, user2.Account.Id);
 
@@ -322,7 +323,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
-    public async void CreateConnection_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
+    public async Task CreateConnection_WhenUsersDoNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
     {
         // Given
         TestUserCredentials user = new()
@@ -338,12 +339,12 @@ public class ConnectionEndpointsTests : EndpointTestBase
         };
 
         var user1 = user1Exists 
-            ? _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
+            ? await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
             : null;
         var user2 = user2Exists 
-            ? _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
+            ? await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
             : null;
 
         NewConnectionContract contract = new(user1?.Account.Id ?? "user1", user2?.Account.Id ?? "user2");
@@ -361,13 +362,13 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void CreateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task CreateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
         NewConnectionContract newConnection = new(user1.Account.Id, user2.Account.Id);
 
@@ -383,15 +384,15 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData(ConnectionStatus.Connected)]
     [InlineData(ConnectionStatus.Blocked)]
-    public async void UpdateConnection_WhenConnectionExists_UpdateTheConnection(ConnectionStatus connectionStatus)
+    public async Task UpdateConnection_WhenConnectionExists_UpdateTheConnection(ConnectionStatus connectionStatus)
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
         _ = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, connectionStatus.ToString());
 
@@ -403,7 +404,8 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var connection = _fakeConnectionRepository.GetConnection(user1.Account, user2.Account);
+
+        var connection = await _fakeConnectionRepository.GetConnectionAsync(user1.Account, user2.Account);
         connection.Should().NotBeNull();
         connection!.Status.Should().Be(connectionStatus);
     }
@@ -411,13 +413,13 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateConnection_WhenConnectionDoesNotExist_ReturnNotFound()
+    public async Task UpdateConnection_WhenConnectionDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Created");
 
@@ -437,7 +439,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
-    public async void UpdateConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
+    public async Task UpdateConnection_WhenUserDoesNotExist_ReturnNotFound(bool user1Exists, bool user2Exists)
     {
         // Given
         TestUserCredentials user = new()
@@ -453,8 +455,8 @@ public class ConnectionEndpointsTests : EndpointTestBase
         };
 
         var user1 = user1Exists
-            ? _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
+            ? await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero))
             : new TestUserCredentials()
             {
                 Account = new TestUserAccount()
@@ -468,8 +470,8 @@ public class ConnectionEndpointsTests : EndpointTestBase
             };
 
         var user2 = user2Exists
-            ? _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
+            ? await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero))
             : new TestUserCredentials()
             {
                 Account = new TestUserAccount()
@@ -483,7 +485,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
             };
 
         _ = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Created");
 
@@ -500,15 +502,15 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateConnection_WhenConnectionStatusIsNotSupported_ReturnBadRequest()
+    public async Task UpdateConnection_WhenConnectionStatusIsNotSupported_ReturnBadRequest()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Unsupported Status");
 
@@ -525,15 +527,15 @@ public class ConnectionEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UpdateConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-            .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
 
         UpdateConnectionContract contract = new(user1.Account.Id, user2.Account.Id, "Connected");
 

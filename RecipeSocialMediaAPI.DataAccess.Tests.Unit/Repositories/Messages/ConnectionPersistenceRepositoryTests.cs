@@ -36,7 +36,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateConnection_WhenConnectionIsValid_AddConnectionToCollectionAndReturnMappedConnection()
+    public async Task CreateConnection_WhenConnectionIsValid_AddConnectionToCollectionAndReturnMappedConnection()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -60,29 +60,31 @@ public class ConnectionPersistenceRepositoryTests
         Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Insert(It.IsAny<ConnectionDocument>()))
-            .Returns(testDocument);
+            .Setup(collection => collection.InsertAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _connectionDocumentToModelMapperMock
-            .Setup(mapper => mapper.MapConnectionFromDocument(testDocument))
-            .Returns(testConnection);
+            .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocument, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testConnection);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.CreateConnection(testUser1, testUser2, testConnection.Status);
+        var result = await _connectionPersistenceRepositorySUT.CreateConnectionAsync(testUser1, testUser2, testConnection.Status);
 
         // Then
         result.Should().Be(testConnection);
         _connectionCollectionMock
-            .Verify(collection => collection.Insert(It.Is<ConnectionDocument>(document
-                => document.AccountId1 == testUser1.Id
-                   && document.AccountId2 == testUser2.Id
-                   && document.ConnectionStatus == "Pending")), 
+            .Verify(collection => collection.InsertAsync(
+                    It.Is<ConnectionDocument>(document 
+                        => document.AccountId1 == testUser1.Id
+                        && document.AccountId2 == testUser2.Id
+                        && document.ConnectionStatus == "Pending"),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConnection_WhenUpdateIsSuccessful_ReturnTrue()
+    public async Task UpdateConnection_WhenUpdateIsSuccessful_ReturnTrue()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -108,15 +110,16 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.Is<ConnectionDocument>(document 
+            .Setup(collection => collection.UpdateAsync(It.Is<ConnectionDocument>(document 
                 => document.AccountId1 == testUser1.Id
                    && document.AccountId2 == testUser2.Id
                    && document.ConnectionStatus == "Connected"),
-                   It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(true);
+                   It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
+                   It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.UpdateConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.UpdateConnectionAsync(testConnection);
 
         // Then
         result.Should().BeTrue();
@@ -125,7 +128,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateConnection_WhenUpdateIsUnsuccessful_ReturnFalse()
+    public async Task UpdateConnection_WhenUpdateIsUnsuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -151,15 +154,16 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.Is<ConnectionDocument>(document
+            .Setup(collection => collection.UpdateAsync(It.Is<ConnectionDocument>(document
                 => document.AccountId1 == testUser1.Id
                    && document.AccountId2 == testUser2.Id
                    && document.ConnectionStatus == "Connected"),
-                   It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(false);
+                   It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                   It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.UpdateConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.UpdateConnectionAsync(testConnection);
 
         // Then
         result.Should().BeFalse();
@@ -168,7 +172,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteConnectionByAccounts_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task DeleteConnectionByAccounts_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -192,11 +196,13 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(true);
+            .Setup(collection => collection.DeleteAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.DeleteConnection(testUser1, testUser2);
+        var result = await _connectionPersistenceRepositorySUT.DeleteConnectionAsync(testUser1, testUser2);
 
         // Then
         result.Should().BeTrue();
@@ -205,7 +211,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteConnectionByAccounts_WhenDeleteIsUnuccessful_ReturnFalse()
+    public async Task DeleteConnectionByAccounts_WhenDeleteIsUnuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -229,11 +235,13 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(false);
+            .Setup(collection => collection.DeleteAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.DeleteConnection(testUser1, testUser2);
+        var result = await _connectionPersistenceRepositorySUT.DeleteConnectionAsync(testUser1, testUser2);
 
         // Then
         result.Should().BeFalse();
@@ -242,7 +250,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteConnection_WhenDeleteIsSuccessful_ReturnTrue()
+    public async Task DeleteConnection_WhenDeleteIsSuccessful_ReturnTrue()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -266,13 +274,15 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(true);
+            .Setup(collection => collection.DeleteAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.DeleteConnectionAsync(testConnection);
 
         // Then
         result.Should().BeTrue();
@@ -281,7 +291,7 @@ public class ConnectionPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteConnection_WhenDeleteIsUnuccessful_ReturnFalse()
+    public async Task DeleteConnection_WhenDeleteIsUnuccessful_ReturnFalse()
     {
         // Given
         TestUserAccount testUser1 = new()
@@ -305,13 +315,15 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Delete(It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))))
-            .Returns(false);
+            .Setup(collection => collection.DeleteAsync(
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         // When
-        var result = _connectionPersistenceRepositorySUT.DeleteConnection(testConnection);
+        var result = await _connectionPersistenceRepositorySUT.DeleteConnectionAsync(testConnection);
 
         // Then
         result.Should().BeFalse();

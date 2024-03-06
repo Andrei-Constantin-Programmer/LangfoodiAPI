@@ -56,8 +56,8 @@ public class CreateConnectionConversationHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount1.Id))
-            .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
+            .Setup(repo => repo.GetUserByIdAsync(userAccount1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
 
         Connection connection = new(
             connectionId: "connection1",
@@ -67,14 +67,14 @@ public class CreateConnectionConversationHandlerTests
         );
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(connection.ConnectionId))
-            .Returns(connection);
+            .Setup(repo => repo.GetConnectionAsync(connection.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connection);
 
         ConnectionConversation expectedConversation = new(connection, "conversation1");
 
         _conversationPersistenceRepositoryMock
-            .Setup(repo => repo.CreateConnectionConversation(connection))
-            .Returns(expectedConversation);
+            .Setup(repo => repo.CreateConnectionConversationAsync(connection, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedConversation);
 
         ConversationDTO conversationDto = new(expectedConversation.ConversationId, connection.ConnectionId, false, userAccount2.UserName, userAccount2.ProfileImageId, null, new() { userAccount1.Id, userAccount2.Id });
         _conversationMapperMock
@@ -116,8 +116,8 @@ public class CreateConnectionConversationHandlerTests
             AccountCreationDate = new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero)
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserById(userAccount1.Id))
-            .Returns(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
+            .Setup(repo => repo.GetUserByIdAsync(userAccount1.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials() { Account = userAccount1, Email = "test@mail.com", Password = "Test@123" });
 
         Connection connection = new(
             connectionId: "connection1",
@@ -127,14 +127,14 @@ public class CreateConnectionConversationHandlerTests
         );
 
         _connectionQueryRepositoryMock
-            .Setup(repo => repo.GetConnection(connection.ConnectionId))
-            .Returns(connection);
+            .Setup(repo => repo.GetConnectionAsync(connection.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connection);
 
         ConnectionConversation expectedConversation = new(connection, "conversation1");
 
         _conversationPersistenceRepositoryMock
-            .Setup(repo => repo.CreateConnectionConversation(connection))
-            .Returns(expectedConversation);
+            .Setup(repo => repo.CreateConnectionConversationAsync(connection, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedConversation);
 
         // When
         var testAction = async() => await _connectionConversationHandlerSUT.Handle(new CreateConnectionConversationCommand(userAccount1.Id, "invalidId"), CancellationToken.None);

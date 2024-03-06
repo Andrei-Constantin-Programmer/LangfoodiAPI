@@ -21,24 +21,24 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         _messageCollection = mongoCollectionFactory.CreateCollection<MessageDocument>();
     }
 
-    public Message CreateMessage(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds)
+    public async Task<Message> CreateMessageAsync(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
     {
-        MessageDocument messageDocument = _messageCollection.Insert(new MessageDocument(
+        MessageDocument messageDocument = await _messageCollection.InsertAsync(new MessageDocument(
             SenderId: sender.Id,
             MessageContent: new(text, recipeIds, imageURLs),
             SeenByUserIds: seenByUserIds,
             SentDate: sentDate,
             MessageRepliedToId: messageRepliedTo?.Id
-        ));
+        ), cancellationToken);
 
-        return _mapper.MapMessageFromDocument(messageDocument, sender, messageRepliedTo);
+        return await _mapper.MapMessageFromDocumentAsync(messageDocument, sender, messageRepliedTo, cancellationToken);
     }
 
-    public bool UpdateMessage(Message message)
+    public async Task<bool> UpdateMessageAsync(Message message, CancellationToken cancellationToken = default)
     {
         try
         {
-            return _messageCollection.UpdateRecord(new MessageDocument(
+            return await _messageCollection.UpdateAsync(new MessageDocument(
                 Id: message.Id,
                 SenderId: message.Sender.Id,
                 MessageContent: message switch
@@ -54,7 +54,8 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
                 LastUpdatedDate: message.UpdatedDate,
                 MessageRepliedToId: message.RepliedToMessage?.Id
             ),
-            doc => doc.Id == message.Id);
+            doc => doc.Id == message.Id,
+            cancellationToken);
         }
         catch (Exception ex)
         {
@@ -63,7 +64,9 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         }
     }
 
-    public bool DeleteMessage(Message message) => DeleteMessage(message.Id);
+    public async Task<bool> DeleteMessageAsync(Message message, CancellationToken cancellationToken = default) 
+        => await DeleteMessageAsync(message.Id, cancellationToken);
 
-    public bool DeleteMessage(string messageId) => _messageCollection.Delete(messageDoc => messageDoc.Id == messageId);
+    public async Task<bool> DeleteMessageAsync(string messageId, CancellationToken cancellationToken = default) 
+        => await _messageCollection.DeleteAsync(messageDoc => messageDoc.Id == messageId, cancellationToken);
 }

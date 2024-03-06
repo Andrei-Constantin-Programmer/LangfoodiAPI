@@ -21,18 +21,16 @@ internal class UnpinConversationHandler : IRequestHandler<UnpinConversationComma
         _conversationQueryRepository = conversationQueryRepository;
     }
 
-    public Task Handle(UnpinConversationCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UnpinConversationCommand request, CancellationToken cancellationToken)
     {
-        IUserCredentials user = _userQueryRepository.GetUserById(request.UserId)
+        IUserCredentials user = await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken)
             ?? throw new UserNotFoundException($"User with id {request.UserId} does not exist");
-        Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId)
+        Conversation conversation = (await _conversationQueryRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken))
             ?? throw new ConversationNotFoundException($"Conversation with id {request.ConversationId} does not exist");
 
         if (user.Account.RemovePin(conversation.ConversationId))
         {
-            _userPersistenceRepository.UpdateUser(user);
+            await _userPersistenceRepository.UpdateUserAsync(user, cancellationToken);
         }
-
-        return Task.CompletedTask;
     }
 }

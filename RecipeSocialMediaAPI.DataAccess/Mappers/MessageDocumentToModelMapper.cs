@@ -27,31 +27,31 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
         _userQueryRepository = userQueryRepository;
     }
 
-    public Message MapMessageFromDocument(MessageDocument messageDocument, IUserAccount sender, Message? repliedToMessage)
+    public async Task<Message> MapMessageFromDocumentAsync(MessageDocument messageDocument, IUserAccount sender, Message? repliedToMessage, CancellationToken cancellationToken = default)
     {
         var (text, recipeIds, imageURLs) = messageDocument.MessageContent;
         return (text, recipeIds, imageURLs) switch
         {
-            (object, null, null) => MapMessageDocumentToTextMessage(messageDocument, sender, repliedToMessage),
-            (_, null, object) => MapMessageDocumentToImageMessage(messageDocument, sender, repliedToMessage),
-            (_, object, null) => GetRecipeMessage(repliedToMessage),
+            (object, null, null) => await MapMessageDocumentToTextMessageAsync(messageDocument, sender, repliedToMessage, cancellationToken),
+            (_, null, object) => await MapMessageDocumentToImageMessageAsync(messageDocument, sender, repliedToMessage, cancellationToken),
+            (_, object, null) => await GetRecipeMessageAsync(repliedToMessage, cancellationToken),
 
             _ => throw new MalformedMessageDocumentException(messageDocument)
         };
 
-        Message GetRecipeMessage(Message? repliedToMessage)
+        async Task<Message> GetRecipeMessageAsync(Message? repliedToMessage, CancellationToken cancellationToken = default)
         {
-            var recipes = recipeIds
-                .Select(id =>
+            var recipes = (await Task.WhenAll(recipeIds
+                .Select(async id =>
                 {
-                    var recipe = _recipeQueryRepository.GetRecipeById(id);
+                    var recipe = await _recipeQueryRepository.GetRecipeByIdAsync(id, cancellationToken);
                     if (recipe is null)
                     {
                         _logger.LogWarning("No recipe with id {RecipeId} found for message with id {MessageId}", id, messageDocument.Id);
                     }
 
                     return recipe;
-                })
+                })))
                 .OfType<RecipeAggregate>();
 
             if (recipes.IsNullOrEmpty())
@@ -62,14 +62,14 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
                 }
 
                 _logger.LogWarning("Malformed message found with no existing recipes: {MessageId}", messageDocument.Id);
-                return MapMessageDocumentToTextMessage(messageDocument, sender, repliedToMessage);
+                return await MapMessageDocumentToTextMessageAsync(messageDocument, sender, repliedToMessage, cancellationToken);
             }
 
-            return MapMessageDocumentToRecipeMessage(messageDocument, sender, recipes, repliedToMessage);
+            return await MapMessageDocumentToRecipeMessageAsync(messageDocument, sender, recipes, repliedToMessage, cancellationToken);
         }
     }
 
-    private Message MapMessageDocumentToTextMessage(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null)
+    private async Task<Message> MapMessageDocumentToTextMessageAsync(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null, CancellationToken cancellationToken = default)
     {
         if (messageDocument.Id is null)
         {
@@ -80,13 +80,13 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             messageDocument.Id,
             sender,
             messageDocument.MessageContent.Text!,
-            GetSeenByUsers(messageDocument),
+            await GetSeenByUsersAsync(messageDocument, cancellationToken),
             messageDocument.SentDate,
             messageDocument.LastUpdatedDate,
             messageRepliedTo);
     }
 
-    private Message MapMessageDocumentToImageMessage(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null)
+    private async Task<Message> MapMessageDocumentToImageMessageAsync(MessageDocument messageDocument, IUserAccount sender, Message? messageRepliedTo = null, CancellationToken cancellationToken = default)
     {
         if (messageDocument.Id is null)
         {
@@ -98,13 +98,13 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             sender,
             messageDocument.MessageContent.ImageURLs!,
             messageDocument.MessageContent.Text,
-            GetSeenByUsers(messageDocument),
+            await GetSeenByUsersAsync(messageDocument, cancellationToken),
             messageDocument.SentDate,
             messageDocument.LastUpdatedDate,
             messageRepliedTo);
     }
 
-    private Message MapMessageDocumentToRecipeMessage(MessageDocument messageDocument, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, Message? messageRepliedTo = null)
+    private async Task<Message> MapMessageDocumentToRecipeMessageAsync(MessageDocument messageDocument, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, Message? messageRepliedTo = null, CancellationToken cancellationToken = default)
     {
         if (messageDocument.Id is null)
         {
@@ -116,15 +116,16 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             sender,
             recipes,
             messageDocument.MessageContent.Text,
-            GetSeenByUsers(messageDocument),
+            await GetSeenByUsersAsync(messageDocument, cancellationToken),
             messageDocument.SentDate,
             messageDocument.LastUpdatedDate,
             messageRepliedTo);
     }
 
-    private List<IUserAccount> GetSeenByUsers(MessageDocument messageDocument) => messageDocument.SeenByUserIds
-        .Select(userId => _userQueryRepository.GetUserById(userId))
-        .Where(user => user is not null)
-        .Select(user => user!.Account)
-        .ToList();
+    private async Task<List<IUserAccount>> GetSeenByUsersAsync(MessageDocument messageDocument, CancellationToken cancellationToken = default) 
+        => (await Task.WhenAll(messageDocument.SeenByUserIds
+            .Select(async userId => await _userQueryRepository.GetUserByIdAsync(userId, cancellationToken))))
+            .Where(user => user is not null)
+            .Select(user => user!.Account)
+            .ToList();
 }

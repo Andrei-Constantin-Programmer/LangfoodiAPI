@@ -4,10 +4,10 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Users;
 
 public interface IUserQueryRepository
 {
-    IEnumerable<IUserCredentials> GetAllUsers();
-    IUserCredentials? GetUserById(string id);
-    IUserCredentials? GetUserByHandler(string handler);
-    IUserCredentials? GetUserByEmail(string email);
-    IUserCredentials? GetUserByUsername(string username);
-    IEnumerable<IUserAccount> GetAllUserAccountsContaining(string containedString);
+    Task<IEnumerable<IUserCredentials>> GetAllUsersAsync(CancellationToken cancellationToken = default);
+    Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<IUserCredentials?> GetUserByHandlerAsync(string handler, CancellationToken cancellationToken = default);
+    Task<IUserCredentials?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);
+    Task<IUserCredentials?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default);
+    Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default);
 }

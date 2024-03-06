@@ -22,12 +22,12 @@ internal class MarkConversationAsReadHandler : IRequestHandler<MarkConversationA
         _messagePersistenceRepository = messagePersistenceRepository;
     }
 
-    public Task Handle(MarkConversationAsReadCommand request, CancellationToken cancellationToken)
+    public async Task Handle(MarkConversationAsReadCommand request, CancellationToken cancellationToken)
     {
-        IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
+        IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
-        Conversation conversation = _conversationQueryRepository.GetConversationById(request.ConversationId)
+        Conversation conversation = (await _conversationQueryRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken))
             ?? throw new ConversationNotFoundException($"No conversation found with id {request.ConversationId}");
 
         var unseenMessages = conversation.Messages
@@ -37,9 +37,7 @@ internal class MarkConversationAsReadHandler : IRequestHandler<MarkConversationA
         foreach (var message in unseenMessages)
         {
             message.MarkAsSeenBy(user);
-            _messagePersistenceRepository.UpdateMessage(message);
+            await _messagePersistenceRepository.UpdateMessageAsync(message, cancellationToken);
         }
-
-        return Task.CompletedTask;
     }
 }

@@ -17,19 +17,17 @@ internal class RecipeRemovedHandler : INotificationHandler<RecipeRemovedNotifica
         _messagePersistenceRepository = messagePersistenceRepository;
     }
 
-    public Task Handle(RecipeRemovedNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(RecipeRemovedNotification notification, CancellationToken cancellationToken)
     {
-        var messages = _messageQueryRepository.GetMessagesWithRecipe(notification.RecipeId);
+        var messages = await _messageQueryRepository.GetMessagesWithRecipeAsync(notification.RecipeId, cancellationToken);
 
         foreach (var message in messages.Cast<RecipeMessage>())
         {
             if (message.Recipes.Count == 1
                 && string.IsNullOrWhiteSpace(message.TextContent))
             {
-                _messagePersistenceRepository.DeleteMessage(message);
+                await _messagePersistenceRepository.DeleteMessageAsync(message, cancellationToken);
             }
         }
-
-        return Task.CompletedTask;
     }
 }

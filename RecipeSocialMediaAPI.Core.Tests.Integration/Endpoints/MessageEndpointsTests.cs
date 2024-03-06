@@ -105,13 +105,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenTextMessageFound_ReturnMessage()
+    public async Task GetMessageById_WhenTextMessageFound_ReturnMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender,"hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender,"hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -138,15 +138,15 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenRecipeMessageFound_ReturnMessage()
+    public async Task GetMessageById_WhenRecipeMessageFound_ReturnMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
-           .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
-        var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id}, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        await _fakeRecipeRepository
+           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new() { _testRecipe1.Id}, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -179,13 +179,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenImageMessageFound_ReturnMessage()
+    public async Task GetMessageById_WhenImageMessageFound_ReturnMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1"}, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1"}, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -212,11 +212,11 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenMessageDoesNotExist_ReturnNotFound()
+    public async Task GetMessageById_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -231,13 +231,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageById_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetMessageById_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _ = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.PostAsync($"message/get/?id={message.Id}", null);
@@ -249,26 +249,26 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessagesByConversation_WhenConversationDoesExist_ReturnMessages()
+    public async Task GetMessagesByConversation_WhenConversationDoesExist_ReturnMessages()
     {
         // Given
-        var user1 = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-          .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
-        var conversation = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
+        var user1 = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+          .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
-        var message1 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Message 1", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
-        var message2 = _fakeMessageRepository
-            .CreateMessage(user2.Account, "Message 2", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), message1, new());
+        var message1 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Message 1", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
+        var message2 = await _fakeMessageRepository
+            .CreateMessageAsync(user2.Account, "Message 2", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), message1, new());
         
         conversation.SendMessage(message1);
         conversation.SendMessage(message2);
-        _fakeConversationRepository.UpdateConversation(conversation, connection);
+        await _fakeConversationRepository.UpdateConversationAsync(conversation, connection);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -306,11 +306,11 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessagesByConversation_WhenConversationDoesNotExist_ReturnNotFound()
+    public async Task GetMessagesByConversation_WhenConversationDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -325,26 +325,26 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessagesByConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetMessagesByConversation_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user1 = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-          .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var connection = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Pending);
-        var conversation = _fakeConversationRepository
-            .CreateConnectionConversation(connection);
+        var user1 = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+          .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
 
-        var message1 = _fakeMessageRepository
-            .CreateMessage(user1.Account, "Message 1", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
-        var message2 = _fakeMessageRepository
-            .CreateMessage(user2.Account, "Message 2", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), message1, new());
+        var message1 = await _fakeMessageRepository
+            .CreateMessageAsync(user1.Account, "Message 1", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
+        var message2 = await _fakeMessageRepository
+            .CreateMessageAsync(user2.Account, "Message 2", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), message1, new());
 
         conversation.SendMessage(message1);
         conversation.SendMessage(message2);
-        _fakeConversationRepository.UpdateConversation(conversation, connection);
+        await _fakeConversationRepository.UpdateConversationAsync(conversation, connection);
 
         // When
         var result = await _client.PostAsync($"message/get-by-conversation/?conversationId={conversation.ConversationId}", null);
@@ -356,13 +356,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
+    public async Task SendMessage_WhenContractIsValidForTextMessage_ReturnCreatedMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var conversation = _fakeConversationRepository
-            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = await _fakeConversationRepository
+            .CreateGroupConversationAsync(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new(), null);
 
@@ -392,13 +392,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractIsValidForImageMessage_ReturnCreatedMessage()
+    public async Task SendMessage_WhenContractIsValidForImageMessage_ReturnCreatedMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var conversation = _fakeConversationRepository
-            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = await _fakeConversationRepository
+            .CreateGroupConversationAsync(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new() { "Image1", "Image2" }, null);
 
@@ -428,18 +428,18 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractIsValidForRecipeMessage_ReturnCreatedMessage()
+    public async Task SendMessage_WhenContractIsValidForRecipeMessage_ReturnCreatedMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var conversation = _fakeConversationRepository
-            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = await _fakeConversationRepository
+            .CreateGroupConversationAsync(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
-        var recipe1 = _fakeRecipeRepository
-           .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
-        var recipe2 = _fakeRecipeRepository
-           .CreateRecipe(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
+        var recipe1 = await _fakeRecipeRepository
+           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+        var recipe2 = await _fakeRecipeRepository
+           .CreateRecipeAsync(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new() { recipe1.Id, recipe2.Id }, new(), null);
 
@@ -473,13 +473,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractContainsNoMessageContent_ReturnBadRequest()
+    public async Task SendMessage_WhenContractContainsNoMessageContent_ReturnBadRequest()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var conversation = _fakeConversationRepository
-            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = await _fakeConversationRepository
+            .CreateGroupConversationAsync(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, null, new(), new(), null);
 
@@ -496,13 +496,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenContractIsInvalid_ReturnBadRequest()
+    public async Task SendMessage_WhenContractIsInvalid_ReturnBadRequest()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var conversation = _fakeConversationRepository
-            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = await _fakeConversationRepository
+            .CreateGroupConversationAsync(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, null, new() { "recipe1", "recipe2" }, new() { "Image1", "Image2" }, null);
 
@@ -519,13 +519,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task SendMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var conversation = _fakeConversationRepository
-            .CreateGroupConversation(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var conversation = await _fakeConversationRepository
+            .CreateGroupConversationAsync(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new(), new(), null);
 
@@ -539,20 +539,20 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void SendMessage_WhenConnectionIsBlocked_ReturnBadRequest()
+    public async Task SendMessage_WhenConnectionIsBlocked_ReturnBadRequest()
     {
         // Given
         string connectionId = "conn1";
-        var user1 = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
 
         user1.Account.BlockConnection(connectionId);
-        _fakeUserRepository.UpdateUser(user1);
+        await _fakeUserRepository.UpdateUserAsync(user1);
 
-        var conversation = _fakeConversationRepository
-            .CreateConnectionConversation(new Connection(connectionId, user1.Account, user2.Account, ConnectionStatus.Connected));
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(new Connection(connectionId, user1.Account, user2.Account, ConnectionStatus.Connected));
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
@@ -569,13 +569,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenTextMessageExists_ReturnOk()
+    public async Task UpdateMessage_WhenTextMessageExists_ReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var existingMessage = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var existingMessage = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", null, null);
         var oldUpdatedDate = existingMessage.UpdatedDate;
@@ -588,7 +588,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var message = _fakeMessageRepository.GetMessage(existingMessage.Id) as TextMessage;
+        var message = (await _fakeMessageRepository.GetMessageAsync(existingMessage.Id)) as TextMessage;
 
         message.Should().NotBeNull();
         message!.Id.Should().Be(existingMessage.Id);
@@ -601,18 +601,18 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenRecipeMessageExists_ReturnOk()
+    public async Task UpdateMessage_WhenRecipeMessageExists_ReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var oldRecipe = _fakeRecipeRepository
-           .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
-        var existingMessage = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var oldRecipe = await _fakeRecipeRepository
+           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+        var existingMessage = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
-        var newRecipe = _fakeRecipeRepository
-           .CreateRecipe(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
+        var newRecipe = await _fakeRecipeRepository
+           .CreateRecipeAsync(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", new() { newRecipe.Id }, null);
         var oldUpdatedDate = existingMessage.UpdatedDate;
 
@@ -624,7 +624,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var message = _fakeMessageRepository.GetMessage(existingMessage.Id) as RecipeMessage;
+        var message = (await _fakeMessageRepository.GetMessageAsync(existingMessage.Id)) as RecipeMessage;
 
         message.Should().NotBeNull();
         message!.Id.Should().Be(existingMessage.Id);
@@ -638,13 +638,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenImageMessageExists_ReturnOk()
+    public async Task UpdateMessage_WhenImageMessageExists_ReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var existingMessage = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var existingMessage = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", null, new() { "image 2" });
         var oldUpdatedDate = existingMessage.UpdatedDate;
@@ -657,7 +657,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var message = _fakeMessageRepository.GetMessage(existingMessage.Id) as ImageMessage;
+        var message = (await _fakeMessageRepository.GetMessageAsync(existingMessage.Id)) as ImageMessage;
 
         message.Should().NotBeNull();
         message!.Id.Should().Be(existingMessage.Id);
@@ -671,11 +671,11 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenMessageDoesNotExist_ReturnNotFound()
+    public async Task UpdateMessage_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         UpdateMessageContract contract = new("1", "New Text", null, null);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -691,16 +691,15 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UpdateMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UpdateMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        _ = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var existingMessage = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        _ = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var existingMessage = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", null, null);
-        var oldUpdatedDate = existingMessage.UpdatedDate;
 
         // When
         var result = await _client.PutAsJsonAsync($"message/update", contract);
@@ -712,11 +711,11 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenMessageDoesNotExist_ReturnNotFound()
+    public async Task GetMessageDetailed_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -731,13 +730,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenTextMessageFound_ReturnMessage()
+    public async Task GetMessageDetailed_WhenTextMessageFound_ReturnMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -762,15 +761,15 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenRecipeMessageFound_ReturnMessage()
+    public async Task GetMessageDetailed_WhenRecipeMessageFound_ReturnMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        _fakeRecipeRepository
-           .CreateRecipe(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
-        var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        await _fakeRecipeRepository
+           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -803,13 +802,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenImageMessageFound_ReturnMessage()
+    public async Task GetMessageDetailed_WhenImageMessageFound_ReturnMessage()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -834,13 +833,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetMessageDetailed_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetMessageDetailed_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        _ = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        _ = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.PostAsync($"message/get-detailed/?id={message.Id}", null);
@@ -852,11 +851,11 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteMessage_WhenMessageDoesNotExist_ReturnNotFound()
+    public async Task DeleteMessage_WhenMessageDoesNotExist_ReturnNotFound()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -872,13 +871,13 @@ public class MessageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteMessage_WhenMessageExists_ReturnOk()
+    public async Task DeleteMessage_WhenMessageExists_ReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -888,19 +887,19 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        _fakeMessageRepository.GetMessage(message.Id).Should().BeNull();
+        (await _fakeMessageRepository.GetMessageAsync(message.Id)).Should().BeNull();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void DeleteMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task DeleteMessage_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _ = _fakeUserRepository
-          .CreateUser(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = _fakeMessageRepository
-            .CreateMessage(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         // When
         var result = await _client.DeleteAsync($"message/delete/?id={message.Id}");

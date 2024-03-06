@@ -20,7 +20,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserCreate_WhenValidUser_ReturnUserWithId()
+    public async Task UserCreate_WhenValidUser_ReturnUserWithId()
     {
         // Given
         NewUserContract contract = new("TestHandler", "TestUsername", "test@mail.com", "Test@123");
@@ -44,7 +44,7 @@ public class UserEndpointsTests : EndpointTestBase
     [InlineData("", "test@mail.com", "Test@123")]
     [InlineData("TestUsername", "test.com", "Test@123")]
     [InlineData("TestUsername", "test@mail.com", "test")]
-    public async void UserCreate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
+    public async Task UserCreate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
         NewUserContract contract = new("handler", username, email, password);
@@ -59,13 +59,13 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUsernameExists_WhenUsernameExists_ReturnTrue()
+    public async Task UserUsernameExists_WhenUsernameExists_ReturnTrue()
     {
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        _ = _fakeUserRepository
-            .CreateUser(contract.Handler, contract.UserName, contract.Email, _fakeCryptoService.Encrypt(contract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync(contract.Handler, contract.UserName, contract.Email, _fakeCryptoService.Encrypt(contract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(contract.UserName)}", null);
@@ -80,7 +80,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
+    public async Task UserUsernameExists_WhenUsernameDoesNotExist_ReturnFalse()
     {
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
@@ -98,13 +98,13 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserEmailExists_WhenEmailExists_ReturnTrue()
+    public async Task UserEmailExists_WhenEmailExists_ReturnTrue()
     {
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
 
-        _ = _fakeUserRepository
-            .CreateUser(contract.Handler, contract.UserName, contract.Email, _fakeCryptoService.Encrypt(contract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync(contract.Handler, contract.UserName, contract.Email, _fakeCryptoService.Encrypt(contract.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsync($"user/email/exists?email={Uri.EscapeDataString(contract.Email)}", null);
@@ -119,7 +119,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
+    public async Task UserEmailExists_WhenEmailDoesNotExist_ReturnFalse()
     {
         // Given
         NewUserContract contract = new("handler", "TestUsername", "test@mail.com", "Test@123");
@@ -137,11 +137,11 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
+    public async Task UserUpdate_WhenUserExists_UpdateUserAndReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+           .CreateUserAsync("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var oldUsername = user.Account.UserName;
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
@@ -155,8 +155,8 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var oldUserExists = _fakeUserRepository.GetUserByUsername(oldUsername) is not null;
-        var newUserExists = _fakeUserRepository.GetUserByUsername(updateContract.UserName!) is not null;
+        var oldUserExists = await _fakeUserRepository.GetUserByUsernameAsync(oldUsername) is not null;
+        var newUserExists = await _fakeUserRepository.GetUserByUsernameAsync(updateContract.UserName!) is not null;
 
         oldUserExists.Should().BeFalse();
         newUserExists.Should().BeTrue();
@@ -165,7 +165,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
+    public async Task UserUpdate_WhenUserDoesNotExist_DoNotUpdateAndReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -191,7 +191,7 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
-        var userExists = _fakeUserRepository.GetUserByUsername(updateContract.UserName!) is not null;
+        var userExists = await _fakeUserRepository.GetUserByUsernameAsync(updateContract.UserName!) is not null;
         userExists.Should().BeFalse();
     }
 
@@ -201,11 +201,11 @@ public class UserEndpointsTests : EndpointTestBase
     [InlineData("", "test@mail.com", "Test@123")]
     [InlineData("TestUsername", "test.com", "Test@123")]
     [InlineData("TestUsername", "test@mail.com", "test")]
-    public async void UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
+    public async Task UserUpdate_WhenInvalidUser_ReturnBadRequest(string username, string email, string password)
     {
         // Given
-        var user = _fakeUserRepository
-           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+           .CreateUserAsync("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -222,11 +222,11 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UserUpdate_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user = _fakeUserRepository
-           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+           .CreateUserAsync("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         UpdateUserContract updateContract = new(user.Account.Id, "TestImageId", "NewUsername", user.Email, user.Password);
 
@@ -240,11 +240,11 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
+    public async Task UserRemove_WhenUserEmailDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+           .CreateUserAsync("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -255,18 +255,18 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        var userExists = _fakeUserRepository.GetUserByUsername(user.Account.UserName) is not null;
+        var userExists = await _fakeUserRepository.GetUserByUsernameAsync(user.Account.UserName) is not null;
         userExists.Should().BeFalse();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
+    public async Task UserRemove_WhenUserIdDoesExist_DeleteUserAndReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+           .CreateUserAsync("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -277,14 +277,14 @@ public class UserEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var userExists = _fakeUserRepository.GetUserByUsername(user.Account.UserName) is not null;
+        var userExists = await _fakeUserRepository.GetUserByUsernameAsync(user.Account.UserName) is not null;
         userExists.Should().BeFalse();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenUserEmailDoesNotExist_ReturnNotFound()
+    public async Task UserRemove_WhenUserEmailDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -312,7 +312,7 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenUserIdDoesNotExist_ReturnNotFound()
+    public async Task UserRemove_WhenUserIdDoesNotExist_ReturnNotFound()
     {
         // Given
         TestUserCredentials user = new()
@@ -340,11 +340,11 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void UserRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task UserRemove_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
-        var user = _fakeUserRepository
-           .CreateUser("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+           .CreateUserAsync("handle", "user_1", "u1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.DeleteAsync($"user/remove?emailOrId={Uri.EscapeDataString(user.Account.Id)}");
@@ -358,11 +358,11 @@ public class UserEndpointsTests : EndpointTestBase
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
     [InlineData(true)]
     [InlineData(false)]
-    public async void GetAll_WhenThereAreNoUsers_ReturnEmptyList(bool containSelf)
+    public async Task GetAll_WhenThereAreNoUsers_ReturnEmptyList(bool containSelf)
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -380,16 +380,16 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenThereAreUsersAndChoseSelf_ReturnUsersWithSelf()
+    public async Task GetAll_WhenThereAreUsersAndChoseSelf_ReturnUsersWithSelf()
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
-            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var _ = _fakeUserRepository
-            .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var _ = await _fakeUserRepository
+            .CreateUserAsync("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -415,16 +415,16 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetAll_WhenThereAreUsersAndChoseNonSelf_ReturnUsersWithoutQueryingUser()
+    public async Task GetAll_WhenThereAreUsersAndChoseNonSelf_ReturnUsersWithoutQueryingUser()
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
-            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeUserRepository
-            .CreateUser("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync("not_found_handle", "Not Found User", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -446,11 +446,11 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnected_WhenThereAreNoUsers_ReturnEmptyList()
+    public async Task GetConnected_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -468,19 +468,19 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnected_WhenThereAreUsers_ReturnOnlyConnectedUsers()
+    public async Task GetConnected_WhenThereAreUsers_ReturnOnlyConnectedUsers()
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
-            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeUserRepository
-            .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -502,19 +502,19 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetConnected_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetConnected_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
-            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeUserRepository
-            .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         // When
         var result = await _client.PostAsync($"user/get-connected/?containedString={containedString}&userId={user1.Account.Id}", null);
@@ -526,11 +526,11 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetUnconnected_WhenThereAreNoUsers_ReturnEmptyList()
+    public async Task GetUnconnected_WhenThereAreNoUsers_ReturnEmptyList()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -548,19 +548,19 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetUnconnected_WhenThereAreUsers_ReturnOnlyUnconnectedUsers()
+    public async Task GetUnconnected_WhenThereAreUsers_ReturnOnlyUnconnectedUsers()
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
-            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        var user3 = _fakeUserRepository
-            .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var user3 = await _fakeUserRepository
+            .CreateUserAsync($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -582,19 +582,19 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetUnconnected_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetUnconnected_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         string containedString = "test";
-        var user1 = _fakeUserRepository
-            .CreateUser($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var user2 = _fakeUserRepository
-            .CreateUser("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
-        _ = _fakeUserRepository
-            .CreateUser($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync($"handle_{containedString}", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("Handle 2", $"{containedString.ToUpper()} 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@321"), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync($"{containedString}_handle", "User 3", "email3@mail.com", _fakeCryptoService.Encrypt("Test@987"), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero));
 
-        _ = _fakeConnectionRepository
-            .CreateConnection(user1.Account, user2.Account, ConnectionStatus.Connected);
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Connected);
 
         // When
         var result = await _client.PostAsync($"user/get-unconnected/?containedString={containedString}&userId={user1.Account.Id}", null);

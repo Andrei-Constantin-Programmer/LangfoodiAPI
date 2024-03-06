@@ -76,8 +76,8 @@ public class GetRecipesFromUserHandlerTests
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipesByChefName(It.IsAny<string>()))
-            .Returns(new List<RecipeAggregate> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
+            .Setup(x => x.GetRecipesByChefNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<RecipeAggregate> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
         _recipeMapperMock
             .Setup(x => x.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()))
             .Returns(expectedResult);

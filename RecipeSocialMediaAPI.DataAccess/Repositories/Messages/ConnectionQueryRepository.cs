@@ -21,12 +21,12 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public IConnection? GetConnection(string connectionId)
+    public async Task<IConnection?> GetConnectionAsync(string connectionId, CancellationToken cancellationToken = default)
     {
         ConnectionDocument? connectionDocument;
         try
         {
-            connectionDocument = _connectionCollection.Find(connectionDoc => connectionDoc.Id == connectionId);
+            connectionDocument = await _connectionCollection.GetOneAsync(connectionDoc => connectionDoc.Id == connectionId, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -35,18 +35,18 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         }
 
         return connectionDocument is not null
-            ? _mapper.MapConnectionFromDocument(connectionDocument)
+            ? await _mapper.MapConnectionFromDocumentAsync(connectionDocument, cancellationToken)
             : null;
     }
 
-    public IConnection? GetConnection(IUserAccount userAccount1, IUserAccount userAccount2)
+    public async Task<IConnection?> GetConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default)
     {
         ConnectionDocument? connectionDocument;
         try
         {
-            connectionDocument = _connectionCollection.Find(
+            connectionDocument = await _connectionCollection.GetOneAsync(
                 connectionDoc => (connectionDoc.AccountId1 == userAccount1.Id && connectionDoc.AccountId2 == userAccount2.Id)
-                              || (connectionDoc.AccountId1 == userAccount2.Id && connectionDoc.AccountId2 == userAccount1.Id));
+                              || (connectionDoc.AccountId1 == userAccount2.Id && connectionDoc.AccountId2 == userAccount1.Id), cancellationToken);
         }
         catch (Exception ex)
         {
@@ -55,28 +55,26 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         }
 
         return connectionDocument is not null
-            ? _mapper.MapConnectionFromDocument(connectionDocument) 
+            ? await _mapper.MapConnectionFromDocumentAsync(connectionDocument, cancellationToken) 
             : null;
     }
 
-    public List<IConnection> GetConnectionsForUser(IUserAccount userAccount)
+    public async Task<IEnumerable<IConnection>> GetConnectionsForUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
     {
-        List<ConnectionDocument> connections = new();
+        IEnumerable<ConnectionDocument> connections = Enumerable.Empty<ConnectionDocument>();
 
         try
         {
-            connections = _connectionCollection
-                .GetAll(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
-                                      || connectionDoc.AccountId2 == userAccount.Id)
-                .ToList();
+            connections = await _connectionCollection
+                .GetAllAsync(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
+                                      || connectionDoc.AccountId2 == userAccount.Id, cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "There was an error trying to get the connections for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
         }
 
-        return connections
-            .Select(_mapper.MapConnectionFromDocument)
-            .ToList();
+        return (await Task.WhenAll(connections
+            .Select(async connection => await _mapper.MapConnectionFromDocumentAsync(connection, cancellationToken))));
     }
 }

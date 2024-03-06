@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using RecipeSocialMediaAPI.Application.Repositories.Messages;
+﻿using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.DataAccess.Mappers.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.DataAccess.MongoDocuments;
@@ -19,33 +18,36 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         _connectionCollection = mongoCollectionFactory.CreateCollection<ConnectionDocument>();
     }
 
-    public IConnection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus)
+    public async Task<IConnection> CreateConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
     {
-        ConnectionDocument connectionDocument = _connectionCollection.Insert(new ConnectionDocument(
+        ConnectionDocument connectionDocument = await _connectionCollection.InsertAsync(new ConnectionDocument(
             AccountId1: userAccount1.Id,
             AccountId2: userAccount2.Id,
             ConnectionStatus: connectionStatus.ToString()
-        ));
+        ), cancellationToken);
 
-        return _mapper.MapConnectionFromDocument(connectionDocument);
+        return await _mapper.MapConnectionFromDocumentAsync(connectionDocument, cancellationToken);
     }
 
-    public bool UpdateConnection(IConnection connection)
+    public async Task<bool> UpdateConnectionAsync(IConnection connection, CancellationToken cancellationToken = default)
     {
-        return _connectionCollection.UpdateRecord(
+        return await _connectionCollection.UpdateAsync(
             new ConnectionDocument(
                 AccountId1: connection.Account1.Id,
                 AccountId2: connection.Account2.Id,
                 ConnectionStatus: connection.Status.ToString()
             ),
             doc => (doc.AccountId1 == connection.Account1.Id && doc.AccountId2 == connection.Account2.Id)
-                || (doc.AccountId1 == connection.Account2.Id && doc.AccountId2 == connection.Account1.Id));
+                || (doc.AccountId1 == connection.Account2.Id && doc.AccountId2 == connection.Account1.Id),
+            cancellationToken);
     }
 
-    public bool DeleteConnection(IConnection connection) => DeleteConnection(connection.Account1, connection.Account2);
+    public async Task<bool> DeleteConnectionAsync(IConnection connection, CancellationToken cancellationToken = default) 
+        => await DeleteConnectionAsync(connection.Account1, connection.Account2, cancellationToken);
 
-    public bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2) 
-        => _connectionCollection.Delete(
+    public async Task<bool> DeleteConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default) 
+        => await _connectionCollection.DeleteAsync(
             doc => (doc.AccountId1 == userAccount1.Id && doc.AccountId2 == userAccount2.Id)
-                || (doc.AccountId1 == userAccount2.Id && doc.AccountId2 == userAccount1.Id));
+                || (doc.AccountId1 == userAccount2.Id && doc.AccountId2 == userAccount1.Id), 
+            cancellationToken);
 }

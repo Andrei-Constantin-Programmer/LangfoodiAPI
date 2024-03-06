@@ -35,7 +35,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateException()
+    public async Task CreateUser_WhenDocumentAlreadyExistsExceptionIsThrownFromTheCollection_PropagateException()
     {
         // Given
         UserDocument testDocument = new( 
@@ -48,20 +48,20 @@ public class UserPersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument)))
-            .Throws(new DocumentAlreadyExistsException<UserDocument>(testDocument));
+            .Setup(collection => collection.InsertAsync(It.Is<UserDocument>(doc => doc == testDocument), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new DocumentAlreadyExistsException<UserDocument>(testDocument));
 
         // When
-        var action = () => _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
+        var action = async () => await _userPersistenceRepositorySUT.CreateUserAsync(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
 
         // Then
-        action.Should().Throw<DocumentAlreadyExistsException<UserDocument>>();
+        await action.Should().ThrowAsync<DocumentAlreadyExistsException<UserDocument>>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void CreateUser_CreatesUserAndReturnsNewlyCreatedUser()
+    public async Task CreateUser_CreatesUserAndReturnsNewlyCreatedUser()
     {
         // Given
         UserDocument testDocument = new(
@@ -87,25 +87,27 @@ public class UserPersistenceRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument)))
-            .Returns(testDocument);
+            .Setup(collection => collection.InsertAsync(It.Is<UserDocument>(doc => doc == testDocument), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(It.Is<UserDocument>(doc => doc == testDocument)))
             .Returns(testUser);
 
         // When
-        var result = _userPersistenceRepositorySUT.CreateUser(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
+        var result = await _userPersistenceRepositorySUT.CreateUserAsync(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
 
         // Then
         result.Should().Be(testUser);
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument)), Times.Once);
+            .Verify(collection => collection.InsertAsync(
+                It.Is<UserDocument>(doc => doc == testDocument), 
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
+    public async Task UpdateUser_WhenUserExists_UpdatesUserAndReturnsTrue()
     {
         // Given
         UserDocument testDocument = new(
@@ -140,20 +142,25 @@ public class UserPersistenceRepositoryTests
         Expression<Func<UserDocument, bool>> updateExpression = x => x.Id == testDocument.Id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, findExpression))))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, findExpression)),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<UserDocument>(), It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.UpdateAsync(
+                It.IsAny<UserDocument>(), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _userPersistenceRepositorySUT.UpdateUser(updatedUser);
+        var result = await _userPersistenceRepositorySUT.UpdateUserAsync(updatedUser);
 
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.UpdateRecord(
+            .Verify(collection => collection.UpdateAsync(
                     It.Is<UserDocument>(
                         doc => doc.Id == testDocument.Id
                         && doc.Handler == testDocument.Handler
@@ -164,14 +171,15 @@ public class UserPersistenceRepositoryTests
                         && doc.ProfileImageId == updatedUser.Account.ProfileImageId
                         && doc.PinnedConversationIds!.First() == updatedUser.Account.PinnedConversationIds[0]
                         && doc.PinnedConversationIds!.Skip(1).First() == updatedUser.Account.PinnedConversationIds[1]),
-                    It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression))),
+                    It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression)), 
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateUser_WhenUserDoesNotExist_ReturnFalse()
+    public async Task UpdateUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
         UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password", (int)UserRole.User);
@@ -191,11 +199,11 @@ public class UserPersistenceRepositoryTests
         UserDocument? nullUserDocument = null;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(nullUserDocument);
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nullUserDocument);
 
         // When
-        var result = _userPersistenceRepositorySUT.UpdateUser(updatedUser);
+        var result = await _userPersistenceRepositorySUT.UpdateUserAsync(updatedUser);
 
         // Then
         result.Should().BeFalse();
@@ -204,7 +212,7 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateUser_WhenCollectionCantUpdate_ReturnFalse()
+    public async Task UpdateUser_WhenCollectionCantUpdate_ReturnFalse()
     {
         // Given
         UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password", (int)UserRole.User);
@@ -222,14 +230,17 @@ public class UserPersistenceRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(testDocument);
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testDocument);
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(It.IsAny<UserDocument>(), It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.UpdateAsync(
+                It.IsAny<UserDocument>(), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _userPersistenceRepositorySUT.UpdateUser(updatedUser);
+        var result = await _userPersistenceRepositorySUT.UpdateUserAsync(updatedUser);
 
         // Then
         result.Should().BeFalse();
@@ -238,35 +249,42 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
+    public async Task DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
     {
         // Given
         UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
-        var result = _userPersistenceRepositorySUT.DeleteUser(testDocument.Id!);
+        var result = await _userPersistenceRepositorySUT.DeleteUserAsync(testDocument.Id!);
 
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock.Verify(collection =>
-            collection.Delete(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))));
+            collection.DeleteAsync(
+                    It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
+    public async Task DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
     {
         // Given
         UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(true);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         IUserCredentials userCredentials = new TestUserCredentials()
         {
@@ -282,26 +300,31 @@ public class UserPersistenceRepositoryTests
         };
 
         // When
-        var result = _userPersistenceRepositorySUT.DeleteUser(userCredentials);
+        var result = await _userPersistenceRepositorySUT.DeleteUserAsync(userCredentials);
 
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock.Verify(collection =>
-            collection.Delete(It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression))));
+            collection.DeleteAsync(
+                    It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteUser_WhenUserWithIdDoesNotExist_ReturnFalse()
+    public async Task DeleteUser_WhenUserWithIdDoesNotExist_ReturnFalse()
     {
         // Given
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
-        var result = _userPersistenceRepositorySUT.DeleteUser("1");
+        var result = await _userPersistenceRepositorySUT.DeleteUserAsync("1");
 
         // Then
         result.Should().BeFalse();
@@ -310,12 +333,14 @@ public class UserPersistenceRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void DeleteUser_WhenUserDoesNotExist_ReturnFalse()
+    public async Task DeleteUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(It.IsAny<Expression<Func<UserDocument, bool>>>()))
-            .Returns(false);
+            .Setup(collection => collection.DeleteAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         IUserCredentials userCredentials = new TestUserCredentials()
         {
@@ -331,7 +356,7 @@ public class UserPersistenceRepositoryTests
         };
 
         // When
-        var result = _userPersistenceRepositorySUT.DeleteUser(userCredentials);
+        var result = await _userPersistenceRepositorySUT.DeleteUserAsync(userCredentials);
 
         // Then
         result.Should().BeFalse();

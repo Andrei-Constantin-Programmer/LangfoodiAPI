@@ -31,7 +31,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
+    public async Task GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
     {
         // Given
         List<TestDocument> existingDocuments = new();
@@ -43,7 +43,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(existingDocuments);
 
         // When
-        var result = _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('1'));
+        var result = (await _mongoCollectionWrapperSUT.GetAllAsync(doc => doc.TestProperty!.StartsWith('1'))).ToList();
 
         // Then
         result.Should().OnlyContain(doc => doc.TestProperty == "1" || doc.TestProperty == "10");
@@ -53,7 +53,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAll_WhenNoDocumentsMatch_ReturnEmptyList()
+    public async Task GetAll_WhenNoDocumentsMatch_ReturnEmptyList()
     {
         // Given
         List<TestDocument> existingDocuments = new();
@@ -65,7 +65,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(existingDocuments);
 
         // When
-        var result = _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('a'));
+        var result = await _mongoCollectionWrapperSUT.GetAllAsync(doc => doc.TestProperty!.StartsWith('a'));
 
         // Then
         result.Should().BeEmpty();
@@ -74,12 +74,12 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void GetAll_WhenThereAreNoDocuments_ReturnEmptyList()
+    public async Task GetAll_WhenThereAreNoDocuments_ReturnEmptyList()
     {
         // Given
 
         // When
-        var result = _mongoCollectionWrapperSUT.GetAll(_ => true);
+        var result = await _mongoCollectionWrapperSUT.GetAllAsync(_ => true);
 
         // Then
         result.Should().BeEmpty();
@@ -88,13 +88,13 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Insert_AddsDocumentToTheDatabaseAndReturnsDocument()
+    public async Task Insert_AddsDocumentToTheDatabaseAndReturnsDocument()
     {
         // Given
         TestDocument testDocument = new("Test 1");
 
         // When
-        var document = _mongoCollectionWrapperSUT.Insert(testDocument);
+        var document = await _mongoCollectionWrapperSUT.InsertAsync(testDocument);
 
         // Then
         document.Should().Be(testDocument);
@@ -105,30 +105,30 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsException()
+    public async Task Insert_WhenDocumentWithIdAlreadyExists_ThrowDocumentAlreadyExistsException()
     {
         // Given
         TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var action = () => _mongoCollectionWrapperSUT.Insert(testDocument);
+        var action = async () => await _mongoCollectionWrapperSUT.InsertAsync(testDocument);
 
         // Then
-        action.Should().Throw<DocumentAlreadyExistsException<TestDocument>>();
+        await action.Should().ThrowAsync<DocumentAlreadyExistsException<TestDocument>>();
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrue()
+    public async Task Delete_WhenDocumentWithConditionExists_DeleteDocumentAndReturnTrue()
     {
         // Given
         TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.Id == testDocument.Id);
+        var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.Id == testDocument.Id);
 
         // Then
         wasDeleted.Should().BeTrue();
@@ -138,7 +138,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Delete_WhenMultipleDocumentsWithConditionExist_DeleteFirstFittingDocumentAndReturnTrue()
+    public async Task Delete_WhenMultipleDocumentsWithConditionExist_DeleteFirstFittingDocumentAndReturnTrue()
     {
         // Given
         List<TestDocument> testDocuments = new()
@@ -151,7 +151,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(testDocuments);
 
         // When
-        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty!.Contains("To Delete"));
+        var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.TestProperty!.Contains("To Delete"));
 
         // Then
         wasDeleted.Should().BeTrue();
@@ -163,14 +163,14 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Delete_WhenNoDocumentWithConditionExists_ReturnFalse()
+    public async Task Delete_WhenNoDocumentWithConditionExists_ReturnFalse()
     {
         // Given
         TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
+        var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.TestProperty == string.Empty);
 
         // Then
         wasDeleted.Should().BeFalse();
@@ -180,12 +180,12 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Delete_WhenNoDocumentExists_ReturnFalse()
+    public async Task Delete_WhenNoDocumentExists_ReturnFalse()
     {
         // Given
         
         // When
-        var wasDeleted = _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
+        var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.TestProperty == string.Empty);
 
         // Then
         wasDeleted.Should().BeFalse();
@@ -194,14 +194,14 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Find_WhenNoDocumentWithConditionExists_ReturnNull()
+    public async Task Find_WhenNoDocumentWithConditionExists_ReturnNull()
     {
         // Given
         TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var documentFromDb = _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == "Nonexistent");
+        var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty == "Nonexistent");
 
         // Then
         documentFromDb.Should().BeNull();
@@ -210,12 +210,12 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Find_WhenNoDocumentExists_ReturnNull()
+    public async Task Find_WhenNoDocumentExists_ReturnNull()
     {
         // Given
         
         // When
-        var documentFromDb = _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == "Nonexistent");
+        var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty == "Nonexistent");
 
         // Then
         documentFromDb.Should().BeNull();
@@ -224,14 +224,14 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Find_WhenDocumentWithConditionExists_ReturnDocument()
+    public async Task Find_WhenDocumentWithConditionExists_ReturnDocument()
     {
         // Given
         TestDocument testDocument = new("Test 1");
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var documentFromDb = _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == testDocument.TestProperty);
+        var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty == testDocument.TestProperty);
 
         // Then
         documentFromDb.Should().Be(testDocument);
@@ -240,7 +240,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void Find_WhenMultipleDocumentsWithConditionExist_ReturnTheFirstOne()
+    public async Task Find_WhenMultipleDocumentsWithConditionExist_ReturnTheFirstOne()
     {
         // Given
         List<TestDocument> testDocuments = new()
@@ -253,7 +253,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(testDocuments);
 
         // When
-        var documentFromDb = _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty!.Contains("Test"));
+        var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty!.Contains("Test"));
 
         // Then
         documentFromDb.Should().Be(testDocuments.Skip(2).First());
@@ -262,7 +262,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdate()
+    public async Task UpdateRecord_WhenRecordWithConditionDoesNotExist_ReturnFalseAndDontUpdate()
     {
         // Given
         TestDocument testDocument = new("Test");
@@ -271,7 +271,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         TestDocument updatedDocument = new("Updated");
 
         // When
-        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.TestProperty == "Nonexistent");
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateAsync(updatedDocument, doc => doc.TestProperty == "Nonexistent");
 
         // Then
         wasUpdatedSuccessfully.Should().BeFalse();
@@ -282,13 +282,13 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdate()
+    public async Task UpdateRecord_WhenNoRecordExists_ReturnFalseAndDontUpdate()
     {
         // Given
         TestDocument updatedDocument = new("Updated");
 
         // When
-        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => true);
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateAsync(updatedDocument, doc => true);
 
         // Then
         wasUpdatedSuccessfully.Should().BeFalse();
@@ -298,7 +298,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public void UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdate()
+    public async Task UpdateRecord_WhenRecordWithConditionExists_ReturnTrueAndUpdate()
     {
         // Given
         TestDocument testDocument = new("Test");
@@ -307,7 +307,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         TestDocument updatedDocument = new(Id: testDocument.Id, TestProperty: "Updated");
 
         // When
-        var wasUpdatedSuccessfully = _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.Id == testDocument.Id);
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateAsync(updatedDocument, doc => doc.Id == testDocument.Id);
 
         // Then
         wasUpdatedSuccessfully.Should().BeTrue();

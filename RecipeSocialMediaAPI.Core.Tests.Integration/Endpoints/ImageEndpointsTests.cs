@@ -20,11 +20,11 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_SignatureGenerated_ReturnGeneratedCloudinarySignature()
+    public async Task GetCloudinarySignature_SignatureGenerated_ReturnGeneratedCloudinarySignature()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinarySignatureServiceMock
             .Setup(x => x.GenerateSignature(It.IsAny<Cloudinary>(), null))
         .Returns(_signatureTestData);
@@ -46,7 +46,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void GetCloudinarySignature_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task GetCloudinarySignature_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _cloudinarySignatureServiceMock
@@ -63,11 +63,11 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageSingleDelete_GivenPublicIdAndNoError_ReturnOk()
+    public async Task ImageSingleDelete_GivenPublicIdAndNoError_ReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(
                 It.IsAny<CloudinarySignatureDTO>(),
@@ -88,11 +88,11 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageSingleDelete_GivenPublicIdAndError_ReturnNotOk()
+    public async Task ImageSingleDelete_GivenPublicIdAndError_ReturnNotOk()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.RemoveHostedImage(
                 It.IsAny<CloudinarySignatureDTO>(),
@@ -113,7 +113,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageSingleDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task ImageSingleDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _cloudinaryWebClientMock
@@ -133,11 +133,11 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageBulkDelete_GivenPublicIdsAndNoError_ReturnOk()
+    public async Task ImageBulkDelete_GivenPublicIdsAndNoError_ReturnOk()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.BulkRemoveHostedImages(
                 It.IsAny<List<string>>(),
@@ -158,11 +158,11 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageBulkDelete_GivenPublicIdsAndError_ReturnNotOk()
+    public async Task ImageBulkDelete_GivenPublicIdsAndError_ReturnNotOk()
     {
         // Given
-        var user = _fakeUserRepository
-            .CreateUser($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle_1", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _cloudinaryWebClientMock
             .Setup(x => x.BulkRemoveHostedImages(
                 It.IsAny<List<string>>(),
@@ -183,7 +183,7 @@ public class ImageEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void ImageBulkDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
+    public async Task ImageBulkDelete_WhenNoTokenIsUsed_ReturnUnauthorised()
     {
         // Given
         _cloudinaryWebClientMock

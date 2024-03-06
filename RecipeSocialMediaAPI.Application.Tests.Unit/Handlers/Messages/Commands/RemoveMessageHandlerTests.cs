@@ -79,11 +79,11 @@ public class RemoveMessageHandlerTests
             null);
         
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.DeleteMessage(testCommand.Id))
-            .Returns(true);
+            .Setup(repo => repo.DeleteMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _removeMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -112,11 +112,11 @@ public class RemoveMessageHandlerTests
             null);
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.DeleteMessage(testCommand.Id))
-            .Returns(false);
+            .Setup(repo => repo.DeleteMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
         var testAction = async () => await _removeMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -128,7 +128,7 @@ public class RemoveMessageHandlerTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public async Task Handle_WhenDeleteIsSuccessful_PublishMessageDeletedNotificationAsync()
+    public async Task Handle_WhenDeleteIsSuccessful_PublishMessageDeletedNotification()
     {
         // Given
         RemoveMessageCommand testCommand = new("MessageId");
@@ -145,11 +145,11 @@ public class RemoveMessageHandlerTests
             null);
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.DeleteMessage(testCommand.Id))
-            .Returns(true);
+            .Setup(repo => repo.DeleteMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         await _removeMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -186,11 +186,11 @@ public class RemoveMessageHandlerTests
             new(2023, 10, 24, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.DeleteMessage(testCommand.Id))
-            .Returns(true);
+            .Setup(repo => repo.DeleteMessageAsync(testCommand.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _removeMessageHandlerSUT.Handle(testCommand, CancellationToken.None);

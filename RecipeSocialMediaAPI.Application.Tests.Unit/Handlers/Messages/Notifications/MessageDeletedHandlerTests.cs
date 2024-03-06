@@ -32,7 +32,7 @@ public class MessageDeletedHandlerTests
 
         // Then
         _messageNotificationServiceMock
-            .Verify(service => service.NotifyMessageDeleted(messageId, It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(service => service.NotifyMessageDeletedAsync(messageId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class MessageDeletedHandlerTests
         MessageDeletedNotification notification = new(messageId);
 
         _messageNotificationServiceMock
-            .Setup(service => service.NotifyMessageDeleted(messageId, It.IsAny<CancellationToken>()))
+            .Setup(service => service.NotifyMessageDeletedAsync(messageId, It.IsAny<CancellationToken>()))
             .Throws(new OperationCanceledException());
 
         // When

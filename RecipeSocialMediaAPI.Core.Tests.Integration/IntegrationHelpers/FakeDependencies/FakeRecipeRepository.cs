@@ -13,7 +13,7 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         _collection = new List<RecipeAggregate>();
     }
 
-    public RecipeAggregate CreateRecipe(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId)
+    public async Task<RecipeAggregate> CreateRecipeAsync(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         RecipeAggregate newRecipe = new(
@@ -23,18 +23,25 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         );
         _collection.Add(newRecipe);
 
-        return newRecipe;
+        return await Task.FromResult(newRecipe);
     }
 
-    public bool DeleteRecipe(RecipeAggregate recipe) => DeleteRecipe(recipe.Id);
+    public async Task<bool> DeleteRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default) 
+        => await DeleteRecipeAsync(recipe.Id, cancellationToken);
 
-    public bool DeleteRecipe(string id) => _collection.RemoveAll(x => x.Id == id) > 0;
+    public async Task<bool> DeleteRecipeAsync(string id, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.RemoveAll(x => x.Id == id) > 0);
 
-    public RecipeAggregate? GetRecipeById(string id) => _collection.Find(x => x.Id == id);
-    public IEnumerable<RecipeAggregate> GetRecipesByChef(IUserAccount? user) => GetRecipesByChefId(user!.Id);
-    public IEnumerable<RecipeAggregate> GetRecipesByChefId(string chefId) => _collection.FindAll(x => x.Chef.Id == chefId);
-    public IEnumerable<RecipeAggregate> GetRecipesByChefName(string chefName) => _collection.FindAll(x => x.Chef.UserName == chefName);
-    public bool UpdateRecipe(RecipeAggregate recipe)
+    public async Task<RecipeAggregate?> GetRecipeByIdAsync(string id, CancellationToken cancellationToken = default) 
+        => await Task.FromResult(_collection.Find(x => x.Id == id));
+
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefAsync(IUserAccount? user, CancellationToken cancellationToken = default) => await GetRecipesByChefIdAsync(user!.Id, cancellationToken);
+
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefIdAsync(string chefId, CancellationToken cancellationToken = default) => await Task.FromResult(_collection.FindAll(x => x.Chef.Id == chefId));
+
+    public async Task<IEnumerable<RecipeAggregate>> GetRecipesByChefNameAsync(string chefName, CancellationToken cancellationToken = default) => await Task.FromResult(_collection.FindAll(x => x.Chef.UserName == chefName));
+
+    public async Task<bool> UpdateRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default)
     {
         RecipeAggregate? existingRecipe = _collection.FirstOrDefault(x => x.Id == recipe.Id);
         if (existingRecipe is null)
@@ -53,6 +60,6 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         _collection.Remove(existingRecipe);
         _collection.Add(updatedRecipe);
 
-        return true;
+        return await Task.FromResult(true);
     }
 }

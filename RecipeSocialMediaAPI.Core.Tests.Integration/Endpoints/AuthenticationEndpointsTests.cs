@@ -17,12 +17,12 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenValidUserWithEmail_ReturnUserFromDBWithBearerToken()
+    public async Task Authenticate_WhenValidUserWithEmail_ReturnUserFromDBWithBearerToken()
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
-        var userInDb = _fakeUserRepository
-            .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var userInDb = await _fakeUserRepository
+            .CreateUserAsync(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Email, userToCreate.Password));
@@ -44,12 +44,12 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenUserDoesNotExist_ReturnNotFound()
+    public async Task Authenticate_WhenUserDoesNotExist_ReturnNotFound()
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
-        _ = _fakeUserRepository
-            .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract("Inexistant user", userToCreate.Password));
@@ -61,12 +61,12 @@ public class AuthenticationEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.AUTHENTICATION)]
     [Trait(Traits.MODULE, Traits.Modules.CORE)]
-    public async void Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
+    public async Task Authenticate_WhenPasswordDoesNotMatch_ReturnBadRequest()
     {
         // Given
         NewUserContract userToCreate = new("testHandler", "testUser", "test@mail.com", "Test@123");
-        _ = _fakeUserRepository
-            .CreateUser(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeUserRepository
+            .CreateUserAsync(userToCreate.Handler, userToCreate.UserName, userToCreate.Email, _fakeCryptoService.Encrypt(userToCreate.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var result = await _client.PostAsJsonAsync("auth/authenticate", new AuthenticationAttemptContract(userToCreate.Email, string.Empty));
