@@ -20,7 +20,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
 
     public async Task<IConnection> CreateConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default)
     {
-        ConnectionDocument connectionDocument = await _connectionCollection.Insert(new ConnectionDocument(
+        ConnectionDocument connectionDocument = await _connectionCollection.InsertAsync(new ConnectionDocument(
             AccountId1: userAccount1.Id,
             AccountId2: userAccount2.Id,
             ConnectionStatus: connectionStatus.ToString()
@@ -31,7 +31,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
 
     public async Task<bool> UpdateConnectionAsync(IConnection connection, CancellationToken cancellationToken = default)
     {
-        return await _connectionCollection.UpdateRecord(
+        return await _connectionCollection.UpdateAsync(
             new ConnectionDocument(
                 AccountId1: connection.Account1.Id,
                 AccountId2: connection.Account2.Id,
@@ -46,7 +46,7 @@ public class ConnectionPersistenceRepository : IConnectionPersistenceRepository
         => await DeleteConnectionAsync(connection.Account1, connection.Account2, cancellationToken);
 
     public async Task<bool> DeleteConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default) 
-        => await _connectionCollection.Delete(
+        => await _connectionCollection.DeleteAsync(
             doc => (doc.AccountId1 == userAccount1.Id && doc.AccountId2 == userAccount2.Id)
                 || (doc.AccountId1 == userAccount2.Id && doc.AccountId2 == userAccount1.Id), 
             cancellationToken);

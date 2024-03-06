@@ -80,7 +80,7 @@ public class RecipePersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.IsAny<RecipeDocument>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.InsertAsync(It.IsAny<RecipeDocument>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(newRecipeDocument);
 
         _mapperMock
@@ -101,7 +101,7 @@ public class RecipePersistenceRepositoryTests
         // Then
         result.Should().Be(expectedResult);
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Insert(
+            .Verify(collection => collection.InsertAsync(
                 It.Is<RecipeDocument>(doc =>
                     doc.Id == null
                     && doc.Title == expectedResult.Title
@@ -146,7 +146,7 @@ public class RecipePersistenceRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<RecipeDocument>(), 
                 It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -159,7 +159,7 @@ public class RecipePersistenceRepositoryTests
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
             .Verify(collection =>
-                collection.UpdateRecord(
+                collection.UpdateAsync(
                     It.Is<RecipeDocument>(recipeDoc =>
                         recipeDoc.Id == recipe.Id
                         && recipeDoc.Title == recipe.Title
@@ -209,7 +209,7 @@ public class RecipePersistenceRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == recipe.Id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<RecipeDocument>(), 
                 It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -232,7 +232,7 @@ public class RecipePersistenceRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -243,7 +243,7 @@ public class RecipePersistenceRepositoryTests
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(
+            .Verify(collection => collection.DeleteAsync(
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                     It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -276,7 +276,7 @@ public class RecipePersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -287,7 +287,7 @@ public class RecipePersistenceRepositoryTests
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(
+            .Verify(collection => collection.DeleteAsync(
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                     It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -303,7 +303,7 @@ public class RecipePersistenceRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
@@ -314,7 +314,7 @@ public class RecipePersistenceRepositoryTests
         // Then
         result.Should().BeFalse();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(
+            .Verify(collection => collection.DeleteAsync(
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                     It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -347,7 +347,7 @@ public class RecipePersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
@@ -358,7 +358,7 @@ public class RecipePersistenceRepositoryTests
         // Then
         result.Should().BeFalse();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Delete(
+            .Verify(collection => collection.DeleteAsync(
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                     It.IsAny<CancellationToken>()),
                 Times.Once);

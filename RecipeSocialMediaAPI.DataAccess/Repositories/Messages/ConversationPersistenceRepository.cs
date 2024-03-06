@@ -27,7 +27,7 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         ConnectionDocument connectionDocument = await GetConnectionDocumentAsync(connection, cancellationToken)
             ?? throw new ConnectionDocumentNotFoundException(connection.Account1, connection.Account2);
 
-        ConversationDocument conversationDocument = await _conversationCollection.Insert(new(
+        ConversationDocument conversationDocument = await _conversationCollection.InsertAsync(new(
             ConnectionId: connectionDocument.Id,
             Messages: new()
         ), cancellationToken);
@@ -37,7 +37,7 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
 
     public async Task<Conversation> CreateGroupConversationAsync(Group group, CancellationToken cancellationToken = default)
     {
-        ConversationDocument conversationDocument = await _conversationCollection.Insert(new(
+        ConversationDocument conversationDocument = await _conversationCollection.InsertAsync(new(
             GroupId: group.GroupId,
             Messages: new()
         ), cancellationToken);
@@ -63,7 +63,7 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
             _ => throw new InvalidConversationException($"Could not update conversation with id {conversation.ConversationId} of unknown type {conversation.GetType()}"),
         };
 
-        return await _conversationCollection.UpdateRecord(
+        return await _conversationCollection.UpdateAsync(
             new ConversationDocument(
                 Id: conversation.ConversationId,
                 ConnectionId: connectionId,
@@ -79,7 +79,7 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         : null;
 
     private async Task<ConnectionDocument?> GetConnectionDocumentAsync(IConnection connection, CancellationToken cancellationToken = default) =>
-        await _connectionCollection.Find(conn => (conn.AccountId1 == connection.Account1.Id 
+        await _connectionCollection.GetOneAsync(conn => (conn.AccountId1 == connection.Account1.Id 
                                                                   && conn.AccountId2 == connection.Account2.Id) 
                                               || (conn.AccountId1 == connection.Account2.Id 
                                                                   && conn.AccountId2 == connection.Account1.Id), cancellationToken);

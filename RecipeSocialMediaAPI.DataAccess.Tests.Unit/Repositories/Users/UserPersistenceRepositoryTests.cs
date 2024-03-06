@@ -48,7 +48,7 @@ public class UserPersistenceRepositoryTests
         );
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.InsertAsync(It.Is<UserDocument>(doc => doc == testDocument), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new DocumentAlreadyExistsException<UserDocument>(testDocument));
 
         // When
@@ -87,7 +87,7 @@ public class UserPersistenceRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Insert(It.Is<UserDocument>(doc => doc == testDocument), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.InsertAsync(It.Is<UserDocument>(doc => doc == testDocument), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(It.Is<UserDocument>(doc => doc == testDocument)))
@@ -99,7 +99,7 @@ public class UserPersistenceRepositoryTests
         // Then
         result.Should().Be(testUser);
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.Insert(
+            .Verify(collection => collection.InsertAsync(
                 It.Is<UserDocument>(doc => doc == testDocument), 
                 It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -142,13 +142,13 @@ public class UserPersistenceRepositoryTests
         Expression<Func<UserDocument, bool>> updateExpression = x => x.Id == testDocument.Id;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, findExpression)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<UserDocument>(), 
                 It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -160,7 +160,7 @@ public class UserPersistenceRepositoryTests
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.UpdateRecord(
+            .Verify(collection => collection.UpdateAsync(
                     It.Is<UserDocument>(
                         doc => doc.Id == testDocument.Id
                         && doc.Handler == testDocument.Handler
@@ -199,7 +199,7 @@ public class UserPersistenceRepositoryTests
         UserDocument? nullUserDocument = null;
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullUserDocument);
 
         // When
@@ -230,10 +230,10 @@ public class UserPersistenceRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<UserDocument>(), 
                 It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -255,7 +255,7 @@ public class UserPersistenceRepositoryTests
         UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -266,7 +266,7 @@ public class UserPersistenceRepositoryTests
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock.Verify(collection =>
-            collection.Delete(
+            collection.DeleteAsync(
                     It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                     It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -281,7 +281,7 @@ public class UserPersistenceRepositoryTests
         UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -305,7 +305,7 @@ public class UserPersistenceRepositoryTests
         // Then
         result.Should().BeTrue();
         _mongoCollectionWrapperMock.Verify(collection =>
-            collection.Delete(
+            collection.DeleteAsync(
                     It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                     It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -318,7 +318,7 @@ public class UserPersistenceRepositoryTests
     {
         // Given
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
@@ -337,7 +337,7 @@ public class UserPersistenceRepositoryTests
     {
         // Given
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);

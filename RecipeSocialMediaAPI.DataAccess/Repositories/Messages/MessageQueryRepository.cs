@@ -30,7 +30,7 @@ public class MessageQueryRepository : IMessageQueryRepository
         MessageDocument? messageDocument;
         try
         {
-            messageDocument = await _messageCollection.Find(messageDoc => messageDoc.Id == id, cancellationToken);
+            messageDocument = await _messageCollection.GetOneAsync(messageDoc => messageDoc.Id == id, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -56,7 +56,7 @@ public class MessageQueryRepository : IMessageQueryRepository
 
     public async Task<IEnumerable<Message>> GetMessagesWithRecipeAsync(string recipeId, CancellationToken cancellationToken = default)
     {
-        var messageDocuments = await _messageCollection.GetAll(messageDoc 
+        var messageDocuments = await _messageCollection.GetAllAsync(messageDoc 
             => messageDoc.MessageContent.RecipeIds != null 
             && messageDoc.MessageContent.RecipeIds.Contains(recipeId), cancellationToken);
         

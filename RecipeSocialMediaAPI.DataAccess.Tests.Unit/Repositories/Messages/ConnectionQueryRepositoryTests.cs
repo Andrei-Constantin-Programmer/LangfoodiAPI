@@ -62,7 +62,7 @@ public class ConnectionQueryRepositoryTests
 
         ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -90,7 +90,7 @@ public class ConnectionQueryRepositoryTests
         Expression<Func<ConnectionDocument, bool>> expectedExpression = doc => doc.Id == connectionId;
 
         _connectionCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConnectionDocument?)null);
@@ -114,7 +114,7 @@ public class ConnectionQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
 
         // When
@@ -144,7 +144,7 @@ public class ConnectionQueryRepositoryTests
 
         ConnectionDocument testDocument = new("User1", "User2", "Pending");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -187,7 +187,7 @@ public class ConnectionQueryRepositoryTests
 
         ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -230,7 +230,7 @@ public class ConnectionQueryRepositoryTests
                 || (doc.AccountId1 == testAccount2.Id && doc.AccountId2 == testAccount1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConnectionDocument?)null);
@@ -267,7 +267,7 @@ public class ConnectionQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
 
         // When
@@ -311,7 +311,7 @@ public class ConnectionQueryRepositoryTests
 
         ConnectionDocument testDocument = new(testAccount1.Id, testAccount2.Id, "Pending");
         _connectionCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -372,7 +372,7 @@ public class ConnectionQueryRepositoryTests
         };
 
         _connectionCollectionMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocuments);
@@ -409,7 +409,7 @@ public class ConnectionQueryRepositoryTests
         };
 
         _connectionCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ConnectionDocument>());
 
         // When
@@ -446,7 +446,7 @@ public class ConnectionQueryRepositoryTests
         ConnectionDocument testDocument = new(testAccount.Id, testAccount2.Id, "Pending");
 
         _connectionCollectionMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ConnectionDocument>() { testDocument });
@@ -486,7 +486,7 @@ public class ConnectionQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _connectionCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
     
         // When

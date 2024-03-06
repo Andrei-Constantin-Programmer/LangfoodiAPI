@@ -100,7 +100,7 @@ public class MessagePersistenceRepositoryTests
 
         // Then
         _messageCollectionMock
-            .Verify(collection => collection.Insert(
+            .Verify(collection => collection.InsertAsync(
                 It.Is<MessageDocument>(doc =>
                     doc.Id == null
                     && doc.MessageContent.Text == expectedMessage.Text
@@ -132,7 +132,7 @@ public class MessagePersistenceRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<MessageDocument>(), 
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -145,7 +145,7 @@ public class MessagePersistenceRepositoryTests
         result.Should().BeTrue();
         _messageCollectionMock
             .Verify(collection => 
-                collection.UpdateRecord(
+                collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
                         && doc.MessageContent.Text == message.TextContent
@@ -185,7 +185,7 @@ public class MessagePersistenceRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<MessageDocument>(), 
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -198,7 +198,7 @@ public class MessagePersistenceRepositoryTests
         result.Should().BeTrue();
         _messageCollectionMock
             .Verify(collection =>
-                collection.UpdateRecord(
+                collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
                         && doc.MessageContent.Text == message.TextContent
@@ -233,7 +233,7 @@ public class MessagePersistenceRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<MessageDocument>(), 
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -246,7 +246,7 @@ public class MessagePersistenceRepositoryTests
         result.Should().BeTrue();
         _messageCollectionMock
             .Verify(collection =>
-                collection.UpdateRecord(
+                collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
                         && doc.MessageContent.Text == message.TextContent
@@ -276,7 +276,7 @@ public class MessagePersistenceRepositoryTests
         TestMessage message = new("MessageId", testSender, _dateTimeProviderMock.Object.Now, null);
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<MessageDocument>(), 
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -315,7 +315,7 @@ public class MessagePersistenceRepositoryTests
             .CreateTextMessage("MessageId", testSender, "Test Text", new(), _dateTimeProviderMock.Object.Now);
 
         _messageCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.IsAny<MessageDocument>(), 
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
@@ -344,7 +344,7 @@ public class MessagePersistenceRepositoryTests
         TestMessage message = new("TestId", testSender, _dateTimeProviderMock.Object.Now, null);
 
         _messageCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -372,7 +372,7 @@ public class MessagePersistenceRepositoryTests
         TestMessage message = new("TestId", testSender, _dateTimeProviderMock.Object.Now, null);
 
         _messageCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
@@ -391,7 +391,7 @@ public class MessagePersistenceRepositoryTests
     {
         // Given
         _messageCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -410,7 +410,7 @@ public class MessagePersistenceRepositoryTests
     {
         // Given
         _messageCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);

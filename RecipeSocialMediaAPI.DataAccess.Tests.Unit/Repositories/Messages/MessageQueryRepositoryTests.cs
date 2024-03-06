@@ -55,7 +55,7 @@ public class MessageQueryRepositoryTests
         string messageId = "1";
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == messageId;
         _messageCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((MessageDocument?)null);
@@ -100,7 +100,7 @@ public class MessageQueryRepositoryTests
         );
 
         _messageCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -165,7 +165,7 @@ public class MessageQueryRepositoryTests
             .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(textMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -231,7 +231,7 @@ public class MessageQueryRepositoryTests
             .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(imageMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -317,7 +317,7 @@ public class MessageQueryRepositoryTests
             .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument, testSender.Account,  null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(recipeMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -403,7 +403,7 @@ public class MessageQueryRepositoryTests
             .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(recipeMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -467,7 +467,7 @@ public class MessageQueryRepositoryTests
             .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testMessage);
         _messageCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -494,7 +494,7 @@ public class MessageQueryRepositoryTests
 
             Expression<Func<MessageDocument, bool>> innerExpression = x => x.Id == id;
             _messageCollectionMock
-                .Setup(collection => collection.Find(
+                .Setup(collection => collection.GetOneAsync(
                     It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(innerExpression, expr)), 
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new MessageDocument(
@@ -555,7 +555,7 @@ public class MessageQueryRepositoryTests
             null);
 
         _messageCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -584,7 +584,7 @@ public class MessageQueryRepositoryTests
         string messageId = "1";
         Exception testException = new("Test exception message");
         _messageCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<MessageDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<MessageDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
 
         // When
@@ -635,7 +635,7 @@ public class MessageQueryRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
 
         _messageCollectionMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Enumerable.Empty<MessageDocument>());
         _userQueryRepositoryMock
@@ -702,7 +702,7 @@ public class MessageQueryRepositoryTests
             .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument, testSender.Account, null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(recipeMessage);
         _messageCollectionMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<MessageDocument> { testDocument });
@@ -768,7 +768,7 @@ public class MessageQueryRepositoryTests
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
 
         _messageCollectionMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<MessageDocument> { testDocument });

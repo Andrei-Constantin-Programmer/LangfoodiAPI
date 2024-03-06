@@ -21,7 +21,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
     public async Task<RecipeAggregate> CreateRecipeAsync(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
     {
         var recipeDocument = await _recipeCollection
-            .Insert(new RecipeDocument(
+            .InsertAsync(new RecipeDocument(
                 Title: title,
                 Ingredients: recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
                 Steps: recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
@@ -41,7 +41,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
     }
 
     public async Task<bool> UpdateRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default) => await 
-        _recipeCollection.UpdateRecord(
+        _recipeCollection.UpdateAsync(
             new RecipeDocument(
                 Id: recipe.Id,
                 Title: recipe.Title,
@@ -65,5 +65,5 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         => await DeleteRecipeAsync(recipe.Id, cancellationToken);
 
     public async Task<bool> DeleteRecipeAsync(string id, CancellationToken cancellationToken = default) 
-        => await _recipeCollection.Delete(recipeDoc => recipeDoc.Id == id, cancellationToken);
+        => await _recipeCollection.DeleteAsync(recipeDoc => recipeDoc.Id == id, cancellationToken);
 }

@@ -26,7 +26,7 @@ public class GroupQueryRepository : IGroupQueryRepository
         GroupDocument? groupDocument;
         try
         {
-            groupDocument = await _groupCollection.Find(
+            groupDocument = await _groupCollection.GetOneAsync(
                 groupDoc => groupDoc.Id == groupId, cancellationToken);
         }
         catch (Exception ex)
@@ -45,7 +45,7 @@ public class GroupQueryRepository : IGroupQueryRepository
         try
         {
             return await Task.WhenAll((await _groupCollection
-                .GetAll(groupDoc => groupDoc.UserIds.Contains(userAccount.Id), cancellationToken))
+                .GetAllAsync(groupDoc => groupDoc.UserIds.Contains(userAccount.Id), cancellationToken))
                 .Select(group => _mapper.MapGroupFromDocumentAsync(group, cancellationToken)));
         }
         catch (Exception ex)

@@ -21,7 +21,7 @@ public class UserQueryRepository : IUserQueryRepository
     }
 
     public async Task<IEnumerable<IUserCredentials>> GetAllUsersAsync(CancellationToken cancellationToken = default) => (await _userCollection
-        .GetAll((_) => true, cancellationToken))
+        .GetAllAsync((_) => true, cancellationToken))
         .Select(_mapper.MapUserDocumentToUser);
 
     public async Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default)
@@ -31,7 +31,7 @@ public class UserQueryRepository : IUserQueryRepository
         try
         {
             userDocument = await _userCollection
-                .Find(userDoc => userDoc.Id == id, cancellationToken);
+                .GetOneAsync(userDoc => userDoc.Id == id, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -50,7 +50,7 @@ public class UserQueryRepository : IUserQueryRepository
         try
         {
             userDocument = await _userCollection
-                .Find(userDoc => userDoc.Email == email, cancellationToken);
+                .GetOneAsync(userDoc => userDoc.Email == email, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -70,7 +70,7 @@ public class UserQueryRepository : IUserQueryRepository
         try
         {
             userDocument = await _userCollection
-                .Find(userDoc => userDoc.Handler == handler, cancellationToken);
+                .GetOneAsync(userDoc => userDoc.Handler == handler, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -90,7 +90,7 @@ public class UserQueryRepository : IUserQueryRepository
         try
         {
             userDocument = await _userCollection
-                .Find(userDoc => userDoc.UserName == username, cancellationToken);
+                .GetOneAsync(userDoc => userDoc.UserName == username, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -105,7 +105,7 @@ public class UserQueryRepository : IUserQueryRepository
 
     public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default) 
         => (await _userCollection
-            .GetAll(userDoc => userDoc.Handler.Contains(containedString.ToLower())
+            .GetAllAsync(userDoc => userDoc.Handler.Contains(containedString.ToLower())
                             || userDoc.UserName.Contains(containedString.ToLower()), cancellationToken))
             .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);
 }

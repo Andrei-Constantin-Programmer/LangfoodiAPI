@@ -26,7 +26,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         ConnectionDocument? connectionDocument;
         try
         {
-            connectionDocument = await _connectionCollection.Find(connectionDoc => connectionDoc.Id == connectionId, cancellationToken);
+            connectionDocument = await _connectionCollection.GetOneAsync(connectionDoc => connectionDoc.Id == connectionId, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -44,7 +44,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         ConnectionDocument? connectionDocument;
         try
         {
-            connectionDocument = await _connectionCollection.Find(
+            connectionDocument = await _connectionCollection.GetOneAsync(
                 connectionDoc => (connectionDoc.AccountId1 == userAccount1.Id && connectionDoc.AccountId2 == userAccount2.Id)
                               || (connectionDoc.AccountId1 == userAccount2.Id && connectionDoc.AccountId2 == userAccount1.Id), cancellationToken);
         }
@@ -66,7 +66,7 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         try
         {
             connections = await _connectionCollection
-                .GetAll(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
+                .GetAllAsync(connectionDoc => connectionDoc.AccountId1 == userAccount.Id
                                       || connectionDoc.AccountId2 == userAccount.Id, cancellationToken);
         }
         catch (Exception ex)

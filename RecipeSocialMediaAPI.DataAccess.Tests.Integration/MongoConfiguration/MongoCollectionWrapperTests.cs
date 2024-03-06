@@ -43,7 +43,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(existingDocuments);
 
         // When
-        var result = (await _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('1'))).ToList();
+        var result = (await _mongoCollectionWrapperSUT.GetAllAsync(doc => doc.TestProperty!.StartsWith('1'))).ToList();
 
         // Then
         result.Should().OnlyContain(doc => doc.TestProperty == "1" || doc.TestProperty == "10");
@@ -65,7 +65,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(existingDocuments);
 
         // When
-        var result = await _mongoCollectionWrapperSUT.GetAll(doc => doc.TestProperty!.StartsWith('a'));
+        var result = await _mongoCollectionWrapperSUT.GetAllAsync(doc => doc.TestProperty!.StartsWith('a'));
 
         // Then
         result.Should().BeEmpty();
@@ -79,7 +79,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         // Given
 
         // When
-        var result = await _mongoCollectionWrapperSUT.GetAll(_ => true);
+        var result = await _mongoCollectionWrapperSUT.GetAllAsync(_ => true);
 
         // Then
         result.Should().BeEmpty();
@@ -94,7 +94,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         TestDocument testDocument = new("Test 1");
 
         // When
-        var document = await _mongoCollectionWrapperSUT.Insert(testDocument);
+        var document = await _mongoCollectionWrapperSUT.InsertAsync(testDocument);
 
         // Then
         document.Should().Be(testDocument);
@@ -112,7 +112,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var action = async () => await _mongoCollectionWrapperSUT.Insert(testDocument);
+        var action = async () => await _mongoCollectionWrapperSUT.InsertAsync(testDocument);
 
         // Then
         await action.Should().ThrowAsync<DocumentAlreadyExistsException<TestDocument>>();
@@ -128,7 +128,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var wasDeleted = await _mongoCollectionWrapperSUT.Delete(doc => doc.Id == testDocument.Id);
+        var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.Id == testDocument.Id);
 
         // Then
         wasDeleted.Should().BeTrue();
@@ -151,7 +151,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(testDocuments);
 
         // When
-        var wasDeleted = await _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty!.Contains("To Delete"));
+        var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.TestProperty!.Contains("To Delete"));
 
         // Then
         wasDeleted.Should().BeTrue();
@@ -170,7 +170,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var wasDeleted = await _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
+        var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.TestProperty == string.Empty);
 
         // Then
         wasDeleted.Should().BeFalse();
@@ -185,7 +185,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         // Given
         
         // When
-        var wasDeleted = await _mongoCollectionWrapperSUT.Delete(doc => doc.TestProperty == string.Empty);
+        var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.TestProperty == string.Empty);
 
         // Then
         wasDeleted.Should().BeFalse();
@@ -201,7 +201,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var documentFromDb = await _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == "Nonexistent");
+        var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty == "Nonexistent");
 
         // Then
         documentFromDb.Should().BeNull();
@@ -215,7 +215,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         // Given
         
         // When
-        var documentFromDb = await _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == "Nonexistent");
+        var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty == "Nonexistent");
 
         // Then
         documentFromDb.Should().BeNull();
@@ -231,7 +231,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertOne(testDocument);
 
         // When
-        var documentFromDb = await _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty == testDocument.TestProperty);
+        var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty == testDocument.TestProperty);
 
         // Then
         documentFromDb.Should().Be(testDocument);
@@ -253,7 +253,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         _dbFixture.TestCollection.InsertMany(testDocuments);
 
         // When
-        var documentFromDb = await _mongoCollectionWrapperSUT.Find(doc => doc.TestProperty!.Contains("Test"));
+        var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty!.Contains("Test"));
 
         // Then
         documentFromDb.Should().Be(testDocuments.Skip(2).First());
@@ -271,7 +271,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         TestDocument updatedDocument = new("Updated");
 
         // When
-        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.TestProperty == "Nonexistent");
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateAsync(updatedDocument, doc => doc.TestProperty == "Nonexistent");
 
         // Then
         wasUpdatedSuccessfully.Should().BeFalse();
@@ -288,7 +288,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         TestDocument updatedDocument = new("Updated");
 
         // When
-        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => true);
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateAsync(updatedDocument, doc => true);
 
         // Then
         wasUpdatedSuccessfully.Should().BeFalse();
@@ -307,7 +307,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
         TestDocument updatedDocument = new(Id: testDocument.Id, TestProperty: "Updated");
 
         // When
-        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateRecord(updatedDocument, doc => doc.Id == testDocument.Id);
+        var wasUpdatedSuccessfully = await _mongoCollectionWrapperSUT.UpdateAsync(updatedDocument, doc => doc.Id == testDocument.Id);
 
         // Then
         wasUpdatedSuccessfully.Should().BeTrue();

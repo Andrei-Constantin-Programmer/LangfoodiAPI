@@ -54,7 +54,7 @@ public class RecipeQueryRepositoryTests
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
         RecipeDocument? nullRecipeDocument = null;
         _recipeCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullRecipeDocument);
@@ -113,7 +113,7 @@ public class RecipeQueryRepositoryTests
             );
 
         _recipeCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -174,7 +174,7 @@ public class RecipeQueryRepositoryTests
             );
 
         _recipeCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -246,7 +246,7 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
@@ -297,7 +297,7 @@ public class RecipeQueryRepositoryTests
             .ReturnsAsync(testChef);
 
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<RecipeDocument>());
@@ -356,7 +356,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
 
-        _recipeCollectionMock.Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
@@ -398,7 +398,7 @@ public class RecipeQueryRepositoryTests
         };
 
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocuments);
 
         // When
@@ -457,7 +457,7 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
@@ -526,7 +526,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.LastUpdatedDate,
             new HashSet<string>());
 
-        _recipeCollectionMock.Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(x => x == chefUsername), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
@@ -569,7 +569,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByUsernameAsync(chefUsername, It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
 
-        _recipeCollectionMock.Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>());
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>());
 
         // When
         var result = await _recipeQueryRepositorySUT.GetRecipesByChefNameAsync(chefUsername);
@@ -607,7 +607,7 @@ public class RecipeQueryRepositoryTests
             )
         };
 
-        _recipeCollectionMock.Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(testDocuments);
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(testDocuments);
 
         // When
         var result = await _recipeQueryRepositorySUT.GetRecipesByChefNameAsync(chefUsername);
@@ -669,7 +669,7 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _userQueryRepositoryMock
             .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(x => x == chefUsername), It.IsAny<CancellationToken>()))
@@ -755,7 +755,7 @@ public class RecipeQueryRepositoryTests
             chefsRecipe.ThumbnailId
         );
 
-        _recipeCollectionMock.Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
             .Returns(expectedResult);
@@ -785,7 +785,7 @@ public class RecipeQueryRepositoryTests
         };
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        _recipeCollectionMock.Setup(collection => collection.GetAll(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>());
+        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>());
 
         // When
         var result = await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef);
@@ -838,7 +838,7 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _recipeCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))

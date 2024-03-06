@@ -60,7 +60,7 @@ public class ConnectionPersistenceRepositoryTests
         Connection testConnection = new("0", testUser1, testUser2, ConnectionStatus.Pending);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Insert(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.InsertAsync(It.IsAny<ConnectionDocument>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
         _connectionDocumentToModelMapperMock
             .Setup(mapper => mapper.MapConnectionFromDocumentAsync(testDocument, It.IsAny<CancellationToken>()))
@@ -72,7 +72,7 @@ public class ConnectionPersistenceRepositoryTests
         // Then
         result.Should().Be(testConnection);
         _connectionCollectionMock
-            .Verify(collection => collection.Insert(
+            .Verify(collection => collection.InsertAsync(
                     It.Is<ConnectionDocument>(document 
                         => document.AccountId1 == testUser1.Id
                         && document.AccountId2 == testUser2.Id
@@ -110,7 +110,7 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.Is<ConnectionDocument>(document 
+            .Setup(collection => collection.UpdateAsync(It.Is<ConnectionDocument>(document 
                 => document.AccountId1 == testUser1.Id
                    && document.AccountId2 == testUser2.Id
                    && document.ConnectionStatus == "Connected"),
@@ -154,7 +154,7 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.UpdateRecord(It.Is<ConnectionDocument>(document
+            .Setup(collection => collection.UpdateAsync(It.Is<ConnectionDocument>(document
                 => document.AccountId1 == testUser1.Id
                    && document.AccountId2 == testUser2.Id
                    && document.ConnectionStatus == "Connected"),
@@ -196,7 +196,7 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -235,7 +235,7 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
@@ -274,7 +274,7 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -315,7 +315,7 @@ public class ConnectionPersistenceRepositoryTests
                 || (doc.AccountId1 == testUser2.Id && doc.AccountId2 == testUser1.Id);
 
         _connectionCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);

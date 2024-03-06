@@ -94,7 +94,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversation.ConversationId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(document);
@@ -152,7 +152,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversation.ConversationId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(document);
@@ -178,7 +178,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversationId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConversationDocument?)null);
@@ -202,7 +202,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.Id == conversationId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
@@ -264,7 +264,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connection.ConnectionId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(document);
@@ -292,7 +292,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connectionId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConversationDocument?)null);
@@ -316,7 +316,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.ConnectionId == connectionId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
@@ -378,7 +378,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == group.GroupId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(document);
@@ -406,7 +406,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == groupId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConversationDocument?)null);
@@ -430,7 +430,7 @@ public class ConversationQueryRepositoryTests
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = doc => doc.GroupId == connectionId;
         _conversationCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
@@ -530,7 +530,7 @@ public class ConversationQueryRepositoryTests
         ConversationDocument document4 = new(conversation4.Messages.Select(message => message.Id).ToList(), null, group2.GroupId, conversation4.ConversationId);
 
         _conversationCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ConversationDocument>() { document1, document2, document3, document4 });
 
         _conversationDocumentToModelMapperMock
@@ -574,7 +574,7 @@ public class ConversationQueryRepositoryTests
             .ReturnsAsync(new List<Group>());
 
         _conversationCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ConversationDocument>());
 
         // When
@@ -608,7 +608,7 @@ public class ConversationQueryRepositoryTests
             .ReturnsAsync(new List<Group>());
 
         _conversationCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
 
         // When

@@ -23,7 +23,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
 
     public async Task<Message> CreateMessageAsync(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
     {
-        MessageDocument messageDocument = await _messageCollection.Insert(new MessageDocument(
+        MessageDocument messageDocument = await _messageCollection.InsertAsync(new MessageDocument(
             SenderId: sender.Id,
             MessageContent: new(text, recipeIds, imageURLs),
             SeenByUserIds: seenByUserIds,
@@ -38,7 +38,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
     {
         try
         {
-            return await _messageCollection.UpdateRecord(new MessageDocument(
+            return await _messageCollection.UpdateAsync(new MessageDocument(
                 Id: message.Id,
                 SenderId: message.Sender.Id,
                 MessageContent: message switch
@@ -68,5 +68,5 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         => await DeleteMessageAsync(message.Id, cancellationToken);
 
     public async Task<bool> DeleteMessageAsync(string messageId, CancellationToken cancellationToken = default) 
-        => await _messageCollection.Delete(messageDoc => messageDoc.Id == messageId, cancellationToken);
+        => await _messageCollection.DeleteAsync(messageDoc => messageDoc.Id == messageId, cancellationToken);
 }

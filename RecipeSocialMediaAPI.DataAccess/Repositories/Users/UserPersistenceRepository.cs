@@ -28,14 +28,14 @@ public class UserPersistenceRepository : IUserPersistenceRepository
     {
         UserDocument newUserDocument = new(handler, username, email, password, (int)userRole, null, accountCreationDate);
         
-        newUserDocument = await _userCollection.Insert(newUserDocument, cancellationToken);
+        newUserDocument = await _userCollection.InsertAsync(newUserDocument, cancellationToken);
 
         return _mapper.MapUserDocumentToUser(newUserDocument);
     }
 
     public async Task<bool> UpdateUserAsync(IUserCredentials user, CancellationToken cancellationToken = default)
     {
-        var userDocument = await _userCollection.Find(userDoc => userDoc.Id == user.Account.Id, cancellationToken);
+        var userDocument = await _userCollection.GetOneAsync(userDoc => userDoc.Id == user.Account.Id, cancellationToken);
 
         if (userDocument is null)
         {
@@ -53,12 +53,12 @@ public class UserPersistenceRepository : IUserPersistenceRepository
             BlockedConnectionIds = user.Account.BlockedConnectionIds.ToList()
         };
 
-        return await _userCollection.UpdateRecord(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id, cancellationToken);
+        return await _userCollection.UpdateAsync(updatedUserDocument, userDoc => userDoc.Id == userDocument.Id, cancellationToken);
     }
 
     public async Task<bool> DeleteUserAsync(IUserCredentials user, CancellationToken cancellationToken = default) 
         => await DeleteUserAsync(user.Account.Id, cancellationToken);
 
     public async Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken = default) 
-        => await _userCollection.Delete(userDoc => userDoc.Id == id, cancellationToken);
+        => await _userCollection.DeleteAsync(userDoc => userDoc.Id == id, cancellationToken);
 }

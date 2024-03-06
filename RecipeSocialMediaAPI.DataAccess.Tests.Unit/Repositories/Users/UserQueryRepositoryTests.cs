@@ -44,7 +44,7 @@ public class UserQueryRepositoryTests
         List<UserDocument> existingUsers = new();
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingUsers);
@@ -55,7 +55,7 @@ public class UserQueryRepositoryTests
         // Then
         result.Should().BeEmpty();
         _mongoCollectionWrapperMock
-            .Verify(collection => collection.GetAll(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Theory]
@@ -75,7 +75,7 @@ public class UserQueryRepositoryTests
         }
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingUsers);
@@ -97,7 +97,7 @@ public class UserQueryRepositoryTests
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
         UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullUserDocument);
@@ -132,7 +132,7 @@ public class UserQueryRepositoryTests
         };
             
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -172,7 +172,7 @@ public class UserQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
@@ -204,7 +204,7 @@ public class UserQueryRepositoryTests
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
         UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullUserDocument);
@@ -239,7 +239,7 @@ public class UserQueryRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -279,7 +279,7 @@ public class UserQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
@@ -311,7 +311,7 @@ public class UserQueryRepositoryTests
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
         UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullUserDocument);
@@ -346,7 +346,7 @@ public class UserQueryRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
@@ -386,7 +386,7 @@ public class UserQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
@@ -416,7 +416,7 @@ public class UserQueryRepositoryTests
         // Given
         string containedString = "test";
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Enumerable.Empty<UserDocument>());
 
         // When
@@ -470,7 +470,7 @@ public class UserQueryRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAll(
+            .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userDocuments);

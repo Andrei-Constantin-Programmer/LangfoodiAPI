@@ -35,7 +35,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         ConversationDocument? conversationDocument;
         try
         {
-            conversationDocument = await _conversationCollection.Find(
+            conversationDocument = await _conversationCollection.GetOneAsync(
                 conversationDoc => conversationDoc.Id == id, cancellationToken);
 
             if (conversationDocument is null)
@@ -61,7 +61,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         ConversationDocument? conversationDocument;
         try
         {
-            conversationDocument = await _conversationCollection.Find(
+            conversationDocument = await _conversationCollection.GetOneAsync(
                 conversationDoc => conversationDoc.ConnectionId == connectionId, cancellationToken);
             if (conversationDocument is null)
             {
@@ -87,7 +87,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         ConversationDocument? conversationDocument;
         try
         {
-            conversationDocument = await _conversationCollection.Find(
+            conversationDocument = await _conversationCollection.GetOneAsync(
                 conversationDoc => conversationDoc.GroupId == groupId, cancellationToken);
             if (conversationDocument is null)
             {
@@ -125,7 +125,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
                 .ToList() ?? new List<string>();
 
             conversations = (await _conversationCollection
-                .GetAll(conversationDoc => conversationDoc.ConnectionId == null
+                .GetAllAsync(conversationDoc => conversationDoc.ConnectionId == null
                     ? groupIds.Any(id => id == conversationDoc.GroupId)
                     : connectionIds.Any(id => id == conversationDoc.ConnectionId), cancellationToken));
         }

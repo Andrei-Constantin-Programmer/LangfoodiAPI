@@ -30,7 +30,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         try
         {
             recipeDocument = await _recipeCollection
-                .Find(recipeDoc => recipeDoc.Id == id, cancellationToken);
+                .GetOneAsync(recipeDoc => recipeDoc.Id == id, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -65,7 +65,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
         try
         {
             recipes = await _recipeCollection
-                .GetAll(recipeDoc => recipeDoc.ChefId == chef.Id, cancellationToken);
+                .GetAllAsync(recipeDoc => recipeDoc.ChefId == chef.Id, cancellationToken);
         }
         catch (Exception ex)
         {

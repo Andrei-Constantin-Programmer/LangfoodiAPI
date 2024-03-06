@@ -72,7 +72,7 @@ public class GroupPersistenceRepositoryTests
         );
 
         _groupCollectionMock
-            .Setup(collection => collection.Insert(
+            .Setup(collection => collection.InsertAsync(
                 It.Is<GroupDocument>(
                     groupDoc => groupDoc.Id == null
                          && groupDoc.GroupName == groupName
@@ -123,7 +123,7 @@ public class GroupPersistenceRepositoryTests
         Expression<Func<GroupDocument, bool>> expectedExpression = doc => doc.Id == group.GroupId;
 
         _groupCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.Is<GroupDocument>(
                     groupDoc => groupDoc.Id == group.GroupId
                              && groupDoc.GroupName == group.GroupName
@@ -169,7 +169,7 @@ public class GroupPersistenceRepositoryTests
         Expression<Func<GroupDocument, bool>> expectedExpression = doc => doc.Id == group.GroupId;
 
         _groupCollectionMock
-            .Setup(collection => collection.UpdateRecord(
+            .Setup(collection => collection.UpdateAsync(
                 It.Is<GroupDocument>(
                     groupDoc => groupDoc.Id == group.GroupId
                              && groupDoc.GroupName == group.GroupName
@@ -195,7 +195,7 @@ public class GroupPersistenceRepositoryTests
         Group group = new("g1", "Group", "Group Description");
 
         _groupCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<GroupDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -216,7 +216,7 @@ public class GroupPersistenceRepositoryTests
         Group group = new("g1", "Group", "Group Description");
 
         _groupCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<GroupDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
@@ -235,7 +235,7 @@ public class GroupPersistenceRepositoryTests
     {
         // Given
         _groupCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<GroupDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -254,7 +254,7 @@ public class GroupPersistenceRepositoryTests
     {
         // Given
         _groupCollectionMock
-            .Setup(collection => collection.Delete(
+            .Setup(collection => collection.DeleteAsync(
                 It.IsAny<Expression<Func<GroupDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);

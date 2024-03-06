@@ -20,18 +20,18 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         _collection = _database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
     }
 
-    public async Task<TDocument?> Find(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
+    public async Task<TDocument?> GetOneAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
         return (await _collection.FindAsync(expr, cancellationToken: cancellationToken)).FirstOrDefault(cancellationToken: cancellationToken);
     }
 
-    public async Task<IEnumerable<TDocument>> GetAll(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<TDocument>> GetAllAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
         return (await _collection.FindAsync(expr, cancellationToken: cancellationToken))
             .ToEnumerable(cancellationToken: cancellationToken) ?? Enumerable.Empty<TDocument>();
     }
 
-    public async Task<TDocument> Insert(TDocument doc, CancellationToken cancellationToken = default)
+    public async Task<TDocument> InsertAsync(TDocument doc, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -44,7 +44,7 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         }
     }
 
-    public async Task<bool> UpdateRecord(TDocument record, Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateAsync(TDocument record, Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -56,7 +56,7 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         }
     }
 
-    public async Task<bool> Delete(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
         return (await _collection.DeleteOneAsync(expr, cancellationToken)).DeletedCount > 0;
     }

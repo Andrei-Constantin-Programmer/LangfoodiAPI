@@ -20,14 +20,14 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
 
     public async Task<Group> CreateGroupAsync(string groupName, string groupDescription, List<IUserAccount> users, CancellationToken cancellationToken = default)
     {
-        GroupDocument groupDocument = await _groupCollection.Insert(new(groupName, groupDescription, users.Select(user => user.Id).ToList()), cancellationToken);
+        GroupDocument groupDocument = await _groupCollection.InsertAsync(new(groupName, groupDescription, users.Select(user => user.Id).ToList()), cancellationToken);
 
         return await _mapper.MapGroupFromDocumentAsync(groupDocument, cancellationToken);
     }
 
     public async Task<bool> UpdateGroupAsync(Group group, CancellationToken cancellationToken = default)
     {
-        return await _groupCollection.UpdateRecord(
+        return await _groupCollection.UpdateAsync(
             new GroupDocument(group.GroupName, group.GroupDescription, group.Users.Select(user => user.Id).ToList(), group.GroupId),
             groupDoc => groupDoc.Id == group.GroupId, cancellationToken);
     }
@@ -36,5 +36,5 @@ public class GroupPersistenceRepository : IGroupPersistenceRepository
         => await DeleteGroupAsync(group.GroupId, cancellationToken);
 
     public async Task<bool> DeleteGroupAsync(string groupId, CancellationToken cancellationToken = default) 
-        => await _groupCollection.Delete(groupDoc => groupDoc.Id == groupId, cancellationToken);
+        => await _groupCollection.DeleteAsync(groupDoc => groupDoc.Id == groupId, cancellationToken);
 }

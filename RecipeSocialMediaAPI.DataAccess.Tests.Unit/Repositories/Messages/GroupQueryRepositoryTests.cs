@@ -81,7 +81,7 @@ public class GroupQueryRepositoryTests
 
         Expression<Func<GroupDocument, bool>> expectedExpression = doc => doc.Id == groupDoc.Id;
         _groupCollectionMock
-            .Setup(collection => collection.Find(
+            .Setup(collection => collection.GetOneAsync(
                 It.Is<Expression<Func<GroupDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(groupDoc);
@@ -106,7 +106,7 @@ public class GroupQueryRepositoryTests
     {
         // Given
         _groupCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((GroupDocument?)null);
 
         // When
@@ -124,7 +124,7 @@ public class GroupQueryRepositoryTests
         // Given
         Exception testException = new("Test Exception");
         _groupCollectionMock
-            .Setup(collection => collection.Find(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
 
         // When
@@ -207,7 +207,7 @@ public class GroupQueryRepositoryTests
         );
 
         _groupCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<GroupDocument>() { groupDoc1, groupDoc2 });
 
         Group group1 = new(groupDoc1.Id!, groupDoc1.GroupName, groupDoc1.GroupDescription, users.Take(3));
@@ -244,7 +244,7 @@ public class GroupQueryRepositoryTests
         };
 
         _groupCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<GroupDocument>());
 
         // When
@@ -270,7 +270,7 @@ public class GroupQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _groupCollectionMock
-            .Setup(collection => collection.GetAll(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<GroupDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
 
         // When
