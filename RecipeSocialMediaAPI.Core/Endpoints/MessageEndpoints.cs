@@ -21,25 +21,28 @@ public static class MessageEndpoints
     {
         group.MapPost("/get", async (
             [FromQuery] string id,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetMessageByIdQuery(id)));
+            return Results.Ok(await sender.Send(new GetMessageByIdQuery(id), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/get-detailed", async (
             [FromQuery] string id,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetMessageDetailedByIdQuery(id)));
+            return Results.Ok(await sender.Send(new GetMessageDetailedByIdQuery(id), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/get-by-conversation", async (
             [FromQuery] string conversationId,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetMessagesByConversationQuery(conversationId)));
+            return Results.Ok(await sender.Send(new GetMessagesByConversationQuery(conversationId), cancellationToken));
         })
             .RequireAuthorization();
 

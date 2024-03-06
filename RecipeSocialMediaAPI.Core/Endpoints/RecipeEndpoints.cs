@@ -21,50 +21,56 @@ public static class RecipeEndpoints
     {
         group.MapPost("/get/id", async (
             [FromQuery] string id,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetRecipeByIdQuery(id)));
+            return Results.Ok(await sender.Send(new GetRecipeByIdQuery(id), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/get/userid", async (
             [FromQuery] string id,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetRecipesFromUserIdQuery(id)));
+            return Results.Ok(await sender.Send(new GetRecipesFromUserIdQuery(id), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/get/username", async (
             [FromQuery] string username,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new GetRecipesFromUserQuery(username)));
+            return Results.Ok(await sender.Send(new GetRecipesFromUserQuery(username), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPost("/create", async (
             [FromBody] NewRecipeContract newRecipeContract,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(await sender.Send(new AddRecipeCommand(newRecipeContract)));
+            return Results.Ok(await sender.Send(new AddRecipeCommand(newRecipeContract), cancellationToken));
         })
             .RequireAuthorization();
 
         group.MapPut("/update", async (
             [FromBody] UpdateRecipeContract updateRecipeContract,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new UpdateRecipeCommand(updateRecipeContract));
+            await sender.Send(new UpdateRecipeCommand(updateRecipeContract), cancellationToken);
             return Results.Ok();
         })
             .RequireAuthorization();
 
         group.MapDelete("/remove", async (
             [FromQuery] string id,
+            CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            await sender.Send(new RemoveRecipeCommand(id));
+            await sender.Send(new RemoveRecipeCommand(id), cancellationToken);
             return Results.Ok();
         })
             .RequireAuthorization();
