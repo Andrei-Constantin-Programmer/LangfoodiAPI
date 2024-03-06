@@ -31,7 +31,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.DATA_ACCESS)]
-    public async Task GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithProperty()
+    public async Task GetAll_WhenThereAreDocuments_ReturnAllDocumentsWithPropertyAsync()
     {
         // Given
         List<TestDocument> existingDocuments = new();

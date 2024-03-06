@@ -61,11 +61,6 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
         return (await _collection.DeleteOneAsync(expr, cancellationToken)).DeletedCount > 0;
     }
 
-    public bool Contains(Expression<Func<TDocument, bool>> expr)
-    {
-        return _collection?.Find(expr).Any() ?? false;
-    }
-
     private protected static string GetCollectionName(Type documentType) =>
         ((MongoCollectionAttribute)documentType.GetCustomAttributes(typeof(MongoCollectionAttribute), true).First()).CollectionName;
 }
