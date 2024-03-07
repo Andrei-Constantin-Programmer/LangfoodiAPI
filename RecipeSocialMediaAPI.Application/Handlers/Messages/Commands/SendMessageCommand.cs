@@ -65,19 +65,9 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         {
             throw new AttemptedToSendMessageToBlockedConnectionException($"Cannot send message to connection {connectionId}, as it is blocked");
         }
-        
-        foreach (var recipeId in request.Contract.RecipeIds ?? new List<string>())
-        {
-            if ((await _recipeQueryRepository.GetRecipeByIdAsync(recipeId, cancellationToken)) is null)
-            {
-                throw new RecipeNotFoundException(recipeId);
-            }
-        }
 
-        Message? messageRepliedTo = request.Contract.MessageRepliedToId is null
-            ? null
-            : await _messageQueryRepository.GetMessageAsync(request.Contract.MessageRepliedToId, cancellationToken)
-                ?? throw new MessageNotFoundException(request.Contract.MessageRepliedToId);
+        await ThrowIfRecipesNotFound(request.Contract.RecipeIds ?? new List<string>(), cancellationToken);
+        Message? messageRepliedTo = await GetMessageRepliedTo(request, cancellationToken);
 
         Message createdMessage = await _messagePersistenceRepository.CreateMessageAsync(
             sender: sender,
@@ -89,7 +79,33 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
             seenByUserIds: new() { sender.Id },
             cancellationToken: cancellationToken
         );
+        await SendMessageToConversation(conversation, createdMessage, cancellationToken);
 
+        var messageDto = _messageMapper.MapMessageToMessageDTO(createdMessage);
+        await _publisher.Publish(new MessageSentNotification(messageDto, conversation.ConversationId), cancellationToken);
+
+        return messageDto;
+    }
+
+    private async Task ThrowIfRecipesNotFound(List<string> recipeIds, CancellationToken cancellationToken)
+    {
+        foreach (var recipeId in recipeIds)
+        {
+            if ((await _recipeQueryRepository.GetRecipeByIdAsync(recipeId, cancellationToken)) is null)
+            {
+                throw new RecipeNotFoundException(recipeId);
+            }
+        }
+    }
+
+    private async Task<Message?> GetMessageRepliedTo(SendMessageCommand request, CancellationToken cancellationToken) 
+        => request.Contract.MessageRepliedToId is null
+            ? null
+            : await _messageQueryRepository.GetMessageAsync(request.Contract.MessageRepliedToId, cancellationToken)
+                ?? throw new MessageNotFoundException(request.Contract.MessageRepliedToId);
+
+    private async Task SendMessageToConversation(Conversation conversation, Message createdMessage, CancellationToken cancellationToken)
+    {
         conversation.SendMessage(createdMessage);
 
         var (connection, group) = conversation switch
@@ -101,11 +117,6 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         };
 
         await _conversationPersistenceRepository.UpdateConversationAsync(conversation, connection, group, cancellationToken);
-
-        var messageDto = _messageMapper.MapMessageToMessageDTO(createdMessage);
-        await _publisher.Publish(new MessageSentNotification(messageDto, conversation.ConversationId), cancellationToken);
-
-        return messageDto;
     }
 
     private static bool IsBlockedConnectionConversation(Conversation conversation, out string? connectionId)
