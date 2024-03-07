@@ -19,11 +19,7 @@ public class UserQueryRepository : IUserQueryRepository
         _mapper = mapper;
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
-
-    public async Task<IEnumerable<IUserCredentials>> GetAllUsersAsync(CancellationToken cancellationToken = default) => (await _userCollection
-        .GetAllAsync((_) => true, cancellationToken))
-        .Select(_mapper.MapUserDocumentToUser);
-
+    
     public async Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;

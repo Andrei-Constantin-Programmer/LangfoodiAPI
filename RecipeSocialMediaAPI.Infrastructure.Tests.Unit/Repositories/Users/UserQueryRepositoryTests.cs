@@ -37,59 +37,6 @@ public class UserQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public async Task GetAllUsers_WhenNoUsersExist_ReturnsEmptyEnumerable()
-    {
-        // Given
-        Expression<Func<UserDocument, bool>> expectedExpression = (_) => true;
-        List<UserDocument> existingUsers = new();
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAllAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(existingUsers);
-
-        // When
-        var result = await _userQueryRepositorySUT.GetAllUsersAsync();
-
-        // Then
-        result.Should().BeEmpty();
-        _mongoCollectionWrapperMock
-            .Verify(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
-    }
-
-    [Theory]
-    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    [InlineData(1)]
-    [InlineData(5)]
-    [InlineData(10)]
-    public async Task GetAllUsers_WhenUsersExist_ReturnsAllUsers(int numberOfUsers)
-    {
-        // Given
-        Expression<Func<UserDocument, bool>> expectedExpression = (_) => true;
-        List<UserDocument> existingUsers = new();
-        for (int i = 0; i < numberOfUsers; i++)
-        {
-            existingUsers.Add(new UserDocument("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User));
-        }
-
-        _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetAllAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(existingUsers);
-
-        // When
-        var result = await _userQueryRepositorySUT.GetAllUsersAsync();
-
-        // Then
-        result.Should().HaveCount(numberOfUsers);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetUserById_WhenUserIsNotFound_ReturnNull()
     {
         // Given
