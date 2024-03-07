@@ -12,8 +12,8 @@ It has been decided to integrate SignalR into our infrastructure to facilitate l
 ## Consequences
 
 ### Positive
-- **Real-time updates** - Highly enhanced user experience and improved system visibility
-- **Improved responsiveness** - The users will get real-time feedback to their (and other users') actions
+- **Real-time updates** - Highly enhanced user experience and improved system visibility.
+- **Improved responsiveness** - The users will get real-time feedback to their (and other users') actions.
 
 ### Negative
-- **Increased complexity** - There will be some overhead in introducing this change and making sure existing functionality is integrated with SignalR
+- **Increased complexity** - There will be some overhead in introducing this change and making sure existing functionality is integrated with SignalR.
