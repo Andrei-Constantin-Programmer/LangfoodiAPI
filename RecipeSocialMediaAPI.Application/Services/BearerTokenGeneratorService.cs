@@ -41,6 +41,7 @@ public class BearerTokenGeneratorService : IBearerTokenGeneratorService
         {
             claims.Add(new(IdentityData.DeveloperUserClaimName, "true", ClaimValueTypes.Boolean));
         }
+
         if (user.Account.Role is UserRole.Admin)
         {
             claims.Add(new(IdentityData.AdminUserClaimName, "true", ClaimValueTypes.Boolean));
