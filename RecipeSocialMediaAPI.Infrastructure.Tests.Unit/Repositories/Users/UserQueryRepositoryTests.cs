@@ -435,4 +435,76 @@ public class UserQueryRepositoryTests
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(new List<IUserAccount> { testUser1.Account, testUser2.Account });
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task GetAllUserAccountsContaining_WhenUserMappingFails_LogAndIgnoreUser()
+    {
+        // Given
+        string containedString = "test";
+        Expression<Func<UserDocument, bool>> expectedExpression = x
+            => x.Handler.Contains(containedString.ToLower())
+            || x.UserName.Contains(containedString.ToLower());
+
+        List<UserDocument> userDocuments = new()
+        {
+            new("non_searched_handle", $"User{containedString}Name", string.Empty, string.Empty, (int)UserRole.User),
+            new($"the_{containedString}_handle", "NonSearchedUsername", string.Empty, string.Empty, (int)UserRole.User),
+        };
+
+        IUserCredentials testUser1 = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = userDocuments[0].Handler,
+                UserName = userDocuments[0].UserName,
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "email",
+            Password = "password"
+        };
+        IUserCredentials testUser2 = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = userDocuments[1].Handler,
+                UserName = userDocuments[1].UserName,
+                AccountCreationDate = new(2023, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "email",
+            Password = "password"
+        };
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(userDocuments);
+
+        Exception testException = new("Test Exception");
+        _mapperMock
+            .Setup(mapper => mapper.MapUserDocumentToUser(userDocuments[0]))
+            .Returns(testUser1);
+        _mapperMock
+            .Setup(mapper => mapper.MapUserDocumentToUser(userDocuments[1]))
+            .Throws(testException);
+
+        // When
+        var result = await _userQueryRepositorySUT.GetAllUserAccountsContainingAsync(containedString);
+
+        // Then
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(new List<IUserAccount> { testUser1.Account });
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
 }
