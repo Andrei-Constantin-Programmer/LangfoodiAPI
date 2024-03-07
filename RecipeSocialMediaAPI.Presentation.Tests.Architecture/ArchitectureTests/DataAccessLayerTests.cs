@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NetArchTest.Rules;
-using RecipeSocialMediaAPI.Presentation.Tests.Architecture.TestHelpers;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
+using RecipeSocialMediaAPI.Presentation.Tests.Architecture.TestHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Architecture.ArchitectureTests;

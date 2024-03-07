@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Recipes;
 

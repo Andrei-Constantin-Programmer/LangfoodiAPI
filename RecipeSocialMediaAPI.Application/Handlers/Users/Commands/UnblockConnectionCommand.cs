@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
+
 public record UnblockConnectionCommand(string UserId, string ConnectionId) : IRequest;
 
 internal class UnblockConnectionHandler : IRequestHandler<UnblockConnectionCommand>

@@ -9,6 +9,7 @@ using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Queries;
+
 public class GetRecipesFromUserHandlerTests
 {
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;

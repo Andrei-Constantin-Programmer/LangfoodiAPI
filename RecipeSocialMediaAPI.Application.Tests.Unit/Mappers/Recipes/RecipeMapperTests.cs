@@ -1,14 +1,13 @@
 ﻿using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
-using RecipeSocialMediaAPI.Application.Mappers.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
-using CloudinaryDotNet.Actions;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Mappers.Recipes;
 

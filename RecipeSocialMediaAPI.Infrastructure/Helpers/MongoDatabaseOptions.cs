@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace RecipeSocialMediaAPI.Infrastructure.Helpers;
+﻿namespace RecipeSocialMediaAPI.Infrastructure.Helpers;
 
 public class MongoDatabaseOptions
 {

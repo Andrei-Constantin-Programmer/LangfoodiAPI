@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.TestInfrastructure;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using FluentAssertions;
-using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Infrastructure.Mappers;
-using RecipeSocialMediaAPI.Application.Repositories.Recipes;
-using RecipeSocialMediaAPI.Infrastructure.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
-using RecipeSocialMediaAPI.Infrastructure.Repositories.Messages;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
-using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
+using RecipeSocialMediaAPI.Infrastructure.Mappers;
+using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
+using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.Messages;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.Recipes;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 

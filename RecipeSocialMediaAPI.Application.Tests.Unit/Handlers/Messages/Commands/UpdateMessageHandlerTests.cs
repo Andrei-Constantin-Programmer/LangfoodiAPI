@@ -17,7 +17,6 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands;
 

@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers.FakeDependencies;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using Moq;
-using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
-using RecipeSocialMediaAPI.Application.Services.Interfaces;
-using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Application.Utilities;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Utilities;
-using RecipeSocialMediaAPI.Application.Utilities;
+using RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers.FakeDependencies;
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers;
 

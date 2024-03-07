@@ -1,18 +1,16 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Messages;
+using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Mappers.Users;
 using RecipeSocialMediaAPI.Application.Utilities;
 using RecipeSocialMediaAPI.Domain.Services;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Application.Mappers.Users;
-using RecipeSocialMediaAPI.Application.Mappers.Messages.Interfaces;
-using RecipeSocialMediaAPI.Application.Mappers.Messages;
-using RecipeSocialMediaAPI.Application.Services.Interfaces;
-using RecipeSocialMediaAPI.Application.Services;
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Configuration;
 

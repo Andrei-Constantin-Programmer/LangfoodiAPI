@@ -1,9 +1,9 @@
-﻿using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using Microsoft.Extensions.Logging;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
 

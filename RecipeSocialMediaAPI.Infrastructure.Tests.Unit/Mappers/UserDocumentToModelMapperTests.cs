@@ -1,11 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Infrastructure.Mappers;
-using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Infrastructure.Mappers;
+using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Collections.Immutable;
 

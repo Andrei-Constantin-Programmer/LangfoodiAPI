@@ -2,10 +2,10 @@
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 

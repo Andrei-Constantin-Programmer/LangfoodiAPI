@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
 using Moq;
 using Neleus.LambdaCompare;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
 using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
-using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Tests.Unit.Repositories.Users;

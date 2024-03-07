@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Cryptography;
-using FluentAssertions;
-using RecipeSocialMediaAPI.Domain.Services.Interfaces;
-using RecipeSocialMediaAPI.Domain.Services;
-using RecipeSocialMediaAPI.Application.Services.Interfaces;
-using RecipeSocialMediaAPI.Application.Services;
-using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
-using RecipeSocialMediaAPI.Application.WebClients;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
+using RecipeSocialMediaAPI.Application.Services;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.WebClients;
+using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
+using RecipeSocialMediaAPI.Domain.Services;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Presentation.SignalR;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 

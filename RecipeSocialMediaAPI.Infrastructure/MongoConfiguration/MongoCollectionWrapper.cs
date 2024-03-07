@@ -1,9 +1,9 @@
-﻿using System.Linq.Expressions;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
 using RecipeSocialMediaAPI.Infrastructure.Helpers;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
+using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
 

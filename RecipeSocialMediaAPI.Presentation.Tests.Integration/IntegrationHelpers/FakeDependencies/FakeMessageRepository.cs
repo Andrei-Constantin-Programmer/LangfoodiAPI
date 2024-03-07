@@ -1,5 +1,4 @@
-﻿using Moq;
-using RecipeSocialMediaAPI.Application.Repositories.Messages;
+﻿using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;

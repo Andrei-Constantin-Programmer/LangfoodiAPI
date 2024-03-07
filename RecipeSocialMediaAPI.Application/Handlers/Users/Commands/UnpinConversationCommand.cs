@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
+
 public record UnpinConversationCommand(string UserId, string ConversationId) : IRequest;
 
 internal class UnpinConversationHandler : IRequestHandler<UnpinConversationCommand>

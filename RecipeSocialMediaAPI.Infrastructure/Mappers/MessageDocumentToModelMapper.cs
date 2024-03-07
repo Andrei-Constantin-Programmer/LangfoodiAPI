@@ -2,13 +2,13 @@
 using Microsoft.IdentityModel.Tokens;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Infrastructure.Exceptions;
-using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
+using RecipeSocialMediaAPI.Infrastructure.Exceptions;
+using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Mappers;
 

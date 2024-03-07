@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
-using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services;
-using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
 

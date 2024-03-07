@@ -1,7 +1,7 @@
-﻿using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
+﻿using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Mappers;
 

@@ -3,14 +3,14 @@ using Moq;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
-using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 

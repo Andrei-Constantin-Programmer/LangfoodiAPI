@@ -7,6 +7,7 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Validators.Recipes;
+
 public class AddRecipeValidatorTests
 {
     private readonly AddRecipeCommandValidator _addRecipeValidatorSUT;

@@ -1,20 +1,21 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
-using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
+
 public class AddRecipeHandlerTests
 {
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
