@@ -67,5 +67,5 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
         IUserAccount queryingUser,
         IEnumerable<IUserAccount> allUsers,
         Predicate<IUserAccount> condition)
-    => allUsers.Where(user => user.Id != queryingUser.Id && condition(user));
+        => allUsers.Where(user => user.Id != queryingUser.Id && condition(user));
 }

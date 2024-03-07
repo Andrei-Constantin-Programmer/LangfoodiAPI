@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Images.Commands;
+
 public class RemoveImageHandlerTests
 {
     private readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;

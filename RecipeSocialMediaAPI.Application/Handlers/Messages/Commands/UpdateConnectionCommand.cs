@@ -47,7 +47,6 @@ internal class UpdateConnectionHandler : IRequestHandler<UpdateConnectionCommand
         connection.Status = newStatus;
 
         var isSuccessful = await _connectionPersistenceRepository.UpdateConnectionAsync(connection, cancellationToken);
-
         if (!isSuccessful)
         {
             throw new ConnectionUpdateException($"Could not update connection between users with ids {user1.Id} and {user2.Id}");

@@ -1,7 +1,7 @@
 ﻿using RecipeSocialMediaAPI.Application.Options;
+using RecipeSocialMediaAPI.Infrastructure.Helpers;
 using RecipeSocialMediaAPI.Presentation.Options;
 using RecipeSocialMediaAPI.Presentation.OptionValidation;
-using RecipeSocialMediaAPI.Infrastructure.Helpers;
 
 namespace RecipeSocialMediaAPI.Presentation.Configuration;
 

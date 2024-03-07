@@ -40,7 +40,6 @@ internal class RemoveMessageHandler : IRequestHandler<RemoveMessageCommand>
         }
 
         bool isSuccessful = await _messagePersistenceRepository.DeleteMessageAsync(request.Id, cancellationToken);
-
         if (!isSuccessful)
         {
             throw new MessageRemovalException(request.Id);

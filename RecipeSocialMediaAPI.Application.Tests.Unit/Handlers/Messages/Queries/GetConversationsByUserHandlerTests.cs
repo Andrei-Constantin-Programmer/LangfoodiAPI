@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.VisualBasic;
 using Moq;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Exceptions;

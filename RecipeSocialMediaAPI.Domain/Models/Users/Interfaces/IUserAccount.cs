@@ -11,10 +11,10 @@ public interface IUserAccount
     DateTimeOffset AccountCreationDate { get; }
     ImmutableList<string> PinnedConversationIds { get; }
     ImmutableList<string> BlockedConnectionIds { get; }
-    public UserRole Role { get; set; }
+    UserRole Role { get; set; }
 
-    public bool RemovePin(string pinnedConversationId);
-    public bool AddPin(string pinnedConversationId);
-    public bool UnblockConnection(string connectionId);
-    public bool BlockConnection(string connectionId);
+    bool RemovePin(string pinnedConversationId);
+    bool AddPin(string pinnedConversationId);
+    bool UnblockConnection(string connectionId);
+    bool BlockConnection(string connectionId);
 }

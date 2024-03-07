@@ -13,4 +13,8 @@ public record MessageDocument(
     string? Id = null
 ) : MongoDocument(Id);
 
-public record MessageContentDTO(string? Text = null, List<string>? RecipeIds = null, List<string>? ImageURLs = null);
+public record MessageContentDTO(
+    string? Text = null,
+    List<string>? RecipeIds = null,
+    List<string>? ImageURLs = null
+);

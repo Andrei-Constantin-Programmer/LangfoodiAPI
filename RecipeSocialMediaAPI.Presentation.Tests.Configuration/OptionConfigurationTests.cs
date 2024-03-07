@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.TestInfrastructure;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Options;
-using FluentAssertions;
-using RecipeSocialMediaAPI.Core.OptionValidation;
 using RecipeSocialMediaAPI.Application.Options;
+using RecipeSocialMediaAPI.Core.OptionValidation;
 using RecipeSocialMediaAPI.Infrastructure.Helpers;
-using RecipeSocialMediaAPI.Presentation.OptionValidation;
 using RecipeSocialMediaAPI.Presentation.Options;
+using RecipeSocialMediaAPI.Presentation.OptionValidation;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Core.Tests.Configuration;
 

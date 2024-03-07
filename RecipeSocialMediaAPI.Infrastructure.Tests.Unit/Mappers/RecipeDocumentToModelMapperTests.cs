@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using RecipeSocialMediaAPI.Infrastructure.Mappers;
-using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Infrastructure.Mappers;
+using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Tests.Unit.Mappers;

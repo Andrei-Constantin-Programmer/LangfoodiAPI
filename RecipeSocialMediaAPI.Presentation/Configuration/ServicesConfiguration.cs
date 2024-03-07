@@ -18,8 +18,9 @@ using RecipeSocialMediaAPI.Application.Utilities;
 using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Application.WebClients;
 using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
-using RecipeSocialMediaAPI.Presentation.Middleware;
-using RecipeSocialMediaAPI.Presentation.SignalR;
+using RecipeSocialMediaAPI.Domain.Services;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
+using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Infrastructure.Mappers;
 using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
@@ -27,10 +28,9 @@ using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Messages;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Recipes;
 using RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
-using RecipeSocialMediaAPI.Domain.Services;
-using RecipeSocialMediaAPI.Domain.Services.Interfaces;
-using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.Presentation;
+using RecipeSocialMediaAPI.Presentation.Middleware;
+using RecipeSocialMediaAPI.Presentation.SignalR;
 
 namespace RecipeSocialMediaAPI.Core.Configuration;
 

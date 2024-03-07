@@ -1,11 +1,11 @@
 ﻿using RecipeSocialMediaAPI.Application.Repositories.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
 using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Messaging;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Repositories.Messages;
 
@@ -79,9 +79,10 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         : null;
 
     private async Task<ConnectionDocument?> GetConnectionDocumentAsync(IConnection connection, CancellationToken cancellationToken = default) =>
-        await _connectionCollection.GetOneAsync(conn => (conn.AccountId1 == connection.Account1.Id 
-                                                                  && conn.AccountId2 == connection.Account2.Id) 
-                                              || (conn.AccountId1 == connection.Account2.Id 
-                                                                  && conn.AccountId2 == connection.Account1.Id), cancellationToken);
-
+        await _connectionCollection.GetOneAsync(
+            conn => (conn.AccountId1 == connection.Account1.Id 
+                                     && conn.AccountId2 == connection.Account2.Id) 
+                 || (conn.AccountId1 == connection.Account2.Id 
+                                     && conn.AccountId2 == connection.Account1.Id), 
+            cancellationToken);
 }

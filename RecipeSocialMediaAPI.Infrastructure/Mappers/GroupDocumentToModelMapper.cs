@@ -1,8 +1,8 @@
 ﻿using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Domain.Models.Messaging;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
 using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Messaging;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Mappers;
 
@@ -23,8 +23,9 @@ public class GroupDocumentToModelMapper : IGroupDocumentToModelMapper
         }
 
         var users = await Task.WhenAll(groupDocument.UserIds
-            .Select(async userId => (await _userQueryRepository.GetUserByIdAsync(userId, cancellationToken))?.Account
-                                    ?? throw new UserDocumentNotFoundException(userId)));
+            .Select(async userId => 
+                (await _userQueryRepository.GetUserByIdAsync(userId, cancellationToken))?.Account
+                    ?? throw new UserDocumentNotFoundException(userId)));
         
         return new Group(groupDocument.Id, groupDocument.GroupName, groupDocument.GroupDescription, users);
     }

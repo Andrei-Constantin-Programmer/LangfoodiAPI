@@ -1,10 +1,10 @@
-﻿using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
+﻿using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 
 public interface IRecipeDocumentToModelMapper
 {
-    public RecipeAggregate MapRecipeDocumentToRecipeAggregate(RecipeDocument recipeDocument, IUserAccount chef);
+    RecipeAggregate MapRecipeDocumentToRecipeAggregate(RecipeDocument recipeDocument, IUserAccount chef);
 }

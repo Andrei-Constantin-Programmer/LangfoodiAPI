@@ -1,9 +1,9 @@
-﻿using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using Microsoft.Extensions.Logging;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Repositories.Users;
 
@@ -106,6 +106,7 @@ public class UserQueryRepository : IUserQueryRepository
     public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default) 
         => (await _userCollection
             .GetAllAsync(userDoc => userDoc.Handler.Contains(containedString.ToLower())
-                            || userDoc.UserName.Contains(containedString.ToLower()), cancellationToken))
+                                 || userDoc.UserName.Contains(containedString.ToLower()), 
+                        cancellationToken))
             .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);
 }

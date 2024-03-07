@@ -2,16 +2,16 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Neleus.LambdaCompare;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
-using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Infrastructure.Repositories.Recipes;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Linq.Expressions;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Infrastructure.Repositories.Recipes;
-using RecipeSocialMediaAPI.Domain.Tests.Shared;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Tests.Unit.Repositories.Recipes;
 

@@ -11,6 +11,7 @@ using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Queries;
+
 public class GetRecipeByIdHandlerTests
 {
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;

@@ -3,6 +3,7 @@ using RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Validators.Images;
+
 public class RemoveMultipleImagesValidatorTests
 {
     private readonly RemoveMultipleImagesValidator _removeMultipleImagesValidatorSUT;

@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
-using RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
 using System.Net.Http.Headers;

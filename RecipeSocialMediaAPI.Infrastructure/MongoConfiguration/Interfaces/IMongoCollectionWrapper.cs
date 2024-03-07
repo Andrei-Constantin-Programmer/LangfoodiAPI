@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
+﻿using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
+using System.Linq.Expressions;
 
 namespace RecipeSocialMediaAPI.Infrastructure.MongoConfiguration.Interfaces;
 

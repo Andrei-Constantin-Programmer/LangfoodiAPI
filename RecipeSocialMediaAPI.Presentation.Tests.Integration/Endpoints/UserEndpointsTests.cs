@@ -1,15 +1,15 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
+using RecipeSocialMediaAPI.Application.DTO.Users;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
-using System.Net.Http.Json;
 using System.Net.Http.Headers;
-using RecipeSocialMediaAPI.Domain.Tests.Shared;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using System.Net.Http.Json;
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Integration.Endpoints;
 
