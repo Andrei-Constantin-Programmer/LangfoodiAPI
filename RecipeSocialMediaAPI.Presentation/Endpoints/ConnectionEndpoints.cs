@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
+using RecipeSocialMediaAPI.Application.Identity;
 
 namespace RecipeSocialMediaAPI.Presentation.Endpoints;
 
@@ -56,6 +57,16 @@ public static class ConnectionEndpoints
             return Results.Ok();
         })
             .RequireAuthorization();
+
+        group.MapDelete("/delete", async (
+            [FromQuery] string connectionId,
+            CancellationToken cancellationToken,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new RemoveConnectionCommand(connectionId), cancellationToken);
+            return Results.Ok();
+        })
+            .RequireAuthorization(IdentityData.DeveloperUserPolicyName);
 
         return group;
     }
