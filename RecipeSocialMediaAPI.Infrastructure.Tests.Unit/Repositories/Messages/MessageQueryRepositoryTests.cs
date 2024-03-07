@@ -722,7 +722,7 @@ public class MessageQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public async Task GetMessagesWithRecipe_WhenUserNotFound_ThrowUserDocumentNotFoundException()
+    public async Task GetMessagesWithRecipe_WhenUserNotFound_LogAndIgnoreMessage()
     {
         // Given
         string senderId = "50";
@@ -749,37 +749,167 @@ public class MessageQueryRepositoryTests
             new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        MessageDocument testDocument = new(
+        MessageDocument testDocument1 = new(
             Id: "m1",
             MessageContent: new(null, new() { recipe.Id }, null),
             SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
         );
+        MessageDocument testDocument2 = new(
+            Id: "m2",
+            MessageContent: new(null, new() { recipe.Id }, null),
+            SeenByUserIds: new(),
+            SenderId: senderId,
+            SentDate: new(2024, 01, 15, 0, 0, 0, TimeSpan.Zero)
+        );
 
-        TestRecipeMessage recipeMessage = new(
-        testDocument.Id!,
+        TestRecipeMessage recipeMessage1 = new(
+            testDocument1.Id!,
             testSender.Account,
-            testDocument.MessageContent.Text!,
+            testDocument1.MessageContent.Text!,
             new List<RecipeAggregate>() { recipe },
-            testDocument.SentDate,
-        null);
+            testDocument1.SentDate,
+            null);
 
-        Expression<Func<MessageDocument, bool>> expectedExpression = x => x.MessageContent.RecipeIds != null && x.MessageContent.RecipeIds.Contains(recipe.Id);
+        TestRecipeMessage recipeMessage2 = new(
+            testDocument2.Id!,
+            testSender.Account,
+            testDocument2.MessageContent.Text!,
+            new List<RecipeAggregate>() { recipe },
+            testDocument2.SentDate,
+            null);
+
+        Expression<Func<MessageDocument, bool>> expectedExpression = x 
+            => x.MessageContent.RecipeIds != null 
+            && x.MessageContent.RecipeIds.Contains(recipe.Id);
 
         _messageCollectionMock
             .Setup(collection => collection.GetAllAsync(
                 It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<MessageDocument> { testDocument });
+            .ReturnsAsync(new List<MessageDocument> { testDocument1, testDocument2 });
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByIdAsync(senderId, It.IsAny<CancellationToken>()))
+            .SetupSequence(repo => repo.GetUserByIdAsync(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender)
             .ReturnsAsync((IUserCredentials?)null);
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument1, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(recipeMessage1);
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument2, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(recipeMessage2);
 
         // When
-        var testAction = async () => (await _messageQueryRepositorySUT.GetMessagesWithRecipeAsync(recipe.Id)).ToList();
+        var result = (await _messageQueryRepositorySUT.GetMessagesWithRecipeAsync(recipe.Id)).ToList();
 
         // Then
-        await testAction.Should().ThrowAsync<UserDocumentNotFoundException>();
+        result.Should().BeEquivalentTo(new List<Message> { recipeMessage1 });
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<UserDocumentNotFoundException>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task GetMessagesWithRecipe_WhenMessageMappingFails_LogAndIgnoreMessage()
+    {
+        // Given
+        string senderId = "50";
+
+        TestUserCredentials testSender = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = senderId,
+                Handler = "Test Handler",
+                UserName = "Test Username",
+                AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = "test@mail.com",
+            Password = "testpass"
+        };
+
+        RecipeAggregate recipe = new(
+            "r1",
+            "Recipe1",
+            new(new(), new()),
+            "Description1",
+            testSender.Account,
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        MessageDocument testDocument1 = new(
+            Id: "m1",
+            MessageContent: new(null, new() { recipe.Id }, null),
+            SeenByUserIds: new(),
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
+        MessageDocument testDocument2 = new(
+            Id: "m2",
+            MessageContent: new(null, new() { recipe.Id }, null),
+            SeenByUserIds: new(),
+            SenderId: senderId,
+            SentDate: new(2024, 01, 15, 0, 0, 0, TimeSpan.Zero)
+        );
+
+        TestRecipeMessage recipeMessage1 = new(
+            testDocument1.Id!,
+            testSender.Account,
+            testDocument1.MessageContent.Text!,
+            new List<RecipeAggregate>() { recipe },
+            testDocument1.SentDate,
+            null);
+
+        TestRecipeMessage recipeMessage2 = new(
+            testDocument2.Id!,
+            testSender.Account,
+            testDocument2.MessageContent.Text!,
+            new List<RecipeAggregate>() { recipe },
+            testDocument2.SentDate,
+            null);
+
+        Expression<Func<MessageDocument, bool>> expectedExpression = x 
+            => x.MessageContent.RecipeIds != null 
+            && x.MessageContent.RecipeIds.Contains(recipe.Id);
+
+        _messageCollectionMock
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expectedExpression, expr)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<MessageDocument> { testDocument1, testDocument2 });
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserByIdAsync(senderId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testSender);
+
+        Exception testException = new("Test Exception");
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument1, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(recipeMessage1);
+        _mapperMock
+            .Setup(mapper => mapper.MapMessageFromDocumentAsync(testDocument2, testSender.Account, null, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
+
+        // When
+        var result = (await _messageQueryRepositorySUT.GetMessagesWithRecipeAsync(recipe.Id)).ToList();
+
+        // Then
+        result.Should().BeEquivalentTo(new List<Message> { recipeMessage1 });
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 }
