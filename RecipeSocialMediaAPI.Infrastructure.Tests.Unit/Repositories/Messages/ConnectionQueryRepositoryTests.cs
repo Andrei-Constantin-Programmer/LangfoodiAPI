@@ -423,7 +423,7 @@ public class ConnectionQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public async Task GetConnectionsForUser_WhenMapperThrowsException_ThrowException()
+    public async Task GetConnectionsForUser_WhenMapperThrowsException_RemoveConnectionFromCollectionAndLog()
     {
         // Given
         TestUserAccount testAccount = new()
@@ -440,8 +440,9 @@ public class ConnectionQueryRepositoryTests
             UserName = "User 2 Name",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        Expression<Func<ConnectionDocument, bool>> expectedExpression = x => x.AccountId1 == testAccount.Id
-                                                                             || x.AccountId2 == testAccount.Id;
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = x 
+            => x.AccountId1 == testAccount.Id
+            || x.AccountId2 == testAccount.Id;
 
         ConnectionDocument testDocument = new(testAccount.Id, testAccount2.Id, "Pending");
 
@@ -457,10 +458,19 @@ public class ConnectionQueryRepositoryTests
             .Throws(testException);
 
         // When
-        var testAction = async () => await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
+        var result = await _connectionQueryRepositorySUT.GetConnectionsForUserAsync(testAccount);
 
         // Then
-        await testAction.Should().ThrowAsync<Exception>().WithMessage(testException.Message);
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+        _loggerMock
+            .Verify(logger => logger.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
     }
 
     [Fact]
