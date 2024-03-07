@@ -730,7 +730,7 @@ public class RecipeQueryRepositoryTests
             
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
 
-        RecipeDocument chefsRecipe = new(
+        RecipeDocument chefsRecipe1 = new(
             Id: "10",
             Title: "TestTitle",
             Ingredients: new List<(string, double, string)>(),
@@ -742,31 +742,154 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId,
             ThumbnailId: "public_id_1"
         );
-
-        RecipeAggregate expectedResult = new(
-            chefsRecipe.Id!,
-            chefsRecipe.Title,
-            new Recipe(new(), new()),
-            chefsRecipe.Description,
-            testChef,
-            chefsRecipe.CreationDate,
-            chefsRecipe.LastUpdatedDate,
-            new HashSet<string>(),
-            chefsRecipe.ThumbnailId
+        RecipeDocument chefsRecipe2 = new(
+            Id: "20",
+            Title: "TestTitle 2",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc 2",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId,
+            ThumbnailId: "public_id_2"
         );
 
-        _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
+        RecipeAggregate expectedResult1 = new(
+            chefsRecipe1.Id!,
+            chefsRecipe1.Title,
+            new Recipe(new(), new()),
+            chefsRecipe1.Description,
+            testChef,
+            chefsRecipe1.CreationDate,
+            chefsRecipe1.LastUpdatedDate,
+            new HashSet<string>(),
+            chefsRecipe1.ThumbnailId
+        );
+        RecipeAggregate expectedResult2 = new(
+            chefsRecipe2.Id!,
+            chefsRecipe2.Title,
+            new Recipe(new(), new()),
+            chefsRecipe2.Description,
+            testChef,
+            chefsRecipe2.CreationDate,
+            chefsRecipe2.LastUpdatedDate,
+            new HashSet<string>(),
+            chefsRecipe2.ThumbnailId
+        );
+
+        _recipeCollectionMock
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<RecipeDocument>() { chefsRecipe1, chefsRecipe2 });
+
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
-            .Returns(expectedResult);
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe1, testChef))
+            .Returns(expectedResult1);
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe2, testChef))
+            .Returns(expectedResult2);
 
         // When
-        var result = await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef);
+        var result = (await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef)).ToList();
 
         // Then
-        result.Should().HaveCount(1);
-        var recipe = result.First();
-        recipe.Should().Be(expectedResult);
+        result.Should().BeEquivalentTo(new List<RecipeAggregate> { expectedResult1, expectedResult2 });
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task GetRecipesByChef_WhenRecipeMappingFails_ReturnRelatedRecipesIgnoringFailingRecipe()
+    {
+        // Given
+        string chefId = "1";
+        IUserAccount testChef = new TestUserAccount()
+        {
+            Id = chefId,
+            Handler = "TestHandler",
+            UserName = "TestUsername",
+            AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+        };
+            
+        Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.ChefId == chefId;
+
+        RecipeDocument chefsRecipe1 = new(
+            Id: "10",
+            Title: "TestTitle",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId,
+            ThumbnailId: "public_id_1"
+        );
+        RecipeDocument chefsRecipe2 = new(
+            Id: "20",
+            Title: "TestTitle 2",
+            Ingredients: new List<(string, double, string)>(),
+            Steps: new List<(string, string?)>(),
+            Description: "TestShortDesc 2",
+            CreationDate: _testDate,
+            LastUpdatedDate: _testDate,
+            Tags: new List<string>(),
+            ChefId: chefId,
+            ThumbnailId: "public_id_2"
+        );
+
+        RecipeAggregate expectedResult1 = new(
+            chefsRecipe1.Id!,
+            chefsRecipe1.Title,
+            new Recipe(new(), new()),
+            chefsRecipe1.Description,
+            testChef,
+            chefsRecipe1.CreationDate,
+            chefsRecipe1.LastUpdatedDate,
+            new HashSet<string>(),
+            chefsRecipe1.ThumbnailId
+        );
+        RecipeAggregate expectedResult2 = new(
+            chefsRecipe2.Id!,
+            chefsRecipe2.Title,
+            new Recipe(new(), new()),
+            chefsRecipe2.Description,
+            testChef,
+            chefsRecipe2.CreationDate,
+            chefsRecipe2.LastUpdatedDate,
+            new HashSet<string>(),
+            chefsRecipe2.ThumbnailId
+        );
+
+        _recipeCollectionMock
+            .Setup(collection => collection.GetAllAsync(
+                It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<RecipeDocument>() { chefsRecipe1, chefsRecipe2 });
+
+        Exception testException = new("Test Exception");
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe1, testChef))
+            .Returns(expectedResult1);
+        _mapperMock
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe2, testChef))
+            .Throws(testException);
+
+        // When
+        var result = (await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef)).ToList();
+
+        // Then
+        result.Should().BeEquivalentTo(new List<RecipeAggregate> { expectedResult1 });
+        _loggerMock.Verify(logger =>
+            logger.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                testException,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     [Fact]
