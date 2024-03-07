@@ -134,15 +134,24 @@ public class ConversationQueryRepository : IConversationQueryRepository
             _logger.LogError(ex, "There was an error trying to get the conversations for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
         }
 
-        return await Task.WhenAll(conversations
+        return (await Task.WhenAll(conversations
             .Select(async conversationDoc => 
             {
                 IConnection? connection = await GetConnectionAsync(conversationDoc, cancellationToken);
                 Group? group = await GetGroupAsync(conversationDoc);
                 List<Message> messages = await GetMessagesAsync(conversationDoc);
 
-                return _mapper.MapConversationFromDocument(conversationDoc, connection, group, messages);
-            }));
+                try
+                {
+                    return _mapper.MapConversationFromDocument(conversationDoc, connection, group, messages);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "There was an error mapping conversation {ConversationId}", conversationDoc.Id);
+                    return null;
+                }
+            })))
+            .OfType<Conversation>();
     }
 
     private async Task<List<Message>> GetMessagesAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default) 
