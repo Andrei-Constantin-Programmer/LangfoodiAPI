@@ -37,10 +37,10 @@ internal class CreateConnectionConversationHandler : IRequestHandler<CreateConne
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
         IConnection connection = (await _connectionQueryRepository.GetConnectionAsync(request.ConnectionId, cancellationToken))
-                                    ?? throw new ConnectionNotFoundException($"Connection with id {request.ConnectionId} was not found");
+            ?? throw new ConnectionNotFoundException($"Connection with id {request.ConnectionId} was not found");
 
         Conversation newConversation = await _conversationPersistenceRepository.CreateConnectionConversationAsync(connection, cancellationToken);
 
-        return await Task.FromResult(_conversationMapper.MapConversationToConnectionConversationDTO(user, (ConnectionConversation)newConversation));
+        return _conversationMapper.MapConversationToConnectionConversationDTO(user, (ConnectionConversation)newConversation);
     }
 }

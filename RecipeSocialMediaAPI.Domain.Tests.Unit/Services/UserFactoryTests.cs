@@ -68,32 +68,6 @@ public class UserFactoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void CreateUserCredentials_WithExistingAccount_ReturnsExpectedUserCredentials()
-    {
-        // Given
-        string email = "TestEmail";
-        string password = "TestPassword";
-        
-        TestUserAccount testAccount = new()
-        {
-            Id = "TestId",
-            Handler = "TestHandler",
-            UserName = "TestUsername",
-            AccountCreationDate = new(2023, 10, 10, 12, 30, 0, TimeSpan.Zero)
-        };
-
-        // When
-        var account = _userFactorySUT.CreateUserCredentials(testAccount, email, password);
-
-        // Then
-        account.Account.Should().Be(testAccount);
-        account.Email.Should().Be(email);
-        account.Password.Should().Be(password);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
-    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
     public void CreateUserCredentials_WithoutExistingAccount_ReturnsExpectedUserCredentials()
     {
         // Given

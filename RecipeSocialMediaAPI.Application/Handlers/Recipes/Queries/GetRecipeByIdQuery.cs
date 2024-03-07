@@ -25,6 +25,6 @@ internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, Recipe
         RecipeAggregate recipe = await _recipeQueryRepository.GetRecipeByIdAsync(request.Id, cancellationToken)
             ?? throw new RecipeNotFoundException(request.Id);
 
-        return await Task.FromResult(_mapper.MapRecipeAggregateToRecipeDetailedDto(recipe));
+        return _mapper.MapRecipeAggregateToRecipeDetailedDto(recipe);
     }
 }

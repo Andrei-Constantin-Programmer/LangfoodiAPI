@@ -26,11 +26,6 @@ public class UserFactory : IUserFactory
         return new UserAccount(id, handler, username, profileImageId, accountCreationDate ?? _dateTimeProvider.Now, pinnedConversationIds, blockedConnectionIds, userRole);
     }
 
-    public IUserCredentials CreateUserCredentials(IUserAccount userAccount, string email, string password)
-    {
-        return new UserCredentials(userAccount, email, password);
-    }
-
     public IUserCredentials CreateUserCredentials(
         string id,
         string handler,

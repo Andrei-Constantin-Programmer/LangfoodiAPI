@@ -1,6 +1,4 @@
 ﻿using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
-using System.Runtime.CompilerServices;
-using System.Text;
 using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Application.Cryptography;

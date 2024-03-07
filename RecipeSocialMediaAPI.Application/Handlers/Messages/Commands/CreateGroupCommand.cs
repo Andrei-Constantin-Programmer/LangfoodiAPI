@@ -5,7 +5,6 @@ using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging;
-using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
@@ -27,15 +26,10 @@ internal class CreateGroupHandler : IRequestHandler<CreateGroupCommand, GroupDTO
         string groupName = request.Contract.Name;
         string groupDesciption = request.Contract.Description;
 
-        List<IUserAccount> userAccounts = new();
-        List<string> userIds = request.Contract.UserIds;
-
-        foreach (string userid in userIds)
-        { 
-            userAccounts.Add((await _userQueryRepository
-                .GetUserByIdAsync(userid, cancellationToken))?.Account
-                ?? throw new UserNotFoundException($"No user found with id {userid}"));
-        }
+        var userAccounts = (await Task.WhenAll(request.Contract.UserIds
+            .Select(async userid => (await _userQueryRepository.GetUserByIdAsync(userid, cancellationToken))?.Account
+                ?? throw new UserNotFoundException($"No user found with id {userid}"))))
+            .ToList();
 
         Group createdGroup = await _groupPersistenceRepository
             .CreateGroupAsync(groupName, groupDesciption, userAccounts, cancellationToken);

@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
-using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Images.Queries;

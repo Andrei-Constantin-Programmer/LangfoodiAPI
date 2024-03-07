@@ -79,9 +79,10 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         : null;
 
     private async Task<ConnectionDocument?> GetConnectionDocumentAsync(IConnection connection, CancellationToken cancellationToken = default) =>
-        await _connectionCollection.GetOneAsync(conn => (conn.AccountId1 == connection.Account1.Id 
-                                                                  && conn.AccountId2 == connection.Account2.Id) 
-                                              || (conn.AccountId1 == connection.Account2.Id 
-                                                                  && conn.AccountId2 == connection.Account1.Id), cancellationToken);
-
+        await _connectionCollection.GetOneAsync(
+            conn => (conn.AccountId1 == connection.Account1.Id 
+                                     && conn.AccountId2 == connection.Account2.Id) 
+                 || (conn.AccountId1 == connection.Account2.Id 
+                                     && conn.AccountId2 == connection.Account1.Id), 
+            cancellationToken);
 }

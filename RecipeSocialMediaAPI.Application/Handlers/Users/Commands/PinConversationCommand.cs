@@ -26,6 +26,7 @@ internal class PinConversationHandler : IRequestHandler<PinConversationCommand>
     {
         IUserCredentials user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))
             ?? throw new UserNotFoundException($"User with id {request.UserId} does not exist");
+
         Conversation conversation = (await _conversationQueryRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken))
             ?? throw new ConversationNotFoundException($"Conversation with id {request.ConversationId} does not exist");
 

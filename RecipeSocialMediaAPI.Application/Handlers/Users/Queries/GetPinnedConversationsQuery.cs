@@ -21,6 +21,6 @@ internal class GetPinnedConversationsHandler : IRequestHandler<GetPinnedConversa
         IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"User with id {request.UserId} does not exist");
 
-        return await Task.FromResult(user.PinnedConversationIds.ToList());
+        return user.PinnedConversationIds.ToList();
     }
 }

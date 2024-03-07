@@ -44,8 +44,9 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
             users: group.Users.ToList());
 
         var newUserList = (await Task.WhenAll(request.Contract.UserIds
-            .Select(async userId => (await _userQueryRepository.GetUserByIdAsync(userId, cancellationToken))?.Account
-                           ?? throw new UserNotFoundException(userId))))
+            .Select(async userId 
+                => (await _userQueryRepository.GetUserByIdAsync(userId, cancellationToken))?.Account
+                        ?? throw new UserNotFoundException(userId))))
             .ToList();
 
         UpdateGroupUserList(updatedGroup, newUserList);

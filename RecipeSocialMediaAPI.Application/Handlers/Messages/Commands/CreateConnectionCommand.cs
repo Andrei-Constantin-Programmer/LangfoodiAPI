@@ -34,10 +34,10 @@ internal class CreateConnectionHandler : IRequestHandler<CreateConnectionCommand
         IConnection createdConnection = await _connectionPersistenceRepository
             .CreateConnectionAsync(user1, user2, ConnectionStatus.Pending, cancellationToken);
 
-        return await Task.FromResult(new ConnectionDTO(
+        return new ConnectionDTO(
             createdConnection.ConnectionId,
             createdConnection.Account1.Id, 
             createdConnection.Account2.Id, 
-            createdConnection.Status.ToString()));
+            createdConnection.Status.ToString());
     }
 }

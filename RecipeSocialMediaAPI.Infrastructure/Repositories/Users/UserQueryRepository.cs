@@ -106,6 +106,7 @@ public class UserQueryRepository : IUserQueryRepository
     public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default) 
         => (await _userCollection
             .GetAllAsync(userDoc => userDoc.Handler.Contains(containedString.ToLower())
-                            || userDoc.UserName.Contains(containedString.ToLower()), cancellationToken))
+                                 || userDoc.UserName.Contains(containedString.ToLower()), 
+                        cancellationToken))
             .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);
 }

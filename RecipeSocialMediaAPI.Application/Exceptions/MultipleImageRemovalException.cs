@@ -1,4 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.Exceptions;
+
+[Serializable]
 public class MultipleImageRemovalException : Exception
 {
     public MultipleImageRemovalException(List<string> publicIds) 
