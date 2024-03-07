@@ -14,5 +14,5 @@ public class UserValidationService : BaseValidationService, IUserValidationServi
         RegexPatternMatch(@"^[a-zA-Z0-9_]+[a-zA-Z0-9_ ]{2,}$", userName);
 
     public bool ValidHandler(string handler) =>
-        RegexPatternMatch(@"^[a-zA-Z0-9_]+[a-zA-Z0-9_ ]{2,}$", handler);
+        RegexPatternMatch(@"^[a-z0-9_]+[a-z0-9_]{2,}$", handler);
 }
