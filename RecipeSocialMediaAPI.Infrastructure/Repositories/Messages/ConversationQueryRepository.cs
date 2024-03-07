@@ -115,19 +115,19 @@ public class ConversationQueryRepository : IConversationQueryRepository
         try
         {
             var groupIds = (await _groupQueryRepository
-                .GetGroupsByUserAsync(userAccount, cancellationToken))
-                ?.Select(g => g.GroupId)
+                .GetGroupsByUserAsync(userAccount, cancellationToken))?
+                .Select(g => g.GroupId)
                 .ToList() ?? new List<string>();
 
             var connectionIds = (await _connectionQueryRepository
-                .GetConnectionsForUserAsync(userAccount, cancellationToken))
-                ?.Select(c => c.ConnectionId)
+                .GetConnectionsForUserAsync(userAccount, cancellationToken))?
+                .Select(c => c.ConnectionId)
                 .ToList() ?? new List<string>();
 
-            conversations = (await _conversationCollection
+            conversations = await _conversationCollection
                 .GetAllAsync(conversationDoc => conversationDoc.ConnectionId == null
                     ? groupIds.Any(id => id == conversationDoc.GroupId)
-                    : connectionIds.Any(id => id == conversationDoc.ConnectionId), cancellationToken));
+                    : connectionIds.Any(id => id == conversationDoc.ConnectionId), cancellationToken);
         }
         catch (Exception ex)
         {
