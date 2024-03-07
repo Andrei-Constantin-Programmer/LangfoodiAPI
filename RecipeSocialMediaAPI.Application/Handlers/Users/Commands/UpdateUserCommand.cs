@@ -44,7 +44,10 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             request.Contract.Email ?? existingUser.Email,
             newPassword,
             request.Contract.ProfileImageId ?? existingUser.Account.ProfileImageId,
-            existingUser.Account.AccountCreationDate
+            existingUser.Account.AccountCreationDate,
+            existingUser.Account.PinnedConversationIds.ToList(),
+            existingUser.Account.BlockedConnectionIds.ToList(),
+            existingUser.Account.Role
         );
 
         bool isSuccessful = await _userPersistenceRepository.UpdateUserAsync(updatedUser, cancellationToken);

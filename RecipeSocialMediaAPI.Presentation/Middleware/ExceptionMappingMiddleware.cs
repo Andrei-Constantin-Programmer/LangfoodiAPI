@@ -55,6 +55,11 @@ public class ExceptionMappingMiddleware
             _logger.LogWarning(ex, "Attempted to send a message to a blocked connection");
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Cannot send message to blocked connection");
         }
+        catch (InvalidUserRoleException ex)
+        {
+            _logger.LogInformation(ex, "Attempted to change user role to role {InvalidRole}", ex.InvalidRole);
+            await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, $"Invalid user role {ex.InvalidRole}");
+        }
         catch (UserNotFoundException)
         {
             await HandleExceptionAsync(context, StatusCodes.Status404NotFound, "User not found");
