@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Integration.Endpoints;
 
@@ -598,6 +600,105 @@ public class UserEndpointsTests : EndpointTestBase
 
         // When
         var result = await _client.PostAsync($"user/get-unconnected/?containedString={containedString}&userId={user1.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task ChangeRole_WhenUserDoesExist_ChangeRole()
+    {
+        // Given
+        var admin = await _fakeUserRepository
+            .CreateUserAsync($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), UserRole.Admin);
+
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle_2", "UserName 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), UserRole.User);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(admin);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PutAsync($"user/change-role?userId={user.Account.Id}&newRole=Developer", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))?.Account.Role.Should().Be(UserRole.Developer);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task ChangeRole_WhenRoleIsInvalid_ReturnsBadRequest()
+    {
+        // Given
+        var admin = await _fakeUserRepository
+            .CreateUserAsync($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), UserRole.Admin);
+
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle_2", "UserName 2", "email2@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), UserRole.User);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(admin);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PutAsync($"user/change-role?userId={user.Account.Id}&newRole=BadRole", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task ChangeRole_WhenUserDoesNotExist_ReturnsNotFound()
+    {
+        // Given
+        var admin = await _fakeUserRepository
+            .CreateUserAsync($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), UserRole.Admin);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(admin);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PutAsync($"user/change-role?userId=u1&newRole=role", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    [InlineData(UserRole.Developer)]
+    [InlineData(UserRole.User)]
+    public async Task ChangeRole_WhenNonAdminTokenIsUsed_ReturnsForbidden(UserRole role)
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync($"handle", "UserName 1", "email1@mail.com", _fakeCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PutAsync($"user/change-role?userId=1&newRole={role}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task ChangeRole_WhenNoTokenIsUsed_ReturnsUnauthorised()
+    {
+        // Given
+
+        // When
+        var result = await _client.PutAsync($"user/change-role?userId=1&newRole=role", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

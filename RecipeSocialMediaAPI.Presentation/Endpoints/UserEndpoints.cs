@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
+using RecipeSocialMediaAPI.Application.Identity;
 using RecipeSocialMediaAPI.Application.Utilities;
 
 namespace RecipeSocialMediaAPI.Presentation.Endpoints;
@@ -144,6 +145,17 @@ public static class UserEndpoints
             return Results.Ok(await sender.Send(new GetPinnedConversationsQuery(userId), cancellationToken));
         })
             .RequireAuthorization();
+
+        group.MapPut("/change-role", async(
+            [FromQuery] string userId,
+            [FromQuery] string newRole,
+            CancellationToken cancellationToken,
+            [FromServices] ISender sender) =>
+        {
+            await sender.Send(new ChangeUserRoleCommand(userId, newRole), cancellationToken);
+            return Results.Ok();
+        })
+            .RequireAuthorization(IdentityData.AdminUserPolicyName);
 
         return group;
     }
