@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Presentation.Tests.Integration.IntegrationHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -544,5 +545,100 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    [InlineData(UserRole.Developer)]
+    [InlineData(UserRole.Admin)]
+    public async Task DeleteConnection_WhenConnectionExists_DeletesConnectionAndReturnsOk(UserRole userRole)
+    {
+        // Given
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), userRole);
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.DeleteAsync($"connection/delete?connectionId={connection.ConnectionId}");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        (await _fakeConnectionRepository.GetConnectionAsync(connection.ConnectionId)).Should().BeNull();
+    }
+
+    [Theory]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    [InlineData(UserRole.Developer)]
+    [InlineData(UserRole.Admin)]
+    public async Task DeleteConnection_WhenConnectionDoesNotExist_ReturnsOk(UserRole userRole)
+    {
+        // Given
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), userRole);
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        var connection = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.DeleteAsync($"connection/delete?connectionId=connId");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        (await _fakeConnectionRepository.GetConnectionAsync(connection.ConnectionId)).Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task DeleteConnection_WhenNoTokenIsUsed_ReturnUnauthorised()
+    {
+        // Given
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        // When
+        var result = await _client.DeleteAsync($"connection/delete?connectionId=connId");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task DeleteConnection_WhenNonDeveloperTokenIsUsed_ReturnForbidden()
+    {
+        // Given
+        var user1 = await _fakeUserRepository
+            .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakeCryptoService.Encrypt(_testUser2.Password), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero));
+        _ = await _fakeConnectionRepository
+            .CreateConnectionAsync(user1.Account, user2.Account, ConnectionStatus.Pending);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user1);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.DeleteAsync($"connection/delete?connectionId=connId");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }
