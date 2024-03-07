@@ -17,6 +17,7 @@ public class UserValidationTests
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
     [InlineData("handler")]
+    [InlineData("handler_1")]
     [InlineData("handler123")]
     public void ValidHandle_WhenValidHandler_ReturnsTrue(string handler)
     {
@@ -34,6 +35,8 @@ public class UserValidationTests
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
     [InlineData("h1")]
     [InlineData("12")]
+    [InlineData("Handle")]
+    [InlineData("handle 1")]
     public void ValidHandler_WhenInvalidHandler_ReturnsFalse(string handler)
     {
         // Given

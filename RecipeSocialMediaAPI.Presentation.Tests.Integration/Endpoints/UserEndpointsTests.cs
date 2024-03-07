@@ -23,7 +23,7 @@ public class UserEndpointsTests : EndpointTestBase
     public async Task UserCreate_WhenValidUser_ReturnUserWithId()
     {
         // Given
-        NewUserContract contract = new("TestHandler", "TestUsername", "test@mail.com", "Test@123");
+        NewUserContract contract = new("test_handle", "TestUsername", "test@mail.com", "Test@123");
 
         // When
         var result = await _client.PostAsJsonAsync("user/create", contract);
