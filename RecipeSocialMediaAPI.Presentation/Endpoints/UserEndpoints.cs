@@ -96,43 +96,47 @@ public static class UserEndpoints
             return Results.Ok(await sender.Send(new CheckEmailExistsQuery(email), cancellationToken));
         });
 
-        group.MapPost("/pin", (
+        group.MapPost("/pin", async (
             [FromQuery] string userId,
             [FromQuery] string conversationId,
             CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(sender.Send(new PinConversationCommand(userId, conversationId), cancellationToken));
+            await sender.Send(new PinConversationCommand(userId, conversationId), cancellationToken);
+            return Results.Ok();
         })
             .RequireAuthorization();
 
-        group.MapPost("/unpin", (
+        group.MapPost("/unpin", async (
             [FromQuery] string userId,
             [FromQuery] string conversationId,
             CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(sender.Send(new UnpinConversationCommand(userId, conversationId), cancellationToken));
+            await sender.Send(new UnpinConversationCommand(userId, conversationId), cancellationToken);
+            return Results.Ok();
         })
             .RequireAuthorization();
 
-        group.MapPost("/block", (
+        group.MapPost("/block", async (
             [FromQuery] string userId,
             [FromQuery] string connectionId,
             CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(sender.Send(new BlockConnectionCommand(userId, connectionId), cancellationToken));
+            await sender.Send(new BlockConnectionCommand(userId, connectionId), cancellationToken);
+            return Results.Ok();
         })
             .RequireAuthorization();
 
-        group.MapPost("/unblock", (
+        group.MapPost("/unblock", async (
             [FromQuery] string userId,
             [FromQuery] string connectionId,
             CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {
-            return Results.Ok(sender.Send(new UnblockConnectionCommand(userId, connectionId), cancellationToken));
+            await sender.Send(new UnblockConnectionCommand(userId, connectionId), cancellationToken);
+            return Results.Ok();
         })
             .RequireAuthorization();
 
@@ -146,7 +150,7 @@ public static class UserEndpoints
         })
             .RequireAuthorization();
 
-        group.MapPut("/change-role", async(
+        group.MapPut("/change-role", async (
             [FromQuery] string userId,
             [FromQuery] string newRole,
             CancellationToken cancellationToken,
