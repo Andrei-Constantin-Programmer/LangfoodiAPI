@@ -556,6 +556,119 @@ public class ConversationQueryRepositoryTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task GetConversationsByUser_WhenConversationMapperThrows_ReturnMappedConversationsIgnoringFailingConversation()
+    {
+        // Given
+        TestUserAccount user1 = new()
+        {
+            Id = "u1",
+            Handler = "user1",
+            UserName = "User 1",
+        };
+        TestUserAccount user2 = new()
+        {
+            Id = "u2",
+            Handler = "user2",
+            UserName = "User 2",
+        };
+        TestUserAccount user3 = new()
+        {
+            Id = "u3",
+            Handler = "user3",
+            UserName = "User 3",
+        };
+        TestUserAccount user4 = new()
+        {
+            Id = "u4",
+            Handler = "user4",
+            UserName = "User 4",
+        };
+
+        List<Message> messages = new()
+        {
+            new TestMessage("m1", user1, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null),
+            new TestMessage("m2", user2, new(2024, 1, 1, 0, 15, 30, TimeSpan.Zero), null),
+            new TestMessage("m3", user3, new(2024, 1, 1, 0, 16, 20, TimeSpan.Zero), null),
+            new TestMessage("m4", user4, new(2024, 1, 1, 0, 18, 42, TimeSpan.Zero), null),
+            new TestMessage("m5", user3, new(2024, 1, 1, 1, 0, 11, TimeSpan.Zero), null),
+            new TestMessage("m6", user2, new(2024, 1, 1, 1, 12, 53, TimeSpan.Zero), null),
+        };
+
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessageAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string messageId, CancellationToken _) => messages.First(message => message.Id == messageId));
+
+        Connection connection1 = new("conn1", user1, user2, ConnectionStatus.Connected);
+        Connection connection2 = new("conn2", user1, user3, ConnectionStatus.Pending);
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnectionAsync(connection1.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connection1);
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnectionAsync(connection2.ConnectionId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(connection2);
+        _connectionQueryRepositoryMock
+            .Setup(repo => repo.GetConnectionsForUserAsync(user1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IConnection>() { connection1, connection2 });
+
+        Group group1 = new("g1", "Group 1", "Group Description", new List<IUserAccount>() { user1, user2, user3 });
+        Group group2 = new("g2", "Group 2", "Group Description", new List<IUserAccount>() { user1, user3, user4 });
+        _groupQueryRepositoryMock
+            .Setup(repo => repo.GetGroupByIdAsync(group1.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group1);
+        _groupQueryRepositoryMock
+            .Setup(repo => repo.GetGroupByIdAsync(group2.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group2);
+        _groupQueryRepositoryMock
+            .Setup(repo => repo.GetGroupsByUserAsync(user1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Group>() { group1, group2 });
+
+        ConnectionConversation conversation1 = new(connection1, "convo1", messages.GetRange(0, 2));
+        ConnectionConversation conversation2 = new(connection2, "convo2", messages.GetRange(2, 1));
+        GroupConversation conversation3 = new(group1, "convo3", messages.GetRange(3, 2));
+        GroupConversation conversation4 = new(group2, "convo4", messages.GetRange(4, 1));
+
+        ConversationDocument document1 = new(conversation1.Messages.Select(message => message.Id).ToList(), connection1.ConnectionId, null, conversation1.ConversationId);
+        ConversationDocument document2 = new(conversation2.Messages.Select(message => message.Id).ToList(), connection2.ConnectionId, null, conversation2.ConversationId);
+        ConversationDocument document3 = new(conversation3.Messages.Select(message => message.Id).ToList(), null, group1.GroupId, conversation3.ConversationId);
+        ConversationDocument document4 = new(conversation4.Messages.Select(message => message.Id).ToList(), null, group2.GroupId, conversation4.ConversationId);
+
+        _conversationCollectionMock
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<ConversationDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ConversationDocument>() { document1, document2, document3, document4 });
+
+        Exception testException = new("Test Exception");
+
+        _conversationDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConversationFromDocument(document1, connection1, null, It.Is<List<Message>>(messages => messages.SequenceEqual(conversation1.Messages))))
+            .Returns(conversation1);
+        _conversationDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConversationFromDocument(document2, connection2, null, It.Is<List<Message>>(messages => messages.SequenceEqual(conversation2.Messages))))
+            .Returns(conversation2);
+        _conversationDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConversationFromDocument(document3, null, group1, It.Is<List<Message>>(messages => messages.SequenceEqual(conversation3.Messages))))
+            .Returns(conversation3);
+        _conversationDocumentToModelMapperMock
+            .Setup(mapper => mapper.MapConversationFromDocument(document4, null, group2, It.Is<List<Message>>(messages => messages.SequenceEqual(conversation4.Messages))))
+            .Throws(testException);
+
+        // When
+        var result = await _conversationQueryRepositorySUT.GetConversationsByUserAsync(user1);
+
+        // Then
+        result.Should().BeEquivalentTo(new List<Conversation>() { conversation1, conversation2, conversation3 });
+        _loggerMock
+            .Verify(logger => logger.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
     public async Task GetConversationsByUser_WhenNoConversationsExist_ReturnEmptyList()
     {
         // Given

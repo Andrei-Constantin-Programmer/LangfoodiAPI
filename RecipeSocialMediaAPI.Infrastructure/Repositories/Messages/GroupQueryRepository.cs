@@ -44,9 +44,20 @@ public class GroupQueryRepository : IGroupQueryRepository
     {
         try
         {
-            return await Task.WhenAll((await _groupCollection
+            return (await Task.WhenAll((await _groupCollection
                 .GetAllAsync(groupDoc => groupDoc.UserIds.Contains(userAccount.Id), cancellationToken))
-                .Select(group => _mapper.MapGroupFromDocumentAsync(group, cancellationToken)));
+                .Select(async group => {
+                    try
+                    {
+                        return await _mapper.MapGroupFromDocumentAsync(group, cancellationToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "There was an error mapping group {GroupId}", group.Id);
+                        return null;
+                    }
+                })))
+                .OfType<Group>();
         }
         catch (Exception ex)
         {

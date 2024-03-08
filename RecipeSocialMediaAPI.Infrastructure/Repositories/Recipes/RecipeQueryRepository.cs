@@ -72,7 +72,19 @@ public class RecipeQueryRepository : IRecipeQueryRepository
             _logger.LogInformation(ex, "There was an error trying to get recipes for chef with id {ChefId}: {ErrorMessage}", chef.Id, ex.Message);
         }
 
-        return recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipe(recipeDoc, chef));
+        return recipes
+            .Select(recipeDoc => {
+                try
+                {
+                    return _mapper.MapRecipeDocumentToRecipe(recipeDoc, chef);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "There was an error trying to map recipe {RecipeId}", recipeDoc.Id);
+                    return null;
+                }
+            })
+            .OfType<Recipe>();
     }
 
     public async Task<IEnumerable<Recipe>> GetRecipesByChefIdAsync(string chefId, CancellationToken cancellationToken = default)

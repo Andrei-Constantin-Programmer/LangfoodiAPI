@@ -115,34 +115,43 @@ public class ConversationQueryRepository : IConversationQueryRepository
         try
         {
             var groupIds = (await _groupQueryRepository
-                .GetGroupsByUserAsync(userAccount, cancellationToken))
-                ?.Select(g => g.GroupId)
+                .GetGroupsByUserAsync(userAccount, cancellationToken))?
+                .Select(g => g.GroupId)
                 .ToList() ?? new List<string>();
 
             var connectionIds = (await _connectionQueryRepository
-                .GetConnectionsForUserAsync(userAccount, cancellationToken))
-                ?.Select(c => c.ConnectionId)
+                .GetConnectionsForUserAsync(userAccount, cancellationToken))?
+                .Select(c => c.ConnectionId)
                 .ToList() ?? new List<string>();
 
-            conversations = (await _conversationCollection
+            conversations = await _conversationCollection
                 .GetAllAsync(conversationDoc => conversationDoc.ConnectionId == null
                     ? groupIds.Any(id => id == conversationDoc.GroupId)
-                    : connectionIds.Any(id => id == conversationDoc.ConnectionId), cancellationToken));
+                    : connectionIds.Any(id => id == conversationDoc.ConnectionId), cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "There was an error trying to get the conversations for user with id {UserId}: {ErrorMessage}", userAccount.Id, ex.Message);
         }
 
-        return await Task.WhenAll(conversations
+        return (await Task.WhenAll(conversations
             .Select(async conversationDoc => 
             {
                 IConnection? connection = await GetConnectionAsync(conversationDoc, cancellationToken);
                 Group? group = await GetGroupAsync(conversationDoc);
                 List<Message> messages = await GetMessagesAsync(conversationDoc);
 
-                return _mapper.MapConversationFromDocument(conversationDoc, connection, group, messages);
-            }));
+                try
+                {
+                    return _mapper.MapConversationFromDocument(conversationDoc, connection, group, messages);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "There was an error mapping conversation {ConversationId}", conversationDoc.Id);
+                    return null;
+                }
+            })))
+            .OfType<Conversation>();
     }
 
     private async Task<List<Message>> GetMessagesAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default) 

@@ -20,10 +20,6 @@ public class UserQueryRepository : IUserQueryRepository
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
     }
 
-    public async Task<IEnumerable<IUserCredentials>> GetAllUsersAsync(CancellationToken cancellationToken = default) => (await _userCollection
-        .GetAllAsync((_) => true, cancellationToken))
-        .Select(_mapper.MapUserDocumentToUser);
-
     public async Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         UserDocument? userDocument;
@@ -103,10 +99,21 @@ public class UserQueryRepository : IUserQueryRepository
             : _mapper.MapUserDocumentToUser(userDocument);
     }
 
-    public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default) 
+    public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default)
         => (await _userCollection
             .GetAllAsync(userDoc => userDoc.Handler.Contains(containedString.ToLower())
-                                 || userDoc.UserName.Contains(containedString.ToLower()), 
+                                 || userDoc.UserName.Contains(containedString.ToLower()),
                         cancellationToken))
-            .Select(userDoc => _mapper.MapUserDocumentToUser(userDoc).Account);
+            .Select(userDoc => {
+                try
+                {
+                    return _mapper.MapUserDocumentToUser(userDoc).Account;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "There was an error trying to map user {UserId}", userDoc.Id);
+                    return null;
+                }
+            })
+        .OfType<IUserAccount>();
 }

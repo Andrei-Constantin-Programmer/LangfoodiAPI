@@ -75,6 +75,17 @@ public class ConnectionQueryRepository : IConnectionQueryRepository
         }
 
         return (await Task.WhenAll(connections
-            .Select(async connection => await _mapper.MapConnectionFromDocumentAsync(connection, cancellationToken))));
+            .Select(async connection => {
+                try
+                {
+                    return await _mapper.MapConnectionFromDocumentAsync(connection, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "There was an error mapping connection {ConnectionId}", connection.Id);
+                    return null;
+                }
+            })))
+            .OfType<IConnection>();
     }
 }

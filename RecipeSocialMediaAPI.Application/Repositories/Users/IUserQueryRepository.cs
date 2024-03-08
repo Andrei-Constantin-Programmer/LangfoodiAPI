@@ -4,7 +4,6 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Users;
 
 public interface IUserQueryRepository
 {
-    Task<IEnumerable<IUserCredentials>> GetAllUsersAsync(CancellationToken cancellationToken = default);
     Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default);
     Task<IUserCredentials?> GetUserByHandlerAsync(string handler, CancellationToken cancellationToken = default);
     Task<IUserCredentials?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);

@@ -60,13 +60,25 @@ public class MessageQueryRepository : IMessageQueryRepository
             => messageDoc.MessageContent.RecipeIds != null 
             && messageDoc.MessageContent.RecipeIds.Contains(recipeId), cancellationToken);
         
-        return await Task.WhenAll(messageDocuments
-            .Select(async messageDoc => await _mapper.MapMessageFromDocumentAsync(
-                messageDoc, 
-                await GetSenderAsync(messageDoc.SenderId, messageDoc.Id, cancellationToken) 
-                    ?? throw new UserDocumentNotFoundException(messageDoc.SenderId), 
-                await GetRepliedToMessageAsync(messageDoc, cancellationToken), 
-                cancellationToken)));
+        return (await Task.WhenAll(messageDocuments
+            .Select(async messageDoc => {
+                try
+                {
+                    return await _mapper.MapMessageFromDocumentAsync(
+                        messageDoc,
+                        await GetSenderAsync(messageDoc.SenderId, messageDoc.Id, cancellationToken)
+                            ?? throw new UserDocumentNotFoundException(messageDoc.SenderId),
+                        await GetRepliedToMessageAsync(messageDoc, cancellationToken),
+                        cancellationToken
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "There was an error mapping message {MessageId}", messageDoc.Id);
+                    return null;
+                }
+            })))
+            .OfType<Message>();
     }
 
     private async Task<IUserAccount?> GetSenderAsync(string senderId, string? messageId, CancellationToken cancellationToken = default)
