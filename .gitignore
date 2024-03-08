@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # .idea folder
 /.idea
+
+# Draw.io Backups
+*.drawio.bkp
