@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-03-08T22:24:48.247Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.0.2 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="8AS--U_kqkHgA1-dH5Dd" version="23.0.2" type="device">
+<mxfile host="Electron" modified="2024-03-08T22:39:01.009Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="Iq4oigPlLIQLwla9L3fy" version="23.1.5" type="device">
   <diagram name="Page-1" id="9HRrxLPhDUyKfn-ots-8">
-    <mxGraphModel dx="1430" dy="830" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2074" dy="1204" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -74,15 +74,15 @@
             <mxPoint y="-1" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Ig1RWeTN0T5HhgGichei-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="g0PsKwAOe1t_g35rT8We-8" target="g0PsKwAOe1t_g35rT8We-16">
+        <mxCell id="Ig1RWeTN0T5HhgGichei-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;dashPattern=8 8;" parent="1" source="g0PsKwAOe1t_g35rT8We-8" target="g0PsKwAOe1t_g35rT8We-16" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="Ig1RWeTN0T5HhgGichei-3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Delete images from&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Ig1RWeTN0T5HhgGichei-1">
+        <mxCell id="Ig1RWeTN0T5HhgGichei-3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Delete images from&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="Ig1RWeTN0T5HhgGichei-1" vertex="1" connectable="0">
           <mxGeometry x="-0.4092" y="2" relative="1" as="geometry">
             <mxPoint x="-34" y="2" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Ig1RWeTN0T5HhgGichei-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.136;entryY=-0.016;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.138;exitY=0.987;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="g0PsKwAOe1t_g35rT8We-4" target="g0PsKwAOe1t_g35rT8We-8">
+        <mxCell id="Ig1RWeTN0T5HhgGichei-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.136;entryY=-0.016;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.138;exitY=0.987;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="g0PsKwAOe1t_g35rT8We-4" target="g0PsKwAOe1t_g35rT8We-8" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="720" y="510" as="sourcePoint" />
             <mxPoint x="730" y="520" as="targetPoint" />
@@ -92,7 +92,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="Ig1RWeTN0T5HhgGichei-8" value="Connect to SignalR Hub&lt;br&gt;[WebSockets]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" vertex="1" connectable="0" parent="Ig1RWeTN0T5HhgGichei-7">
+        <mxCell id="Ig1RWeTN0T5HhgGichei-8" value="Connect to SignalR Hub&lt;br&gt;[WebSockets]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" parent="Ig1RWeTN0T5HhgGichei-7" vertex="1" connectable="0">
           <mxGeometry x="0.5067" y="1" relative="1" as="geometry">
             <mxPoint x="-1" y="-20" as="offset" />
           </mxGeometry>
