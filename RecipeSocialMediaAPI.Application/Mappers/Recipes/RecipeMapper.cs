@@ -44,54 +44,54 @@ public class RecipeMapper : IRecipeMapper
         return new RecipeStepDTO(recipeStep.Text, recipeStep.Image?.ImageUrl);
     }
 
-    public RecipeDetailedDTO MapRecipeAggregateToRecipeDetailedDto(Recipe recipeAggregate)
+    public RecipeDetailedDTO MapRecipeToRecipeDetailedDto(Recipe recipe)
     {
         return new RecipeDetailedDTO(
-            Id: recipeAggregate.Id,
-            Title: recipeAggregate.Title,
-            Description: recipeAggregate.Description,
-            Chef: _userMapper.MapUserAccountToUserAccountDto(recipeAggregate.Chef),
-            Tags: recipeAggregate.Tags,
-            Ingredients: recipeAggregate.Guide.Ingredients
+            Id: recipe.Id,
+            Title: recipe.Title,
+            Description: recipe.Description,
+            Chef: _userMapper.MapUserAccountToUserAccountDto(recipe.Chef),
+            Tags: recipe.Tags,
+            Ingredients: recipe.Guide.Ingredients
                 .Select(MapIngredientToIngredientDto)
                 .ToList(),
-            RecipeSteps: new Stack<RecipeStepDTO>(recipeAggregate.Guide.Steps
+            RecipeSteps: new Stack<RecipeStepDTO>(recipe.Guide.Steps
                 .Select(MapRecipeStepToRecipeStepDto)),
-            KiloCalories: recipeAggregate.Guide.KiloCalories,
-            NumberOfServings: recipeAggregate.Guide.NumberOfServings,
-            CookingTime: recipeAggregate.Guide.CookingTimeInSeconds,
-            CreationDate: recipeAggregate.CreationDate,
-            LastUpdatedDate: recipeAggregate.LastUpdatedDate,
-            ThumbnailId: recipeAggregate.ThumbnailId,
-            ServingSize: recipeAggregate.Guide.ServingSize is not null
-                ? MapServingSizeToServingSizeDto(recipeAggregate.Guide.ServingSize)
+            KiloCalories: recipe.Guide.KiloCalories,
+            NumberOfServings: recipe.Guide.NumberOfServings,
+            CookingTime: recipe.Guide.CookingTimeInSeconds,
+            CreationDate: recipe.CreationDate,
+            LastUpdatedDate: recipe.LastUpdatedDate,
+            ThumbnailId: recipe.ThumbnailId,
+            ServingSize: recipe.Guide.ServingSize is not null
+                ? MapServingSizeToServingSizeDto(recipe.Guide.ServingSize)
                 : null
         );
     }
 
-    public RecipeDTO MapRecipeAggregateToRecipeDto(Recipe recipeAggregate)
+    public RecipeDTO MapRecipeToRecipeDto(Recipe recipe)
     {
         return new RecipeDTO(
-            Id: recipeAggregate.Id,
-            Title: recipeAggregate.Title,
-            Description: recipeAggregate.Description,
-            ChefUsername: recipeAggregate.Chef.UserName,
-            Tags: recipeAggregate.Tags,
-            KiloCalories: recipeAggregate.Guide.KiloCalories,
-            NumberOfServings: recipeAggregate.Guide.NumberOfServings,
-            CookingTime: recipeAggregate.Guide.CookingTimeInSeconds,
-            CreationDate: recipeAggregate.CreationDate,
-            LastUpdatedDate: recipeAggregate.LastUpdatedDate,
-            ThumbnailId: recipeAggregate.ThumbnailId
+            Id: recipe.Id,
+            Title: recipe.Title,
+            Description: recipe.Description,
+            ChefUsername: recipe.Chef.UserName,
+            Tags: recipe.Tags,
+            KiloCalories: recipe.Guide.KiloCalories,
+            NumberOfServings: recipe.Guide.NumberOfServings,
+            CookingTime: recipe.Guide.CookingTimeInSeconds,
+            CreationDate: recipe.CreationDate,
+            LastUpdatedDate: recipe.LastUpdatedDate,
+            ThumbnailId: recipe.ThumbnailId
         );
     }
 
-    public RecipePreviewDTO MapRecipeAggregateToRecipePreviewDto(Recipe recipeAggregate)
+    public RecipePreviewDTO MapRecipeToRecipePreviewDto(Recipe recipe)
     {
         return new RecipePreviewDTO(
-            recipeAggregate.Id,
-            recipeAggregate.Title,
-            recipeAggregate.ThumbnailId
+            recipe.Id,
+            recipe.Title,
+            recipe.ThumbnailId
         );
     }
 }

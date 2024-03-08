@@ -185,12 +185,12 @@ public class MessageMapperTests
         );
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(testMessage.Recipes[0]))
+            .Setup(mapper => mapper.MapRecipeToRecipePreviewDto(testMessage.Recipes[0]))
             .Returns(expectedResult.Recipes![0]);
 
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(testMessage.Recipes[1]))
+            .Setup(mapper => mapper.MapRecipeToRecipePreviewDto(testMessage.Recipes[1]))
             .Returns(expectedResult.Recipes[1]);
 
         _userMapperMock
@@ -446,12 +446,12 @@ public class MessageMapperTests
         );
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe1))
+            .Setup(mapper => mapper.MapRecipeToRecipeDto(recipe1))
             .Returns(recipes[0]);
 
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe2))
+            .Setup(mapper => mapper.MapRecipeToRecipeDto(recipe2))
             .Returns(recipes[1]);
 
 

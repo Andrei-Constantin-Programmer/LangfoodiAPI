@@ -121,7 +121,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(testDocument, testChef.Account))
             .Returns(testRecipe);
 
         // When
@@ -179,7 +179,7 @@ public class RecipeQueryRepositoryTests
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(testDocument, testChef))
             .Returns(testRecipe);
 
         // When
@@ -252,7 +252,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(testDocument, testChef.Account))
             .Returns(testRecipe);
 
         // When
@@ -309,7 +309,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -361,7 +361,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -408,7 +408,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -463,7 +463,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -531,7 +531,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(x => x == chefUsername), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -578,7 +578,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -616,7 +616,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -675,7 +675,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(x => x == chefUsername), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -709,7 +709,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -757,7 +757,7 @@ public class RecipeQueryRepositoryTests
 
         _recipeCollectionMock.Setup(collection => collection.GetAllAsync(It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RecipeDocument>() { chefsRecipe });
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef))
             .Returns(expectedResult);
 
         // When
@@ -794,7 +794,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -841,7 +841,7 @@ public class RecipeQueryRepositoryTests
             .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef))
             .Returns(expectedResult);
 
         // When

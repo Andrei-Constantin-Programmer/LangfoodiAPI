@@ -37,7 +37,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
                 ServingSize: recipe.ServingSize is not null ? (recipe.ServingSize.Quantity, recipe.ServingSize.UnitOfMeasurement) : null
             ), cancellationToken);
 
-        return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
+        return _mapper.MapRecipeDocumentToRecipe(recipeDocument, chef);
     }
 
     public async Task<bool> UpdateRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default) => await 

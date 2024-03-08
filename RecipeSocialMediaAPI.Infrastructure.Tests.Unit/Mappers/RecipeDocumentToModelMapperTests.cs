@@ -19,7 +19,7 @@ public class RecipeDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public void MapRecipeDocumentToRecipeAggregate_WhenIdIsNull_ThrowArgumentException()
+    public void MapRecipeDocumentToRecipe_WhenIdIsNull_ThrowArgumentException()
     {
         // Given
         RecipeDocument testDocument = new(
@@ -44,7 +44,7 @@ public class RecipeDocumentToModelMapperTests
         };
 
         // When
-        var testAction = () => _recipeDocumentToModelMapperSUT.MapRecipeDocumentToRecipeAggregate(testDocument, testSender);
+        var testAction = () => _recipeDocumentToModelMapperSUT.MapRecipeDocumentToRecipe(testDocument, testSender);
 
         // Then
         testAction.Should().Throw<ArgumentException>();
@@ -53,7 +53,7 @@ public class RecipeDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public void MapRecipeDocumentToRecipeAggregate_WhenDocumentIsValid_ReturnMappedRecipeModel()
+    public void MapRecipeDocumentToRecipe_WhenDocumentIsValid_ReturnMappedRecipeModel()
     {
         // Given
         RecipeDocument testDocument = new(
@@ -106,7 +106,7 @@ public class RecipeDocumentToModelMapperTests
         };
 
         // When
-        var result= _recipeDocumentToModelMapperSUT.MapRecipeDocumentToRecipeAggregate(testDocument, testSender);
+        var result= _recipeDocumentToModelMapperSUT.MapRecipeDocumentToRecipe(testDocument, testSender);
 
         // Then
         result.Id.Should().Be(testDocument.Id);

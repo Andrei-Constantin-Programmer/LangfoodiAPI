@@ -62,7 +62,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
             cancellationToken
         );
 
-        return _mapper.MapRecipeAggregateToRecipeDetailedDto(insertedRecipe);
+        return _mapper.MapRecipeToRecipeDetailedDto(insertedRecipe);
     }
 }
 

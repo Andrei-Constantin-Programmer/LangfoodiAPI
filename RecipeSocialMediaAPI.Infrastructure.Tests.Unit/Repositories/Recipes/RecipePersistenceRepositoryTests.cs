@@ -84,7 +84,7 @@ public class RecipePersistenceRepositoryTests
             .ReturnsAsync(newRecipeDocument);
 
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(newRecipeDocument, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(newRecipeDocument, testChef))
             .Returns(expectedResult);
 
         // When

@@ -41,7 +41,7 @@ public class GetRecipesFromUserHandlerTests
         // Then
         result.Should().BeEmpty();
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDto(It.IsAny<Recipe>()), Times.Never);
+            .Verify(mapper => mapper.MapRecipeToRecipeDto(It.IsAny<Recipe>()), Times.Never);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class GetRecipesFromUserHandlerTests
     {
         // Given
         string chefUsername = "user1";
-        Recipe testRecipeAggregate = new(
+        Recipe testRecipe = new(
             "1",
             "test title",
             new(new(), new()),
@@ -68,19 +68,19 @@ public class GetRecipesFromUserHandlerTests
         );
 
         RecipeDTO expectedResult = new(
-            Id: testRecipeAggregate.Id,
-            Title: testRecipeAggregate.Title,
-            Tags: testRecipeAggregate.Tags,
-            Description: testRecipeAggregate.Description,
-            ChefUsername: testRecipeAggregate.Chef.UserName,
-            CreationDate: testRecipeAggregate.CreationDate
+            Id: testRecipe.Id,
+            Title: testRecipe.Title,
+            Tags: testRecipe.Tags,
+            Description: testRecipe.Description,
+            ChefUsername: testRecipe.Chef.UserName,
+            CreationDate: testRecipe.CreationDate
         );
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipesByChefNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Recipe> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
+            .ReturnsAsync(new List<Recipe> { testRecipe, testRecipe, testRecipe });
         _recipeMapperMock
-            .Setup(x => x.MapRecipeAggregateToRecipeDto(It.IsAny<Recipe>()))
+            .Setup(x => x.MapRecipeToRecipeDto(It.IsAny<Recipe>()))
             .Returns(expectedResult);
 
         // When
@@ -91,6 +91,6 @@ public class GetRecipesFromUserHandlerTests
         var first = result.First();
         first.Should().Be(expectedResult);
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDto(It.IsAny<Recipe>()), Times.AtLeast(3));
+            .Verify(mapper => mapper.MapRecipeToRecipeDto(It.IsAny<Recipe>()), Times.AtLeast(3));
     }
 }

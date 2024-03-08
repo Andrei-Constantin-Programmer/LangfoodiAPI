@@ -51,7 +51,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
             return null;
         }
 
-        return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
+        return _mapper.MapRecipeDocumentToRecipe(recipeDocument, chef);
     }
 
     public async Task<IEnumerable<Recipe>> GetRecipesByChefAsync(IUserAccount? chef, CancellationToken cancellationToken = default)
@@ -72,7 +72,7 @@ public class RecipeQueryRepository : IRecipeQueryRepository
             _logger.LogInformation(ex, "There was an error trying to get recipes for chef with id {ChefId}: {ErrorMessage}", chef.Id, ex.Message);
         }
 
-        return recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipeAggregate(recipeDoc, chef));
+        return recipes.Select(recipeDoc => _mapper.MapRecipeDocumentToRecipe(recipeDoc, chef));
     }
 
     public async Task<IEnumerable<Recipe>> GetRecipesByChefIdAsync(string chefId, CancellationToken cancellationToken = default)

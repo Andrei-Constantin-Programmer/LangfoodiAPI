@@ -70,7 +70,7 @@ public class AddRecipeHandlerTests
             .WithMessage($"No user found with id {testContract.ChefId}");
 
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Never);
+            .Verify(mapper => mapper.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Never);
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class AddRecipeHandlerTests
             .Returns((RecipeStepDTO step) => new RecipeStep(step.Text, new RecipeImage(step.ImageUrl!)));
 
         _recipeMapperMock
-            .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<Recipe>()))
+            .Setup(x => x.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()))
             .Returns((Recipe recipe) => new RecipeDetailedDTO(
                 Id: "1", 
                 Title: recipe.Title, 
@@ -187,6 +187,6 @@ public class AddRecipeHandlerTests
         result.ThumbnailId.Should().Be("img_id_1");
 
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Once);
+            .Verify(mapper => mapper.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Once);
     }
 }
