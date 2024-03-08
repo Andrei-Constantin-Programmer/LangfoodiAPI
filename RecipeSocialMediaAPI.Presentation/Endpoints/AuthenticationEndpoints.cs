@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Authentication;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 
 namespace RecipeSocialMediaAPI.Presentation.Endpoints;
@@ -27,7 +28,12 @@ public static class AuthenticationEndpoints
                 .Send(new AuthenticateUserQuery(authenticationAttempt.Email, authenticationAttempt.Password), cancellationToken);
 
             return Results.Ok(successfulAuthentication);
-        });
+        })
+            .WithDescription("Authenticates user. If successful, returns the user and a bearer token.")
+            .Produces<SuccessfulAuthenticationDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         return group;
     }

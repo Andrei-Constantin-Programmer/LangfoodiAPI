@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 using RecipeSocialMediaAPI.Application.Handlers.Images.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Images.Queries;
 
@@ -24,7 +25,11 @@ public static class ImageEndpoints
         {
             return Results.Ok(await sender.Send(new GetCloudinarySignatureQuery(), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Generates a Cloudinary signature.")
+            .Produces<CloudinarySignatureDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapDelete("/single-delete", async (
             [FromQuery] string publicId,
@@ -34,7 +39,11 @@ public static class ImageEndpoints
             await sender.Send(new RemoveImageCommand(publicId), cancellationToken);
             return Results.Ok();
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Deletes an image by its Cloudinary id.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapDelete("/bulk-delete", async (
             [FromQuery] string[] publicIds,
@@ -44,7 +53,11 @@ public static class ImageEndpoints
             await sender.Send(new RemoveMultipleImagesCommand(publicIds.ToList()), cancellationToken);
             return Results.Ok();
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Deletes multiple images by their Cloudinary ids.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         return group;
     }
