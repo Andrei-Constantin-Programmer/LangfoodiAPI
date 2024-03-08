@@ -194,7 +194,7 @@ public class MessageDocumentToModelMapperTests
             .Setup(repo => repo.GetUserByIdAsync(testSender.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new TestUserCredentials() { Account = testSender, Email = "test@mail.com", Password = "Test@123" });
 
-        List<RecipeAggregate> recipes = new()
+        List<Recipe> recipes = new()
         {
             new(
                 recipeIds[0],
@@ -337,7 +337,7 @@ public class MessageDocumentToModelMapperTests
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
 
-        List<RecipeAggregate> recipes = new() { };
+        List<Recipe> recipes = new() { };
 
         TestRecipeMessage recipeMessage = new(
             testDocument.Id!,
@@ -392,7 +392,7 @@ public class MessageDocumentToModelMapperTests
             AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
         };
 
-        List<RecipeAggregate> recipes = new()
+        List<Recipe> recipes = new()
         {
             new(
                 recipeIds[0],

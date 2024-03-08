@@ -18,7 +18,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
     }
 
-    public async Task<RecipeAggregate> CreateRecipeAsync(string title, Recipe recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
+    public async Task<Recipe> CreateRecipeAsync(string title, RecipeGuide recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
     {
         var recipeDocument = await _recipeCollection
             .InsertAsync(new RecipeDocument(
@@ -40,28 +40,28 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         return _mapper.MapRecipeDocumentToRecipeAggregate(recipeDocument, chef);
     }
 
-    public async Task<bool> UpdateRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default) => await 
+    public async Task<bool> UpdateRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default) => await 
         _recipeCollection.UpdateAsync(
             new RecipeDocument(
                 Id: recipe.Id,
                 Title: recipe.Title,
-                Ingredients: recipe.Recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
-                Steps: recipe.Recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
+                Ingredients: recipe.Guide.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
+                Steps: recipe.Guide.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
                 Description: recipe.Description,
                 ChefId: recipe.Chef.Id,
                 ThumbnailId: recipe.ThumbnailId,
-                NumberOfServings: recipe.Recipe.NumberOfServings,
-                CookingTimeInSeconds: recipe.Recipe.CookingTimeInSeconds,
-                KiloCalories: recipe.Recipe.KiloCalories,
+                NumberOfServings: recipe.Guide.NumberOfServings,
+                CookingTimeInSeconds: recipe.Guide.CookingTimeInSeconds,
+                KiloCalories: recipe.Guide.KiloCalories,
                 CreationDate: recipe.CreationDate,
                 LastUpdatedDate: recipe.LastUpdatedDate,
                 Tags: recipe.Tags.ToList(),
-                ServingSize: recipe.Recipe.ServingSize is not null ? (recipe.Recipe.ServingSize.Quantity, recipe.Recipe.ServingSize.UnitOfMeasurement) : null),
+                ServingSize: recipe.Guide.ServingSize is not null ? (recipe.Guide.ServingSize.Quantity, recipe.Guide.ServingSize.UnitOfMeasurement) : null),
             doc => doc.Id == recipe.Id,
             cancellationToken
         );
 
-    public async Task<bool> DeleteRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default) 
         => await DeleteRecipeAsync(recipe.Id, cancellationToken);
 
     public async Task<bool> DeleteRecipeAsync(string id, CancellationToken cancellationToken = default) 

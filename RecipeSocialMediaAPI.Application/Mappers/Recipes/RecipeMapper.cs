@@ -44,7 +44,7 @@ public class RecipeMapper : IRecipeMapper
         return new RecipeStepDTO(recipeStep.Text, recipeStep.Image?.ImageUrl);
     }
 
-    public RecipeDetailedDTO MapRecipeAggregateToRecipeDetailedDto(RecipeAggregate recipeAggregate)
+    public RecipeDetailedDTO MapRecipeAggregateToRecipeDetailedDto(Recipe recipeAggregate)
     {
         return new RecipeDetailedDTO(
             Id: recipeAggregate.Id,
@@ -52,24 +52,24 @@ public class RecipeMapper : IRecipeMapper
             Description: recipeAggregate.Description,
             Chef: _userMapper.MapUserAccountToUserAccountDto(recipeAggregate.Chef),
             Tags: recipeAggregate.Tags,
-            Ingredients: recipeAggregate.Recipe.Ingredients
+            Ingredients: recipeAggregate.Guide.Ingredients
                 .Select(MapIngredientToIngredientDto)
                 .ToList(),
-            RecipeSteps: new Stack<RecipeStepDTO>(recipeAggregate.Recipe.Steps
+            RecipeSteps: new Stack<RecipeStepDTO>(recipeAggregate.Guide.Steps
                 .Select(MapRecipeStepToRecipeStepDto)),
-            KiloCalories: recipeAggregate.Recipe.KiloCalories,
-            NumberOfServings: recipeAggregate.Recipe.NumberOfServings,
-            CookingTime: recipeAggregate.Recipe.CookingTimeInSeconds,
+            KiloCalories: recipeAggregate.Guide.KiloCalories,
+            NumberOfServings: recipeAggregate.Guide.NumberOfServings,
+            CookingTime: recipeAggregate.Guide.CookingTimeInSeconds,
             CreationDate: recipeAggregate.CreationDate,
             LastUpdatedDate: recipeAggregate.LastUpdatedDate,
             ThumbnailId: recipeAggregate.ThumbnailId,
-            ServingSize: recipeAggregate.Recipe.ServingSize is not null
-                ? MapServingSizeToServingSizeDto(recipeAggregate.Recipe.ServingSize)
+            ServingSize: recipeAggregate.Guide.ServingSize is not null
+                ? MapServingSizeToServingSizeDto(recipeAggregate.Guide.ServingSize)
                 : null
         );
     }
 
-    public RecipeDTO MapRecipeAggregateToRecipeDto(RecipeAggregate recipeAggregate)
+    public RecipeDTO MapRecipeAggregateToRecipeDto(Recipe recipeAggregate)
     {
         return new RecipeDTO(
             Id: recipeAggregate.Id,
@@ -77,16 +77,16 @@ public class RecipeMapper : IRecipeMapper
             Description: recipeAggregate.Description,
             ChefUsername: recipeAggregate.Chef.UserName,
             Tags: recipeAggregate.Tags,
-            KiloCalories: recipeAggregate.Recipe.KiloCalories,
-            NumberOfServings: recipeAggregate.Recipe.NumberOfServings,
-            CookingTime: recipeAggregate.Recipe.CookingTimeInSeconds,
+            KiloCalories: recipeAggregate.Guide.KiloCalories,
+            NumberOfServings: recipeAggregate.Guide.NumberOfServings,
+            CookingTime: recipeAggregate.Guide.CookingTimeInSeconds,
             CreationDate: recipeAggregate.CreationDate,
             LastUpdatedDate: recipeAggregate.LastUpdatedDate,
             ThumbnailId: recipeAggregate.ThumbnailId
         );
     }
 
-    public RecipePreviewDTO MapRecipeAggregateToRecipePreviewDto(RecipeAggregate recipeAggregate)
+    public RecipePreviewDTO MapRecipeAggregateToRecipePreviewDto(Recipe recipeAggregate)
     {
         return new RecipePreviewDTO(
             recipeAggregate.Id,

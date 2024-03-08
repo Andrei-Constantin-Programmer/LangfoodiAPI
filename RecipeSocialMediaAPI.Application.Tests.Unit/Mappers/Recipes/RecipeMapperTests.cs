@@ -150,10 +150,10 @@ public class RecipeMapperTests
             AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
             "1",
             "title",
-            new Recipe(new(), new(), 1),
+            new RecipeGuide(new(), new(), 1),
             "desc",
             testChef,
             _testDate,
@@ -185,10 +185,10 @@ public class RecipeMapperTests
             AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero),
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
             "1",
             "title",
-            new Recipe(new() {
+            new RecipeGuide(new() {
                 new Ingredient("eggs", 1, "whole") },
                 new(new[] { new RecipeStep("step1", new RecipeImage("url")) }),
                 1, null, null, new ServingSize(30, "kg")),
@@ -252,10 +252,10 @@ public class RecipeMapperTests
             AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
         };
         
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
             "1",
             "title",
-            new Recipe(new(), new(), 1),
+            new RecipeGuide(new(), new(), 1),
             "desc",
             testChef,
             _testDate,

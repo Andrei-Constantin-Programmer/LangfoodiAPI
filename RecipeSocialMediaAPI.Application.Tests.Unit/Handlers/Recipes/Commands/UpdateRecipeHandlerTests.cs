@@ -67,7 +67,7 @@ public class UpdateRecipeHandlerTests
             .WithMessage("The recipe with the id 1 was not found");
 
         _recipePersistenceRepositoryMock
-            .Verify(mapper => mapper.UpdateRecipeAsync(It.IsAny<RecipeAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
+            .Verify(mapper => mapper.UpdateRecipeAsync(It.IsAny<Recipe>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -88,10 +88,10 @@ public class UpdateRecipeHandlerTests
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new RecipeAggregate(
+            .ReturnsAsync(new Recipe(
                 testContract.Id, 
                 testContract.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testContract.Description, 
                 new TestUserAccount 
                 { 
@@ -107,7 +107,7 @@ public class UpdateRecipeHandlerTests
             ));
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.UpdateRecipeAsync(It.IsAny<RecipeAggregate>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.UpdateRecipeAsync(It.IsAny<Recipe>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // When
@@ -137,10 +137,10 @@ public class UpdateRecipeHandlerTests
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new RecipeAggregate(
+            .ReturnsAsync(new Recipe(
                 testContract.Id, 
                 testContract.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testContract.Description,
                 new TestUserAccount
                 {
@@ -156,7 +156,7 @@ public class UpdateRecipeHandlerTests
             ));
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.UpdateRecipeAsync(It.IsAny<RecipeAggregate>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.UpdateRecipeAsync(It.IsAny<Recipe>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // When

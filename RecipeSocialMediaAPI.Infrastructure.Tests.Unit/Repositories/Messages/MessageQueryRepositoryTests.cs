@@ -285,7 +285,7 @@ public class MessageQueryRepositoryTests
             Password = "testpass"
         };
 
-        List<RecipeAggregate> recipes = new()
+        List<Recipe> recipes = new()
         {
             new(
                 recipeIds[0], 
@@ -371,7 +371,7 @@ public class MessageQueryRepositoryTests
             Password = "testpass"
         };
 
-        List<RecipeAggregate> recipes = new()
+        List<Recipe> recipes = new()
         {
             new(
                 recipeIds[0],
@@ -623,7 +623,7 @@ public class MessageQueryRepositoryTests
             Password = "testpass"
         };
 
-        RecipeAggregate recipe = new(
+        Recipe recipe = new(
             "r1",
             "Recipe1",
             new(new(), new()),
@@ -671,7 +671,7 @@ public class MessageQueryRepositoryTests
             Password = "testpass"
         };
 
-        RecipeAggregate recipe = new(
+        Recipe recipe = new(
             "r1",
             "Recipe1",
             new(new(), new()),
@@ -692,7 +692,7 @@ public class MessageQueryRepositoryTests
         testDocument.Id!,
             testSender.Account,
             testDocument.MessageContent.Text!,
-            new List<RecipeAggregate>() { recipe },
+            new List<Recipe>() { recipe },
             testDocument.SentDate,
         null);
 
@@ -740,7 +740,7 @@ public class MessageQueryRepositoryTests
             Password = "testpass"
         };
 
-        RecipeAggregate recipe = new(
+        Recipe recipe = new(
             "r1",
             "Recipe1",
             new(new(), new()),
@@ -761,7 +761,7 @@ public class MessageQueryRepositoryTests
         testDocument.Id!,
             testSender.Account,
             testDocument.MessageContent.Text!,
-            new List<RecipeAggregate>() { recipe },
+            new List<Recipe>() { recipe },
             testDocument.SentDate,
         null);
 

@@ -30,21 +30,21 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
 
     public async Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate existingRecipe = (await _recipeQueryRepository.GetRecipeByIdAsync(request.Contract.Id, cancellationToken))
+        Recipe existingRecipe = (await _recipeQueryRepository.GetRecipeByIdAsync(request.Contract.Id, cancellationToken))
             ?? throw new RecipeNotFoundException(request.Contract.Id);
 
-        RecipeAggregate updatedRecipe = new(
+        Recipe updatedRecipe = new(
             existingRecipe.Id,
             request.Contract.Title,
-            new Recipe(
+            new RecipeGuide(
                 request.Contract.Ingredients
                     .Select(_mapper.MapIngredientDtoToIngredient)
                     .ToList(),
                 new Stack<RecipeStep>(request.Contract.RecipeSteps
                     .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
-                request.Contract.NumberOfServings ?? existingRecipe.Recipe.NumberOfServings,
-                request.Contract.CookingTime ?? existingRecipe.Recipe.CookingTimeInSeconds,
-                request.Contract.KiloCalories ?? existingRecipe.Recipe.KiloCalories,
+                request.Contract.NumberOfServings ?? existingRecipe.Guide.NumberOfServings,
+                request.Contract.CookingTime ?? existingRecipe.Guide.CookingTimeInSeconds,
+                request.Contract.KiloCalories ?? existingRecipe.Guide.KiloCalories,
                 request.Contract.ServingSize is not null
                     ? _mapper.MapServingSizeDtoToServingSize(request.Contract.ServingSize)
                     : null

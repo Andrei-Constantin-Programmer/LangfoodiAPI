@@ -6,5 +6,5 @@ namespace RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
 
 public interface IRecipeDocumentToModelMapper
 {
-    RecipeAggregate MapRecipeDocumentToRecipeAggregate(RecipeDocument recipeDocument, IUserAccount chef);
+    Recipe MapRecipeDocumentToRecipeAggregate(RecipeDocument recipeDocument, IUserAccount chef);
 }

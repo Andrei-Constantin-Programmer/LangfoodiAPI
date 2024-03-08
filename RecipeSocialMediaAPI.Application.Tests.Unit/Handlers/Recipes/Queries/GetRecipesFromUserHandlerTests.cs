@@ -41,7 +41,7 @@ public class GetRecipesFromUserHandlerTests
         // Then
         result.Should().BeEmpty();
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()), Times.Never);
+            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDto(It.IsAny<Recipe>()), Times.Never);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class GetRecipesFromUserHandlerTests
     {
         // Given
         string chefUsername = "user1";
-        RecipeAggregate testRecipeAggregate = new(
+        Recipe testRecipeAggregate = new(
             "1",
             "test title",
             new(new(), new()),
@@ -78,9 +78,9 @@ public class GetRecipesFromUserHandlerTests
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipesByChefNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<RecipeAggregate> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
+            .ReturnsAsync(new List<Recipe> { testRecipeAggregate, testRecipeAggregate, testRecipeAggregate });
         _recipeMapperMock
-            .Setup(x => x.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()))
+            .Setup(x => x.MapRecipeAggregateToRecipeDto(It.IsAny<Recipe>()))
             .Returns(expectedResult);
 
         // When
@@ -91,6 +91,6 @@ public class GetRecipesFromUserHandlerTests
         var first = result.First();
         first.Should().Be(expectedResult);
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDto(It.IsAny<RecipeAggregate>()), Times.AtLeast(3));
+            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDto(It.IsAny<Recipe>()), Times.AtLeast(3));
     }
 }

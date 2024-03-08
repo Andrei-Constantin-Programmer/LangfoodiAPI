@@ -100,10 +100,10 @@ public class RecipeQueryRepositoryTests
             Password = "TestPass"
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
                 id,
                 testDocument.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testDocument.Description,
                 testChef.Account,
                 testDocument.CreationDate,
@@ -161,10 +161,10 @@ public class RecipeQueryRepositoryTests
             AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
                 id,
                 testDocument.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testDocument.Description,
                 testChef,
                 testDocument.CreationDate,
@@ -232,10 +232,10 @@ public class RecipeQueryRepositoryTests
             Password = "TestPass"
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
                 id,
                 testDocument.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testDocument.Description,
                 testChef.Account,
                 testDocument.CreationDate,
@@ -346,10 +346,10 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef.Account,
             chefsRecipe.CreationDate,
@@ -445,10 +445,10 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef.Account,
             chefsRecipe.CreationDate,
@@ -516,10 +516,10 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef.Account,
             chefsRecipe.CreationDate,
@@ -655,10 +655,10 @@ public class RecipeQueryRepositoryTests
             ThumbnailId: "public_id_1"
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef.Account,
             chefsRecipe.CreationDate,
@@ -743,10 +743,10 @@ public class RecipeQueryRepositoryTests
             ThumbnailId: "public_id_1"
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef,
             chefsRecipe.CreationDate,
@@ -826,10 +826,10 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef,
             chefsRecipe.CreationDate,

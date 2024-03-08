@@ -47,7 +47,7 @@ public class RecipeTests
     public void IngredientsProperty_IsEqualToConstructorValue(List<Ingredient> testIngredients)
     {
         // Given
-        Recipe testRecipe = new(testIngredients, new());
+        RecipeGuide testRecipe = new(testIngredients, new());
 
         // When
         var ingredients = testRecipe.Ingredients;
@@ -63,7 +63,7 @@ public class RecipeTests
     public void StepsProperty_IsEqualToConstructorValue(Stack<RecipeStep> testSteps)
     {
         // Given
-        Recipe testRecipe = new(new(), testSteps);
+        RecipeGuide testRecipe = new(new(), testSteps);
 
         // When
         var steps = testRecipe.Steps;
@@ -82,7 +82,7 @@ public class RecipeTests
         Ingredient newIngredient = new("New ingredient", 3, "L");
 
         List<Ingredient> testIngredients = new() { existingIngredient };
-        Recipe testRecipe = new(testIngredients, new());
+        RecipeGuide testRecipe = new(testIngredients, new());
 
         var ingredientsBeforeAddition = testRecipe.Ingredients;
 
@@ -107,7 +107,7 @@ public class RecipeTests
 
         Stack<RecipeStep> testSteps = new();
         testSteps.Push(existingStep);
-        Recipe testRecipe = new(new(), testSteps);
+        RecipeGuide testRecipe = new(new(), testSteps);
 
         var stepsBeforeAddition = testRecipe.Steps;
 
@@ -138,7 +138,7 @@ public class RecipeTests
             existingSteps.Push(new($"Step {i}"));
         }
 
-        Recipe testRecipe = new(new(), existingSteps);
+        RecipeGuide testRecipe = new(new(), existingSteps);
 
         // When
         testRecipe.RemoveSteps(numberOfStepsToRemove);
@@ -159,7 +159,7 @@ public class RecipeTests
     public void RemoveSteps_WhenNumberOfStepsIsZeroOrNegative_ThrowArgumentException(int numberOfStepsToRemove)
     {
         // Given
-        Recipe testRecipe = new(new(), new());
+        RecipeGuide testRecipe = new(new(), new());
 
         // When
         var action = () => testRecipe.RemoveSteps(numberOfStepsToRemove);
@@ -183,7 +183,7 @@ public class RecipeTests
             existingSteps.Push(new($"Step {i}"));
         }
 
-        Recipe testRecipe = new(new(), existingSteps);
+        RecipeGuide testRecipe = new(new(), existingSteps);
 
         // When
         var action = () => testRecipe.RemoveSteps(numberOfStepsToRemove);

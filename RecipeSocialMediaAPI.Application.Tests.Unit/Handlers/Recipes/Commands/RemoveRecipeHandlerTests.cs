@@ -71,10 +71,10 @@ public class RemoveRecipeHandlerTests
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new RecipeAggregate(
+            .ReturnsAsync(new Recipe(
                 "1", 
                 "title",
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 "desc", 
                 new TestUserAccount
                 {
@@ -113,10 +113,10 @@ public class RemoveRecipeHandlerTests
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new RecipeAggregate(
+            .ReturnsAsync(new Recipe(
                 "1", 
                 "title",
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 "desc", 
                 new TestUserAccount
                 {
@@ -155,10 +155,10 @@ public class RemoveRecipeHandlerTests
         testRecipeSteps.Push(new RecipeStep("step1", new RecipeImage("step1_img_id")));
         testRecipeSteps.Push(new RecipeStep("step2", null));
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
             recipeId,
             "title",
-            new Recipe(new List<Ingredient>(), testRecipeSteps),
+            new RecipeGuide(new List<Ingredient>(), testRecipeSteps),
             "desc",
             new TestUserAccount
             {
@@ -218,10 +218,10 @@ public class RemoveRecipeHandlerTests
         testRecipeSteps.Push(new RecipeStep("step1", new RecipeImage("step1_img_id")));
         testRecipeSteps.Push(new RecipeStep("step2", null));
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
             recipeId,
             "title",
-            new Recipe(new List<Ingredient>(), testRecipeSteps),
+            new RecipeGuide(new List<Ingredient>(), testRecipeSteps),
             "desc",
             new TestUserAccount
             {
@@ -280,10 +280,10 @@ public class RemoveRecipeHandlerTests
 
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new RecipeAggregate(
+            .ReturnsAsync(new Recipe(
                 "1",
                 "title",
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 "desc",
                 new TestUserAccount
                 {

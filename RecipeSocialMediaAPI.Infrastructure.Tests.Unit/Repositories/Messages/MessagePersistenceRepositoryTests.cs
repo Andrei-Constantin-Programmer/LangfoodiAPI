@@ -68,12 +68,12 @@ public class MessagePersistenceRepositoryTests
             "MessageId",
             testSender,
             "MessageText",
-            new List<RecipeAggregate>() 
+            new List<Recipe>() 
             { 
                 new(
                     "RecipeId",
                     "RecipeTitle",
-                    new Recipe(new(), new()),
+                    new RecipeGuide(new(), new()),
                     "Recipe Description",
                     testSender,
                     new(2023, 10, 22, 0, 0, 0, TimeSpan.Zero),
@@ -172,7 +172,7 @@ public class MessagePersistenceRepositoryTests
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
 
-        List<RecipeAggregate> recipes = new()
+        List<Recipe> recipes = new()
         {
             new("Recipe1", "Recipe 1", new(new(), new()), "Description", testSender, new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero), new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)),
             new("Recipe2", "Recipe 2", new(new(), new()), "Description", testSender, new(2023, 2, 2, 0, 0, 0, TimeSpan.Zero), new(2023, 4, 4, 0, 0, 0, TimeSpan.Zero)),

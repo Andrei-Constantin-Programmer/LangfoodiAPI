@@ -46,7 +46,7 @@ public class GetRecipeByIdHandlerTests
             .WithMessage("The recipe with the id 1 was not found");
 
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Never);
+            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Never);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class GetRecipeByIdHandlerTests
     {
         // Given
         string recipeId = "1";
-        RecipeAggregate testRecipeAggregate = new(
+        Recipe testRecipeAggregate = new(
             recipeId,
             "test title",
             new(new(), new()),
@@ -89,7 +89,7 @@ public class GetRecipeByIdHandlerTests
             .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testRecipeAggregate);
         _recipeMapperMock
-            .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
+            .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<Recipe>()))
             .Returns(expectedResult);
 
         // When
@@ -97,7 +97,7 @@ public class GetRecipeByIdHandlerTests
 
         // Then
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);
+            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Once);
         result.Should().Be(expectedResult);
     }
 }

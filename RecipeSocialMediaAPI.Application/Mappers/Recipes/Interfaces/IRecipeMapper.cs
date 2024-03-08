@@ -11,7 +11,7 @@ public interface IRecipeMapper
     IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient);
     RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDTO recipeStepDTO);
     RecipeStepDTO MapRecipeStepToRecipeStepDto(RecipeStep recipeStep);
-    RecipeDetailedDTO MapRecipeAggregateToRecipeDetailedDto(RecipeAggregate recipeAggregate);
-    RecipeDTO MapRecipeAggregateToRecipeDto(RecipeAggregate recipeAggregate);
-    RecipePreviewDTO MapRecipeAggregateToRecipePreviewDto(RecipeAggregate recipeAggregate);
+    RecipeDetailedDTO MapRecipeAggregateToRecipeDetailedDto(Recipe recipeAggregate);
+    RecipeDTO MapRecipeAggregateToRecipeDto(Recipe recipeAggregate);
+    RecipePreviewDTO MapRecipeAggregateToRecipePreviewDto(Recipe recipeAggregate);
 }

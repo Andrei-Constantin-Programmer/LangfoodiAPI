@@ -21,8 +21,8 @@ public class MessageEndpointsTests : EndpointTestBase
     private readonly TestMessage _testMessage1;
     private readonly TestUserCredentials _testUser1;
     private readonly TestUserCredentials _testUser2;
-    private readonly RecipeAggregate _testRecipe1;
-    private readonly RecipeAggregate _testRecipe2;
+    private readonly Recipe _testRecipe1;
+    private readonly Recipe _testRecipe2;
 
     public MessageEndpointsTests(WebApplicationFactory<Program> factory) : base(factory)
     {
@@ -144,7 +144,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var user = await _fakeUserRepository
           .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         await _fakeRecipeRepository
-           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Guide, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
         var message = await _fakeMessageRepository
             .CreateMessageAsync(_testMessage1.Sender, "hello", new() { _testRecipe1.Id}, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
@@ -437,9 +437,9 @@ public class MessageEndpointsTests : EndpointTestBase
             .CreateGroupConversationAsync(new("g1", "GroupEx", "GroupDesc", new List<IUserAccount>() { user.Account }));
 
         var recipe1 = await _fakeRecipeRepository
-           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Guide, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
         var recipe2 = await _fakeRecipeRepository
-           .CreateRecipeAsync(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
+           .CreateRecipeAsync(_testRecipe2.Title, _testRecipe2.Guide, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
 
         SendMessageContract newMessageContract = new(conversation.ConversationId, user.Account.Id, "Text", new() { recipe1.Id, recipe2.Id }, new(), null);
 
@@ -607,12 +607,12 @@ public class MessageEndpointsTests : EndpointTestBase
         var user = await _fakeUserRepository
           .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var oldRecipe = await _fakeRecipeRepository
-           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Guide, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
         var existingMessage = await _fakeMessageRepository
             .CreateMessageAsync(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var newRecipe = await _fakeRecipeRepository
-           .CreateRecipeAsync(_testRecipe2.Title, _testRecipe2.Recipe, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
+           .CreateRecipeAsync(_testRecipe2.Title, _testRecipe2.Guide, _testRecipe2.Description, _testRecipe2.Chef, _testRecipe2.Tags, _testRecipe2.CreationDate, _testRecipe2.LastUpdatedDate, _testRecipe2.ThumbnailId);
         UpdateMessageContract contract = new(existingMessage.Id, "New Text", new() { newRecipe.Id }, null);
         var oldUpdatedDate = existingMessage.UpdatedDate;
 
@@ -632,7 +632,7 @@ public class MessageEndpointsTests : EndpointTestBase
         message!.SentDate.Should().Be(existingMessage.SentDate);
         message!.UpdatedDate.Should().NotBe(oldUpdatedDate);
         message!.TextContent.Should().Be(contract.Text);
-        message!.Recipes.Should().BeEquivalentTo(new List<RecipeAggregate>() { oldRecipe, newRecipe });
+        message!.Recipes.Should().BeEquivalentTo(new List<Recipe>() { oldRecipe, newRecipe });
     }
 
     [Fact]
@@ -767,7 +767,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var user = await _fakeUserRepository
           .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakeCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         await _fakeRecipeRepository
-           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Recipe, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
+           .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Guide, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
         var message = await _fakeMessageRepository
             .CreateMessageAsync(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 

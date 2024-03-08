@@ -8,13 +8,13 @@ namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Recipes;
 
 public class RecipeAggregateTests
 {
-    public readonly RecipeAggregate _recipeAggregateSUT;
+    public readonly Recipe _recipeAggregateSUT;
 
     public RecipeAggregateTests()
     {
         string testId = "AggId";
         string testTitle = "My Recipe";
-        Recipe testRecipe = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step")}), 10, 500, 2300);
+        RecipeGuide testRecipe = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step")}), 10, 500, 2300);
         string testDescription = "";
         IUserAccount testChef = new TestUserAccount() { Id = "TestId", Handler = "TestHandler", UserName = "TestUsername" };
         DateTimeOffset testCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
@@ -41,10 +41,10 @@ public class RecipeAggregateTests
         Ingredient testIngredient = new("New Ingredient", 2, "g");
 
         // When
-        _recipeAggregateSUT.Recipe.AddIngredient(testIngredient);
+        _recipeAggregateSUT.Guide.AddIngredient(testIngredient);
 
         // Then
-        _recipeAggregateSUT.Recipe.Ingredients.Should().Contain(testIngredient);
+        _recipeAggregateSUT.Guide.Ingredients.Should().Contain(testIngredient);
     }
 
     [Fact]

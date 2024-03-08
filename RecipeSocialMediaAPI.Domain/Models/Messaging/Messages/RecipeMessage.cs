@@ -20,11 +20,11 @@ public class RecipeMessage : Message
         }
     }
 
-    private readonly List<RecipeAggregate> _recipes;
-    public ImmutableList<RecipeAggregate> Recipes => _recipes.ToImmutableList();
+    private readonly List<Recipe> _recipes;
+    public ImmutableList<Recipe> Recipes => _recipes.ToImmutableList();
 
     public RecipeMessage(IDateTimeProvider dateTimeProvider, 
-        string id, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null, List<IUserAccount>? seenBy = null) 
+        string id, IUserAccount sender, IEnumerable<Recipe> recipes, string? textContent, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null, List<IUserAccount>? seenBy = null) 
         : base(id, sender, sentDate, updatedDate, repliedToMessage, seenBy)
     {
         _dateTimeProvider = dateTimeProvider;
@@ -38,7 +38,7 @@ public class RecipeMessage : Message
         _textContent = textContent;
     }
 
-    public void AddRecipe(RecipeAggregate recipe)
+    public void AddRecipe(Recipe recipe)
     {
         _recipes.Add(recipe);
         UpdatedDate = _dateTimeProvider.Now;

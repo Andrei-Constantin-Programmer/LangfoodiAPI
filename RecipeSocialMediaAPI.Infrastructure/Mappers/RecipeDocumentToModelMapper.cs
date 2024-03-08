@@ -7,7 +7,7 @@ namespace RecipeSocialMediaAPI.Infrastructure.Mappers;
 
 public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
 {
-    public RecipeAggregate MapRecipeDocumentToRecipeAggregate(RecipeDocument recipeDocument, IUserAccount chef)
+    public Recipe MapRecipeDocumentToRecipeAggregate(RecipeDocument recipeDocument, IUserAccount chef)
     {
         if (recipeDocument.Id == null)
         {
@@ -25,7 +25,7 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
             tags: recipeDocument.Tags.ToHashSet(),
             chef: chef,
             thumbnailId: recipeDocument.ThumbnailId,
-            recipe: new Recipe(
+            recipe: new RecipeGuide(
                 recipeDocument.Ingredients
                     .Select(x => new Ingredient(x.Name, x.Quantity, x.UnitOfMeasurement))
                     .ToList(),
