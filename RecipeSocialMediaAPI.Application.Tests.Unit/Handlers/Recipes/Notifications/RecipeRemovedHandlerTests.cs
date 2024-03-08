@@ -64,7 +64,7 @@ public class RecipeRemovedHandlerTests
             Handler = "user_1"
         };
 
-        RecipeAggregate recipeBeingDeleted = new(
+        Recipe recipeBeingDeleted = new(
             "r1",
             "Recipe1",
             new(new(), new()),
@@ -73,7 +73,7 @@ public class RecipeRemovedHandlerTests
             new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        RecipeAggregate recipeNotBeingDeleted = new(
+        Recipe recipeNotBeingDeleted = new(
             "r2",
             "Recipe2",
             new(new(), new()),
@@ -85,7 +85,7 @@ public class RecipeRemovedHandlerTests
         var message1 = (RecipeMessage)_messageFactory.CreateRecipeMessage(
             "m1",
             testSender,
-            new List<RecipeAggregate> { recipeBeingDeleted },
+            new List<Recipe> { recipeBeingDeleted },
             "Has Text Content",
             new(),
             new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
@@ -94,7 +94,7 @@ public class RecipeRemovedHandlerTests
         var message2 = (RecipeMessage)_messageFactory.CreateRecipeMessage(
             "m2",
             testSender,
-            new List<RecipeAggregate> { recipeBeingDeleted, recipeNotBeingDeleted },
+            new List<Recipe> { recipeBeingDeleted, recipeNotBeingDeleted },
             null,
             new(),
             new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
@@ -103,7 +103,7 @@ public class RecipeRemovedHandlerTests
         var message3 = (RecipeMessage)_messageFactory.CreateRecipeMessage(
             "m3",
             testSender,
-            new List<RecipeAggregate> { recipeBeingDeleted },
+            new List<Recipe> { recipeBeingDeleted },
             null,
             new(),
             new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)

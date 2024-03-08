@@ -273,8 +273,8 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
 
-        RecipeAggregate existingRecipe1 = new("R1", "Recipe 1", new(new() { new("Apples", 500, "grams") }, new()), "Recipe Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
-        RecipeAggregate existingRecipe2 = new("R2", "Recipe 2", new(new() { new("Pears", 300, "grams") }, new()), "Recipe 2 Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
+        Recipe existingRecipe1 = new("R1", "Recipe 1", new(new() { new("Apples", 500, "grams") }, new()), "Recipe Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
+        Recipe existingRecipe2 = new("R2", "Recipe 2", new(new() { new("Pears", 300, "grams") }, new()), "Recipe 2 Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
 
         _recipeQueryRepositoryMock
             .Setup(repo => repo.GetRecipeByIdAsync(existingRecipe1.Id, It.IsAny<CancellationToken>()))
@@ -285,7 +285,7 @@ public class SendMessageHandlerTests
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
-        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2}, contract.Text, new(), _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<Recipe>() { existingRecipe1, existingRecipe2}, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessageAsync(user1.Account,
                     contract.Text,
@@ -354,19 +354,19 @@ public class SendMessageHandlerTests
             .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
 
-        RecipeAggregate existingRecipe1 = new("R1", "Recipe 1", new(new() { new("Apples", 500, "grams") }, new()), "Recipe Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
-        RecipeAggregate existingRecipe2 = new("R2", "Recipe 2", new(new() { new("Pears", 300, "grams") }, new()), "Recipe 2 Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
+        Recipe existingRecipe1 = new("R1", "Recipe 1", new(new() { new("Apples", 500, "grams") }, new()), "Recipe Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
+        Recipe existingRecipe2 = new("R2", "Recipe 2", new(new() { new("Pears", 300, "grams") }, new()), "Recipe 2 Desc", user1.Account, _dateTimeProviderMock.Object.Now, _dateTimeProviderMock.Object.Now);
 
         _recipeQueryRepositoryMock
             .Setup(repo => repo.GetRecipeByIdAsync(existingRecipe1.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingRecipe1);
         _recipeQueryRepositoryMock
             .Setup(repo => repo.GetRecipeByIdAsync(existingRecipe2.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((RecipeAggregate?)null);
+            .ReturnsAsync((Recipe?)null);
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
-        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<RecipeAggregate>() { existingRecipe1, existingRecipe2 }, contract.Text, new(), _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<Recipe>() { existingRecipe1, existingRecipe2 }, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessageAsync(user1.Account,
                     contract.Text,

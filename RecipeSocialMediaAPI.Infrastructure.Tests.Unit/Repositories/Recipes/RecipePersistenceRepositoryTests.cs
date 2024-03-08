@@ -50,7 +50,7 @@ public class RecipePersistenceRepositoryTests
 
         string testTag = "TestTag";
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             "TestId",
             "TestTitle",
             new(new(), new(), 10, 500, 2300, new ServingSize(200, "g")),
@@ -73,10 +73,10 @@ public class RecipePersistenceRepositoryTests
             LastUpdatedDate: expectedResult.LastUpdatedDate,
             Tags: new List<string>() { testTag },
             ThumbnailId: expectedResult.ThumbnailId,
-            CookingTimeInSeconds: expectedResult.Recipe.CookingTimeInSeconds,
-            KiloCalories: expectedResult.Recipe.KiloCalories,
-            NumberOfServings: expectedResult.Recipe.NumberOfServings,
-            ServingSize: (expectedResult.Recipe.ServingSize!.Quantity, expectedResult.Recipe.ServingSize!.UnitOfMeasurement)
+            CookingTimeInSeconds: expectedResult.Guide.CookingTimeInSeconds,
+            KiloCalories: expectedResult.Guide.KiloCalories,
+            NumberOfServings: expectedResult.Guide.NumberOfServings,
+            ServingSize: (expectedResult.Guide.ServingSize!.Quantity, expectedResult.Guide.ServingSize!.UnitOfMeasurement)
         );
 
         _mongoCollectionWrapperMock
@@ -84,13 +84,13 @@ public class RecipePersistenceRepositoryTests
             .ReturnsAsync(newRecipeDocument);
 
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(newRecipeDocument, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(newRecipeDocument, testChef))
             .Returns(expectedResult);
 
         // When
         var result = await _recipePersistenceRepositorySUT.CreateRecipeAsync(
             expectedResult.Title,
-            expectedResult.Recipe,
+            expectedResult.Guide,
             expectedResult.Description,
             testChef,
             expectedResult.Tags,
@@ -112,8 +112,8 @@ public class RecipePersistenceRepositoryTests
                     && doc.Ingredients.Count == 0
                     && doc.Steps.Count == 0
                     && doc.Tags.Contains(testTag) && doc.Tags.Count == 1
-                    && doc.ServingSize!.Value.Quantity == expectedResult.Recipe.ServingSize.Quantity
-                    && doc.ServingSize!.Value.UnitOfMeasurement == expectedResult.Recipe.ServingSize.UnitOfMeasurement), 
+                    && doc.ServingSize!.Value.Quantity == expectedResult.Guide.ServingSize.Quantity
+                    && doc.ServingSize!.Value.UnitOfMeasurement == expectedResult.Guide.ServingSize.UnitOfMeasurement), 
                 It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -132,7 +132,7 @@ public class RecipePersistenceRepositoryTests
         };
         string testTag = "TestTag";
 
-        RecipeAggregate recipe = new(
+        Recipe recipe = new(
             "TestId",
             "TestTitle",
             new(new(), new(), 10, 500, 2300, new ServingSize(30, "kg")),
@@ -169,12 +169,12 @@ public class RecipePersistenceRepositoryTests
                         && recipeDoc.Tags.Contains(testTag) && recipe.Tags.Count == 1
                         && recipeDoc.Ingredients.Count == 0
                         && recipeDoc.Steps.Count == 0
-                        && recipeDoc.NumberOfServings == recipe.Recipe.NumberOfServings
-                        && recipeDoc.CookingTimeInSeconds == recipe.Recipe.CookingTimeInSeconds
-                        && recipeDoc.KiloCalories == recipe.Recipe.KiloCalories
+                        && recipeDoc.NumberOfServings == recipe.Guide.NumberOfServings
+                        && recipeDoc.CookingTimeInSeconds == recipe.Guide.CookingTimeInSeconds
+                        && recipeDoc.KiloCalories == recipe.Guide.KiloCalories
                         && recipeDoc.ThumbnailId == recipe.ThumbnailId
-                        && recipeDoc.ServingSize.GetValueOrDefault().Quantity == recipe.Recipe.ServingSize!.Quantity
-                        && recipeDoc.ServingSize.GetValueOrDefault().UnitOfMeasurement == recipe.Recipe.ServingSize!.UnitOfMeasurement),
+                        && recipeDoc.ServingSize.GetValueOrDefault().Quantity == recipe.Guide.ServingSize!.Quantity
+                        && recipeDoc.ServingSize.GetValueOrDefault().UnitOfMeasurement == recipe.Guide.ServingSize!.UnitOfMeasurement),
                     It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
                     It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -196,7 +196,7 @@ public class RecipePersistenceRepositoryTests
 
         string testTag = "TestTag";
 
-        RecipeAggregate recipe = new(
+        Recipe recipe = new(
             "TestId",
             "TestTitle",
             new(new(), new(), 10, 500, 2300, new ServingSize(30, "kg")),
@@ -258,7 +258,7 @@ public class RecipePersistenceRepositoryTests
         string id = "1";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
 
-        RecipeAggregate recipe = new(
+        Recipe recipe = new(
             id,
             "TestTitle",
             new(new(), new(), 10, 500, 2300),
@@ -329,7 +329,7 @@ public class RecipePersistenceRepositoryTests
         string id = "1";
         Expression<Func<RecipeDocument, bool>> expectedExpression = x => x.Id == id;
 
-        RecipeAggregate recipe = new(
+        Recipe recipe = new(
             id,
             "TestTitle",
             new(new(), new(), 10, 500, 2300),

@@ -568,7 +568,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -580,7 +580,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newTextContent, new(), null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         UserPreviewForMessageDTO testSenderPreview = new(
             testSender.Id,
@@ -633,7 +633,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -642,7 +642,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
 
-        RecipeAggregate newRecipe = new(
+        Recipe newRecipe = new(
             "New1",
             "New Recipe Title",
             new(new(), new()),
@@ -654,7 +654,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { newRecipe.Id }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         UserPreviewForMessageDTO testSenderPreview = new(
             testSender.Id,
@@ -711,7 +711,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -723,7 +723,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { "Inexistent Recipe" }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
@@ -759,7 +759,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -768,7 +768,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
 
-        RecipeAggregate newRecipe = new(
+        Recipe newRecipe = new(
             "New1",
             "New Recipe Title",
             new(new(), new()),
@@ -780,7 +780,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { newRecipe.Id }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
@@ -813,7 +813,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -822,7 +822,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
 
-        RecipeAggregate newRecipe = new(
+        Recipe newRecipe = new(
             "New1",
             "New Recipe Title",
             new(new(), new()),
@@ -834,7 +834,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new() { newRecipe.Id }, new() { "New Image" }));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
@@ -871,7 +871,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -883,7 +883,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new(), null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))

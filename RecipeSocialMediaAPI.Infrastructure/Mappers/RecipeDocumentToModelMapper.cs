@@ -7,11 +7,11 @@ namespace RecipeSocialMediaAPI.Infrastructure.Mappers;
 
 public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
 {
-    public RecipeAggregate MapRecipeDocumentToRecipeAggregate(RecipeDocument recipeDocument, IUserAccount chef)
+    public Recipe MapRecipeDocumentToRecipe(RecipeDocument recipeDocument, IUserAccount chef)
     {
         if (recipeDocument.Id == null)
         {
-            throw new ArgumentException("Cannot map Recipe Document with null ID to Recipe Aggregate");
+            throw new ArgumentException("Cannot map Recipe Document with null ID to Recipe");
         }
 
         var (servingSizeQuantity, unitOfMeasurement) = recipeDocument.ServingSize ?? default;
@@ -25,7 +25,7 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
             tags: recipeDocument.Tags.ToHashSet(),
             chef: chef,
             thumbnailId: recipeDocument.ThumbnailId,
-            recipe: new Recipe(
+            recipeGuide: new RecipeGuide(
                 recipeDocument.Ingredients
                     .Select(x => new Ingredient(x.Name, x.Quantity, x.UnitOfMeasurement))
                     .ToList(),

@@ -62,7 +62,7 @@ public class MessageMapper : IMessageMapper
                     imageMessage.ImageURLs.ToList()),
                 RecipeMessage recipeMessage => (
                     recipeMessage.TextContent,
-                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipePreviewDto).ToList(),
+                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeToRecipePreviewDto).ToList(),
                     default(List<string>?)),
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
@@ -85,7 +85,7 @@ public class MessageMapper : IMessageMapper
                     imageMessage.ImageURLs.ToList()),
                 RecipeMessage recipeMessage => (
                     recipeMessage.TextContent,
-                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipeDto).ToList(),
+                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeToRecipeDto).ToList(),
                     default(List<string>?)),
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")

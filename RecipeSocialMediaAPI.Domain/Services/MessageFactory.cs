@@ -43,7 +43,7 @@ public class MessageFactory : IMessageFactory
     public Message CreateRecipeMessage(
         string id,
         IUserAccount sender,
-        IEnumerable<RecipeAggregate> recipes,
+        IEnumerable<Recipe> recipes,
         string? textContent,
         List<IUserAccount> seenBy,
         DateTimeOffset sentDate,

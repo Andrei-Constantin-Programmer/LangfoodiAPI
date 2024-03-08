@@ -19,7 +19,7 @@ public class RecipeDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public void MapRecipeDocumentToRecipeAggregate_WhenIdIsNull_ThrowArgumentException()
+    public void MapRecipeDocumentToRecipe_WhenIdIsNull_ThrowArgumentException()
     {
         // Given
         RecipeDocument testDocument = new(
@@ -44,7 +44,7 @@ public class RecipeDocumentToModelMapperTests
         };
 
         // When
-        var testAction = () => _recipeDocumentToModelMapperSUT.MapRecipeDocumentToRecipeAggregate(testDocument, testSender);
+        var testAction = () => _recipeDocumentToModelMapperSUT.MapRecipeDocumentToRecipe(testDocument, testSender);
 
         // Then
         testAction.Should().Throw<ArgumentException>();
@@ -53,7 +53,7 @@ public class RecipeDocumentToModelMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
-    public void MapRecipeDocumentToRecipeAggregate_WhenDocumentIsValid_ReturnMappedRecipeModel()
+    public void MapRecipeDocumentToRecipe_WhenDocumentIsValid_ReturnMappedRecipeModel()
     {
         // Given
         RecipeDocument testDocument = new(
@@ -106,7 +106,7 @@ public class RecipeDocumentToModelMapperTests
         };
 
         // When
-        var result= _recipeDocumentToModelMapperSUT.MapRecipeDocumentToRecipeAggregate(testDocument, testSender);
+        var result= _recipeDocumentToModelMapperSUT.MapRecipeDocumentToRecipe(testDocument, testSender);
 
         // Then
         result.Id.Should().Be(testDocument.Id);
@@ -118,20 +118,20 @@ public class RecipeDocumentToModelMapperTests
         result.Chef.Should().Be(testSender);
         result.ThumbnailId.Should().Be(testDocument.ThumbnailId);
         
-        result.Recipe.Ingredients.Should().HaveCount(3);
-        result.Recipe.Ingredients[0].Should().BeEquivalentTo(expectedIngredients[0]);
-        result.Recipe.Ingredients[1].Should().BeEquivalentTo(expectedIngredients[1]);
-        result.Recipe.Ingredients[2].Should().BeEquivalentTo(expectedIngredients[2]);
+        result.Guide.Ingredients.Should().HaveCount(3);
+        result.Guide.Ingredients[0].Should().BeEquivalentTo(expectedIngredients[0]);
+        result.Guide.Ingredients[1].Should().BeEquivalentTo(expectedIngredients[1]);
+        result.Guide.Ingredients[2].Should().BeEquivalentTo(expectedIngredients[2]);
 
-        result.Recipe.Steps.Should().HaveCount(3);
-        var recipeSteps = result.Recipe.Steps.ToList();
+        result.Guide.Steps.Should().HaveCount(3);
+        var recipeSteps = result.Guide.Steps.ToList();
         recipeSteps[0].Should().BeEquivalentTo(expectedSteps[0]);
         recipeSteps[1].Should().BeEquivalentTo(expectedSteps[1]);
         recipeSteps[2].Should().BeEquivalentTo(expectedSteps[2]);
 
-        result.Recipe.CookingTimeInSeconds.Should().Be(testDocument.CookingTimeInSeconds);
-        result.Recipe.NumberOfServings.Should().Be(testDocument.NumberOfServings);
-        result.Recipe.KiloCalories.Should().Be(testDocument.KiloCalories);
-        result.Recipe.ServingSize.Should().BeEquivalentTo(new ServingSize(testDocument.ServingSize!.Value.Quantity, testDocument.ServingSize.Value.UnitOfMeasurement));
+        result.Guide.CookingTimeInSeconds.Should().Be(testDocument.CookingTimeInSeconds);
+        result.Guide.NumberOfServings.Should().Be(testDocument.NumberOfServings);
+        result.Guide.KiloCalories.Should().Be(testDocument.KiloCalories);
+        result.Guide.ServingSize.Should().BeEquivalentTo(new ServingSize(testDocument.ServingSize!.Value.Quantity, testDocument.ServingSize.Value.UnitOfMeasurement));
     }
 }
