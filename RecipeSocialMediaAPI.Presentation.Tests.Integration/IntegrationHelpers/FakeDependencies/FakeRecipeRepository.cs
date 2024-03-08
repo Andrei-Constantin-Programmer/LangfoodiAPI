@@ -13,11 +13,11 @@ internal class FakeRecipeRepository : IRecipeQueryRepository, IRecipePersistence
         _collection = new List<Recipe>();
     }
 
-    public async Task<Recipe> CreateRecipeAsync(string title, RecipeGuide recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
+    public async Task<Recipe> CreateRecipeAsync(string title, RecipeGuide recipeGuide, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
     {
         var id = _collection.Count.ToString();
         Recipe newRecipe = new(
-            id, title, recipe, description, chef, 
+            id, title, recipeGuide, description, chef, 
             creationDate, lastUpdatedDate, tags,
             thumbnailId
         );

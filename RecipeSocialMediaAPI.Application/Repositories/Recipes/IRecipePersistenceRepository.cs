@@ -7,7 +7,7 @@ public interface IRecipePersistenceRepository
 {
     Task<Recipe> CreateRecipeAsync(
         string title,
-        RecipeGuide recipe,
+        RecipeGuide recipeGuide,
         string description,
         IUserAccount chef,
         ISet<string> tags,

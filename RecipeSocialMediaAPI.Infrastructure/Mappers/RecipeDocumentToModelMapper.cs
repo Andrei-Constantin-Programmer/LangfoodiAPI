@@ -25,7 +25,7 @@ public class RecipeDocumentToModelMapper : IRecipeDocumentToModelMapper
             tags: recipeDocument.Tags.ToHashSet(),
             chef: chef,
             thumbnailId: recipeDocument.ThumbnailId,
-            recipe: new RecipeGuide(
+            recipeGuide: new RecipeGuide(
                 recipeDocument.Ingredients
                     .Select(x => new Ingredient(x.Name, x.Quantity, x.UnitOfMeasurement))
                     .ToList(),

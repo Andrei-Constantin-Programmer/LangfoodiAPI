@@ -18,23 +18,23 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
     }
 
-    public async Task<Recipe> CreateRecipeAsync(string title, RecipeGuide recipe, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
+    public async Task<Recipe> CreateRecipeAsync(string title, RecipeGuide recipeGuide, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
     {
         var recipeDocument = await _recipeCollection
             .InsertAsync(new RecipeDocument(
                 Title: title,
-                Ingredients: recipe.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
-                Steps: recipe.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
+                Ingredients: recipeGuide.Ingredients.Select(ingredient => (ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement)).ToList(),
+                Steps: recipeGuide.Steps.Select(step => (step.Text, step.Image?.ImageUrl)).ToList(),
                 Description: description,
                 ChefId: chef.Id,
                 ThumbnailId: thumbnailId,
                 CreationDate: creationDate,
                 LastUpdatedDate: lastUpdatedDate,
                 Tags: tags.ToList(),
-                NumberOfServings: recipe.NumberOfServings,
-                CookingTimeInSeconds: recipe.CookingTimeInSeconds,
-                KiloCalories: recipe.KiloCalories,
-                ServingSize: recipe.ServingSize is not null ? (recipe.ServingSize.Quantity, recipe.ServingSize.UnitOfMeasurement) : null
+                NumberOfServings: recipeGuide.NumberOfServings,
+                CookingTimeInSeconds: recipeGuide.CookingTimeInSeconds,
+                KiloCalories: recipeGuide.KiloCalories,
+                ServingSize: recipeGuide.ServingSize is not null ? (recipeGuide.ServingSize.Quantity, recipeGuide.ServingSize.UnitOfMeasurement) : null
             ), cancellationToken);
 
         return _mapper.MapRecipeDocumentToRecipe(recipeDocument, chef);

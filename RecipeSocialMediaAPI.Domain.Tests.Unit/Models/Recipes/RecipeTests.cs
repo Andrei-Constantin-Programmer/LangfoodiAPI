@@ -14,7 +14,7 @@ public class RecipeTests
     {
         string testId = "AggId";
         string testTitle = "My Recipe";
-        RecipeGuide testRecipe = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step")}), 10, 500, 2300);
+        RecipeGuide testRecipeGuide = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step")}), 10, 500, 2300);
         string testDescription = "";
         IUserAccount testChef = new TestUserAccount() { Id = "TestId", Handler = "TestHandler", UserName = "TestUsername" };
         DateTimeOffset testCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
@@ -24,7 +24,7 @@ public class RecipeTests
             (
                 testId,
                 testTitle,
-                testRecipe,
+                testRecipeGuide,
                 testDescription,
                 testChef,
                 testCreationDate,

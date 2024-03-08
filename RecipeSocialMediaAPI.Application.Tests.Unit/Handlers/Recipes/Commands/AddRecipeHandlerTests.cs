@@ -112,11 +112,18 @@ public class AddRecipeHandlerTests
             });
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.CreateRecipeAsync(It.IsAny<string>(), It.IsAny<RecipeGuide>(), It.IsAny<string>(),
-                It.IsAny<IUserAccount>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
-                It.IsAny<DateTimeOffset>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string title, RecipeGuide recipe, string desc, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken _) 
-                => new Recipe("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, tags, thumbnailId)
+            .Setup(x => x.CreateRecipeAsync(
+                It.IsAny<string>(),
+                It.IsAny<RecipeGuide>(),
+                It.IsAny<string>(),
+                It.IsAny<IUserAccount>(),
+                It.IsAny<ISet<string>>(),
+                It.IsAny<DateTimeOffset>(),
+                It.IsAny<DateTimeOffset>(),
+                It.IsAny<string?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string title, RecipeGuide recipeGuide, string desc, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken _) 
+                => new Recipe("1", title, recipeGuide, desc, chef, creationDate, lastUpdatedDate, tags, thumbnailId)
             );
 
         _recipeMapperMock

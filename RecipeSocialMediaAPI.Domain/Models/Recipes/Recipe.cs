@@ -20,7 +20,7 @@ public class Recipe
     public Recipe(
         string id,
         string title,
-        RecipeGuide recipe,
+        RecipeGuide recipeGuide,
         string description,
         IUserAccount chef,
         DateTimeOffset creationDate,
@@ -31,7 +31,7 @@ public class Recipe
     {
         Id = id;
         Title = title;
-        Guide = recipe;
+        Guide = recipeGuide;
         Description = description;
         Chef = chef;
         CreationDate = creationDate;

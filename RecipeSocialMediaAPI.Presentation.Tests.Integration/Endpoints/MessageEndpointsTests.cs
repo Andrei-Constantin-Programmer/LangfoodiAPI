@@ -56,7 +56,7 @@ public class MessageEndpointsTests : EndpointTestBase
             description: "Test",
             chef: _testUser1.Account,
             tags: new HashSet<string>(),
-            recipe: new(
+            recipeGuide: new(
             numberOfServings: 1,
             kiloCalories: 2300,
             cookingTimeInSeconds: 500,
@@ -77,7 +77,7 @@ public class MessageEndpointsTests : EndpointTestBase
             description: "Test 2",
             chef: _testUser1.Account,
             tags: new HashSet<string>(),
-            recipe: new(
+            recipeGuide: new(
             numberOfServings: 2,
             kiloCalories: 1800,
             cookingTimeInSeconds: 600,
