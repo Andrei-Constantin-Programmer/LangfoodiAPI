@@ -37,7 +37,7 @@ internal class FakeMessageRepository : IMessageQueryRepository, IMessagePersiste
         {
             var recipes = (await Task.WhenAll(recipeIds
                 .Select(async id => await _recipeQueryRepository.GetRecipeByIdAsync(id, cancellationToken)!)))
-                .OfType<RecipeAggregate>();
+                .OfType<Recipe>();
 
             message = _messageFactory
                 .CreateRecipeMessage(id, sender, recipes, text, new(), sentDate, repliedToMessage: messageRepliedTo);

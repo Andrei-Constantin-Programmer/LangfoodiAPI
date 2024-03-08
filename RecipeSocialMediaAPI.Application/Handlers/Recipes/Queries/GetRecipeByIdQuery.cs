@@ -22,9 +22,9 @@ internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, Recipe
 
     public async Task<RecipeDetailedDTO> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)
     {
-        RecipeAggregate recipe = await _recipeQueryRepository.GetRecipeByIdAsync(request.Id, cancellationToken)
+        Recipe recipe = await _recipeQueryRepository.GetRecipeByIdAsync(request.Id, cancellationToken)
             ?? throw new RecipeNotFoundException(request.Id);
 
-        return _mapper.MapRecipeAggregateToRecipeDetailedDto(recipe);
+        return _mapper.MapRecipeToRecipeDetailedDto(recipe);
     }
 }

@@ -139,7 +139,7 @@ public class RecipeMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void MapRecipeAggregateToRecipePreviewDto_GivenRecipeAggregate_ReturnRecipePreviewDto()
+    public void MapRecipeToRecipePreviewDto_GivenRecipe_ReturnRecipePreviewDto()
     {
         // Given
         IUserAccount testChef = new TestUserAccount
@@ -150,10 +150,10 @@ public class RecipeMapperTests
             AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
             "1",
             "title",
-            new Recipe(new(), new(), 1),
+            new RecipeGuide(new(), new(), 1),
             "desc",
             testChef,
             _testDate,
@@ -162,7 +162,7 @@ public class RecipeMapperTests
             "thumbnail_public_id_1");
 
         // When
-        var result = _mapperSUT.MapRecipeAggregateToRecipePreviewDto(testRecipe);
+        var result = _mapperSUT.MapRecipeToRecipePreviewDto(testRecipe);
 
         // Then
         result.Should().BeOfType<RecipePreviewDTO>();
@@ -174,7 +174,7 @@ public class RecipeMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void MapRecipeAggregateToRecipeDetailedDto_GivenRecipeAggregate_ReturnRecipeDetailedDto()
+    public void MapRecipeToRecipeDetailedDto_GivenRecipe_ReturnRecipeDetailedDto()
     {
         // Given
         IUserAccount testChef = new TestUserAccount
@@ -185,10 +185,10 @@ public class RecipeMapperTests
             AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero),
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
             "1",
             "title",
-            new Recipe(new() {
+            new RecipeGuide(new() {
                 new Ingredient("eggs", 1, "whole") },
                 new(new[] { new RecipeStep("step1", new RecipeImage("url")) }),
                 1, null, null, new ServingSize(30, "kg")),
@@ -211,7 +211,7 @@ public class RecipeMapperTests
             ));
 
         // When
-        var result = _mapperSUT.MapRecipeAggregateToRecipeDetailedDto(testRecipe);
+        var result = _mapperSUT.MapRecipeToRecipeDetailedDto(testRecipe);
 
         // Then
         result.Should().BeOfType<RecipeDetailedDTO>();
@@ -241,7 +241,7 @@ public class RecipeMapperTests
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void MapRecipeAggregateToRecipeDto_GivenRecipeAggregate_ReturnRecipeDto()
+    public void MapRecipeToRecipeDto_GivenRecipe_ReturnRecipeDto()
     {
         // Given
         IUserAccount testChef = new TestUserAccount
@@ -252,10 +252,10 @@ public class RecipeMapperTests
             AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
         };
         
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
             "1",
             "title",
-            new Recipe(new(), new(), 1),
+            new RecipeGuide(new(), new(), 1),
             "desc",
             testChef,
             _testDate,
@@ -264,7 +264,7 @@ public class RecipeMapperTests
             "thumbnail_public_id_1");
 
         // When
-        var result = _mapperSUT.MapRecipeAggregateToRecipeDto(testRecipe);
+        var result = _mapperSUT.MapRecipeToRecipeDto(testRecipe);
 
         // Then
         result.Should().BeOfType<RecipeDTO>();

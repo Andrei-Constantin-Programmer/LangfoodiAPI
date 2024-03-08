@@ -19,7 +19,10 @@ public static class TestEndpoints
         {
             logger.LogInformation("Hello World");
         })
-            .RequireAuthorization(IdentityData.DeveloperUserPolicyName);
+            .RequireAuthorization(IdentityData.DeveloperUserPolicyName)
+            .WithDescription("Creates a test log.")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden);
 
         return group;
     }

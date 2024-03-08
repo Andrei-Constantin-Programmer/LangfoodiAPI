@@ -21,7 +21,7 @@ internal class GetRecipesFromUserHandler : IRequestHandler<GetRecipesFromUserQue
     public async Task<List<RecipeDTO>> Handle(GetRecipesFromUserQuery request, CancellationToken cancellationToken)
     {
         return (await _recipeQueryRepository.GetRecipesByChefNameAsync(request.Username, cancellationToken))
-            .Select(_mapper.MapRecipeAggregateToRecipeDto)
+            .Select(_mapper.MapRecipeToRecipeDto)
             .ToList();
     }
 }

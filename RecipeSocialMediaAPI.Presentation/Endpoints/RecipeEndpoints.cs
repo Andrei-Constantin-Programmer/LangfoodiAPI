@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 
@@ -26,7 +27,12 @@ public static class RecipeEndpoints
         {
             return Results.Ok(await sender.Send(new GetRecipeByIdQuery(id), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Gets a recipe by its id.")
+            .Produces<RecipeDetailedDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/get/userid", async (
             [FromQuery] string id,
@@ -35,7 +41,12 @@ public static class RecipeEndpoints
         {
             return Results.Ok(await sender.Send(new GetRecipesFromUserIdQuery(id), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Gets all recipes created by user.")
+            .Produces<List<RecipeDTO>>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/get/username", async (
             [FromQuery] string username,
@@ -44,7 +55,12 @@ public static class RecipeEndpoints
         {
             return Results.Ok(await sender.Send(new GetRecipesFromUserQuery(username), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Gets all recipes created by user.")
+            .Produces<List<RecipeDTO>>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/create", async (
             [FromBody] NewRecipeContract newRecipeContract,
@@ -53,7 +69,13 @@ public static class RecipeEndpoints
         {
             return Results.Ok(await sender.Send(new AddRecipeCommand(newRecipeContract), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Creates a new recipe.")
+            .Produces<RecipeDetailedDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPut("/update", async (
             [FromBody] UpdateRecipeContract updateRecipeContract,
@@ -63,7 +85,13 @@ public static class RecipeEndpoints
             await sender.Send(new UpdateRecipeCommand(updateRecipeContract), cancellationToken);
             return Results.Ok();
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Updates a recipe.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapDelete("/remove", async (
             [FromQuery] string id,
@@ -73,7 +101,12 @@ public static class RecipeEndpoints
             await sender.Send(new RemoveRecipeCommand(id), cancellationToken);
             return Results.Ok();
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Deletes a recipe.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         return group;
     }

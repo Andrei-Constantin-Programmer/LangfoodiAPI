@@ -52,7 +52,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
 
                     return recipe;
                 })))
-                .OfType<RecipeAggregate>();
+                .OfType<Recipe>();
 
             if (recipes.IsNullOrEmpty())
             {
@@ -104,7 +104,7 @@ public class MessageDocumentToModelMapper : IMessageDocumentToModelMapper
             messageRepliedTo);
     }
 
-    private async Task<Message> MapMessageDocumentToRecipeMessageAsync(MessageDocument messageDocument, IUserAccount sender, IEnumerable<RecipeAggregate> recipes, Message? messageRepliedTo = null, CancellationToken cancellationToken = default)
+    private async Task<Message> MapMessageDocumentToRecipeMessageAsync(MessageDocument messageDocument, IUserAccount sender, IEnumerable<Recipe> recipes, Message? messageRepliedTo = null, CancellationToken cancellationToken = default)
     {
         if (messageDocument.Id is null)
         {

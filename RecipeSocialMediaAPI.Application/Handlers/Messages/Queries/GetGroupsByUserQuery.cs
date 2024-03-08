@@ -7,9 +7,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetGroupsByUserQuery(string UserId) : IRequest<IEnumerable<GroupDTO>>;
+public record GetGroupsByUserQuery(string UserId) : IRequest<List<GroupDTO>>;
 
-internal class GetGroupsByUserHandler : IRequestHandler<GetGroupsByUserQuery, IEnumerable<GroupDTO>>
+internal class GetGroupsByUserHandler : IRequestHandler<GetGroupsByUserQuery, List<GroupDTO>>
 {
     private readonly IGroupQueryRepository _groupQueryRepository;
     private readonly IUserQueryRepository _userQueryRepository;
@@ -20,7 +20,7 @@ internal class GetGroupsByUserHandler : IRequestHandler<GetGroupsByUserQuery, IE
         _userQueryRepository = userQueryRepository;
     }
 
-    public async Task<IEnumerable<GroupDTO>> Handle(GetGroupsByUserQuery request, CancellationToken cancellationToken)
+    public async Task<List<GroupDTO>> Handle(GetGroupsByUserQuery request, CancellationToken cancellationToken)
     {
         IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
@@ -33,6 +33,7 @@ internal class GetGroupsByUserHandler : IRequestHandler<GetGroupsByUserQuery, IE
                 group.GroupDescription,
                 group.Users
                     .Select(user => user.Id)
-                    .ToList()));
+                    .ToList()))
+            .ToList();
     }
 }

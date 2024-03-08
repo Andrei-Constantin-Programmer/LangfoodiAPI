@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
+using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 using RecipeSocialMediaAPI.Application.Identity;
@@ -27,7 +28,12 @@ public static class GroupEndpoints
         {
             return Results.Ok(await sender.Send(new GetGroupQuery(groupId), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Gets a group by its id.")
+            .Produces<GroupDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/get-by-user", async (
             [FromQuery] string userId,
@@ -36,7 +42,27 @@ public static class GroupEndpoints
         {
             return Results.Ok(await sender.Send(new GetGroupsByUserQuery(userId), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Gets all groups for a user.")
+            .Produces<List<GroupDTO>>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
+
+        group.MapPost("/create", async (
+            [FromBody] NewGroupContract newGroupContract,
+            CancellationToken cancellationToken,
+            [FromServices] ISender sender) =>
+        {
+            return Results.Ok(await sender.Send(new CreateGroupCommand(newGroupContract), cancellationToken));
+        })
+            .RequireAuthorization()
+            .WithDescription("Creates a group.")
+            .Produces<GroupDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPut("/update", async (
             [FromBody] UpdateGroupContract updateGroupContract,
@@ -46,7 +72,13 @@ public static class GroupEndpoints
             await sender.Send(new UpdateGroupCommand(updateGroupContract), cancellationToken);
             return Results.Ok();
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Updates a group.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapDelete("/delete", async (
             [FromQuery] string groupId,
@@ -56,16 +88,13 @@ public static class GroupEndpoints
             await sender.Send(new RemoveGroupCommand(groupId), cancellationToken);
             return Results.Ok();
         })
-            .RequireAuthorization(IdentityData.DeveloperUserPolicyName);
-
-        group.MapPost("/create", async (
-            [FromBody] NewGroupContract newGroupContract,
-            CancellationToken cancellationToken,
-            [FromServices] ISender sender) =>
-        {
-            return Results.Ok(await sender.Send(new CreateGroupCommand(newGroupContract), cancellationToken));
-        })
-            .RequireAuthorization();
+            .RequireAuthorization(IdentityData.DeveloperUserPolicyName)
+            .WithDescription("Deletes a group.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         return group;
     }

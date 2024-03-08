@@ -5,9 +5,9 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 public interface IRecipePersistenceRepository
 {
-    Task<RecipeAggregate> CreateRecipeAsync(
+    Task<Recipe> CreateRecipeAsync(
         string title,
-        Recipe recipe,
+        RecipeGuide recipeGuide,
         string description,
         IUserAccount chef,
         ISet<string> tags,
@@ -15,7 +15,7 @@ public interface IRecipePersistenceRepository
         DateTimeOffset lastUpdatedDate,
         string? thumbnailId,
         CancellationToken cancellationToken = default);
-    Task<bool> UpdateRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default);
-    Task<bool> DeleteRecipeAsync(RecipeAggregate recipe, CancellationToken cancellationToken = default);
+    Task<bool> UpdateRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default);
+    Task<bool> DeleteRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default);
     Task<bool> DeleteRecipeAsync(string id, CancellationToken cancellationToken = default);
 }

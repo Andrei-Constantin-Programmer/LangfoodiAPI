@@ -100,10 +100,10 @@ public class RecipeQueryRepositoryTests
             Password = "TestPass"
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
                 id,
                 testDocument.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testDocument.Description,
                 testChef.Account,
                 testDocument.CreationDate,
@@ -121,7 +121,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(testDocument, testChef.Account))
             .Returns(testRecipe);
 
         // When
@@ -161,10 +161,10 @@ public class RecipeQueryRepositoryTests
             AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
                 id,
                 testDocument.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testDocument.Description,
                 testChef,
                 testDocument.CreationDate,
@@ -179,7 +179,7 @@ public class RecipeQueryRepositoryTests
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(testDocument, testChef))
             .Returns(testRecipe);
 
         // When
@@ -232,10 +232,10 @@ public class RecipeQueryRepositoryTests
             Password = "TestPass"
         };
 
-        RecipeAggregate testRecipe = new(
+        Recipe testRecipe = new(
                 id,
                 testDocument.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testDocument.Description,
                 testChef.Account,
                 testDocument.CreationDate,
@@ -252,7 +252,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(testDocument, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(testDocument, testChef.Account))
             .Returns(testRecipe);
 
         // When
@@ -309,7 +309,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -346,10 +346,10 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef.Account,
             chefsRecipe.CreationDate,
@@ -361,7 +361,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -408,7 +408,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -445,10 +445,10 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef.Account,
             chefsRecipe.CreationDate,
@@ -463,7 +463,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByIdAsync(It.Is<string>(x => x == chefId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -516,10 +516,10 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef.Account,
             chefsRecipe.CreationDate,
@@ -531,7 +531,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(x => x == chefUsername), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -578,7 +578,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -616,7 +616,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -655,10 +655,10 @@ public class RecipeQueryRepositoryTests
             ThumbnailId: "public_id_1"
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef.Account,
             chefsRecipe.CreationDate,
@@ -675,7 +675,7 @@ public class RecipeQueryRepositoryTests
             .Setup(repo => repo.GetUserByUsernameAsync(It.Is<string>(x => x == chefUsername), It.IsAny<CancellationToken>()))
             .ReturnsAsync(testChef);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef.Account))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef.Account))
             .Returns(expectedResult);
 
         // When
@@ -709,7 +709,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -755,10 +755,10 @@ public class RecipeQueryRepositoryTests
             ThumbnailId: "public_id_2"
         );
 
-        RecipeAggregate expectedResult1 = new(
+        Recipe expectedResult1 = new(
             chefsRecipe1.Id!,
             chefsRecipe1.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe1.Description,
             testChef,
             chefsRecipe1.CreationDate,
@@ -766,10 +766,10 @@ public class RecipeQueryRepositoryTests
             new HashSet<string>(),
             chefsRecipe1.ThumbnailId
         );
-        RecipeAggregate expectedResult2 = new(
+        Recipe expectedResult2 = new(
             chefsRecipe2.Id!,
             chefsRecipe2.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe2.Description,
             testChef,
             chefsRecipe2.CreationDate,
@@ -785,17 +785,17 @@ public class RecipeQueryRepositoryTests
             .ReturnsAsync(new List<RecipeDocument>() { chefsRecipe1, chefsRecipe2 });
 
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe1, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe1, testChef))
             .Returns(expectedResult1);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe2, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe2, testChef))
             .Returns(expectedResult2);
 
         // When
         var result = (await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef)).ToList();
 
         // Then
-        result.Should().BeEquivalentTo(new List<RecipeAggregate> { expectedResult1, expectedResult2 });
+        result.Should().BeEquivalentTo(new List<Recipe> { expectedResult1, expectedResult2 });
     }
 
     [Fact]
@@ -840,10 +840,10 @@ public class RecipeQueryRepositoryTests
             ThumbnailId: "public_id_2"
         );
 
-        RecipeAggregate expectedResult1 = new(
+        Recipe expectedResult1 = new(
             chefsRecipe1.Id!,
             chefsRecipe1.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe1.Description,
             testChef,
             chefsRecipe1.CreationDate,
@@ -851,10 +851,10 @@ public class RecipeQueryRepositoryTests
             new HashSet<string>(),
             chefsRecipe1.ThumbnailId
         );
-        RecipeAggregate expectedResult2 = new(
+        Recipe expectedResult2 = new(
             chefsRecipe2.Id!,
             chefsRecipe2.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe2.Description,
             testChef,
             chefsRecipe2.CreationDate,
@@ -871,17 +871,17 @@ public class RecipeQueryRepositoryTests
 
         Exception testException = new("Test Exception");
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe1, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe1, testChef))
             .Returns(expectedResult1);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe2, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe2, testChef))
             .Throws(testException);
 
         // When
         var result = (await _recipeQueryRepositorySUT.GetRecipesByChefAsync(testChef)).ToList();
 
         // Then
-        result.Should().BeEquivalentTo(new List<RecipeAggregate> { expectedResult1 });
+        result.Should().BeEquivalentTo(new List<Recipe> { expectedResult1 });
         _loggerMock.Verify(logger =>
             logger.Log(
                 LogLevel.Error,
@@ -917,7 +917,7 @@ public class RecipeQueryRepositoryTests
         result.Should().BeEmpty();
         _mapperMock
             .Verify(mapper =>
-                mapper.MapRecipeDocumentToRecipeAggregate(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
+                mapper.MapRecipeDocumentToRecipe(It.IsAny<RecipeDocument>(), It.IsAny<IUserAccount>()),
                 Times.Never);
     }
 
@@ -949,10 +949,10 @@ public class RecipeQueryRepositoryTests
             ChefId: chefId
         );
 
-        RecipeAggregate expectedResult = new(
+        Recipe expectedResult = new(
             chefsRecipe.Id!,
             chefsRecipe.Title,
-            new Recipe(new(), new()),
+            new RecipeGuide(new(), new()),
             chefsRecipe.Description,
             testChef,
             chefsRecipe.CreationDate,
@@ -964,7 +964,7 @@ public class RecipeQueryRepositoryTests
             .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<RecipeDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
-            .Setup(mapper => mapper.MapRecipeDocumentToRecipeAggregate(chefsRecipe, testChef))
+            .Setup(mapper => mapper.MapRecipeDocumentToRecipe(chefsRecipe, testChef))
             .Returns(expectedResult);
 
         // When

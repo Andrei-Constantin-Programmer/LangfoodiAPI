@@ -7,9 +7,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetConnectionsByUserQuery(string UserId) : IRequest<IEnumerable<ConnectionDTO>>;
+public record GetConnectionsByUserQuery(string UserId) : IRequest<List<ConnectionDTO>>;
 
-internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUserQuery, IEnumerable<ConnectionDTO>>
+internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUserQuery, List<ConnectionDTO>>
 {
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IConnectionQueryRepository _connectionQueryRepository;
@@ -20,7 +20,7 @@ internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUse
         _connectionQueryRepository = connectionQueryRepository;
     }
 
-    public async Task<IEnumerable<ConnectionDTO>> Handle(GetConnectionsByUserQuery request, CancellationToken cancellationToken)
+    public async Task<List<ConnectionDTO>> Handle(GetConnectionsByUserQuery request, CancellationToken cancellationToken)
     {
         IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
@@ -31,6 +31,7 @@ internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUse
                 connection.ConnectionId,
                 connection.Account1.Id,
                 connection.Account2.Id,
-                connection.Status.ToString()));
+                connection.Status.ToString()))
+            .ToList();
     }
 }
