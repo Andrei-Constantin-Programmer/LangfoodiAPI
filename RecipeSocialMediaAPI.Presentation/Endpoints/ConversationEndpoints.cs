@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
@@ -25,7 +26,13 @@ public static class ConversationEndpoints
         {
             return Results.Ok(await sender.Send(new GetConversationsByUserQuery(userId), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Gets all conversations for a user.")
+            .Produces<List<ConversationDTO>>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/get-by-connection", async (
             [FromQuery] string userId,
@@ -35,7 +42,13 @@ public static class ConversationEndpoints
         {
             return Results.Ok(await sender.Send(new GetConversationByConnectionQuery(userId, connectionId), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Gets a conversation by its connection.")
+            .Produces<ConversationDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/get-by-group", async (
             [FromQuery] string userId,
@@ -45,7 +58,13 @@ public static class ConversationEndpoints
         {
             return Results.Ok(await sender.Send(new GetConversationByGroupQuery(userId, groupId), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Gets a conversation by its group.")
+            .Produces<ConversationDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/create-by-connection", async (
             [FromQuery] string userId,
@@ -55,7 +74,13 @@ public static class ConversationEndpoints
         {
             return Results.Ok(await sender.Send(new CreateConnectionConversationCommand(userId, connectionId), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Creates a conversation for a connection.")
+            .Produces<ConversationDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/create-by-group", async (
             [FromQuery] string userId,
@@ -65,7 +90,13 @@ public static class ConversationEndpoints
         {
             return Results.Ok(await sender.Send(new CreateGroupConversationCommand(userId, groupId), cancellationToken));
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Creates a conversation for a group.")
+            .Produces<ConversationDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPut("/mark-as-read", async (
             [FromQuery] string userId,
@@ -76,7 +107,13 @@ public static class ConversationEndpoints
             await sender.Send(new MarkConversationAsReadCommand(userId, conversationId), cancellationToken);
             return Results.Ok();
         })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithDescription("Marks all messages in a conversation as read for a user.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         return group;
     }
