@@ -34,7 +34,6 @@ public static class UserEndpoints
         })
             .WithDescription("Gets all users whose handle or username contain the given string.")
             .Produces<List<UserAccountDTO>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -49,7 +48,6 @@ public static class UserEndpoints
             .RequireAuthorization()
             .WithDescription("Gets all connected users whose handle or username contain the given string.")
             .Produces<List<UserAccountDTO>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -65,7 +63,6 @@ public static class UserEndpoints
             .RequireAuthorization()
             .WithDescription("Gets all unconnected users whose handle or username contain the given string.")
             .Produces<List<UserAccountDTO>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -80,7 +77,6 @@ public static class UserEndpoints
             .WithDescription("Registers a new user. Returns newly created user and a bearer token.")
             .Produces<SuccessfulAuthenticationDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPut("/update", async (
@@ -110,7 +106,6 @@ public static class UserEndpoints
             .RequireAuthorization()
             .WithDescription("Deletes a user.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -124,7 +119,6 @@ public static class UserEndpoints
         })
             .WithDescription("Checks if a user with username exists.")
             .Produces<bool>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -137,7 +131,6 @@ public static class UserEndpoints
         })
             .WithDescription("Checks if a user with email already exists.")
             .Produces<bool>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -153,7 +146,6 @@ public static class UserEndpoints
             .RequireAuthorization()
             .WithDescription("Pins a conversation for a user.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -170,7 +162,6 @@ public static class UserEndpoints
             .RequireAuthorization()
             .WithDescription("Unpins a conversation for a user.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -187,7 +178,6 @@ public static class UserEndpoints
             .RequireAuthorization()
             .WithDescription("Blocks a connection for a user.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -204,7 +194,6 @@ public static class UserEndpoints
             .RequireAuthorization()
             .WithDescription("Unblocks a connection for a user.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -220,7 +209,6 @@ public static class UserEndpoints
             .RequireAuthorization()
             .WithDescription("Gets all pinned conversation ids for a user.")
             .Produces<List<string>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);

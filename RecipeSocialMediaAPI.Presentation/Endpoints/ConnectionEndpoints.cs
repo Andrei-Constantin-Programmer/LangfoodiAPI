@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
 using RecipeSocialMediaAPI.Application.DTO.Message;
-using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 using RecipeSocialMediaAPI.Application.Identity;
@@ -33,7 +32,6 @@ public static class ConnectionEndpoints
             .RequireAuthorization()
             .WithDescription("Gets connection between two users.")
             .Produces<ConnectionDTO>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -48,7 +46,6 @@ public static class ConnectionEndpoints
             .RequireAuthorization()
             .WithDescription("Gets all connections for user.")
             .Produces<List<ConnectionDTO>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -95,7 +92,6 @@ public static class ConnectionEndpoints
             .RequireAuthorization(IdentityData.DeveloperUserPolicyName)
             .WithDescription("Deletes a connection.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)

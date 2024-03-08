@@ -29,7 +29,6 @@ public static class ConversationEndpoints
             .RequireAuthorization()
             .WithDescription("Gets all conversations for a user.")
             .Produces<List<ConversationDTO>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -45,7 +44,6 @@ public static class ConversationEndpoints
             .RequireAuthorization()
             .WithDescription("Gets a conversation by its connection.")
             .Produces<ConversationDTO>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -61,7 +59,6 @@ public static class ConversationEndpoints
             .RequireAuthorization()
             .WithDescription("Gets a conversation by its group.")
             .Produces<ConversationDTO>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -110,7 +107,6 @@ public static class ConversationEndpoints
             .RequireAuthorization()
             .WithDescription("Marks all messages in a conversation as read for a user.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);

@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
-using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
@@ -31,7 +30,6 @@ public static class RecipeEndpoints
             .RequireAuthorization()
             .WithDescription("Gets a recipe by its id.")
             .Produces<RecipeDetailedDTO>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -46,7 +44,6 @@ public static class RecipeEndpoints
             .RequireAuthorization()
             .WithDescription("Gets all recipes created by user.")
             .Produces<List<RecipeDTO>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -61,7 +58,6 @@ public static class RecipeEndpoints
             .RequireAuthorization()
             .WithDescription("Gets all recipes created by user.")
             .Produces<List<RecipeDTO>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -108,7 +104,6 @@ public static class RecipeEndpoints
             .RequireAuthorization()
             .WithDescription("Deletes a recipe.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);

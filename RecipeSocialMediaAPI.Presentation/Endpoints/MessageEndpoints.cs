@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RecipeSocialMediaAPI.Application.Contracts.Messages;
-using RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 using RecipeSocialMediaAPI.Application.DTO.Message;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 using RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
@@ -31,7 +30,6 @@ public static class MessageEndpoints
             .RequireAuthorization()
             .WithDescription("Gets a message by its id.")
             .Produces<MessageDTO>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -46,7 +44,6 @@ public static class MessageEndpoints
             .RequireAuthorization()
             .WithDescription("Gets a detailed version of a message by its id.")
             .Produces<MessageDetailedDTO>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -61,7 +58,6 @@ public static class MessageEndpoints
             .RequireAuthorization()
             .WithDescription("Gets all messages in a conversation.")
             .Produces<List<MessageDTO>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -112,7 +108,6 @@ public static class MessageEndpoints
             .RequireAuthorization()
             .WithDescription("Deletes a message.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -130,7 +125,6 @@ public static class MessageEndpoints
             .RequireAuthorization()
             .WithDescription("Mark message as read for a user.")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
