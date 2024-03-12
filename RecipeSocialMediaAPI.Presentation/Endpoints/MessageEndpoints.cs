@@ -34,20 +34,6 @@ public static class MessageEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        group.MapPost("/get-detailed", async (
-            [FromQuery] string id,
-            CancellationToken cancellationToken,
-            [FromServices] ISender sender) =>
-        {
-            return Results.Ok(await sender.Send(new GetMessageDetailedByIdQuery(id), cancellationToken));
-        })
-            .RequireAuthorization()
-            .WithDescription("Gets a detailed version of a message by its id.")
-            .Produces<MessageDetailedDTO>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
-
         group.MapPost("/get-by-conversation", async (
             [FromQuery] string conversationId,
             CancellationToken cancellationToken,
