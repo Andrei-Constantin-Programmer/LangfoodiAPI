@@ -40,14 +40,27 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
-    public void CryptoService_ShouldBeConfiguredCorrectly()
+    public void PasswordCryptoService_ShouldBeConfiguredCorrectly()
     {
         // Given
         using var scope = _factory.Services.CreateScope();
-        var cryptoService = scope.ServiceProvider.GetService(typeof(ICryptoService)) as CryptoService;
+        var passwordCryptoService = scope.ServiceProvider.GetService(typeof(IPasswordCryptoService)) as PasswordCryptoService;
 
         // Then
-        cryptoService.Should().NotBeNull();
+        passwordCryptoService.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public void DataCryptoService_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var dataCryptoService = scope.ServiceProvider.GetService(typeof(IDataCryptoService)) as DataCryptoService;
+
+        // Then
+        dataCryptoService.Should().NotBeNull();
     }
 
     [Fact]

@@ -19,7 +19,7 @@ public class AuthenticateUserHandlerTests
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
     private readonly Mock<IUserMapper> _mapperMock;
     private readonly Mock<IBearerTokenGeneratorService> _bearerTokenGeneratorServiceMock;
-    private readonly ICryptoService _cryptoServiceFake;
+    private readonly IPasswordCryptoService _passwordCryptoServiceFake;
 
     private readonly AuthenticateUserHandler _authenticateUserHandlerSUT;
 
@@ -28,12 +28,12 @@ public class AuthenticateUserHandlerTests
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _mapperMock = new Mock<IUserMapper>();
         _bearerTokenGeneratorServiceMock = new Mock<IBearerTokenGeneratorService>();
-        _cryptoServiceFake = new FakeCryptoService();
+        _passwordCryptoServiceFake = new FakePasswordCryptoService();
 
         _authenticateUserHandlerSUT = new AuthenticateUserHandler(
             _userQueryRepositoryMock.Object,
             _mapperMock.Object,
-            _cryptoServiceFake,
+            _passwordCryptoServiceFake,
             _bearerTokenGeneratorServiceMock.Object);
     }
 
@@ -65,7 +65,7 @@ public class AuthenticateUserHandlerTests
     public async Task Handle_WhenEmailIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
     {
         // Given
-        var encryptedPassword = _cryptoServiceFake.Encrypt("TestPass");
+        var encryptedPassword = _passwordCryptoServiceFake.Encrypt("TestPass");
         IUserCredentials testUser = new TestUserCredentials
         {
             Account = new TestUserAccount
@@ -98,7 +98,7 @@ public class AuthenticateUserHandlerTests
     {
         // Given
         var decryptedPassword = "TestPass";
-        var encryptedPassword = _cryptoServiceFake.Encrypt(decryptedPassword);
+        var encryptedPassword = _passwordCryptoServiceFake.Encrypt(decryptedPassword);
         IUserCredentials testUser = new TestUserCredentials
         {
             Account = new TestUserAccount

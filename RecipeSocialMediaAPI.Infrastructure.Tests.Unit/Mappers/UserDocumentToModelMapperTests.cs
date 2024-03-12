@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
@@ -13,14 +15,16 @@ namespace RecipeSocialMediaAPI.Infrastructure.Tests.Unit.Mappers;
 public class UserDocumentToModelMapperTests
 {
     private readonly Mock<IUserFactory> _userFactoryMock;
+    private readonly IDataCryptoService _dataCryptoServiceFake;
 
     private readonly UserDocumentToModelMapper _userDocumentToModelMapperSUT;
 
     public UserDocumentToModelMapperTests()
     {
         _userFactoryMock = new Mock<IUserFactory>();
+        _dataCryptoServiceFake = new FakeDataCryptoService();
 
-        _userDocumentToModelMapperSUT = new(_userFactoryMock.Object);
+        _userDocumentToModelMapperSUT = new(_userFactoryMock.Object, _dataCryptoServiceFake);
     }
 
     [Fact]
@@ -31,10 +35,10 @@ public class UserDocumentToModelMapperTests
         // Given
         UserDocument testDocument = new(
             Id: null,
-            Handler: "TestUserHandler",
-            UserName: "TestUser",
-            Email: "TestMail",
-            Password: "TestPassword",
+            Handler: _dataCryptoServiceFake.Encrypt("TestUserHandler"),
+            UserName: _dataCryptoServiceFake.Encrypt("TestUser"),
+            Email: _dataCryptoServiceFake.Encrypt("TestMail"),
+            Password: _dataCryptoServiceFake.Encrypt("TestPassword"),
             AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
             Role: (int)UserRole.User
         );
@@ -67,12 +71,12 @@ public class UserDocumentToModelMapperTests
         // Given
         UserDocument testDocument = new(
             Id: "1",
-            Handler: "TestUserHandler",
-            UserName: "TestUser",
-            Email: "TestMail",
-            Password: "TestPassword",
+            Handler: _dataCryptoServiceFake.Encrypt("TestUserHandler"),
+            UserName: _dataCryptoServiceFake.Encrypt("TestUser"),
+            Email: _dataCryptoServiceFake.Encrypt("TestMail"),
+            Password: _dataCryptoServiceFake.Encrypt("TestPassword"),
             AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            ProfileImageId: "TestImageId",
+            ProfileImageId: _dataCryptoServiceFake.Encrypt("TestImageId"),
             Role: (int)UserRole.User
         );
 
@@ -81,24 +85,24 @@ public class UserDocumentToModelMapperTests
             Account = new TestUserAccount()
             {
                 Id = testDocument.Id!,
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = testDocument.AccountCreationDate!.Value,
-                ProfileImageId = testDocument.ProfileImageId,
+                ProfileImageId = _dataCryptoServiceFake.Decrypt(testDocument.ProfileImageId!),
                 Role = UserRole.User
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         _userFactoryMock
             .Setup(factory => factory.CreateUserCredentials(
                 testDocument.Id!,
-                testDocument.Handler,
-                testDocument.UserName,
-                testDocument.Email,
-                testDocument.Password,
-                testDocument.ProfileImageId,
+                _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                _dataCryptoServiceFake.Decrypt(testDocument.UserName),
+                _dataCryptoServiceFake.Decrypt(testDocument.Email),
+                _dataCryptoServiceFake.Decrypt(testDocument.Password),
+                _dataCryptoServiceFake.Decrypt(testDocument.ProfileImageId!),
                 testDocument.AccountCreationDate,
                 It.IsAny<List<string>>(),
                 It.IsAny<List<string>>(),
@@ -120,12 +124,12 @@ public class UserDocumentToModelMapperTests
         // Given
         UserDocument testDocument = new(
             Id: "1",
-            Handler: "TestUserHandler",
-            UserName: "TestUser",
-            Email: "TestMail",
-            Password: "TestPassword",
+            Handler: _dataCryptoServiceFake.Encrypt("TestUserHandler"),
+            UserName: _dataCryptoServiceFake.Encrypt("TestUser"),
+            Email: _dataCryptoServiceFake.Encrypt("TestMail"),
+            Password: _dataCryptoServiceFake.Encrypt("TestPassword"),
             AccountCreationDate: new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-            ProfileImageId: "TestImageId",
+            ProfileImageId: _dataCryptoServiceFake.Encrypt("TestImageId"),
             PinnedConversationIds: new() { "convo1", "convo2" },
             Role: (int)UserRole.User
         );
@@ -135,24 +139,24 @@ public class UserDocumentToModelMapperTests
             Account = new TestUserAccount()
             {
                 Id = testDocument.Id!,
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = testDocument.AccountCreationDate!.Value,
-                ProfileImageId = testDocument.ProfileImageId,
+                ProfileImageId = _dataCryptoServiceFake.Decrypt(testDocument.ProfileImageId!),
                 PinnedConversationIds = testDocument.PinnedConversationIds!.ToImmutableList()
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         _userFactoryMock
             .Setup(factory => factory.CreateUserCredentials(
                 testDocument.Id!,
-                testDocument.Handler,
-                testDocument.UserName,
-                testDocument.Email,
-                testDocument.Password,
-                testDocument.ProfileImageId,
+                _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                _dataCryptoServiceFake.Decrypt(testDocument.UserName),
+                _dataCryptoServiceFake.Decrypt(testDocument.Email),
+                _dataCryptoServiceFake.Decrypt(testDocument.Password),
+                _dataCryptoServiceFake.Decrypt(testDocument.ProfileImageId!),
                 testDocument.AccountCreationDate,
                 testDocument.PinnedConversationIds,
                 testDocument.BlockedConnectionIds,

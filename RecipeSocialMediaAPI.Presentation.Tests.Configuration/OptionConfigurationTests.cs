@@ -86,4 +86,21 @@ public class OptionConfigurationTests : IClassFixture<WebApplicationFactory<Prog
         jwtOptions!.Value.Should().NotBeNull();
         validationResult.Should().BeTrue();
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public void EncryptionOptions_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        var encryptionOptions = _serviceProvider.GetService(typeof(IOptions<EncryptionOptions>)) as IOptions<EncryptionOptions>;
+
+        // When
+        var validationResult = new EncryptionOptionValidator().Validate(encryptionOptions!.Value).IsValid;
+
+        // Then
+        encryptionOptions.Should().NotBeNull();
+        encryptionOptions!.Value.Should().NotBeNull();
+        validationResult.Should().BeTrue();
+    }
 }

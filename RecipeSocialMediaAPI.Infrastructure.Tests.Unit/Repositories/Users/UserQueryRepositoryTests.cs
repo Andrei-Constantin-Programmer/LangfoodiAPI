@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Neleus.LambdaCompare;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
@@ -15,11 +17,13 @@ namespace RecipeSocialMediaAPI.Infrastructure.Tests.Unit.Repositories.Users;
 
 public class UserQueryRepositoryTests
 {
-    private readonly UserQueryRepository _userQueryRepositorySUT;
     private readonly Mock<IMongoCollectionWrapper<UserDocument>> _mongoCollectionWrapperMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
     private readonly Mock<IUserDocumentToModelMapper> _mapperMock;
     private readonly Mock<ILogger<UserQueryRepository>> _loggerMock;
+    private readonly IDataCryptoService _dataCryptoServiceFake;
+
+    private readonly UserQueryRepository _userQueryRepositorySUT;
 
     public UserQueryRepositoryTests()
     {
@@ -30,8 +34,13 @@ public class UserQueryRepositoryTests
         _mongoCollectionFactoryMock
             .Setup(factory => factory.CreateCollection<UserDocument>())
             .Returns(_mongoCollectionWrapperMock.Object);
+        _dataCryptoServiceFake = new FakeDataCryptoService();
 
-        _userQueryRepositorySUT = new UserQueryRepository(_loggerMock.Object, _mapperMock.Object, _mongoCollectionFactoryMock.Object);
+        _userQueryRepositorySUT = new UserQueryRepository(
+            _loggerMock.Object,
+            _mapperMock.Object,
+            _mongoCollectionFactoryMock.Object,
+            _dataCryptoServiceFake);
     }
 
     [Fact]
@@ -64,18 +73,23 @@ public class UserQueryRepositoryTests
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler"),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt("TestEmail"),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
             
         _mongoCollectionWrapperMock
@@ -102,18 +116,23 @@ public class UserQueryRepositoryTests
         // Given
         string id = "1";
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == id;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler"),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt("TestEmail"),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         Exception testException = new("Test Exception");
@@ -148,13 +167,11 @@ public class UserQueryRepositoryTests
     {
         // Given
         string email = "test@mail.com";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(nullUserDocument);
+            .ReturnsAsync(Enumerable.Empty<UserDocument>());
 
         // When
         var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
@@ -170,26 +187,36 @@ public class UserQueryRepositoryTests
     {
         // Given
         string email = "test@mail.com";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler"),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt(email),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
+        UserDocument otherDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler1"),
+            _dataCryptoServiceFake.Encrypt("TestName1"),
+            _dataCryptoServiceFake.Encrypt("TestEmail1"),
+            _dataCryptoServiceFake.Encrypt("TestPassword1"),
+            (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(testDocument);
+            .ReturnsAsync(new List<UserDocument> { testDocument, otherDocument });
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
@@ -208,25 +235,29 @@ public class UserQueryRepositoryTests
     {
         // Given
         string email = "test@mail.com";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument testDocument = new("TestHandler", "TestName", email, "TestPassword", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler"),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt(email),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
@@ -255,13 +286,11 @@ public class UserQueryRepositoryTests
     {
         // Given
         string username = "TestUsername";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
-        UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(nullUserDocument);
+            .ReturnsAsync(Enumerable.Empty<UserDocument>());
 
         // When
         var result = await _userQueryRepositorySUT.GetUserByUsernameAsync(username);
@@ -277,26 +306,36 @@ public class UserQueryRepositoryTests
     {
         // Given
         string username = "WrongUsername";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler"),
+            _dataCryptoServiceFake.Encrypt(username),
+            _dataCryptoServiceFake.Encrypt("TestEmail"),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
+        UserDocument otherDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler1"),
+            _dataCryptoServiceFake.Encrypt("TestName1"),
+            _dataCryptoServiceFake.Encrypt("TestEmail1"),
+            _dataCryptoServiceFake.Encrypt("TestPassword1"),
+            (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(testDocument);
+            .ReturnsAsync(new List<UserDocument> { testDocument, otherDocument });
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
@@ -315,32 +354,36 @@ public class UserQueryRepositoryTests
     {
         // Given
         string username = "TestUsername";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == username;
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler"),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt("TestEmail"),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserByIdAsync(username);
+        var result = await _userQueryRepositorySUT.GetUserByUsernameAsync(username);
 
         // Then
         result.Should().BeNull();
@@ -381,14 +424,21 @@ public class UserQueryRepositoryTests
     {
         // Given
         string containedString = "test";
-        Expression<Func<UserDocument, bool>> expectedExpression = x
-            => x.Handler.Contains(containedString.ToLower())
-            || x.UserName.Contains(containedString.ToLower());
-
+        
         List<UserDocument> userDocuments = new()
         {
-            new("non_searched_handle", $"User{containedString}Name", string.Empty, string.Empty, (int)UserRole.User),
-            new($"the_{containedString}_handle", "NonSearchedUsername", string.Empty, string.Empty, (int)UserRole.User),
+            new(
+                _dataCryptoServiceFake.Encrypt("non_searched_handle"),
+                _dataCryptoServiceFake.Encrypt($"User{containedString}Name"),
+                _dataCryptoServiceFake.Encrypt(string.Empty),
+                _dataCryptoServiceFake.Encrypt(string.Empty),
+                (int)UserRole.User),
+            new(
+                _dataCryptoServiceFake.Encrypt($"the_{containedString}_handle"),
+                _dataCryptoServiceFake.Encrypt("NonSearchedUsername"),
+                _dataCryptoServiceFake.Encrypt(string.Empty),
+                _dataCryptoServiceFake.Encrypt(string.Empty),
+                (int)UserRole.User),
         };
 
         IUserCredentials testUser1 = new TestUserCredentials()
@@ -396,8 +446,8 @@ public class UserQueryRepositoryTests
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = userDocuments[0].Handler,
-                UserName = userDocuments[0].UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(userDocuments[0].Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(userDocuments[0].UserName),
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
             },
             Email = "email",
@@ -408,8 +458,8 @@ public class UserQueryRepositoryTests
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = userDocuments[1].Handler,
-                UserName = userDocuments[1].UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(userDocuments[1].Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(userDocuments[1].UserName),
                 AccountCreationDate = new(2023, 10, 10, 0, 0, 0, TimeSpan.Zero)
             },
             Email = "email",
@@ -418,7 +468,7 @@ public class UserQueryRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAllAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userDocuments);
         _mapperMock
@@ -443,14 +493,21 @@ public class UserQueryRepositoryTests
     {
         // Given
         string containedString = "test";
-        Expression<Func<UserDocument, bool>> expectedExpression = x
-            => x.Handler.Contains(containedString.ToLower())
-            || x.UserName.Contains(containedString.ToLower());
-
+        
         List<UserDocument> userDocuments = new()
         {
-            new("non_searched_handle", $"User{containedString}Name", string.Empty, string.Empty, (int)UserRole.User),
-            new($"the_{containedString}_handle", "NonSearchedUsername", string.Empty, string.Empty, (int)UserRole.User),
+            new(
+                _dataCryptoServiceFake.Encrypt("non_searched_handle"),
+                _dataCryptoServiceFake.Encrypt($"User{containedString}Name"),
+                _dataCryptoServiceFake.Encrypt(string.Empty),
+                _dataCryptoServiceFake.Encrypt(string.Empty),
+                (int)UserRole.User),
+            new(
+                _dataCryptoServiceFake.Encrypt($"the_{containedString}_handle"),
+                _dataCryptoServiceFake.Encrypt("NonSearchedUsername"),
+                _dataCryptoServiceFake.Encrypt(string.Empty),
+                _dataCryptoServiceFake.Encrypt(string.Empty),
+                (int)UserRole.User),
         };
 
         IUserCredentials testUser1 = new TestUserCredentials()
@@ -458,8 +515,8 @@ public class UserQueryRepositoryTests
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = userDocuments[0].Handler,
-                UserName = userDocuments[0].UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(userDocuments[0].Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(userDocuments[0].UserName),
                 AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
             },
             Email = "email",
@@ -470,8 +527,8 @@ public class UserQueryRepositoryTests
             Account = new TestUserAccount()
             {
                 Id = "TestId",
-                Handler = userDocuments[1].Handler,
-                UserName = userDocuments[1].UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(userDocuments[1].Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(userDocuments[1].UserName),
                 AccountCreationDate = new(2023, 10, 10, 0, 0, 0, TimeSpan.Zero)
             },
             Email = "email",
@@ -480,7 +537,7 @@ public class UserQueryRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAllAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userDocuments);
 

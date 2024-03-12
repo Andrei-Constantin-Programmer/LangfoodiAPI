@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Infrastructure.Mappers.Interfaces;
@@ -12,12 +13,18 @@ public class UserQueryRepository : IUserQueryRepository
     private readonly ILogger<UserQueryRepository> _logger;
     private readonly IMongoCollectionWrapper<UserDocument> _userCollection;
     private readonly IUserDocumentToModelMapper _mapper;
+    private readonly IDataCryptoService _dataCryptoService;
 
-    public UserQueryRepository(ILogger<UserQueryRepository> logger, IUserDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory)
+    public UserQueryRepository(
+        ILogger<UserQueryRepository> logger,
+        IUserDocumentToModelMapper mapper,
+        IMongoCollectionFactory mongoCollectionFactory,
+        IDataCryptoService dataCryptoService)
     {
         _logger = logger;
         _mapper = mapper;
         _userCollection = mongoCollectionFactory.CreateCollection<UserDocument>();
+        _dataCryptoService = dataCryptoService;
     }
 
     public async Task<IUserCredentials?> GetUserByIdAsync(string id, CancellationToken cancellationToken = default)
@@ -45,8 +52,8 @@ public class UserQueryRepository : IUserQueryRepository
         UserDocument? userDocument;
         try
         {
-            userDocument = await _userCollection
-                .GetOneAsync(userDoc => userDoc.Email == email, cancellationToken);
+            userDocument = (await _userCollection.GetAllAsync(_ => true, cancellationToken))
+                .FirstOrDefault(userDoc => _dataCryptoService.Decrypt(userDoc.Email) == email);
         }
         catch (Exception ex)
         {
@@ -65,8 +72,8 @@ public class UserQueryRepository : IUserQueryRepository
 
         try
         {
-            userDocument = await _userCollection
-                .GetOneAsync(userDoc => userDoc.Handler == handler, cancellationToken);
+            userDocument = (await _userCollection.GetAllAsync(_ => true, cancellationToken))
+                .FirstOrDefault(userDoc => _dataCryptoService.Decrypt(userDoc.Handler) == handler);
         }
         catch (Exception ex)
         {
@@ -85,8 +92,8 @@ public class UserQueryRepository : IUserQueryRepository
 
         try
         {
-            userDocument = await _userCollection
-                .GetOneAsync(userDoc => userDoc.UserName == username, cancellationToken);
+            userDocument = (await _userCollection.GetAllAsync(_ => true, cancellationToken))
+                .FirstOrDefault(userDoc => _dataCryptoService.Decrypt(userDoc.UserName) == username);
         }
         catch (Exception ex)
         {
@@ -101,9 +108,9 @@ public class UserQueryRepository : IUserQueryRepository
 
     public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default)
         => (await _userCollection
-            .GetAllAsync(userDoc => userDoc.Handler.Contains(containedString.ToLower())
-                                 || userDoc.UserName.Contains(containedString.ToLower()),
-                        cancellationToken))
+            .GetAllAsync(_ => true, cancellationToken))
+            .Where(userDoc => _dataCryptoService.Decrypt(userDoc.Handler).ToLower().Contains(containedString.ToLower())
+                           || _dataCryptoService.Decrypt(userDoc.UserName).ToLower().Contains(containedString.ToLower()))
             .Select(userDoc => {
                 try
                 {

@@ -20,16 +20,22 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
 {
     private readonly IUserMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly ICryptoService _cryptoService;
+    private readonly IPasswordCryptoService _passwordCryptoService;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserPersistenceRepository _userPersistenceRepository;
     private readonly IBearerTokenGeneratorService _bearerTokenGeneratorService;
 
-    public AddUserHandler(IUserMapper mapper, IDateTimeProvider dateTimeProvider, ICryptoService cryptoService, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository, IBearerTokenGeneratorService bearerTokenGeneratorService)
+    public AddUserHandler(
+        IUserMapper mapper,
+        IDateTimeProvider dateTimeProvider,
+        IPasswordCryptoService passwordCryptoService,
+        IUserPersistenceRepository userPersistenceRepository,
+        IUserQueryRepository userQueryRepository,
+        IBearerTokenGeneratorService bearerTokenGeneratorService)
     {
         _mapper = mapper;
         _dateTimeProvider = dateTimeProvider;
-        _cryptoService = cryptoService;
+        _passwordCryptoService = passwordCryptoService;
         _userPersistenceRepository = userPersistenceRepository;
         _userQueryRepository = userQueryRepository;
         _bearerTokenGeneratorService = bearerTokenGeneratorService;
@@ -52,7 +58,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
             throw new EmailAlreadyInUseException(request.Contract.Email);
         }
 
-        var encryptedPassword = _cryptoService.Encrypt(request.Contract.Password);
+        var encryptedPassword = _passwordCryptoService.Encrypt(request.Contract.Password);
         IUserCredentials insertedUser = await _userPersistenceRepository
             .CreateUserAsync(
                 request.Contract.Handler,

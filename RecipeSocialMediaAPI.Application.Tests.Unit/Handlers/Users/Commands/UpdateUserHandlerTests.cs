@@ -15,7 +15,7 @@ namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
 public class UpdateUserHandlerTests
 {
-    private readonly ICryptoService _cryptoServiceFake;
+    private readonly IPasswordCryptoService _passwordCryptoServiceFake;
     private readonly Mock<IUserFactory> _userFactoryMock;
 
     private readonly Mock<IUserPersistenceRepository> _userPersistenceRepositoryMock;
@@ -25,12 +25,12 @@ public class UpdateUserHandlerTests
 
     public UpdateUserHandlerTests()
     {
-        _cryptoServiceFake = new FakeCryptoService();
+        _passwordCryptoServiceFake = new FakePasswordCryptoService();
         _userFactoryMock = new Mock<IUserFactory>(); 
         _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
-        _updateUserHandlerSUT = new UpdateUserHandler(_cryptoServiceFake, _userFactoryMock.Object, _userPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object);
+        _updateUserHandlerSUT = new UpdateUserHandler(_passwordCryptoServiceFake, _userFactoryMock.Object, _userPersistenceRepositoryMock.Object, _userQueryRepositoryMock.Object);
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class UpdateUserHandlerTests
             .Setup(repo => repo.UpdateUserAsync(It.IsAny<IUserCredentials>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        var encryptedPassword = _cryptoServiceFake.Encrypt(contract.Password!);
+        var encryptedPassword = _passwordCryptoServiceFake.Encrypt(contract.Password!);
         _userFactoryMock
             .Setup(factory => factory
                 .CreateUserCredentials(
@@ -143,7 +143,7 @@ public class UpdateUserHandlerTests
                 && user.Account.AccountCreationDate == creationDate
                 && user.Account.UserName == contract.UserName
                 && user.Email == contract.Email
-                && _cryptoServiceFake.ArePasswordsTheSame(contract.Password!, user.Password)), It.IsAny<CancellationToken>()), Times.Once);
+                && _passwordCryptoServiceFake.ArePasswordsTheSame(contract.Password!, user.Password)), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

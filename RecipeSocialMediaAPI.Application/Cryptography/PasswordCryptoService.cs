@@ -3,7 +3,7 @@ using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Application.Cryptography;
 
-public class CryptoService : ICryptoService
+public class PasswordCryptoService : IPasswordCryptoService
 {
 
     public bool ArePasswordsTheSame(string clientPassword, string serverPassword)

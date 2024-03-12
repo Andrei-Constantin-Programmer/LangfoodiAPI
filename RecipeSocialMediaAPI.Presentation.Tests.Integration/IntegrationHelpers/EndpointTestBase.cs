@@ -29,7 +29,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
     internal FakeGroupRepository _fakeGroupRepository;
     internal FakeConversationRepository _fakeConversationRepository;
 
-    internal FakeCryptoService _fakeCryptoService;
+    internal FakePasswordCryptoService _fakePasswordCryptoService;
 
     public EndpointTestBase(WebApplicationFactory<Program> factory)
     {
@@ -43,7 +43,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
         _fakeMessageRepository = new FakeMessageRepository(new MessageFactory(_dateTimeProvider), _fakeRecipeRepository);
         _fakeGroupRepository = new FakeGroupRepository();
         _fakeConversationRepository = new FakeConversationRepository();
-        _fakeCryptoService = new FakeCryptoService();
+        _fakePasswordCryptoService = new FakePasswordCryptoService();
 
         _client = factory
             .WithWebHostBuilder(builder => builder.ConfigureServices(services =>
@@ -68,7 +68,7 @@ public abstract class EndpointTestBase : IClassFixture<WebApplicationFactory<Pro
                 services.AddSingleton<IConversationQueryRepository>(_fakeConversationRepository);
                 services.AddSingleton<IConversationPersistenceRepository>(_fakeConversationRepository);
 
-                services.AddSingleton<ICryptoService>(_fakeCryptoService);
+                services.AddSingleton<IPasswordCryptoService>(_fakePasswordCryptoService);
 
                 services.AddSingleton(_cloudinaryWebClientMock.Object);
             }))
