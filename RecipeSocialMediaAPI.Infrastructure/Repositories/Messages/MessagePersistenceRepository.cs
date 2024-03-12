@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Users;
@@ -13,19 +14,25 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
     private readonly ILogger<MessagePersistenceRepository> _logger;
     private readonly IMessageDocumentToModelMapper _mapper;
     private readonly IMongoCollectionWrapper<MessageDocument> _messageCollection;
+    private readonly IDataCryptoService _dataCryptoService;
 
-    public MessagePersistenceRepository(ILogger<MessagePersistenceRepository> logger, IMessageDocumentToModelMapper mapper, IMongoCollectionFactory mongoCollectionFactory)
+    public MessagePersistenceRepository(
+        ILogger<MessagePersistenceRepository> logger,
+        IMessageDocumentToModelMapper mapper,
+        IMongoCollectionFactory mongoCollectionFactory,
+        IDataCryptoService dataCryptoService)
     {
         _logger = logger;
         _mapper = mapper;
         _messageCollection = mongoCollectionFactory.CreateCollection<MessageDocument>();
+        _dataCryptoService = dataCryptoService;
     }
 
     public async Task<Message> CreateMessageAsync(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
     {
         MessageDocument messageDocument = await _messageCollection.InsertAsync(new MessageDocument(
             SenderId: sender.Id,
-            MessageContent: new(text, recipeIds, imageURLs),
+            MessageContent: new(EncryptTextMessage(text), recipeIds, imageURLs),
             SeenByUserIds: seenByUserIds,
             SentDate: sentDate,
             MessageRepliedToId: messageRepliedTo?.Id
@@ -43,9 +50,9 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
                 SenderId: message.Sender.Id,
                 MessageContent: message switch
                 {
-                    TextMessage textMessage => new(textMessage.TextContent, null, null),
-                    ImageMessage imageMessage => new(imageMessage.TextContent, null, imageMessage.ImageURLs.ToList()),
-                    RecipeMessage recipeMessage => new(recipeMessage.TextContent, recipeMessage.Recipes.Select(recipe => recipe.Id).ToList(), null),
+                    TextMessage textMessage => new(EncryptTextMessage(textMessage.TextContent), null, null),
+                    ImageMessage imageMessage => new(EncryptTextMessage(imageMessage.TextContent), null, imageMessage.ImageURLs.ToList()),
+                    RecipeMessage recipeMessage => new(EncryptTextMessage(recipeMessage.TextContent), recipeMessage.Recipes.Select(recipe => recipe.Id).ToList(), null),
 
                     _ => throw new Exception($"Unable to update message with id {message.Id}")
                 },
@@ -69,4 +76,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
 
     public async Task<bool> DeleteMessageAsync(string messageId, CancellationToken cancellationToken = default) 
         => await _messageCollection.DeleteAsync(messageDoc => messageDoc.Id == messageId, cancellationToken);
+
+    private string? EncryptTextMessage(string? textMessage) =>
+        textMessage is null ? null : _dataCryptoService.Encrypt(textMessage);
 }

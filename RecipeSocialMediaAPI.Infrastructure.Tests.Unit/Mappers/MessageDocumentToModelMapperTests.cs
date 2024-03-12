@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
@@ -18,12 +20,13 @@ namespace RecipeSocialMediaAPI.Infrastructure.Tests.Unit.Mappers;
 
 public class MessageDocumentToModelMapperTests
 {
-    private readonly MessageDocumentToModelMapper _messageDocumentToModelMapperSUT;
-
     private readonly Mock<ILogger<MessageDocumentToModelMapper>> _loggerMock;
     private readonly Mock<IMessageFactory> _messageFactoryMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
+    private readonly IDataCryptoService _dataCryptoServiceFake;
+
+    private readonly MessageDocumentToModelMapper _messageDocumentToModelMapperSUT;
 
     public MessageDocumentToModelMapperTests()
     {
@@ -31,8 +34,14 @@ public class MessageDocumentToModelMapperTests
         _messageFactoryMock = new Mock<IMessageFactory>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
+        _dataCryptoServiceFake = new FakeDataCryptoService();
 
-        _messageDocumentToModelMapperSUT = new(_loggerMock.Object, _messageFactoryMock.Object, _recipeQueryRepositoryMock.Object, _userQueryRepositoryMock.Object);
+        _messageDocumentToModelMapperSUT = new(
+            _loggerMock.Object,
+            _messageFactoryMock.Object,
+            _recipeQueryRepositoryMock.Object,
+            _userQueryRepositoryMock.Object,
+            _dataCryptoServiceFake);
     }
 
     [Fact]
@@ -47,7 +56,7 @@ public class MessageDocumentToModelMapperTests
 
         MessageDocument testDocument = new(
             Id: messageId,
-            MessageContent: new("Text"),
+            MessageContent: new(_dataCryptoServiceFake.Encrypt("Text")),
             SeenByUserIds: new() { senderId },
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
@@ -67,7 +76,7 @@ public class MessageDocumentToModelMapperTests
         TestTextMessage textMessage = new(
             testDocument.Id!,
             testSender,
-            testDocument.MessageContent.Text!,
+            _dataCryptoServiceFake.Decrypt(testDocument.MessageContent.Text!),
             testDocument.SentDate,
             null,
             null,
@@ -77,7 +86,7 @@ public class MessageDocumentToModelMapperTests
             .Setup(factory => factory.CreateTextMessage(
                 textMessage.Id,
                 testSender,
-                textMessage.Text,
+                textMessage.Text!,
                 It.Is<List<IUserAccount>>(list => list.Contains(testSender)),
                 textMessage.SentDate,
                 textMessage.UpdatedDate,
@@ -111,7 +120,7 @@ public class MessageDocumentToModelMapperTests
 
         MessageDocument testDocument = new(
             Id: messageId,
-            MessageContent: new(hasText ? "Text" : null, null, imageURLs),
+            MessageContent: new(hasText ? _dataCryptoServiceFake.Encrypt("Text") : null, null, imageURLs),
             SeenByUserIds: new() { senderId },
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
@@ -131,7 +140,7 @@ public class MessageDocumentToModelMapperTests
         TestImageMessage imageMessage = new(
             testDocument.Id!,
             testSender,
-            testDocument.MessageContent.Text!,
+            testDocument.MessageContent.Text is null ? null : _dataCryptoServiceFake.Decrypt(testDocument.MessageContent.Text),
             testDocument.MessageContent.ImageURLs!,
             testDocument.SentDate,
             null,
@@ -177,7 +186,7 @@ public class MessageDocumentToModelMapperTests
 
         MessageDocument testDocument = new(
             Id: messageId,
-            MessageContent: new(hasText ? "Text" : null, recipeIds, null),
+            MessageContent: new(hasText ? _dataCryptoServiceFake.Encrypt("Text") : null, recipeIds, null),
             SeenByUserIds: new() { senderId },
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
@@ -217,7 +226,7 @@ public class MessageDocumentToModelMapperTests
         TestRecipeMessage recipeMessage = new(
             testDocument.Id!,
             testSender,
-            testDocument.MessageContent.Text!,
+            testDocument.MessageContent.Text is null ? null : _dataCryptoServiceFake.Decrypt(testDocument.MessageContent.Text),
             recipes,
             testDocument.SentDate,
             null,
@@ -258,7 +267,7 @@ public class MessageDocumentToModelMapperTests
 
         MessageDocument testDocument = new(
             Id: messageId,
-            MessageContent: new("Text", new() { "r1", "r2" }, null),
+            MessageContent: new(_dataCryptoServiceFake.Encrypt("Text"), new() { "r1", "r2" }, null),
             SeenByUserIds: new(),
             SenderId: senderId,
             SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
@@ -275,7 +284,7 @@ public class MessageDocumentToModelMapperTests
         TestTextMessage textMessage = new(
             testDocument.Id!,
             testSender,
-            testDocument.MessageContent.Text!,
+            _dataCryptoServiceFake.Decrypt(testDocument.MessageContent.Text!),
             testDocument.SentDate,
             null);
 
@@ -283,7 +292,7 @@ public class MessageDocumentToModelMapperTests
             .Setup(factory => factory.CreateTextMessage(
                 textMessage.Id,
                 testSender,
-                textMessage.Text,
+                textMessage.Text!,
                 new(),
                 textMessage.SentDate,
                 textMessage.UpdatedDate,
@@ -342,7 +351,7 @@ public class MessageDocumentToModelMapperTests
         TestRecipeMessage recipeMessage = new(
             testDocument.Id!,
             testSender,
-            testDocument.MessageContent.Text!,
+            testDocument.MessageContent.Text,
             recipes,
             testDocument.SentDate,
             null);
@@ -415,7 +424,7 @@ public class MessageDocumentToModelMapperTests
         TestRecipeMessage recipeMessage = new(
             testDocument.Id!,
             testSender,
-            testDocument.MessageContent.Text!,
+            testDocument.MessageContent.Text,
             recipes,
             testDocument.SentDate,
             null);
