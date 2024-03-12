@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Neleus.LambdaCompare;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
@@ -28,6 +30,7 @@ public class MessagePersistenceRepositoryTests
     private readonly Mock<IMongoCollectionWrapper<MessageDocument>> _messageCollectionMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+    private readonly IDataCryptoService _dataCryptoServiceFake;
 
     private readonly IMessageFactory _messageFactory;
 
@@ -46,8 +49,13 @@ public class MessagePersistenceRepositoryTests
             .Setup(provider => provider.Now)
             .Returns(new DateTimeOffset(2023, 10, 22, 21, 30, 0, TimeSpan.Zero));
         _messageFactory = new MessageFactory(_dateTimeProviderMock.Object);
+        _dataCryptoServiceFake = new FakeDataCryptoService();
 
-        _messagePersistenceRepositorySUT = new(_loggerMock.Object, _messageDocumentToModelMapperMock.Object, _mongoCollectionFactoryMock.Object);
+        _messagePersistenceRepositorySUT = new(
+            _loggerMock.Object,
+            _messageDocumentToModelMapperMock.Object,
+            _mongoCollectionFactoryMock.Object,
+            _dataCryptoServiceFake);
     }
 
     [Fact]
@@ -103,7 +111,7 @@ public class MessagePersistenceRepositoryTests
             .Verify(collection => collection.InsertAsync(
                 It.Is<MessageDocument>(doc =>
                     doc.Id == null
-                    && doc.MessageContent.Text == expectedMessage.Text
+                    && _dataCryptoServiceFake.Decrypt(doc.MessageContent.Text!) == expectedMessage.Text
                     && doc.MessageContent.RecipeIds!.SequenceEqual(expectedMessage.Recipes.Select(r => r.Id))
                     && doc.MessageContent.ImageURLs!.SequenceEqual(expectedMessage.ImageURLs)
                     && doc.SentDate == expectedMessage.SentDate
@@ -148,7 +156,7 @@ public class MessagePersistenceRepositoryTests
                 collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
-                        && doc.MessageContent.Text == message.TextContent
+                        && _dataCryptoServiceFake.Decrypt(doc.MessageContent.Text!) == message.TextContent
                         && doc.MessageContent.RecipeIds == null
                         && doc.MessageContent.ImageURLs == null
                         && doc.SentDate == message.SentDate                    
@@ -201,7 +209,7 @@ public class MessagePersistenceRepositoryTests
                 collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
-                        && doc.MessageContent.Text == message.TextContent
+                        && _dataCryptoServiceFake.Decrypt(doc.MessageContent.Text!) == message.TextContent
                         && doc.MessageContent.RecipeIds!.SequenceEqual(recipes.Select(r => r.Id))
                         && doc.MessageContent.ImageURLs == null
                         && doc.SentDate == message.SentDate
@@ -249,7 +257,7 @@ public class MessagePersistenceRepositoryTests
                 collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
-                        && doc.MessageContent.Text == message.TextContent
+                        && _dataCryptoServiceFake.Decrypt(doc.MessageContent.Text!) == message.TextContent
                         && doc.MessageContent.RecipeIds == null
                         && doc.MessageContent.ImageURLs!.SequenceEqual(imageURLs)
                         && doc.SentDate == message.SentDate
