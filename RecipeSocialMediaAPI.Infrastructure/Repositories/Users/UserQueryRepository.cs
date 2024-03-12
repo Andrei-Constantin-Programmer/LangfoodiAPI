@@ -108,9 +108,9 @@ public class UserQueryRepository : IUserQueryRepository
 
     public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default)
         => (await _userCollection
-            .GetAllAsync((_ => true), cancellationToken))
-            .Where(userDoc => _dataCryptoService.Decrypt(userDoc.Handler).Contains(containedString.ToLower())
-                           || _dataCryptoService.Decrypt(userDoc.UserName).Contains(containedString.ToLower()))
+            .GetAllAsync(_ => true, cancellationToken))
+            .Where(userDoc => _dataCryptoService.Decrypt(userDoc.Handler).ToLower().Contains(containedString.ToLower())
+                           || _dataCryptoService.Decrypt(userDoc.UserName).ToLower().Contains(containedString.ToLower()))
             .Select(userDoc => {
                 try
                 {
