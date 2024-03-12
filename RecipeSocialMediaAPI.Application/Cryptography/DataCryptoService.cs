@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Options;
 using System.Security.Cryptography;
@@ -8,11 +9,14 @@ namespace RecipeSocialMediaAPI.Application.Cryptography;
 
 public class DataCryptoService : IDataCryptoService
 {
+    private readonly ILogger<DataCryptoService> _logger;
+
     private readonly byte[] _encryptionKeyBytes;
 
-    public DataCryptoService(IOptions<EncryptionOptions> encryptionOptions)
+    public DataCryptoService(IOptions<EncryptionOptions> encryptionOptions, ILogger<DataCryptoService> logger)
     {
         _encryptionKeyBytes = Encoding.UTF8.GetBytes(encryptionOptions.Value.EncryptionKey);
+        _logger = logger;
     }
 
     public string Encrypt(string plainText)
@@ -60,6 +64,14 @@ public class DataCryptoService : IDataCryptoService
         using var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
         using var streamReader = new StreamReader(cryptoStream);
 
-        return streamReader.ReadToEnd();
+        try
+        {
+            return streamReader.ReadToEnd();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was an error trying to decrypt information {CipherText}", cipherText);
+            return string.Empty;
+        }
     }
 }

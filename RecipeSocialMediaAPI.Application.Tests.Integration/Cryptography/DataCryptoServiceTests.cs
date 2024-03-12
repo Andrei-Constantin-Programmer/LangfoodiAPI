@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using RecipeSocialMediaAPI.Application.Cryptography;
@@ -10,6 +11,7 @@ namespace RecipeSocialMediaAPI.Application.Tests.Integration.Cryptography;
 public class DataCryptoServiceTests
 {
     private readonly Mock<IOptions<EncryptionOptions>> _encryptionOptionsMock;
+    private readonly Mock<ILogger<DataCryptoService>> _loggerMock;
 
     private readonly DataCryptoService _dataCryptoServiceSUT;
 
@@ -23,7 +25,9 @@ public class DataCryptoServiceTests
                 EncryptionKey = "TempRecipeShareSocialMediaApiKey"
             });
 
-        _dataCryptoServiceSUT = new DataCryptoService(_encryptionOptionsMock.Object);
+        _loggerMock = new Mock<ILogger<DataCryptoService>>();
+
+        _dataCryptoServiceSUT = new DataCryptoService(_encryptionOptionsMock.Object, _loggerMock.Object);
     }
 
     [Theory]
@@ -65,7 +69,8 @@ public class DataCryptoServiceTests
     public void Decrypt_WithSameKey_CorrectlyRetrievesOriginalText(string plainText)
     {
         // Given
-        var cipherText = new DataCryptoService(_encryptionOptionsMock.Object).Encrypt(plainText);
+        var cipherText = new DataCryptoService(_encryptionOptionsMock.Object, _loggerMock.Object)
+            .Encrypt(plainText);
 
         // When
         var result = _dataCryptoServiceSUT.Decrypt(cipherText);
@@ -86,7 +91,7 @@ public class DataCryptoServiceTests
     [InlineData("MediuMSizE")]
     [InlineData("Long@Test!With_Special-Characters")]
     [InlineData("Extremely Long Test &*/. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vitae.")]
-    public void Decrypt_WithDifferentKey_DoesNotRetrieveOriginalText(string plainText)
+    public void Decrypt_WithDifferentKey_ReturnsNullAndLogs(string plainText)
     {
         // Given
         var differentOptions = new Mock<IOptions<EncryptionOptions>>();
@@ -97,12 +102,21 @@ public class DataCryptoServiceTests
                 EncryptionKey = "yeKipAaideMlaicoSerahSepiceRpmeT"
             });
         
-        var cipherText = new DataCryptoService(differentOptions.Object).Encrypt(plainText);
+        var cipherText = new DataCryptoService(differentOptions.Object, _loggerMock.Object)
+            .Encrypt(plainText);
 
         // When
-        var testAction = () => _dataCryptoServiceSUT.Decrypt(cipherText);
+        var result = _dataCryptoServiceSUT.Decrypt(cipherText);
 
         // Then
-        testAction.Should().Throw<Exception>();
+        result.Should().BeEmpty();
+        _loggerMock
+            .Verify(logger => logger.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
     }
 }
