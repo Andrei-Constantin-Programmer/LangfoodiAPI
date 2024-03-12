@@ -53,6 +53,19 @@ public class TransientServiceConfigurationTests : IClassFixture<WebApplicationFa
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
     [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public void DataCryptoService_ShouldBeConfiguredCorrectly()
+    {
+        // Given
+        using var scope = _factory.Services.CreateScope();
+        var dataCryptoService = scope.ServiceProvider.GetService(typeof(IDataCryptoService)) as DataCryptoService;
+
+        // Then
+        dataCryptoService.Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.CONFIGURATION)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public void MessageFactory_ShouldBeConfiguredCorrectly()
     {
         // Given

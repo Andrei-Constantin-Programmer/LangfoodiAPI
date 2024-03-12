@@ -28,5 +28,10 @@ internal static class OptionConfiguration
             .BindConfiguration(JwtOptions.CONFIGURATION_SECTION)
             .ValidateOptions()
             .ValidateOnStart();
+
+        builder.Services.AddOptions<EncryptionOptions>()
+            .BindConfiguration(EncryptionOptions.CONFIGURATION_SECTION)
+            .ValidateOptions()
+            .ValidateOnStart();
     }
 }
