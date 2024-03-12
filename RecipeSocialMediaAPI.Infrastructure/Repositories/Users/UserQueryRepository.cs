@@ -52,8 +52,8 @@ public class UserQueryRepository : IUserQueryRepository
         UserDocument? userDocument;
         try
         {
-            userDocument = await _userCollection
-                .GetOneAsync(userDoc => _dataCryptoService.Decrypt(userDoc.Email) == email, cancellationToken);
+            userDocument = (await _userCollection.GetAllAsync(_ => true, cancellationToken))
+                .FirstOrDefault(userDoc => _dataCryptoService.Decrypt(userDoc.Email) == email);
         }
         catch (Exception ex)
         {
@@ -72,8 +72,8 @@ public class UserQueryRepository : IUserQueryRepository
 
         try
         {
-            userDocument = await _userCollection
-                .GetOneAsync(userDoc => _dataCryptoService.Decrypt(userDoc.Handler) == handler, cancellationToken);
+            userDocument = (await _userCollection.GetAllAsync(_ => true, cancellationToken))
+                .FirstOrDefault(userDoc => _dataCryptoService.Decrypt(userDoc.Handler) == handler);
         }
         catch (Exception ex)
         {
@@ -92,8 +92,8 @@ public class UserQueryRepository : IUserQueryRepository
 
         try
         {
-            userDocument = await _userCollection
-                .GetOneAsync(userDoc => _dataCryptoService.Decrypt(userDoc.UserName) == username, cancellationToken);
+            userDocument = (await _userCollection.GetAllAsync(_ => true, cancellationToken))
+                .FirstOrDefault(userDoc => _dataCryptoService.Decrypt(userDoc.UserName) == username);
         }
         catch (Exception ex)
         {
@@ -108,9 +108,9 @@ public class UserQueryRepository : IUserQueryRepository
 
     public async Task<IEnumerable<IUserAccount>> GetAllUserAccountsContainingAsync(string containedString, CancellationToken cancellationToken = default)
         => (await _userCollection
-            .GetAllAsync(userDoc => _dataCryptoService.Decrypt(userDoc.Handler).Contains(containedString.ToLower())
-                                 || _dataCryptoService.Decrypt(userDoc.UserName).Contains(containedString.ToLower()),
-                        cancellationToken))
+            .GetAllAsync((_ => true), cancellationToken))
+            .Where(userDoc => _dataCryptoService.Decrypt(userDoc.Handler).Contains(containedString.ToLower())
+                           || _dataCryptoService.Decrypt(userDoc.UserName).Contains(containedString.ToLower()))
             .Select(userDoc => {
                 try
                 {

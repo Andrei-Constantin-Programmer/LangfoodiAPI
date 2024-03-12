@@ -167,13 +167,11 @@ public class UserQueryRepositoryTests
     {
         // Given
         string email = "test@mail.com";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
-        UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(nullUserDocument);
+            .ReturnsAsync(Enumerable.Empty<UserDocument>());
 
         // When
         var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
@@ -189,12 +187,17 @@ public class UserQueryRepositoryTests
     {
         // Given
         string email = "test@mail.com";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => _dataCryptoServiceFake.Decrypt(x.Email) == email;
         UserDocument testDocument = new(
             _dataCryptoServiceFake.Encrypt("TestHandler"),
             _dataCryptoServiceFake.Encrypt("TestName"),
-            _dataCryptoServiceFake.Encrypt("TestEmail"),
+            _dataCryptoServiceFake.Encrypt(email),
             _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
+        UserDocument otherDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler1"),
+            _dataCryptoServiceFake.Encrypt("TestName1"),
+            _dataCryptoServiceFake.Encrypt("TestEmail1"),
+            _dataCryptoServiceFake.Encrypt("TestPassword1"),
             (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
@@ -210,10 +213,10 @@ public class UserQueryRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(testDocument);
+            .ReturnsAsync(new List<UserDocument> { testDocument, otherDocument });
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
@@ -232,7 +235,6 @@ public class UserQueryRepositoryTests
     {
         // Given
         string email = "test@mail.com";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.Email == email;
         UserDocument testDocument = new(
             _dataCryptoServiceFake.Encrypt("TestHandler"),
             _dataCryptoServiceFake.Encrypt("TestName"),
@@ -255,7 +257,7 @@ public class UserQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
@@ -284,13 +286,11 @@ public class UserQueryRepositoryTests
     {
         // Given
         string username = "TestUsername";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.UserName == username;
-        UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(nullUserDocument);
+            .ReturnsAsync(Enumerable.Empty<UserDocument>());
 
         // When
         var result = await _userQueryRepositorySUT.GetUserByUsernameAsync(username);
@@ -306,12 +306,17 @@ public class UserQueryRepositoryTests
     {
         // Given
         string username = "WrongUsername";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => _dataCryptoServiceFake.Decrypt(x.UserName) == username;
         UserDocument testDocument = new(
             _dataCryptoServiceFake.Encrypt("TestHandler"),
-            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt(username),
             _dataCryptoServiceFake.Encrypt("TestEmail"),
             _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
+        UserDocument otherDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler1"),
+            _dataCryptoServiceFake.Encrypt("TestName1"),
+            _dataCryptoServiceFake.Encrypt("TestEmail1"),
+            _dataCryptoServiceFake.Encrypt("TestPassword1"),
             (int)UserRole.User);
         IUserCredentials testUser = new TestUserCredentials()
         {
@@ -327,10 +332,10 @@ public class UserQueryRepositoryTests
         };
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(testDocument);
+            .ReturnsAsync(new List<UserDocument> { testDocument, otherDocument });
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
@@ -349,7 +354,6 @@ public class UserQueryRepositoryTests
     {
         // Given
         string username = "TestUsername";
-        Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == username;
         UserDocument testDocument = new(
             _dataCryptoServiceFake.Encrypt("TestHandler"),
             _dataCryptoServiceFake.Encrypt("TestName"),
@@ -372,14 +376,14 @@ public class UserQueryRepositoryTests
         Exception testException = new("Test Exception");
 
         _mongoCollectionWrapperMock
-            .Setup(collection => collection.GetOneAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(testException);
         _mapperMock
             .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
             .Returns(testUser);
 
         // When
-        var result = await _userQueryRepositorySUT.GetUserByIdAsync(username);
+        var result = await _userQueryRepositorySUT.GetUserByUsernameAsync(username);
 
         // Then
         result.Should().BeNull();
@@ -420,10 +424,7 @@ public class UserQueryRepositoryTests
     {
         // Given
         string containedString = "test";
-        Expression<Func<UserDocument, bool>> expectedExpression = x
-            => _dataCryptoServiceFake.Decrypt(x.Handler).Contains(containedString.ToLower())
-            || _dataCryptoServiceFake.Decrypt(x.UserName).Contains(containedString.ToLower());
-
+        
         List<UserDocument> userDocuments = new()
         {
             new(
@@ -467,7 +468,7 @@ public class UserQueryRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAllAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userDocuments);
         _mapperMock
@@ -492,10 +493,7 @@ public class UserQueryRepositoryTests
     {
         // Given
         string containedString = "test";
-        Expression<Func<UserDocument, bool>> expectedExpression = x
-            => _dataCryptoServiceFake.Decrypt(x.Handler).Contains(containedString.ToLower())
-            || _dataCryptoServiceFake.Decrypt(x.UserName).Contains(containedString.ToLower());
-
+        
         List<UserDocument> userDocuments = new()
         {
             new(
@@ -539,7 +537,7 @@ public class UserQueryRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAllAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userDocuments);
 
