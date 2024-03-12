@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
 using Moq;
 using Neleus.LambdaCompare;
+using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
@@ -15,10 +17,12 @@ namespace RecipeSocialMediaAPI.Infrastructure.Tests.Unit.Repositories.Users;
 
 public class UserPersistenceRepositoryTests
 {
-    private readonly UserPersistenceRepository _userPersistenceRepositorySUT;
     private readonly Mock<IMongoCollectionWrapper<UserDocument>> _mongoCollectionWrapperMock;
     private readonly Mock<IMongoCollectionFactory> _mongoCollectionFactoryMock;
     private readonly Mock<IUserDocumentToModelMapper> _mapperMock;
+    private readonly IDataCryptoService _dataCryptoServiceFake;
+
+    private readonly UserPersistenceRepository _userPersistenceRepositorySUT;
 
     public UserPersistenceRepositoryTests()
     {
@@ -28,8 +32,12 @@ public class UserPersistenceRepositoryTests
         _mongoCollectionFactoryMock
             .Setup(factory => factory.CreateCollection<UserDocument>())
             .Returns(_mongoCollectionWrapperMock.Object);
+        _dataCryptoServiceFake = new FakeDataCryptoService();
 
-        _userPersistenceRepositorySUT = new UserPersistenceRepository(_mapperMock.Object, _mongoCollectionFactoryMock.Object);
+        _userPersistenceRepositorySUT = new UserPersistenceRepository(
+            _mapperMock.Object,
+            _mongoCollectionFactoryMock.Object,
+            _dataCryptoServiceFake);
     }
 
     [Fact]
@@ -39,10 +47,10 @@ public class UserPersistenceRepositoryTests
     {
         // Given
         UserDocument testDocument = new( 
-            Handler: "TestHandler", 
-            UserName: "TestName", 
-            Email: "TestEmail", 
-            Password: "TestPassword", 
+            Handler: _dataCryptoServiceFake.Encrypt("TestHandler"), 
+            UserName: _dataCryptoServiceFake.Encrypt("TestName"), 
+            Email: _dataCryptoServiceFake.Encrypt("TestEmail"), 
+            Password: _dataCryptoServiceFake.Encrypt("TestPassword"), 
             AccountCreationDate: new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero),
             Role: (int)UserRole.User
         );
@@ -52,7 +60,12 @@ public class UserPersistenceRepositoryTests
             .ThrowsAsync(new DocumentAlreadyExistsException<UserDocument>(testDocument));
 
         // When
-        var action = async () => await _userPersistenceRepositorySUT.CreateUserAsync(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
+        var action = async () => await _userPersistenceRepositorySUT.CreateUserAsync(
+            _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+            _dataCryptoServiceFake.Decrypt(testDocument.UserName),
+            _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            _dataCryptoServiceFake.Decrypt(testDocument.Password),
+            testDocument.AccountCreationDate!.Value);
 
         // Then
         await action.Should().ThrowAsync<DocumentAlreadyExistsException<UserDocument>>();
@@ -65,10 +78,10 @@ public class UserPersistenceRepositoryTests
     {
         // Given
         UserDocument testDocument = new(
-            Handler: "TestHandler",
-            UserName: "TestName",
-            Email: "TestEmail",
-            Password: "TestPassword",
+            Handler: _dataCryptoServiceFake.Encrypt("TestHandler"),
+            UserName: _dataCryptoServiceFake.Encrypt("TestName"),
+            Email: _dataCryptoServiceFake.Encrypt("TestEmail"),
+            Password: _dataCryptoServiceFake.Encrypt("TestPassword"),
             AccountCreationDate: new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero),
             Role: (int)UserRole.User
         );
@@ -78,12 +91,12 @@ public class UserPersistenceRepositoryTests
             Account = new TestUserAccount()
             {
                 Id = testDocument.Id!, 
-                Handler = testDocument.Handler, 
-                UserName = testDocument.UserName, 
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler), 
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName), 
                 AccountCreationDate = testDocument.AccountCreationDate!.Value
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         _mongoCollectionWrapperMock
@@ -94,7 +107,12 @@ public class UserPersistenceRepositoryTests
             .Returns(testUser);
 
         // When
-        var result = await _userPersistenceRepositorySUT.CreateUserAsync(testDocument.Handler, testDocument.UserName, testDocument.Email, testDocument.Password, testDocument.AccountCreationDate!.Value);
+        var result = await _userPersistenceRepositorySUT.CreateUserAsync(
+            _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+            _dataCryptoServiceFake.Decrypt(testDocument.UserName),
+            _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            _dataCryptoServiceFake.Decrypt(testDocument.Password),
+            testDocument.AccountCreationDate!.Value);
 
         // Then
         result.Should().Be(testUser);
@@ -111,12 +129,12 @@ public class UserPersistenceRepositoryTests
     {
         // Given
         UserDocument testDocument = new(
-            "Handler", 
-            "Initial Name", 
-            "Initial Email", 
-            "Initial Password",
+            _dataCryptoServiceFake.Encrypt("Handler"),
+            _dataCryptoServiceFake.Encrypt("Initial Name"), 
+            _dataCryptoServiceFake.Encrypt("Initial Email"), 
+            _dataCryptoServiceFake.Encrypt("Initial Password"),
             (int)UserRole.User,
-            "ProfileImageId", 
+            _dataCryptoServiceFake.Encrypt("ProfileImageId"), 
             new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero), 
             PinnedConversationIds: new List<string>() { "pid1", "pid2" }
         );
@@ -163,12 +181,12 @@ public class UserPersistenceRepositoryTests
             .Verify(collection => collection.UpdateAsync(
                     It.Is<UserDocument>(
                         doc => doc.Id == testDocument.Id
-                        && doc.Handler == testDocument.Handler
+                        && _dataCryptoServiceFake.Decrypt(doc.Handler) == _dataCryptoServiceFake.Decrypt(testDocument.Handler)
                         && doc.AccountCreationDate == testDocument.AccountCreationDate
-                        && doc.UserName == updatedUser.Account.UserName
-                        && doc.Email == updatedUser.Email
-                        && doc.Password == updatedUser.Password
-                        && doc.ProfileImageId == updatedUser.Account.ProfileImageId
+                        && _dataCryptoServiceFake.Decrypt(doc.UserName) == updatedUser.Account.UserName
+                        && _dataCryptoServiceFake.Decrypt(doc.Email) == updatedUser.Email
+                        && _dataCryptoServiceFake.Decrypt(doc.Password) == updatedUser.Password
+                        && _dataCryptoServiceFake.Decrypt(doc.ProfileImageId!) == updatedUser.Account.ProfileImageId!
                         && doc.PinnedConversationIds!.First() == updatedUser.Account.PinnedConversationIds[0]
                         && doc.PinnedConversationIds!.Skip(1).First() == updatedUser.Account.PinnedConversationIds[1]),
                     It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, updateExpression)), 
@@ -182,7 +200,12 @@ public class UserPersistenceRepositoryTests
     public async Task UpdateUser_WhenUserDoesNotExist_ReturnFalse()
     {
         // Given
-        UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("Initial Handler"),
+            _dataCryptoServiceFake.Encrypt("Initial Name"),
+            _dataCryptoServiceFake.Encrypt("Initial Email"),
+            _dataCryptoServiceFake.Encrypt("Initial Password"),
+            (int)UserRole.User);
 
         IUserCredentials updatedUser = new TestUserCredentials
         {
@@ -215,7 +238,12 @@ public class UserPersistenceRepositoryTests
     public async Task UpdateUser_WhenCollectionCantUpdate_ReturnFalse()
     {
         // Given
-        UserDocument testDocument = new("Initial Handler", "Initial Name", "Initial Email", "Initial Password", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("Initial Handler"),
+            _dataCryptoServiceFake.Encrypt("Initial Name"),
+            _dataCryptoServiceFake.Encrypt("Initial Email"),
+            _dataCryptoServiceFake.Encrypt("Initial Password"),
+            (int)UserRole.User);
         IUserCredentials updatedUser = new TestUserCredentials
         {
             Account = new TestUserAccount()
@@ -252,7 +280,12 @@ public class UserPersistenceRepositoryTests
     public async Task DeleteUser_WhenUserWithIdExists_DeleteUserAndReturnTrue()
     {
         // Given
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler"),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt("TestEmail"),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.DeleteAsync(
@@ -278,7 +311,12 @@ public class UserPersistenceRepositoryTests
     public async Task DeleteUser_WhenUserExists_DeleteUserAndReturnTrue()
     {
         // Given
-        UserDocument testDocument = new("TestHandler", "TestName", "TestEmail", "TestPassword", (int)UserRole.User);
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandler"),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt("TestEmail"),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
         Expression<Func<UserDocument, bool>> expectedExpression = x => x.Id == testDocument.Id;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.DeleteAsync(
@@ -291,12 +329,12 @@ public class UserPersistenceRepositoryTests
             Account = new TestUserAccount()
             {
                 Id = testDocument.Id!,
-                Handler = testDocument.Handler,
-                UserName = testDocument.UserName,
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
                 AccountCreationDate = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
             },
-            Email = testDocument.Email,
-            Password = testDocument.Password
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
 
         // When

@@ -6,13 +6,8 @@ public class FakePasswordCryptoService : IPasswordCryptoService
 {
     private const string ENCRYPTION_PREFIX = "CRYPT_";
 
-    public bool ArePasswordsTheSame(string decryptedPassword, string encryptedPassword)
-    {
-        return decryptedPassword == encryptedPassword.Remove(0, ENCRYPTION_PREFIX.Length);
-    }
+    public bool ArePasswordsTheSame(string decryptedPassword, string encryptedPassword) => 
+        decryptedPassword == encryptedPassword[ENCRYPTION_PREFIX.Length..];
 
-    public string Encrypt(string password)
-    {
-        return ENCRYPTION_PREFIX + password;
-    }
+    public string Encrypt(string password) => $"{ENCRYPTION_PREFIX}{password}";
 }
