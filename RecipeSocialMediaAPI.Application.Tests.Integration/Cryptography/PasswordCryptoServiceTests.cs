@@ -5,13 +5,13 @@ using BCrypter = BCrypt.Net.BCrypt;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Integration.Cryptography;
 
-public class CryptoServiceTests
+public class PasswordCryptoServiceTests
 {
-    private readonly CryptoService _cryptoServiceSUT;
+    private readonly PasswordCryptoService _passwordCryptoServiceSUT;
 
-    public CryptoServiceTests()
+    public PasswordCryptoServiceTests()
     {
-        _cryptoServiceSUT = new CryptoService();
+        _passwordCryptoServiceSUT = new PasswordCryptoService();
     }
 
     [Fact]
@@ -24,7 +24,7 @@ public class CryptoServiceTests
         string hash = BCrypter.HashPassword(password);
 
         // When
-        bool result = _cryptoServiceSUT.ArePasswordsTheSame(password, hash);
+        bool result = _passwordCryptoServiceSUT.ArePasswordsTheSame(password, hash);
 
         // Then
         result.Should().BeTrue();
@@ -40,7 +40,7 @@ public class CryptoServiceTests
         string hash = "wrongly_hashed_password";
 
         // When
-        bool result = _cryptoServiceSUT.ArePasswordsTheSame(password, hash);
+        bool result = _passwordCryptoServiceSUT.ArePasswordsTheSame(password, hash);
 
         // Then
         result.Should().BeFalse();
@@ -56,7 +56,7 @@ public class CryptoServiceTests
         string hash = BCrypter.HashPassword(password);
 
         // When
-        bool result = _cryptoServiceSUT.ArePasswordsTheSame(hash, hash);
+        bool result = _passwordCryptoServiceSUT.ArePasswordsTheSame(hash, hash);
 
         // Then
         result.Should().BeTrue();
@@ -73,7 +73,7 @@ public class CryptoServiceTests
         string serverHash = BCrypter.HashPassword(password);
 
         // When
-        bool result = _cryptoServiceSUT.ArePasswordsTheSame(clientHash, serverHash);
+        bool result = _passwordCryptoServiceSUT.ArePasswordsTheSame(clientHash, serverHash);
 
         // Then
         result.Should().BeFalse();
@@ -88,7 +88,7 @@ public class CryptoServiceTests
         string password = "P@ssw0rd";
 
         // When
-        string result = _cryptoServiceSUT.Encrypt(password);
+        string result = _passwordCryptoServiceSUT.Encrypt(password);
 
         // Then
         result.Should().NotBe(password);

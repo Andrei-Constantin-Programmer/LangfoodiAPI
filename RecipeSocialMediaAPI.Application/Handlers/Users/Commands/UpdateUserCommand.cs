@@ -14,15 +14,19 @@ public record UpdateUserCommand(UpdateUserContract Contract) : IValidatableReque
 
 internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
-    private readonly ICryptoService _cryptoService;
+    private readonly IPasswordCryptoService _passwordCryptoService;
     private readonly IUserFactory _userFactory;
 
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserPersistenceRepository _userPersistenceRepository;
 
-    public UpdateUserHandler(ICryptoService cryptoService, IUserFactory userFactory, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
+    public UpdateUserHandler(
+        IPasswordCryptoService passwordCryptoService,
+        IUserFactory userFactory,
+        IUserPersistenceRepository userPersistenceRepository,
+        IUserQueryRepository userQueryRepository)
     {
-        _cryptoService = cryptoService;
+        _passwordCryptoService = passwordCryptoService;
         _userFactory = userFactory;
         _userPersistenceRepository = userPersistenceRepository;
         _userQueryRepository = userQueryRepository;
@@ -34,7 +38,7 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.Id}");
 
         var newPassword = request.Contract.Password is not null
-            ? _cryptoService.Encrypt(request.Contract.Password)
+            ? _passwordCryptoService.Encrypt(request.Contract.Password)
             : existingUser.Password;
 
         IUserCredentials updatedUser = _userFactory.CreateUserCredentials(

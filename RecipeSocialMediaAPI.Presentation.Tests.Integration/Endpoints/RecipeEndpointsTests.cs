@@ -86,7 +86,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         string recipeId = "0";
 
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _ = _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -125,7 +125,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         string recipeId = "0";
 
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -146,7 +146,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         string recipeId = "0";
 
         _ = _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _ = _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -166,7 +166,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         string userid = "0";
 
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _ = _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
         _ = _fakeRecipeRepository
@@ -210,7 +210,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _ = await _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -242,7 +242,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -265,7 +265,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         _ = await _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -283,7 +283,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         await _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
         await _fakeRecipeRepository
@@ -327,7 +327,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         await _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -359,7 +359,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -382,7 +382,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         await _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -443,7 +443,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -491,7 +491,7 @@ public class RecipeEndpointsTests : EndpointTestBase
     {
         // Given
         _ = _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         NewRecipeContract newRecipe = new(
             Title: "New Title",
@@ -536,7 +536,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         );
 
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         await _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -587,7 +587,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         );
 
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -624,7 +624,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         );
 
         _ = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         await _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -643,7 +643,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         // Given
         string recipeId = "0";
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         await _fakeRecipeRepository
             .CreateRecipeAsync(_testRecipe.Title, _testRecipe.Guide, _testRecipe.Description, _testRecipe.Chef, _testRecipe.Tags, _testRecipe.CreationDate, _testRecipe.LastUpdatedDate, _testRecipe.ThumbnailId);
 
@@ -669,7 +669,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         string recipeId = "0";
 
         var user = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -690,7 +690,7 @@ public class RecipeEndpointsTests : EndpointTestBase
         string recipeId = "0";
 
         _ = await _fakeUserRepository
-            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakeCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            .CreateUserAsync(_testUser.Account.Handler, _testUser.Account.UserName, _testUser.Email, _fakePasswordCryptoService.Encrypt(_testUser.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         // When
         var removeResult = await _client.DeleteAsync($"/recipe/remove?id={recipeId}");

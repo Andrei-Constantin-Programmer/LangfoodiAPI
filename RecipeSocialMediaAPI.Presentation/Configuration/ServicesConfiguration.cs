@@ -81,7 +81,7 @@ internal static class ServicesConfiguration
 
         // Transients
         builder.Services.AddTransient<ICloudinaryWebClient, CloudinaryWebClient>();
-        builder.Services.AddTransient<ICryptoService, CryptoService>();
+        builder.Services.AddTransient<IPasswordCryptoService, PasswordCryptoService>();
         builder.Services.AddTransient<IMessageFactory, MessageFactory>();
         builder.Services.AddTransient<IUserFactory, UserFactory>();
         builder.Services.AddTransient<IMessageNotificationService, MessageNotificationService>();

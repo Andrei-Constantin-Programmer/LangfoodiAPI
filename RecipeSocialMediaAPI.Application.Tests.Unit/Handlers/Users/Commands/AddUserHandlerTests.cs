@@ -26,7 +26,7 @@ public class AddUserHandlerTests
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
     private readonly Mock<IBearerTokenGeneratorService> _bearerTokenGeneratorServiceMock;
 
-    private readonly ICryptoService _cryptoServiceFake;
+    private readonly IPasswordCryptoService _passwordCryptoServiceFake;
 
     public AddUserHandlerTests()
     {
@@ -41,12 +41,12 @@ public class AddUserHandlerTests
         _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
         _bearerTokenGeneratorServiceMock = new Mock<IBearerTokenGeneratorService>();
 
-        _cryptoServiceFake = new FakeCryptoService();
+        _passwordCryptoServiceFake = new FakePasswordCryptoService();
 
         _userHandlerSUT = new AddUserHandler(
             _mapperMock.Object,
             _dateTimeProviderMock.Object,
-            _cryptoServiceFake,
+            _passwordCryptoServiceFake,
             _userPersistenceRepositoryMock.Object,
             _userQueryRepositoryMock.Object,
             _bearerTokenGeneratorServiceMock.Object);
@@ -212,7 +212,7 @@ public class AddUserHandlerTests
         // Then
         result.User.UserName.Should().Be(contract.UserName);
         result.User.Email.Should().Be(contract.Email);
-        _cryptoServiceFake.ArePasswordsTheSame(contract.Password, result.User.Password)
+        _passwordCryptoServiceFake.ArePasswordsTheSame(contract.Password, result.User.Password)
             .Should().BeTrue();
         result.Token.Should().Be(token);
     }
