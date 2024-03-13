@@ -1,194 +1,143 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Recipes;
 
 public class RecipeTests
 {
-    public static IEnumerable<object[]> TestIngredientLists =>
-        new List<object[]>
-        {
-            new object[] { new List<Ingredient>() { } },
-            new object[] { new List<Ingredient>() { new("TestIngredient1", 1, "g") } },
-            new object[] { new List<Ingredient>() { new("TestIngredient1", 1, "g"), new("TestIngredient2", 2, "L") } },
-            new object[] { new List<Ingredient>() 
-                { 
-                    new ("TestIngredient1", 1, "g"), 
-                    new ("TestIngredient2", 2, "L"), 
-                    new ("TestIngredient3", 3, "kg"), 
-                    new ("TestIngredient4", 4, "ml"), 
-                    new ("TestIngredient5", 5, "g") 
-                } 
-            },
-        };
+    public readonly Recipe _recipeSUT;
 
-    public static IEnumerable<object[]> TestStepLists =>
-        new List<object[]>
-        {
-            new object[] { new Stack<RecipeStep>() { } },
-            new object[] { new Stack<RecipeStep>(new[] { new RecipeStep("Single-step recipe") } ) },
-            new object[] { new Stack<RecipeStep>(new[] { new RecipeStep("First step"), new RecipeStep("Second step") } ) },
-            new object[] { new Stack<RecipeStep>(new[] 
-                { 
-                    new RecipeStep("First step"),
-                    new RecipeStep("Second step"),
-                    new RecipeStep("Third step"),
-                    new RecipeStep("Fourth step"),
-                    new RecipeStep("Fifth step"),
-                } 
-            )},
-        };
-
-    [Theory]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    [MemberData(nameof(TestIngredientLists))]
-    public void IngredientsProperty_IsEqualToConstructorValue(List<Ingredient> testIngredients)
+    public RecipeTests()
     {
-        // Given
-        Recipe testRecipe = new(testIngredients, new());
+        string testId = "AggId";
+        string testTitle = "My Recipe";
+        RecipeGuide testRecipeGuide = new(new() { new("Test Ingredient", 2, "g") }, new(new[] { new RecipeStep("Test Step")}), 10, 500, 2300);
+        string testDescription = "";
+        IUserAccount testChef = new TestUserAccount() { Id = "TestId", Handler = "TestHandler", UserName = "TestUsername" };
+        DateTimeOffset testCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        DateTimeOffset testLastUpdatedDate = new(2023, 8, 30, 0, 0, 0, TimeSpan.Zero);
 
-        // When
-        var ingredients = testRecipe.Ingredients;
-
-        // Then
-        ingredients.Should().BeEquivalentTo(testIngredients);
-    }
-
-    [Theory]
-    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
-    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    [MemberData(nameof(TestStepLists))]
-    public void StepsProperty_IsEqualToConstructorValue(Stack<RecipeStep> testSteps)
-    {
-        // Given
-        Recipe testRecipe = new(new(), testSteps);
-
-        // When
-        var steps = testRecipe.Steps;
-
-        // Then
-        steps.Should().BeEquivalentTo(testSteps);
+        _recipeSUT = new
+            (
+                testId,
+                testTitle,
+                testRecipeGuide,
+                testDescription,
+                testChef,
+                testCreationDate,
+                testLastUpdatedDate
+            );
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void AddIngredient_AddsIngredientAndDoesNotChangeReturnedList()
+    public void RecipeGuide_CanBeModifiedThroughInstanceMethods()
     {
         // Given
-        Ingredient existingIngredient = new("Existing Ingredient", 1, "g");
-        Ingredient newIngredient = new("New ingredient", 3, "L");
-
-        List<Ingredient> testIngredients = new() { existingIngredient };
-        Recipe testRecipe = new(testIngredients, new());
-
-        var ingredientsBeforeAddition = testRecipe.Ingredients;
+        Ingredient testIngredient = new("New Ingredient", 2, "g");
 
         // When
-        testRecipe.AddIngredient(newIngredient);
+        _recipeSUT.Guide.AddIngredient(testIngredient);
 
         // Then
-        var ingredientsAfterAddition = testRecipe.Ingredients;
-
-        ingredientsBeforeAddition.Should().NotContain(newIngredient);
-        ingredientsAfterAddition.Should().Contain(newIngredient);
+        _recipeSUT.Guide.Ingredients.Should().Contain(testIngredient);
     }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    public void PushRecipeStep_PushesStepToTheEndOfTheStackAndDoesNotChangeReturnedSet()
+    public void ThumbnailId_CanBeModified()
     {
         // Given
-        RecipeStep existingStep = new("Existing Step");
-        RecipeStep newStep = new("New Step");
-
-        Stack<RecipeStep> testSteps = new();
-        testSteps.Push(existingStep);
-        Recipe testRecipe = new(new(), testSteps);
-
-        var stepsBeforeAddition = testRecipe.Steps;
+        string thumbnailId = "img_public_id_1";
 
         // When
-        testRecipe.PushRecipeStep(newStep);
+        _recipeSUT.ThumbnailId = thumbnailId;
 
         // Then
-        var stepsAfterAddition = testRecipe.Steps;
-
-        stepsBeforeAddition.Should().NotContain(newStep);
-        stepsAfterAddition.Should().Contain(newStep);
+        _recipeSUT.ThumbnailId.Should().Be(thumbnailId);
     }
 
-    [Theory]
+    [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    [InlineData(1, 1)]
-    [InlineData(2, 1)]
-    [InlineData(3, 3)]
-    [InlineData(3, 2)]
-    [InlineData(5, 2)]
-    public void RemoveSteps_WhenNumberOfStepsIsValid_RemoveRequestedNumberOfSteps(int numberOfExistingSteps, int numberOfStepsToRemove)
+    public void Description_CanBeModified()
     {
         // Given
-        Stack<RecipeStep> existingSteps = new();
-        for(int i = 0; i < numberOfExistingSteps; i++)
-        {
-            existingSteps.Push(new($"Step {i}"));
-        }
-
-        Recipe testRecipe = new(new(), existingSteps);
+        string newLongDescription = "New, long, windy description";
 
         // When
-        testRecipe.RemoveSteps(numberOfStepsToRemove);
+        _recipeSUT.Description = newLongDescription;
 
         // Then
-        var remainingSteps = testRecipe.Steps;
-        var numberOfStepsRemaining = numberOfExistingSteps - numberOfStepsToRemove;
-        remainingSteps.Should().HaveCount(numberOfStepsRemaining);
-        remainingSteps.Should().NotContainEquivalentOf(existingSteps.Skip(numberOfStepsRemaining));
+        _recipeSUT.Description.Should().Be(newLongDescription);
     }
 
-    [Theory]
+    [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    [InlineData(0)]
-    [InlineData(-1)]
-    [InlineData(-10)]
-    public void RemoveSteps_WhenNumberOfStepsIsZeroOrNegative_ThrowArgumentException(int numberOfStepsToRemove)
+    public void Chef_CanBeModifiedThroughInstanceMethods()
     {
         // Given
-        Recipe testRecipe = new(new(), new());
+        var chef = _recipeSUT.Chef;
+        string newUsername = "New Username";
 
         // When
-        var action = () => testRecipe.RemoveSteps(numberOfStepsToRemove);
+        chef.UserName = newUsername;
 
         // Then
-        action.Should().Throw<ArgumentException>();
+        _recipeSUT.Chef.UserName.Should().Be(newUsername);
     }
 
-    [Theory]
+    [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
-    [InlineData(1, 2)]
-    [InlineData(5, 6)]
-    [InlineData(10, 30)]
-    public void RemoveSteps_WhenNumberOfStepsIsHigherThanExistingStepCount_ThrowArgumentException(int numberOfExistingSteps, int numberOfStepsToRemove)
+    public void LastUpdatedDate_CanBeModified()
     {
         // Given
-        Stack<RecipeStep> existingSteps = new();
-        for (int i = 0; i < numberOfExistingSteps; i++)
-        {
-            existingSteps.Push(new($"Step {i}"));
-        }
-
-        Recipe testRecipe = new(new(), existingSteps);
+        DateTimeOffset newLastUpdatedDate = _recipeSUT.LastUpdatedDate.AddDays(5);
 
         // When
-        var action = () => testRecipe.RemoveSteps(numberOfStepsToRemove);
+        _recipeSUT.LastUpdatedDate = newLastUpdatedDate;
 
         // Then
-        action.Should().Throw<ArgumentException>();
+        _recipeSUT.LastUpdatedDate.Should().Be(newLastUpdatedDate);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void AddTag_WhenTagIsNotYetAdded_AddsTagAndReturnsTrueAndDoesNotChangeReturnedSet()
+    {
+        // Given
+        string testTag = "new_tag";
+
+        // When
+        var wasAdded = _recipeSUT.AddTag(testTag);
+
+        // Then
+        wasAdded.Should().BeTrue();
+        _recipeSUT.Tags.Should().HaveCount(1).And.Contain(testTag);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.RECIPE)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void AddTag_WhenTagIsAlreadyAdded_ReturnsFalse()
+    {
+        // Given
+        string existingTag = "existing";
+        _recipeSUT.AddTag(existingTag);
+
+        // When
+        var wasAdded = _recipeSUT.AddTag(existingTag);
+
+        // Then
+        wasAdded.Should().BeFalse();
+        _recipeSUT.Tags.Should().HaveCount(1).And.Contain(existingTag);
     }
 }

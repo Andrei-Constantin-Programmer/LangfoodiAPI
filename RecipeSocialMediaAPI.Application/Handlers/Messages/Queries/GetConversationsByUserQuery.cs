@@ -26,19 +26,18 @@ internal class GetConversationsByUserHandler : IRequestHandler<GetConversationsB
 
     public async Task<List<ConversationDTO>> Handle(GetConversationsByUserQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
+        IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No User with id {request.UserId} was found");
 
-        return await Task.FromResult(_conversationQueryRepository
-            .GetConversationsByUser(user)
-            .Select(conversation => (ConversationDTO)(conversation switch
+        return (await _conversationQueryRepository
+            .GetConversationsByUserAsync(user, cancellationToken))
+            .Select(conversation => conversation switch
             {
                 ConnectionConversation connConvo => _conversationMapper.MapConversationToConnectionConversationDTO(user, connConvo),
                 GroupConversation groupConvo => _conversationMapper.MapConversationToGroupConversationDTO(user, groupConvo),
 
                 _ => throw new UnsupportedConversationException(conversation)
-            }))
-            .ToList()
-        );
+            })
+            .ToList();
     }
 }

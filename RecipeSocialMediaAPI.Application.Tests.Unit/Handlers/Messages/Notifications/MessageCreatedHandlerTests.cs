@@ -34,7 +34,7 @@ public class MessageCreatedHandlerTests
 
         // Then
         _messageNotificationServiceMock
-            .Verify(service => service.NotifyMessageSent(message, conversationId, It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(service => service.NotifyMessageSentAsync(message, conversationId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class MessageCreatedHandlerTests
         MessageSentNotification notification = new(message, conversationId);
 
         _messageNotificationServiceMock
-            .Setup(service => service.NotifyMessageSent(message, conversationId, It.IsAny<CancellationToken>()))
+            .Setup(service => service.NotifyMessageSentAsync(message, conversationId, It.IsAny<CancellationToken>()))
             .Throws(new OperationCanceledException());
 
         // When

@@ -1,12 +1,13 @@
-﻿using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Domain.Utilities;
+﻿using FluentAssertions;
 using Moq;
-using FluentAssertions;
-using RecipeSocialMediaAPI.TestInfrastructure;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Messages;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Messaging.Messages;
+
 public class TextMessageTests
 {
     private readonly TextMessage _textMessageSUT;

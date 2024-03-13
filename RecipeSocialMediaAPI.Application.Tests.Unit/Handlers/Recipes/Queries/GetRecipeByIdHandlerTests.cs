@@ -11,6 +11,7 @@ using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Queries;
+
 public class GetRecipeByIdHandlerTests
 {
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
@@ -45,7 +46,7 @@ public class GetRecipeByIdHandlerTests
             .WithMessage("The recipe with the id 1 was not found");
 
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Never);
+            .Verify(mapper => mapper.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Never);
     }
 
     [Fact]
@@ -55,7 +56,7 @@ public class GetRecipeByIdHandlerTests
     {
         // Given
         string recipeId = "1";
-        RecipeAggregate testRecipeAggregate = new(
+        Recipe testRecipe = new(
             recipeId,
             "test title",
             new(new(), new()),
@@ -67,28 +68,28 @@ public class GetRecipeByIdHandlerTests
 
         RecipeDetailedDTO expectedResult = new(
             Id: recipeId,
-            Title: testRecipeAggregate.Title,
-            Description: testRecipeAggregate.Description,
-            CreationDate: testRecipeAggregate.CreationDate,
-            LastUpdatedDate: testRecipeAggregate.LastUpdatedDate,
+            Title: testRecipe.Title,
+            Description: testRecipe.Description,
+            CreationDate: testRecipe.CreationDate,
+            LastUpdatedDate: testRecipe.LastUpdatedDate,
             Chef: new UserAccountDTO(
-                Id: testRecipeAggregate.Chef.Id,
-                UserName: testRecipeAggregate.Chef.UserName,
-                Handler: testRecipeAggregate.Chef.Handler,
-                AccountCreationDate: testRecipeAggregate.Chef.AccountCreationDate,
+                Id: testRecipe.Chef.Id,
+                UserName: testRecipe.Chef.UserName,
+                Handler: testRecipe.Chef.Handler,
+                AccountCreationDate: testRecipe.Chef.AccountCreationDate,
                 PinnedConversationIds: new(),
                 BlockedConnectionIds: new()
             ),
             Ingredients: new List<IngredientDTO>(),
             RecipeSteps: new Stack<RecipeStepDTO>(new List<RecipeStepDTO>()),
-            Tags: testRecipeAggregate.Tags
+            Tags: testRecipe.Tags
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>()))
-            .Returns(testRecipeAggregate);
+            .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testRecipe);
         _recipeMapperMock
-            .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
+            .Setup(x => x.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()))
             .Returns(expectedResult);
 
         // When
@@ -96,7 +97,7 @@ public class GetRecipeByIdHandlerTests
 
         // Then
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);
+            .Verify(mapper => mapper.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Once);
         result.Should().Be(expectedResult);
     }
 }

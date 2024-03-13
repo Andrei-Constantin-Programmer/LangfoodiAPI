@@ -25,7 +25,6 @@ public class MessageMapperTests
     private readonly Mock<IRecipeMapper> _recipeMapperMock;
     private readonly Mock<IUserMapper> _userMapperMock;
 
-
     private readonly MessageMapper _messageMapperSUT;
 
     public MessageMapperTests()
@@ -158,7 +157,7 @@ public class MessageMapperTests
         var testMessage = (RecipeMessage)_messageFactory.CreateRecipeMessage(
             "TestId",
             testSender,
-            new List<RecipeAggregate>() 
+            new List<Recipe>() 
             { 
                 new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE),
                 new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE, thumbnailId: "ThumbnailId2")
@@ -185,12 +184,12 @@ public class MessageMapperTests
         );
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(testMessage.Recipes[0]))
+            .Setup(mapper => mapper.MapRecipeToRecipePreviewDto(testMessage.Recipes[0]))
             .Returns(expectedResult.Recipes![0]);
 
 
         _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipePreviewDto(testMessage.Recipes[1]))
+            .Setup(mapper => mapper.MapRecipeToRecipePreviewDto(testMessage.Recipes[1]))
             .Returns(expectedResult.Recipes[1]);
 
         _userMapperMock
@@ -227,263 +226,4 @@ public class MessageMapperTests
         // Then
         testAction.Should().Throw<CorruptedMessageException>();
     }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void MapMessageToMessageDetailedDTO_WhenMessageIsTextMessage_ReturnCorrectlyMappedDTO()
-    {
-        // Given
-        TestUserAccount testSender = new()
-        {
-            Id = "SenderId",
-            Handler = "SenderHandler",
-            UserName = "SenderUsername",
-            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-        };
-
-        var repliedToMessage = (TextMessage)_messageFactory.CreateTextMessage(
-            "TestId",
-            testSender,
-            "Test text content",
-            new(),
-            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
-            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
-            null);
-
-        MessageDetailedDTO repliedToMessageDTO = new(
-        
-            Id: repliedToMessage.Id,
-            SenderId: repliedToMessage.Sender.Id,
-            SenderName: repliedToMessage.Sender.UserName,
-            TextContent: repliedToMessage.TextContent,
-            RepliedToMessage: null,
-            SentDate: repliedToMessage.SentDate,
-            UpdatedDate: repliedToMessage.UpdatedDate,
-            SeenByUserIds: new()
-        );
-
-        var testMessage = (TextMessage)_messageFactory.CreateTextMessage(
-            "TestId",
-            testSender,
-            "Test text content",
-            new(),
-            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
-            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
-            repliedToMessage);
-
-        MessageDetailedDTO expectedResult = new(
-        
-            Id: testMessage.Id,
-            SenderId: testSender.Id,
-            SenderName: testSender.UserName,
-            TextContent: testMessage.TextContent,
-            RepliedToMessage: repliedToMessageDTO,
-            SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate,
-            SeenByUserIds: new()
-        );
-
-        // When
-        var result = _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
-
-        // Then
-        result.Should().BeEquivalentTo(expectedResult);
-    }
-
-    [Theory]
-    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void MapMessageToMessageDetailedDTO_WhenMessageIsImageMessage_ReturnCorrectlyMappedDTO(bool containsTextContent)
-    {
-        // Given
-        TestUserAccount testSender = new()
-        {
-            Id = "SenderId",
-            Handler = "SenderHandler",
-            UserName = "SenderUsername",
-            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-        };
-
-        // TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
-
-        var repliedToMessage = (TextMessage)_messageFactory.CreateTextMessage(
-            "TestId",
-            testSender,
-            "Test text content",
-            new(),
-            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
-            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
-            null);
-
-        MessageDetailedDTO repliedToMessageDTO = new(
-        
-            Id: repliedToMessage.Id,
-            SenderId: repliedToMessage.Sender.Id,
-            SenderName: repliedToMessage.Sender.UserName,
-            TextContent: repliedToMessage.TextContent,
-            RepliedToMessage: null,
-            SentDate: repliedToMessage.SentDate,
-            UpdatedDate: repliedToMessage.UpdatedDate,
-            SeenByUserIds: new()
-        );
-
-        var testMessage = (ImageMessage)_messageFactory.CreateImageMessage(
-            "TestId",
-            testSender,
-            new List<string>() { "Image1", "Image2" },
-            containsTextContent ? "Test text content" : null,
-            new(),
-            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
-            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
-            repliedToMessage);
-
-        MessageDetailedDTO expectedResult = new(
-        
-            Id: testMessage.Id,
-            SenderId: testSender.Id,
-            SenderName: testSender.UserName,
-            ImageURLs: testMessage.ImageURLs.ToList(),
-            TextContent: testMessage.TextContent,
-            RepliedToMessage: repliedToMessageDTO,
-            SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate,
-            SeenByUserIds: new()
-        );
-
-        // When
-        var result = _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
-
-        // Then
-        result.Should().BeEquivalentTo(expectedResult);
-    }
-
-
-    [Theory]
-    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void MapMessageToMessageDetailedDTO_WhenMessageIsRecipeMessage_ReturnCorrectlyMappedDTO(bool containsTextContent)
-    {
-        // Given
-        TestUserAccount testSender = new()
-        {
-            Id = "SenderId",
-            Handler = "SenderHandler",
-            UserName = "SenderUsername",
-            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-        };
-
-        var repliedToMessage = (TextMessage)_messageFactory.CreateTextMessage(
-            "TestId",
-            testSender,
-            "Test text content",
-            new(),
-            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
-            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
-            null);
-
-        MessageDetailedDTO repliedToMessageDTO = new(
-        
-            Id: repliedToMessage.Id,
-            SenderId: repliedToMessage.Sender.Id,
-            SenderName: repliedToMessage.Sender.UserName,
-            TextContent: repliedToMessage.TextContent,
-            RepliedToMessage: null,
-            SentDate: repliedToMessage.SentDate,
-            UpdatedDate: repliedToMessage.UpdatedDate,
-            SeenByUserIds: new()
-        );
-
-        RecipeAggregate recipe1 = new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE);
-        RecipeAggregate recipe2 = new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE);
-
-        var testMessage = (RecipeMessage)_messageFactory.CreateRecipeMessage(
-            "TestId",
-            testSender,
-            new List<RecipeAggregate>()
-            {
-                recipe1,
-                recipe2
-            },
-            containsTextContent ? "Test text content" : null,
-            new(),
-            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
-            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
-            repliedToMessage);
-
-        List<RecipeDTO> recipes = new()
-        {
-            new(
-                Id: "Recipe1Id",
-                Title: "Recipe1Title",
-                Description: "Description",
-                ChefUsername: "chefA",
-                Tags: new HashSet<string>{"labelA" , "labelB"}
-            ),
-            new(
-                Id: "Recipe2Id",
-                Title: "Recipe2Title",
-                Description: "Description",
-                ChefUsername: "chefB",
-                Tags: new HashSet<string>{"labelC" , "labelD"}
-            ),
-        };
-
-        MessageDetailedDTO expectedResult = new(
-            Id: testMessage.Id,
-            SenderId: testSender.Id,
-            SenderName: testSender.UserName,
-            Recipes: recipes,
-            TextContent: testMessage.TextContent,
-            RepliedToMessage: repliedToMessageDTO,
-            SentDate: testMessage.SentDate,
-            UpdatedDate: testMessage.UpdatedDate,
-            SeenByUserIds: new()
-        );
-
-        _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe1))
-            .Returns(recipes[0]);
-
-
-        _recipeMapperMock
-            .Setup(mapper => mapper.MapRecipeAggregateToRecipeDto(recipe2))
-            .Returns(recipes[1]);
-
-
-        // When
-        var result = _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
-
-        // Then
-        result.Should().BeEquivalentTo(expectedResult);
-    }
-
-    [Fact]
-    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    public void MapMessageToMessageDetailedDTO_WhenMessageIsNotOfExpectedType_ThrowCorruptedMessageException()
-    {
-        // Given
-        TestUserAccount testSender = new()
-        {
-            Id = "SenderId",
-            Handler = "SenderHandler",
-            UserName = "SenderUsername",
-            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
-        };
-
-        TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
-        TestMessage testMessage = new("TestId", testSender, new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero), new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero), repliedToMessage);
-
-        // When
-        var testAction = () => _messageMapperSUT.MapMessageToDetailedMessageDTO(testMessage);
-
-        // Then
-        testAction.Should().Throw<CorruptedMessageException>();
-    }
-
 }

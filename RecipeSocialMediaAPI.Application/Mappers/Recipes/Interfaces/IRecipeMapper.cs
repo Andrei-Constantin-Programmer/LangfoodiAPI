@@ -5,13 +5,13 @@ namespace RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
 
 public interface IRecipeMapper
 {
-    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO servingSizeDTO);
-    public ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize servingSize);
-    public Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO);
-    public IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient);
-    public RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDTO recipeStepDTO);
-    public RecipeStepDTO MapRecipeStepToRecipeStepDto(RecipeStep recipeStep);
-    public RecipeDetailedDTO MapRecipeAggregateToRecipeDetailedDto(RecipeAggregate recipeAggregate);
-    public RecipeDTO MapRecipeAggregateToRecipeDto(RecipeAggregate recipeAggregate);
-    public RecipePreviewDTO MapRecipeAggregateToRecipePreviewDto(RecipeAggregate recipeAggregate);
+    ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO servingSizeDTO);
+    ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize servingSize);
+    Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO);
+    IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient);
+    RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDTO recipeStepDTO);
+    RecipeStepDTO MapRecipeStepToRecipeStepDto(RecipeStep recipeStep);
+    RecipeDetailedDTO MapRecipeToRecipeDetailedDto(Recipe recipe);
+    RecipeDTO MapRecipeToRecipeDto(Recipe recipe);
+    RecipePreviewDTO MapRecipeToRecipePreviewDto(Recipe recipe);
 }

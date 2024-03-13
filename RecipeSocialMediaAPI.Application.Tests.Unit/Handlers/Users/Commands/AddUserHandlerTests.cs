@@ -1,18 +1,18 @@
 ﻿using FluentAssertions;
 using Moq;
-using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Domain.Utilities;
-using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Users.Commands;
 
@@ -26,7 +26,7 @@ public class AddUserHandlerTests
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
     private readonly Mock<IBearerTokenGeneratorService> _bearerTokenGeneratorServiceMock;
 
-    private readonly ICryptoService _cryptoServiceFake;
+    private readonly IPasswordCryptoService _passwordCryptoServiceFake;
 
     public AddUserHandlerTests()
     {
@@ -41,12 +41,12 @@ public class AddUserHandlerTests
         _userPersistenceRepositoryMock = new Mock<IUserPersistenceRepository>();
         _bearerTokenGeneratorServiceMock = new Mock<IBearerTokenGeneratorService>();
 
-        _cryptoServiceFake = new FakeCryptoService();
+        _passwordCryptoServiceFake = new FakePasswordCryptoService();
 
         _userHandlerSUT = new AddUserHandler(
             _mapperMock.Object,
             _dateTimeProviderMock.Object,
-            _cryptoServiceFake,
+            _passwordCryptoServiceFake,
             _userPersistenceRepositoryMock.Object,
             _userQueryRepositoryMock.Object,
             _bearerTokenGeneratorServiceMock.Object);
@@ -72,8 +72,8 @@ public class AddUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByHandler(It.IsAny<string>()))
-            .Returns(existingUser);
+            .Setup(repo => repo.GetUserByHandlerAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUser);
         AddUserCommand command = new(
             new NewUserContract(
                 Handler: existingUser.Account.Handler,
@@ -88,7 +88,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<HandlerAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>()), Times.Never);
+            .Verify(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -111,8 +111,8 @@ public class AddUserHandlerTests
         };
             
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByUsername(It.IsAny<string>()))
-            .Returns(existingUser);
+            .Setup(repo => repo.GetUserByUsernameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUser);
         AddUserCommand command = new(
             new NewUserContract(
                 Handler: existingUser.Account.Handler,
@@ -127,7 +127,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<UsernameAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>()), Times.Never);
+            .Verify(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -150,8 +150,8 @@ public class AddUserHandlerTests
         };
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
-            .Returns(existingUser);
+            .Setup(repo => repo.GetUserByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUser);
         NewUserContract contract = new("TestHandler", "NewUser", existingUser.Email,"NewPass");
 
         // When
@@ -160,7 +160,7 @@ public class AddUserHandlerTests
         // Then
         await action.Should().ThrowAsync<EmailAlreadyInUseException>();
         _userPersistenceRepositoryMock
-            .Verify(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>()), Times.Never);
+            .Verify(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -172,20 +172,21 @@ public class AddUserHandlerTests
         NewUserContract contract = new("NewHandler", "NewUser", "NewEmail", "NewPass");
         
         _userPersistenceRepositoryMock
-            .Setup(repo => repo.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>()))
-            .Returns((string handler, string user, string email, string password, DateTimeOffset creationDate, UserRole userRole) => new TestUserCredentials
-            {
-                Account = new TestUserAccount
+            .Setup(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string handler, string user, string email, string password, DateTimeOffset creationDate, UserRole userRole, CancellationToken _) 
+                => new TestUserCredentials
                 {
-                    Id =  "TestId",
-                    Handler = handler,
-                    UserName = user,
-                    AccountCreationDate = creationDate,
-                    Role = userRole
-                },
-                Email = email,
-                Password = password,
-            });
+                    Account = new TestUserAccount
+                    {
+                        Id =  "TestId",
+                        Handler = handler,
+                        UserName = user,
+                        AccountCreationDate = creationDate,
+                        Role = userRole
+                    },
+                    Email = email,
+                    Password = password,
+                });
 
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
@@ -211,7 +212,7 @@ public class AddUserHandlerTests
         // Then
         result.User.UserName.Should().Be(contract.UserName);
         result.User.Email.Should().Be(contract.Email);
-        _cryptoServiceFake.ArePasswordsTheSame(contract.Password, result.User.Password)
+        _passwordCryptoServiceFake.ArePasswordsTheSame(contract.Password, result.User.Password)
             .Should().BeTrue();
         result.Token.Should().Be(token);
     }

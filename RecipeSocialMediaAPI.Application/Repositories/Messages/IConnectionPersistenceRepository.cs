@@ -5,8 +5,8 @@ namespace RecipeSocialMediaAPI.Application.Repositories.Messages;
 
 public interface IConnectionPersistenceRepository
 {
-    public IConnection CreateConnection(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus);
-    bool UpdateConnection(IConnection connection);
-    bool DeleteConnection(IConnection connection);
-    bool DeleteConnection(IUserAccount userAccount1, IUserAccount userAccount2);
+    Task<IConnection> CreateConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, ConnectionStatus connectionStatus, CancellationToken cancellationToken = default);
+    Task<bool> UpdateConnectionAsync(IConnection connection, CancellationToken cancellationToken = default);
+    Task<bool> DeleteConnectionAsync(IConnection connection, CancellationToken cancellationToken = default);
+    Task<bool> DeleteConnectionAsync(IUserAccount userAccount1, IUserAccount userAccount2, CancellationToken cancellationToken = default);
 }

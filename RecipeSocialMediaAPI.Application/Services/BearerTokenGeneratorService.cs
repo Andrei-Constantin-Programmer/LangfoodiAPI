@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Identity;
 using RecipeSocialMediaAPI.Application.Options;
+using RecipeSocialMediaAPI.Application.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Utilities;
-using RecipeSocialMediaAPI.Application.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -41,6 +41,7 @@ public class BearerTokenGeneratorService : IBearerTokenGeneratorService
         {
             claims.Add(new(IdentityData.DeveloperUserClaimName, "true", ClaimValueTypes.Boolean));
         }
+
         if (user.Account.Role is UserRole.Admin)
         {
             claims.Add(new(IdentityData.AdminUserClaimName, "true", ClaimValueTypes.Boolean));

@@ -1,20 +1,21 @@
 ﻿using FluentAssertions;
 using Moq;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
-using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.DTO.Recipes;
+using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
-using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
+
 public class AddRecipeHandlerTests
 {
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
@@ -69,7 +70,7 @@ public class AddRecipeHandlerTests
             .WithMessage($"No user found with id {testContract.ChefId}");
 
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Never);
+            .Verify(mapper => mapper.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Never);
     }
 
     [Fact]
@@ -96,8 +97,8 @@ public class AddRecipeHandlerTests
         testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
 
         _userQueryRepositoryMock
-            .Setup(x => x.GetUserById(It.IsAny<string>()))
-            .Returns(new TestUserCredentials
+            .Setup(x => x.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TestUserCredentials
             {
                 Account = new TestUserAccount
                 {
@@ -111,11 +112,18 @@ public class AddRecipeHandlerTests
             });
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.CreateRecipe(It.IsAny<string>(), It.IsAny<Recipe>(), It.IsAny<string>(),
-                It.IsAny<IUserAccount>(), It.IsAny<ISet<string>>(), It.IsAny<DateTimeOffset>(),
-                It.IsAny<DateTimeOffset>(), It.IsAny<string?>()))
-            .Returns((string title, Recipe recipe, string desc, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId) 
-                => new RecipeAggregate("1", title, recipe, desc, chef, creationDate, lastUpdatedDate, tags, thumbnailId)
+            .Setup(x => x.CreateRecipeAsync(
+                It.IsAny<string>(),
+                It.IsAny<RecipeGuide>(),
+                It.IsAny<string>(),
+                It.IsAny<IUserAccount>(),
+                It.IsAny<ISet<string>>(),
+                It.IsAny<DateTimeOffset>(),
+                It.IsAny<DateTimeOffset>(),
+                It.IsAny<string?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string title, RecipeGuide recipeGuide, string desc, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken _) 
+                => new Recipe("1", title, recipeGuide, desc, chef, creationDate, lastUpdatedDate, tags, thumbnailId)
             );
 
         _recipeMapperMock
@@ -127,8 +135,8 @@ public class AddRecipeHandlerTests
             .Returns((RecipeStepDTO step) => new RecipeStep(step.Text, new RecipeImage(step.ImageUrl!)));
 
         _recipeMapperMock
-            .Setup(x => x.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()))
-            .Returns((RecipeAggregate recipe) => new RecipeDetailedDTO(
+            .Setup(x => x.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()))
+            .Returns((Recipe recipe) => new RecipeDetailedDTO(
                 Id: "1", 
                 Title: recipe.Title, 
                 Description: recipe.Description,
@@ -146,9 +154,9 @@ public class AddRecipeHandlerTests
                 Ingredients: new List<IngredientDTO>() 
                 {
                     new(
-                        recipe.Recipe.Ingredients[0].Name,
-                        recipe.Recipe.Ingredients[0].Quantity,
-                        recipe.Recipe.Ingredients[0].UnitOfMeasurement
+                        recipe.Guide.Ingredients[0].Name,
+                        recipe.Guide.Ingredients[0].Quantity,
+                        recipe.Guide.Ingredients[0].UnitOfMeasurement
                     )
                 },
                 RecipeSteps: new Stack<RecipeStepDTO>
@@ -156,14 +164,14 @@ public class AddRecipeHandlerTests
                     new[] 
                     { 
                         new RecipeStepDTO(
-                            recipe.Recipe.Steps.First().Text,
-                            recipe.Recipe.Steps.First().Image!.ImageUrl
+                            recipe.Guide.Steps.First().Text,
+                            recipe.Guide.Steps.First().Image!.ImageUrl
                         )
                     }    
                 ),
-                NumberOfServings: recipe.Recipe.NumberOfServings,
-                CookingTime: recipe.Recipe.CookingTimeInSeconds,
-                KiloCalories: recipe.Recipe.KiloCalories,
+                NumberOfServings: recipe.Guide.NumberOfServings,
+                CookingTime: recipe.Guide.CookingTimeInSeconds,
+                KiloCalories: recipe.Guide.KiloCalories,
                 ThumbnailId: recipe.ThumbnailId
             ));
 
@@ -186,6 +194,6 @@ public class AddRecipeHandlerTests
         result.ThumbnailId.Should().Be("img_id_1");
 
         _recipeMapperMock
-            .Verify(mapper => mapper.MapRecipeAggregateToRecipeDetailedDto(It.IsAny<RecipeAggregate>()), Times.Once);
+            .Verify(mapper => mapper.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()), Times.Once);
     }
 }

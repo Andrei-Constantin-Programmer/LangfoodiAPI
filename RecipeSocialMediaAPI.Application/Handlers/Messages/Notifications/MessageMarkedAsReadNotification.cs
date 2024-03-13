@@ -15,6 +15,6 @@ internal class MessageMarkedAsReadHandler : INotificationHandler<MessageMarkedAs
 
     public async Task Handle(MessageMarkedAsReadNotification notification, CancellationToken cancellationToken)
     {
-        await _messageNotificationService.NotifyMessageMarkedAsRead(notification.UserId, notification.MessageId, cancellationToken);
+        await _messageNotificationService.NotifyMessageMarkedAsReadAsync(notification.UserId, notification.MessageId, cancellationToken);
     }
 }

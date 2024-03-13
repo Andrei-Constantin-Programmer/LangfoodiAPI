@@ -25,7 +25,7 @@ public class GetGroupHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Handle_WhenGroupIsFound_ReturnGroupDTO()
     {
         // Given
@@ -48,8 +48,8 @@ public class GetGroupHandlerTests
         Group existingGroup = new("g1", "Group", "Group Desc", users);
 
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(existingGroup.GroupId))
-            .Returns(existingGroup);
+            .Setup(repo => repo.GetGroupByIdAsync(existingGroup.GroupId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingGroup);
 
         GetGroupQuery query = new(existingGroup.GroupId);
 
@@ -66,13 +66,13 @@ public class GetGroupHandlerTests
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
-    [Trait(Traits.MODULE, Traits.Modules.CORE)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Handle_WhenGroupIsNotFound_ThrowGroupNotFoundException()
     {
         // Given
         _groupQueryRepositoryMock
-            .Setup(repo => repo.GetGroupById(It.IsAny<string>()))
-            .Returns((Group?)null);
+            .Setup(repo => repo.GetGroupByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Group?)null);
 
         GetGroupQuery query = new("g1");
 

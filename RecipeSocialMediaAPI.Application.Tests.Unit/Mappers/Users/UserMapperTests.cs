@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Users;
-using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.TestInfrastructure;

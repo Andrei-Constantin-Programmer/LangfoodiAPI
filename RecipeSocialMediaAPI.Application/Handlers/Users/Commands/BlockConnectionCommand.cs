@@ -6,6 +6,7 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
+
 public record BlockConnectionCommand(string UserId, string ConnectionId) : IRequest;
 
 internal class BlockConnectionHandler : IRequestHandler<BlockConnectionCommand>
@@ -21,17 +22,16 @@ internal class BlockConnectionHandler : IRequestHandler<BlockConnectionCommand>
         _connectionQueryRepository = connectionQueryRepository;
     }
 
-    public Task Handle(BlockConnectionCommand request, CancellationToken cancellationToken) {
-        IUserCredentials user = _userQueryRepository.GetUserById(request.UserId)
+    public async Task Handle(BlockConnectionCommand request, CancellationToken cancellationToken) {
+        IUserCredentials user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))
             ?? throw new UserNotFoundException($"User with id {request.UserId} does not exist");
-        IConnection connection = _connectionQueryRepository.GetConnection(request.ConnectionId)
+
+        IConnection connection = (await _connectionQueryRepository.GetConnectionAsync(request.ConnectionId, cancellationToken))
             ?? throw new ConnectionNotFoundException($"Connection with id {request.ConnectionId} does not exist");
 
         if (user.Account.BlockConnection(connection.ConnectionId))
         {
-            _userPersistenceRepository.UpdateUser(user);
+            await _userPersistenceRepository.UpdateUserAsync(user, cancellationToken);
         }
-
-        return Task.CompletedTask;
     }
 }

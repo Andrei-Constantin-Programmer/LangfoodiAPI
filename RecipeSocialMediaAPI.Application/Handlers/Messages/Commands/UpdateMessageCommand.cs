@@ -35,8 +35,7 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
 
     public async Task Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
     {
-        Message message =
-            _messageQueryRepository.GetMessage(request.Contract.Id)
+        Message message = await _messageQueryRepository.GetMessageAsync(request.Contract.Id, cancellationToken)
             ?? throw new MessageNotFoundException(request.Contract.Id);
 
         switch (message)
@@ -48,13 +47,13 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
                 AttemptUpdatingImageMessage(request.Contract, imageMessage);
                 break;
             case RecipeMessage recipeMessage:
-                AttemptUpdatingRecipeMessage(request.Contract, recipeMessage);
+                await AttemptUpdatingRecipeMessageAsync(request.Contract, recipeMessage, cancellationToken);
                 break;
             default:
                 throw new CorruptedMessageException($"Message with id {message.Id} could not be updated, as it is corrupted");
         }
 
-        bool isSuccessful = _messagePersistenceRepository.UpdateMessage(message);
+        bool isSuccessful = await _messagePersistenceRepository.UpdateMessageAsync(message, cancellationToken);
         if (!isSuccessful)
         {
             throw new MessageUpdateException($"Could not update message with id {message.Id}");
@@ -114,7 +113,10 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
         }
     }
 
-    private void AttemptUpdatingRecipeMessage(UpdateMessageContract contract, RecipeMessage recipeMessage)
+    private async Task AttemptUpdatingRecipeMessageAsync(
+        UpdateMessageContract contract,
+        RecipeMessage recipeMessage,
+        CancellationToken cancellationToken = default)
     {
         if (contract.NewImageURLs is not null
             && contract.NewImageURLs.Any())
@@ -131,7 +133,7 @@ internal class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand>
         recipeMessage.TextContent = contract.Text;
         foreach (var recipeId in contract.NewRecipeIds ?? new())
         {
-            var recipe = _recipeQueryRepository.GetRecipeById(recipeId) 
+            var recipe = await _recipeQueryRepository.GetRecipeByIdAsync(recipeId, cancellationToken)
                 ?? throw new RecipeMessageUpdateException(recipeMessage.Id, $"attempted to add inexistent recipe with id {recipeId}");
 
             recipeMessage.AddRecipe(recipe);

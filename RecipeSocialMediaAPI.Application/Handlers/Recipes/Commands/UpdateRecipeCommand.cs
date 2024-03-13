@@ -3,11 +3,11 @@ using MediatR;
 using RecipeSocialMediaAPI.Application.Contracts.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Services.Interfaces;
-using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
@@ -28,24 +28,23 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
         _recipeQueryRepository = recipeQueryRepository;
     }
 
-    public Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
     {
-        RecipeAggregate existingRecipe = 
-            _recipeQueryRepository.GetRecipeById(request.Contract.Id) 
+        Recipe existingRecipe = (await _recipeQueryRepository.GetRecipeByIdAsync(request.Contract.Id, cancellationToken))
             ?? throw new RecipeNotFoundException(request.Contract.Id);
 
-        RecipeAggregate updatedRecipe = new(
+        Recipe updatedRecipe = new(
             existingRecipe.Id,
             request.Contract.Title,
-            new Recipe(
+            new RecipeGuide(
                 request.Contract.Ingredients
                     .Select(_mapper.MapIngredientDtoToIngredient)
                     .ToList(),
                 new Stack<RecipeStep>(request.Contract.RecipeSteps
                     .Select(_mapper.MapRecipeStepDtoToRecipeStep)),
-                request.Contract.NumberOfServings ?? existingRecipe.Recipe.NumberOfServings,
-                request.Contract.CookingTime ?? existingRecipe.Recipe.CookingTimeInSeconds,
-                request.Contract.KiloCalories ?? existingRecipe.Recipe.KiloCalories,
+                request.Contract.NumberOfServings ?? existingRecipe.Guide.NumberOfServings,
+                request.Contract.CookingTime ?? existingRecipe.Guide.CookingTimeInSeconds,
+                request.Contract.KiloCalories ?? existingRecipe.Guide.KiloCalories,
                 request.Contract.ServingSize is not null
                     ? _mapper.MapServingSizeDtoToServingSize(request.Contract.ServingSize)
                     : null
@@ -58,11 +57,12 @@ internal class UpdateRecipeHandler : IRequestHandler<UpdateRecipeCommand>
             request.Contract.ThumbnailId
         );
 
-        bool isSuccessful = _recipePersistenceRepository.UpdateRecipe(updatedRecipe);
+        bool isSuccessful = await _recipePersistenceRepository.UpdateRecipeAsync(updatedRecipe, cancellationToken);
 
-        return isSuccessful
-            ? Task.CompletedTask
-            : throw new RecipeUpdateException($"Could not update recipe with id {existingRecipe.Id}");
+        if (!isSuccessful)
+        {
+            throw new RecipeUpdateException($"Could not update recipe with id {existingRecipe.Id}");
+        }
     }
 }
 

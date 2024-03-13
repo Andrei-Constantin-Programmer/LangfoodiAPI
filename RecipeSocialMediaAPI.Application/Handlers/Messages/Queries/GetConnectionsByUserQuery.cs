@@ -7,9 +7,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetConnectionsByUserQuery(string UserId) : IRequest<IEnumerable<ConnectionDTO>>;
+public record GetConnectionsByUserQuery(string UserId) : IRequest<List<ConnectionDTO>>;
 
-internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUserQuery, IEnumerable<ConnectionDTO>>
+internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUserQuery, List<ConnectionDTO>>
 {
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IConnectionQueryRepository _connectionQueryRepository;
@@ -20,13 +20,18 @@ internal class GetConnectionsByUserHandler : IRequestHandler<GetConnectionsByUse
         _connectionQueryRepository = connectionQueryRepository;
     }
 
-    public Task<IEnumerable<ConnectionDTO>> Handle(GetConnectionsByUserQuery request, CancellationToken cancellationToken)
+    public async Task<List<ConnectionDTO>> Handle(GetConnectionsByUserQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount user = _userQueryRepository.GetUserById(request.UserId)?.Account
+        IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
-        return Task.FromResult(_connectionQueryRepository
-            .GetConnectionsForUser(user)
-            .Select(connection => new ConnectionDTO(connection.ConnectionId, connection.Account1.Id, connection.Account2.Id, connection.Status.ToString())));
+        return (await _connectionQueryRepository
+            .GetConnectionsForUserAsync(user, cancellationToken))
+            .Select(connection => new ConnectionDTO(
+                connection.ConnectionId,
+                connection.Account1.Id,
+                connection.Account2.Id,
+                connection.Status.ToString()))
+            .ToList();
     }
 }

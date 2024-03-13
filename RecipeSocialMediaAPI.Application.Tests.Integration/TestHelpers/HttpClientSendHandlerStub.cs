@@ -1,4 +1,5 @@
 ﻿namespace RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+
 public class HttpClientSendHandlerStub : DelegatingHandler
 {
     private readonly Func<HttpRequestMessage, CancellationToken, HttpResponseMessage> _handlerFunc;

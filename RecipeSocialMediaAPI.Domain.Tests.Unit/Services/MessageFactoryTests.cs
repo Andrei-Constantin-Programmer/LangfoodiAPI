@@ -166,9 +166,9 @@ public class MessageFactoryTests
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
         Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
-        List<RecipeAggregate> recipes = new()
+        List<Recipe> recipes = new()
         {
-            new("RecipeId", "RecipeTitle", new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()), "RecipeDescription", testSender, testSentDate, testUpdateDate)
+            new("RecipeId", "RecipeTitle", new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()), "RecipeDescription", testSender, testSentDate, testUpdateDate)
         };
 
         // When
@@ -203,7 +203,7 @@ public class MessageFactoryTests
         DateTimeOffset testUpdateDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
         Message testReplyMessage = new TextMessage(_dateTimeProviderMock.Object, "ReplyId", testSender, "ReplyText", testSentDate.AddDays(-5));
-        List<RecipeAggregate> images = new();
+        List<Recipe> images = new();
 
         // When
         var testAction = () => _messageFactorySUT.CreateRecipeMessage(testId, testSender, images, testText, new(), testSentDate, testUpdateDate, testReplyMessage);

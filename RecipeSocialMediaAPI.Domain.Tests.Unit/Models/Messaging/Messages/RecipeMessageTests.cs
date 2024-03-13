@@ -29,7 +29,7 @@ public class RecipeMessageTests
         };
         DateTimeOffset testDate = new(2023, 10, 3, 16, 30, 0, TimeSpan.Zero);
 
-        List<RecipeAggregate> recipes = new()
+        List<Recipe> recipes = new()
         {
             CreateTestRecipe("1", testUser, testDate)
         };
@@ -70,7 +70,7 @@ public class RecipeMessageTests
             .Setup(provider => provider.Now)
             .Returns(testNow);
 
-        RecipeAggregate newRecipe = CreateTestRecipe("2", _recipeMessageSUT.Sender, testNow);
+        Recipe newRecipe = CreateTestRecipe("2", _recipeMessageSUT.Sender, testNow);
 
         // When
         _recipeMessageSUT.AddRecipe(newRecipe);
@@ -123,6 +123,6 @@ public class RecipeMessageTests
         _recipeMessageSUT.SeenBy.Should().OnlyHaveUniqueItems().And.Contain(existingUser);
     }
 
-    private static RecipeAggregate CreateTestRecipe(string id, IUserAccount testUser, DateTimeOffset testDate) =>
-        new(id, "RecipeTitle", new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()), "RecipeDescription", testUser, testDate, testDate);
+    private static Recipe CreateTestRecipe(string id, IUserAccount testUser, DateTimeOffset testDate) =>
+        new(id, "RecipeTitle", new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()), "RecipeDescription", testUser, testDate, testDate);
 }

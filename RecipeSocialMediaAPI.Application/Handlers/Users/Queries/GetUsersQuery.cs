@@ -5,6 +5,7 @@ using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 using RecipeSocialMediaAPI.Application.Repositories.Messages;
 using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Utilities;
+using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
@@ -26,43 +27,45 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
 
     public async Task<List<UserAccountDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
     {
-        IUserAccount queryingUser = _userQueryRepository.GetUserById(request.UserId)?.Account
+        IUserAccount queryingUser = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
 
-        var allUsers = _userQueryRepository.GetAllUserAccountsContaining(request.ContainedString);
-        var usersFound = GetFilteredUsers(queryingUser, allUsers, request.QueryOptions);
+        var allUsers = await _userQueryRepository.GetAllUserAccountsContainingAsync(request.ContainedString, cancellationToken);
+        var connections = (await _connectionQueryRepository.GetConnectionsForUserAsync(queryingUser, cancellationToken)).ToList();
+        var usersFound = GetFilteredUsers(queryingUser, allUsers, request.QueryOptions, connections);
 
-        return await Task.FromResult(usersFound
+        return usersFound
             .Select(_userMapper.MapUserAccountToUserAccountDto)
-            .ToList());
+            .ToList();
     }
 
-    private IEnumerable<IUserAccount> GetFilteredUsers(
-        IUserAccount queryingUser, 
-        IEnumerable<IUserAccount> allUsers, 
-        UserQueryOptions queryOptions) => queryOptions switch
-    {
-        UserQueryOptions.All => allUsers,
-        UserQueryOptions.NonSelf => allUsers.Where(user => user.Id != queryingUser.Id),
-        UserQueryOptions.Connected => GetUsersFilteredByConnection(
-            queryingUser, 
-            allUsers, 
-            user => _connectionQueryRepository.GetConnectionsForUser(queryingUser)
-                .Any(conn => conn.Account1.Id == user.Id
-                          || conn.Account2.Id == user.Id)),
-        UserQueryOptions.NotConnected => GetUsersFilteredByConnection(
-            queryingUser, 
-            allUsers,
-            user => _connectionQueryRepository.GetConnectionsForUser(queryingUser)
-                .All(conn => conn.Account1.Id != user.Id
-                          && conn.Account2.Id != user.Id)),
+    private static IEnumerable<IUserAccount> GetFilteredUsers(
+        IUserAccount queryingUser,
+        IEnumerable<IUserAccount> allUsers,
+        UserQueryOptions queryOptions,
+        List<IConnection> connections) => queryOptions switch
+        {
+            UserQueryOptions.All => allUsers,
+            UserQueryOptions.NonSelf => allUsers.Where(user => user.Id != queryingUser.Id),
+            UserQueryOptions.Connected => GetUsersFilteredByConnection(
+                queryingUser,
+                allUsers,
+                user => connections
+                    .Any(conn => conn.Account1.Id == user.Id
+                              || conn.Account2.Id == user.Id)),
+            UserQueryOptions.NotConnected => GetUsersFilteredByConnection(
+                queryingUser,
+                allUsers,
+                user => connections
+                    .All(conn => conn.Account1.Id != user.Id
+                              && conn.Account2.Id != user.Id)),
 
-        _ => throw new ArgumentException($"Unsupported query options {queryOptions}")
-    };
+            _ => throw new ArgumentException($"Unsupported query options {queryOptions}")
+        };
 
     private static IEnumerable<IUserAccount> GetUsersFilteredByConnection(
-        IUserAccount queryingUser, 
-        IEnumerable<IUserAccount> allUsers, 
+        IUserAccount queryingUser,
+        IEnumerable<IUserAccount> allUsers,
         Predicate<IUserAccount> condition)
-    => allUsers.Where(user => user.Id != queryingUser.Id && condition(user));
+        => allUsers.Where(user => user.Id != queryingUser.Id && condition(user));
 }

@@ -2,10 +2,10 @@
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 
@@ -15,28 +15,27 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
 {
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserMapper _mapper;
-    private readonly ICryptoService _cryptoService;
+    private readonly IPasswordCryptoService _passwordCryptoService;
     private readonly IBearerTokenGeneratorService _bearerTokenGeneratorService;
 
     public AuthenticateUserHandler(
         IUserQueryRepository userQueryRepository,
         IUserMapper mapper,
-        ICryptoService cryptoService,
+        IPasswordCryptoService passwordCryptoService,
         IBearerTokenGeneratorService bearerTokenGeneratorService)
     {
         _userQueryRepository = userQueryRepository;
         _mapper = mapper;
-        _cryptoService = cryptoService;
+        _passwordCryptoService = passwordCryptoService;
         _bearerTokenGeneratorService = bearerTokenGeneratorService;
     }
 
     public async Task<SuccessfulAuthenticationDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
-        IUserCredentials user = (_userQueryRepository.GetUserByEmail(request.Email))
-                    ?? throw new UserNotFoundException($"No user found with handler/email {request.Email}");
+        IUserCredentials user = await _userQueryRepository.GetUserByEmailAsync(request.Email, cancellationToken)
+                    ?? throw new UserNotFoundException($"No user found with email {request.Email}");
 
-        var successfulLogin = _cryptoService.ArePasswordsTheSame(request.Password, user.Password ?? string.Empty);
-
+        var successfulLogin = _passwordCryptoService.ArePasswordsTheSame(request.Password, user.Password ?? string.Empty);
         if (!successfulLogin)
         {
             throw new InvalidCredentialsException();
@@ -44,6 +43,6 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
 
-        return await Task.FromResult(new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(user), token));
+        return new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(user), token);
     }
 }

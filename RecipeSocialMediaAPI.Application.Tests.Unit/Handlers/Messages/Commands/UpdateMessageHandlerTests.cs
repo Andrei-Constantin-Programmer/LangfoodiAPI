@@ -17,7 +17,6 @@ using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Domain.Utilities;
 using RecipeSocialMediaAPI.TestInfrastructure;
-using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Messages.Commands;
 
@@ -66,8 +65,8 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", "New Text Content", null, null));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns((Message?)null);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Message?)null);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -75,7 +74,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         // Then
         await testAction.Should().ThrowAsync<MessageNotFoundException>();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -99,8 +98,8 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             null);
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -108,7 +107,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         // Then
         await testAction.Should().ThrowAsync<CorruptedMessageException>();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -134,11 +133,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         );
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
@@ -151,13 +150,15 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         // Then
         await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<TextMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.Contract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Once);
+            .Verify(repo => repo.UpdateMessageAsync(
+                    It.Is<TextMessage>(message =>
+                        message.Id == testMessage.Id
+                        && message.Sender == testMessage.Sender
+                        && message.TextContent == testCommand.Contract.Text
+                        && message.SentDate == testMessage.SentDate
+                        && message.UpdatedDate == _dateTimeProviderMock.Object.Now), 
+                    It.IsAny<CancellationToken>()), 
+                Times.Once);
     }
 
     [Fact]
@@ -178,11 +179,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(false);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -209,11 +210,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -223,7 +224,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to add images");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -244,11 +245,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -258,7 +259,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to add recipes");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -279,11 +280,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, testCommand.Contract.Text!, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -293,7 +294,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Theory]
@@ -317,11 +318,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -331,7 +332,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<TextMessageUpdateException>()
             .WithMessage("*attempted to nullify text");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Theory]
@@ -359,11 +360,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         );
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
@@ -376,13 +377,15 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         // Then
         await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.Contract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Once);
+            .Verify(repo => repo.UpdateMessageAsync(
+                    It.Is<ImageMessage>(message =>
+                        message.Id == testMessage.Id
+                        && message.Sender == testMessage.Sender
+                        && message.TextContent == testCommand.Contract.Text
+                        && message.SentDate == testMessage.SentDate
+                        && message.UpdatedDate == _dateTimeProviderMock.Object.Now), 
+                    It.IsAny<CancellationToken>()), 
+                Times.Once);
     }
 
     [Theory]
@@ -412,11 +415,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
@@ -429,14 +432,16 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         // Then
         await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<ImageMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.Contract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                    && message.ImageURLs.Contains(testCommand.Contract.NewImageURLs!.First())
-                )), Times.Once);
+            .Verify(repo => repo.UpdateMessageAsync(
+                    It.Is<ImageMessage>(message =>
+                        message.Id == testMessage.Id
+                        && message.Sender == testMessage.Sender
+                        && message.TextContent == testCommand.Contract.Text
+                        && message.SentDate == testMessage.SentDate
+                        && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                        && message.ImageURLs.Contains(testCommand.Contract.NewImageURLs!.First())), 
+                    It.IsAny<CancellationToken>()), 
+                Times.Once);
     }
 
     [Theory]
@@ -461,11 +466,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(false);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -494,11 +499,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -508,7 +513,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<ImageMessageUpdateException>()
             .WithMessage("*attempted to add recipes");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -531,11 +536,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -545,7 +550,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<ImageMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Theory]
@@ -563,7 +568,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -575,7 +580,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", newTextContent, new(), null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         UserPreviewForMessageDTO testSenderPreview = new(
             testSender.Id,
@@ -584,11 +589,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         );
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
@@ -601,13 +606,15 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         // Then
         await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<RecipeMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.Contract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                )), Times.Once);
+            .Verify(repo => repo.UpdateMessageAsync(
+                    It.Is<RecipeMessage>(message =>
+                        message.Id == testMessage.Id
+                        && message.Sender == testMessage.Sender
+                        && message.TextContent == testCommand.Contract.Text
+                        && message.SentDate == testMessage.SentDate
+                        && message.UpdatedDate == _dateTimeProviderMock.Object.Now), 
+                    It.IsAny<CancellationToken>()), 
+                Times.Once);
     }
 
     [Theory]
@@ -626,7 +633,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -635,7 +642,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
 
-        RecipeAggregate newRecipe = new(
+        Recipe newRecipe = new(
             "New1",
             "New Recipe Title",
             new(new(), new()),
@@ -647,7 +654,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { newRecipe.Id }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         UserPreviewForMessageDTO testSenderPreview = new(
             testSender.Id,
@@ -656,14 +663,14 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         );
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(newRecipe.Id))
-            .Returns(newRecipe);
+            .Setup(repo => repo.GetRecipeByIdAsync(newRecipe.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(newRecipe);
 
         MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
@@ -676,14 +683,16 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         // Then
         await testAction.Should().NotThrowAsync();
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.Is<RecipeMessage>(message =>
-                    message.Id == testMessage.Id
-                    && message.Sender == testMessage.Sender
-                    && message.TextContent == testCommand.Contract.Text
-                    && message.SentDate == testMessage.SentDate
-                    && message.UpdatedDate == _dateTimeProviderMock.Object.Now
-                    && message.Recipes.Contains(newRecipe)
-                )), Times.Once);
+            .Verify(repo => repo.UpdateMessageAsync(
+                    It.Is<RecipeMessage>(message =>
+                        message.Id == testMessage.Id
+                        && message.Sender == testMessage.Sender
+                        && message.TextContent == testCommand.Contract.Text
+                        && message.SentDate == testMessage.SentDate
+                        && message.UpdatedDate == _dateTimeProviderMock.Object.Now
+                        && message.Recipes.Contains(newRecipe)), 
+                    It.IsAny<CancellationToken>()), 
+                Times.Once);
     }
 
     [Theory]
@@ -702,7 +711,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -714,14 +723,14 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { "Inexistent Recipe" }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -731,7 +740,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*attempted to add inexistent recipe*");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Theory]
@@ -750,7 +759,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -759,7 +768,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
 
-        RecipeAggregate newRecipe = new(
+        Recipe newRecipe = new(
             "New1",
             "New Recipe Title",
             new(new(), new()),
@@ -771,17 +780,17 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", changeText ? "New Text" : originalText, new() { newRecipe.Id }, null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(false);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(newRecipe.Id))
-            .Returns(newRecipe);
+            .Setup(repo => repo.GetRecipeByIdAsync(newRecipe.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(newRecipe);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -804,7 +813,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -813,7 +822,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero),
             new(2023, 10, 26, 0, 0, 0, TimeSpan.Zero));
 
-        RecipeAggregate newRecipe = new(
+        Recipe newRecipe = new(
             "New1",
             "New Recipe Title",
             new(new(), new()),
@@ -825,17 +834,17 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new() { newRecipe.Id }, new() { "New Image" }));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
         _recipeQueryRepositoryMock
-            .Setup(repo => repo.GetRecipeById(newRecipe.Id))
-            .Returns(newRecipe);
+            .Setup(repo => repo.GetRecipeByIdAsync(newRecipe.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(newRecipe);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -845,7 +854,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*attempted to add images");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -862,7 +871,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        RecipeAggregate existingRecipe = new(
+        Recipe existingRecipe = new(
             "Existing1",
             "Existing Recipe Title",
             new(new(), new()),
@@ -874,14 +883,14 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         UpdateMessageCommand testCommand = new(new UpdateMessageContract("MessageId", originalText, new(), null));
 
         var testMessage = (RecipeMessage)_messageFactory
-            .CreateRecipeMessage("MessageId", testSender, new List<RecipeAggregate>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
+            .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var testAction = async () => await _updateMessageHandlerSUT.Handle(testCommand, CancellationToken.None);
@@ -891,7 +900,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .ThrowAsync<RecipeMessageUpdateException>()
             .WithMessage("*no changes made");
         _messagePersistenceRepositoryMock
-            .Verify(repo => repo.UpdateMessage(It.IsAny<Message>()), Times.Never);
+            .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -918,11 +927,11 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         );
 
         _messageQueryRepositoryMock
-            .Setup(repo => repo.GetMessage(testCommand.Contract.Id))
-            .Returns(testMessage);
+            .Setup(repo => repo.GetMessageAsync(testCommand.Contract.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testMessage);
         _messagePersistenceRepositoryMock
-            .Setup(repo => repo.UpdateMessage(testMessage))
-            .Returns(true);
+            .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock

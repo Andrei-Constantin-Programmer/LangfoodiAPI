@@ -5,13 +5,14 @@ using RecipeSocialMediaAPI.Application.DTO.Recipes;
 using RecipeSocialMediaAPI.Application.Exceptions;
 using RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 using RecipeSocialMediaAPI.Application.Mappers.Recipes.Interfaces;
-using RecipeSocialMediaAPI.Domain.Utilities;
-using RecipeSocialMediaAPI.Domain.Models.Recipes;
-using RecipeSocialMediaAPI.TestInfrastructure;
 using RecipeSocialMediaAPI.Application.Repositories.Recipes;
+using RecipeSocialMediaAPI.Domain.Models.Recipes;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.Domain.Utilities;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
+
 public class UpdateRecipeHandlerTests
 {
     private readonly Mock<IRecipePersistenceRepository> _recipePersistenceRepositoryMock;
@@ -66,7 +67,7 @@ public class UpdateRecipeHandlerTests
             .WithMessage("The recipe with the id 1 was not found");
 
         _recipePersistenceRepositoryMock
-            .Verify(mapper => mapper.UpdateRecipe(It.IsAny<RecipeAggregate>()), Times.Never);
+            .Verify(mapper => mapper.UpdateRecipeAsync(It.IsAny<Recipe>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -86,11 +87,11 @@ public class UpdateRecipeHandlerTests
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>()))
-            .Returns(new RecipeAggregate(
+            .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Recipe(
                 testContract.Id, 
                 testContract.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testContract.Description, 
                 new TestUserAccount 
                 { 
@@ -106,8 +107,8 @@ public class UpdateRecipeHandlerTests
             ));
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.UpdateRecipe(It.IsAny<RecipeAggregate>()))
-            .Returns(false);
+            .Setup(x => x.UpdateRecipeAsync(It.IsAny<Recipe>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // When
         var action = async () => await _updateRecipeHandlerSUT.Handle(new UpdateRecipeCommand(testContract), CancellationToken.None);
@@ -135,11 +136,11 @@ public class UpdateRecipeHandlerTests
         );
 
         _recipeQueryRepositoryMock
-            .Setup(x => x.GetRecipeById(It.IsAny<string>()))
-            .Returns(new RecipeAggregate(
+            .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Recipe(
                 testContract.Id, 
                 testContract.Title,
-                new Recipe(new List<Ingredient>(), new Stack<RecipeStep>()),
+                new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
                 testContract.Description,
                 new TestUserAccount
                 {
@@ -155,8 +156,8 @@ public class UpdateRecipeHandlerTests
             ));
 
         _recipePersistenceRepositoryMock
-            .Setup(x => x.UpdateRecipe(It.IsAny<RecipeAggregate>()))
-            .Returns(true);
+            .Setup(x => x.UpdateRecipeAsync(It.IsAny<Recipe>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // When
         var action = async () => await _updateRecipeHandlerSUT.Handle(new UpdateRecipeCommand(testContract), CancellationToken.None);

@@ -3,14 +3,14 @@ using Moq;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.DTO.Users;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
-using RecipeSocialMediaAPI.TestInfrastructure;
-using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
-using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
-using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
+using RecipeSocialMediaAPI.Application.Mappers.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
+using RecipeSocialMediaAPI.Domain.Models.Users;
+using RecipeSocialMediaAPI.Domain.Tests.Shared;
+using RecipeSocialMediaAPI.TestInfrastructure;
 
 namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Authentication.Queries;
 
@@ -19,7 +19,7 @@ public class AuthenticateUserHandlerTests
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
     private readonly Mock<IUserMapper> _mapperMock;
     private readonly Mock<IBearerTokenGeneratorService> _bearerTokenGeneratorServiceMock;
-    private readonly ICryptoService _cryptoServiceFake;
+    private readonly IPasswordCryptoService _passwordCryptoServiceFake;
 
     private readonly AuthenticateUserHandler _authenticateUserHandlerSUT;
 
@@ -28,12 +28,12 @@ public class AuthenticateUserHandlerTests
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
         _mapperMock = new Mock<IUserMapper>();
         _bearerTokenGeneratorServiceMock = new Mock<IBearerTokenGeneratorService>();
-        _cryptoServiceFake = new FakeCryptoService();
+        _passwordCryptoServiceFake = new FakePasswordCryptoService();
 
         _authenticateUserHandlerSUT = new AuthenticateUserHandler(
             _userQueryRepositoryMock.Object,
             _mapperMock.Object,
-            _cryptoServiceFake,
+            _passwordCryptoServiceFake,
             _bearerTokenGeneratorServiceMock.Object);
     }
 
@@ -45,8 +45,8 @@ public class AuthenticateUserHandlerTests
         // Given
         UserCredentials? nullUser = null;
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.IsAny<string>()))
-            .Returns(nullUser);
+            .Setup(repo => repo.GetUserByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nullUser);
 
         AuthenticateUserQuery query = new("TestUser", "TestPass");
 
@@ -65,7 +65,7 @@ public class AuthenticateUserHandlerTests
     public async Task Handle_WhenEmailIsFoundButPasswordIsIncorrect_ThrowInvalidCredentialsException()
     {
         // Given
-        var encryptedPassword = _cryptoServiceFake.Encrypt("TestPass");
+        var encryptedPassword = _passwordCryptoServiceFake.Encrypt("TestPass");
         IUserCredentials testUser = new TestUserCredentials
         {
             Account = new TestUserAccount
@@ -79,8 +79,8 @@ public class AuthenticateUserHandlerTests
             Password = encryptedPassword
         };
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
-            .Returns(testUser);
+            .Setup(repo => repo.GetUserByEmailAsync(It.Is<string>(email => email == testUser.Email), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser);
 
         AuthenticateUserQuery query = new(testUser.Email, "WrongPass");
 
@@ -98,7 +98,7 @@ public class AuthenticateUserHandlerTests
     {
         // Given
         var decryptedPassword = "TestPass";
-        var encryptedPassword = _cryptoServiceFake.Encrypt(decryptedPassword);
+        var encryptedPassword = _passwordCryptoServiceFake.Encrypt(decryptedPassword);
         IUserCredentials testUser = new TestUserCredentials
         {
             Account = new TestUserAccount
@@ -123,8 +123,8 @@ public class AuthenticateUserHandlerTests
         );
 
         _userQueryRepositoryMock
-            .Setup(repo => repo.GetUserByEmail(It.Is<string>(email => email == testUser.Email)))
-            .Returns(testUser);
+            .Setup(repo => repo.GetUserByEmailAsync(It.Is<string>(email => email == testUser.Email), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(testUser);
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
             .Returns(expectedUserDto);

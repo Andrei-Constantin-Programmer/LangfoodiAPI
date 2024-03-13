@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using MediatR;
+using RecipeSocialMediaAPI.Application.Contracts.Users;
 using RecipeSocialMediaAPI.Application.Cryptography.Interfaces;
 using RecipeSocialMediaAPI.Application.Exceptions;
-using RecipeSocialMediaAPI.Domain.Services.Interfaces;
+using RecipeSocialMediaAPI.Application.Repositories.Users;
 using RecipeSocialMediaAPI.Application.Validation;
 using RecipeSocialMediaAPI.Domain.Models.Users;
-using RecipeSocialMediaAPI.Application.Contracts.Users;
-using RecipeSocialMediaAPI.Application.Repositories.Users;
+using RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
@@ -14,28 +14,31 @@ public record UpdateUserCommand(UpdateUserContract Contract) : IValidatableReque
 
 internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 {
-    private readonly ICryptoService _cryptoService;
+    private readonly IPasswordCryptoService _passwordCryptoService;
     private readonly IUserFactory _userFactory;
 
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserPersistenceRepository _userPersistenceRepository;
 
-    public UpdateUserHandler(ICryptoService cryptoService, IUserFactory userFactory, IUserPersistenceRepository userPersistenceRepository, IUserQueryRepository userQueryRepository)
+    public UpdateUserHandler(
+        IPasswordCryptoService passwordCryptoService,
+        IUserFactory userFactory,
+        IUserPersistenceRepository userPersistenceRepository,
+        IUserQueryRepository userQueryRepository)
     {
-        _cryptoService = cryptoService;
+        _passwordCryptoService = passwordCryptoService;
         _userFactory = userFactory;
         _userPersistenceRepository = userPersistenceRepository;
         _userQueryRepository = userQueryRepository;
     }
 
-    public Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        IUserCredentials existingUser = 
-            _userQueryRepository.GetUserById(request.Contract.Id)
+        IUserCredentials existingUser = await _userQueryRepository.GetUserByIdAsync(request.Contract.Id, cancellationToken)
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.Id}");
 
         var newPassword = request.Contract.Password is not null
-            ? _cryptoService.Encrypt(request.Contract.Password)
+            ? _passwordCryptoService.Encrypt(request.Contract.Password)
             : existingUser.Password;
 
         IUserCredentials updatedUser = _userFactory.CreateUserCredentials(
@@ -45,14 +48,18 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
             request.Contract.Email ?? existingUser.Email,
             newPassword,
             request.Contract.ProfileImageId ?? existingUser.Account.ProfileImageId,
-            existingUser.Account.AccountCreationDate
+            existingUser.Account.AccountCreationDate,
+            existingUser.Account.PinnedConversationIds.ToList(),
+            existingUser.Account.BlockedConnectionIds.ToList(),
+            existingUser.Account.Role
         );
 
-        bool isSuccessful = _userPersistenceRepository.UpdateUser(updatedUser);
+        bool isSuccessful = await _userPersistenceRepository.UpdateUserAsync(updatedUser, cancellationToken);
 
-        return isSuccessful
-            ? Task.CompletedTask 
-            : throw new UserUpdateException($"Could not update user with id {request.Contract.Id}.");
+        if (!isSuccessful)
+        {
+            throw new UserUpdateException($"Could not update user with id {request.Contract.Id}.");
+        }
     }
 }
 

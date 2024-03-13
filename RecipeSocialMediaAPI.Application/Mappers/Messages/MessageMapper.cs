@@ -33,21 +33,6 @@ public class MessageMapper : IMessageMapper
         return GetMessageDTOHydratedWithContent(messageDTO, message);
     }
 
-    public MessageDetailedDTO MapMessageToDetailedMessageDTO(Message message)
-    {
-        MessageDetailedDTO messageDetailedDTO = new(
-            Id: message.Id,
-            SenderId: message.Sender.Id,
-            SenderName: message.Sender.UserName,
-            SeenByUserIds: message.SeenBy.Select(user => user.Id).ToList(),
-            SentDate: message.SentDate,
-            UpdatedDate: message.UpdatedDate,
-            RepliedToMessage:  message.RepliedToMessage is not null ? MapMessageToDetailedMessageDTO(message.RepliedToMessage) : null
-        );
-
-        return GetDetailedMessageDTOHydratedWithContent(messageDetailedDTO, message);
-    }
-    
     private MessageDTO GetMessageDTOHydratedWithContent(MessageDTO messageDTO, Message message)
     {
         var (text, recipeIds, imageUrls) = message switch
@@ -62,35 +47,12 @@ public class MessageMapper : IMessageMapper
                     imageMessage.ImageURLs.ToList()),
                 RecipeMessage recipeMessage => (
                     recipeMessage.TextContent,
-                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipePreviewDto).ToList(),
+                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeToRecipePreviewDto).ToList(),
                     default(List<string>?)),
 
                 _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
             };
 
         return messageDTO with { TextContent = text, Recipes = recipeIds, ImageURLs = imageUrls };
-    }
-
-    private MessageDetailedDTO GetDetailedMessageDTOHydratedWithContent(MessageDetailedDTO messageDetailedDTO, Message message)
-    {
-        var (text, recipes, images) = message switch
-            {
-                TextMessage textMessage => (
-                    textMessage.TextContent,
-                    default(List<RecipeDTO>?),
-                    default(List<string>?)),
-                ImageMessage imageMessage => (
-                    imageMessage.TextContent,
-                    default(List<RecipeDTO>?),
-                    imageMessage.ImageURLs.ToList()),
-                RecipeMessage recipeMessage => (
-                    recipeMessage.TextContent,
-                    recipeMessage.Recipes.Select(_recipeMapper.MapRecipeAggregateToRecipeDto).ToList(),
-                    default(List<string>?)),
-
-                _ => throw new CorruptedMessageException($"Message with id {message.Id} is corrupted")
-            };
-
-        return messageDetailedDTO with { TextContent = text, Recipes = recipes, ImageURLs = images };
     }
 }
