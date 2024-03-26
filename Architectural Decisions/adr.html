@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADRs</title>
+	<style>
+		body {
+			font-family: "Arial", sans-serif;
+		}
+		table {
+			width: 70%;
+			border-collapse: collapse;
+			margin-bottom: 20px;
+		}
+		th, td {
+			padding: 12px 15px;
+			text-align: left;
+			border-bottom: 1px solid #ddd;
+		}
+		th {
+			background-color: #f2f2f2;
+		}
+		tr:nth-child(even) {
+			background-color: #f5f5f5;
+		}
+		tr:nth-child(odd) {
+			background-color: #ffffff;
+		}
+		tr:hover {
+			background-color: #f5f5f5;
+		}
+		a {
+			color: #007bff;
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+<body>
+	<h1>Architectural Decision Records</h1>
+	<p>This is the folder containing all ADRs for the API.</p>
+	<h2>What are ADRs?</h2>
+	<p>Architectural Decision Records are documents written in markdown (.md) that chronicle important architectural decisions for future reference.</p>
+	<p>More information about ADRs can be found on the Confluence wiki (MGT.4.8)</p>
+
+	<table>
+		<caption><h2>ADRs</h2></caption>
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Name</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>2023-05-13</td>
+				<td><a href="20230513_recording-architecture-decisions.md">Recording Architecture Decisions</a></td>
+				<td>Using ADRs to formally explain all important decisions being made</td>
+			</tr>
+			<tr>
+				<td>2023-05-25</td>
+				<td><a href="20230525_adoption-of-the-mediator-pattern.md">Adoption of the Mediator pattern</a></td>
+				<td>Using the mediator pattern (e.g. through MediatR) to publish requests from endpoints to the Application Layer</td>
+			</tr>
+			<tr>
+				<td>2023-08-27</td>
+				<td><a href="20230827_adoption-of-modular-monolith-with-clean-architecture.md">Adoption of Modular Monolith with Clean Architecture</a></td>
+				<td>Architecting the backend through Clearn Architecture, splitting the code into four layers, each layer being a module</td>
+			</tr>
+			<tr>
+				<td>2023-09-04</td>
+				<td><a href="20230904_introduction-of-repositories-as-an-anti-corruption-layer-between-core-and-data-access.md">Introduction of Repositories as an Anti-Corruption Layer Between Core and Data Access</a></td>
+				<td>Using Repositories to hide MongoDB details in the Data Access Layer (now Infrastructure) from the Core Layer (now Presentation)</td>
+			</tr>
+			<tr>
+				<td>2023-09-25</td>
+				<td><a href="20230925_introduction-of-the-application-layer.md">Introduction of the Application Layer</a></td>
+				<td>Previously, the Core layer (now Presentation) contained the application logic. This is a proposal to create a new layer that separates out application logic into its own layer/module</td>
+			</tr>
+			<tr>
+				<td>2023-09-26</td>
+				<td><a href="20230926_adoption-of-cqrs-within-the-data-access-layer.md">Adoption of CQRS within the Data Access Layer</a></td>
+				<td>Split repositories into query and persistence repositories to adhere to CQRS and allow for better separation of concerns</td>
+			</tr>
+			<tr>
+				<td>2023-09-29</td>
+				<td><a href="20230929_adoption-of-contracts-for-defining-client-to-api-interactions.md">Adoption of Contracts for defining client-to-API interactions</a></td>
+				<td>Use Contract DTOs to clean up incoming requests and to allow for specialised incoming DTOs</td>
+			</tr>
+			<tr>
+				<td>2024-03-06</td>
+				<td><a href="20240306_renaming_core_and_data_access_to_presentation_and_infrastructure.md">Renaming the "Core" and "DataAccess" modules to "Presentation" and "Infrastructure"</a></td>
+				<td>Align layer names to the Clean Architecture and industry standards, and remove confusion between the Presentation and Domain layers</td>
+			</tr>
+			<tr>
+				<td>2024-03-07</td>
+				<td><a href="20240307_authorising-api-with-jwts.md">Authorising the API with JWTs</a></td>
+				<td>Use JSON Web Tokens to authorise incoming requests to disallow bad actors from interacting with the system (with some exceptions, like registering)</td>
+			</tr>
+			<tr>
+				<td>2024-03-07</td>
+				<td><a href="20240307_incorporation-of-signalr.md">Incorporation of SignalR for real-time communication</a></td>
+				<td>Use SignalR to send signals to all users when certain events have happened (e.g. a user has sent a message)</td>
+			</tr>
+	  </tbody>
+	</table>
+</body>
+</html>
