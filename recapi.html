@@ -4,8 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Social Media API</title>
+	<style>
+		body {
+			font-family: "Arial", sans-serif;
+		}
+	</style>
 </head>
 <body>
-<h1>Recipe Social Media API (RECAPI)</h1>
+	<h1>Recipe Social Media API (RECAPI)</h1>
+	<p>This is the backend repository of the project, written in C# (.NET)</p>
+	<p>Below you will find the macro structure of the project:</p>
+	
+	<h2>Architectural Decisions</h2>
+	<p>This folder contains all of our ADRs.</p>
+	<p><a href="Architectural Decisions/adrs.html">Learn more about ADRs</a></p>
+	
+	<h2>Diagrams</h2>
+	<p>This folder contains the C4 diagrams for the project, detailing its structure at the macro level.</p>
+	<p><a href="Diagrams/diagrams.html">Visualise the diagrams</a></p>
+	
+	<small>The following folders contain code, which is split into four modules representing Clean Architecture layers. You can read more about them in the Technical Report (DEL.2).</small>
+	<h2>RecipeSocialMediaAPI.Domain</h2>
+	<p>This is the Domain Layer of the project. You will find it also has several test projects associated with it.</p>
+	<p>The Domain Layer is the core of the API, as it contains the business logic. All entities, value objects, and domain services lie here. Validation and other important rules are defined in the Domain.</p>
+	<p>The Domain Layer has no dependencies on third-party libraries or other layers in the API, and contains pure C# code.</p>
+	
+	<h2>RecipeSocialMediaAPI.Application</h2>
+	<p>This is the Application Layer of the project. You will find it also has several test projects associated with it.</p>
+	<p>The Application Layer is the orchestrator of the application's use cases. It handles requests coming from the Presentation Layer.</p>
+	<p>The Application Layer communicates directly with the Domain Layer, and has some external dependencies (MediatR, FluentValidation, BCrypt etc.)</p>
+	
+	<h2>RecipeSocialMediaAPI.Infrastructure</h2>
+	<p>This is the Infrastructure Layer of the project. You will find it also has several test projects associated with it.</p>
+	<p>The Infrastructure Layer's primary purpose is data access, and handles all communication with the database (MongoDB).</p>
+	<p>The Infrastructure Layer has dependencies on both the Domain and Application layers; it implements the repository interfaces from the Application Layer.</p>
+
+	<h2>RecipeSocialMediaAPI.Presentation</h2>
+	<p>This is the Presentation Layer of the project. You will find it also has several test projects associated with it.</p>
+	<p>The Presentation Layer is the one communicating with the API consumers, and it's the birthplace of the endpoints and SignalR hubs available to them.</p>
+	<p>The Presentation Layer also configures all other layers (therefore having a dependency on all of them).</p>
 </body>
 </html>
