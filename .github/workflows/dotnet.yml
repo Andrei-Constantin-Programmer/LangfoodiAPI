@@ -1,5 +1,4 @@
 name: .NET
-
 on:
   push:
     branches: [ "main", "develop" ]
@@ -8,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -17,15 +15,42 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 7.0.x
-        
+        dotnet-version: '7.0.x'
+
     - name: Restore dependencies
       run: dotnet restore --no-cache
-      
+
     - name: Build
-      run: dotnet build --no-restore
-      
+      run: dotnet build --no-restore -v diag
+
+    - name: Publish build artifacts
+      run: dotnet publish -c Release -o build_output
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: build_output
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifacts
+        path: build_output
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '7.0.x'
+
     - name: Test
-      run: dotnet test --no-build --verbosity detailed
+      run: dotnet test build_output --no-build --verbosity detailed
       env:
         VSTestUseMSBuildOutput: true
