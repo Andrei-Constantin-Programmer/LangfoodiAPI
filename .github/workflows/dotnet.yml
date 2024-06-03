@@ -23,3 +23,6 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity detailed
+    - name: Publish Test Results
+      if: always()
+      run: dotnet publish /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
