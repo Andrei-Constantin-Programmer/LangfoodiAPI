@@ -1,4 +1,5 @@
 name: .NET
+
 on:
   push:
     branches: [ "main", "develop" ]
@@ -11,14 +12,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '7.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore --no-cache
+      run: dotnet restore
 
     - name: Build
       run: dotnet build --no-restore -v diag
@@ -50,7 +51,8 @@ jobs:
       with:
         dotnet-version: '7.0.x'
 
-    - name: Test
-      run: dotnet test build_output --no-build --verbosity detailed
+    - name: Run Tests
+      run: dotnet test --no-build --verbosity detailed
+      working-directory: build_output
       env:
         VSTestUseMSBuildOutput: true
