@@ -1,6 +1,10 @@
-![Langfoodi Logo](https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/assets/55529876/a85bc7c6-85f1-47f2-9492-6c9b8fcac7b6.png#gh-dark-mode-only)
-![Langfoodi Logo](https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/assets/55529876/f06925f0-f036-43fc-90c9-b8a9a3bbe430.png#gh-light-mode-only)
-
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/assets/55529876/a85bc7c6-85f1-47f2-9492-6c9b8fcac7b6">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/assets/55529876/f06925f0-f036-43fc-90c9-b8a9a3bbe430">
+    <img alt="Langfoodi Logo." src="https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/assets/55529876/f06925f0-f036-43fc-90c9-b8a9a3bbe430" height="40%" width="40%">
+  </picture>
+</div>
 
 # Langfoodi API
 [![.NET](https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/actions/workflows/dotnet.yml)
