@@ -20,6 +20,7 @@ The robust API for the Langfoodi recipe-sharing social media platform.
   - [With Visual Studio](#with-vs)
   - [With command line](#with-cmd) 
 - [Team](#team)
+- [Acknowledgements](#acknowledgements)
 - [License](#license)
 
 
@@ -129,6 +130,11 @@ Before you start, ensure you have the following set up on either your machine or
 [Filip Fois](https://github.com/filip-edu)  
 Nathan Gipson
 
+
+## Acknowledgements
+I would like to thank George Langroudi for supervising our dissertation.
+
+I would also like to thank the University of Kent for the opportunity to work on this project.
 
 
 ## License
