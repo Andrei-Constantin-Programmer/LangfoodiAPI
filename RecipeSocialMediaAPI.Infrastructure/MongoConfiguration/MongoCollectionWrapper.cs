@@ -9,15 +9,13 @@ namespace RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
 
 public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocument> where TDocument : MongoDocument
 {
-    private readonly IMongoClient _mongoClient;
-    private readonly IMongoDatabase _database;
     private readonly IMongoCollection<TDocument> _collection;
 
     public MongoCollectionWrapper(MongoDatabaseOptions databaseConfiguration)
     {
-        _mongoClient = new MongoClient(databaseConfiguration.ConnectionString);
-        _database = _mongoClient.GetDatabase(databaseConfiguration.ClusterName);
-        _collection = _database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
+        var mongoClient = new MongoClient(databaseConfiguration.ConnectionString);
+        var database = mongoClient.GetDatabase(databaseConfiguration.ClusterName);
+        _collection = database.GetCollection<TDocument>(MongoCollectionWrapper<TDocument>.GetCollectionName(typeof(TDocument)));
     }
 
     public async Task<TDocument?> GetOneAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
@@ -62,5 +60,5 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
     }
 
     private protected static string GetCollectionName(Type documentType) =>
-        ((MongoCollectionAttribute)documentType.GetCustomAttributes(typeof(MongoCollectionAttribute), true).First()).CollectionName;
+        ((MongoCollectionAttribute)documentType.GetCustomAttributes(typeof(MongoCollectionAttribute), true)[0]).CollectionName;
 }

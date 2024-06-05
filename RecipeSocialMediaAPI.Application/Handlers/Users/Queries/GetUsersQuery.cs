@@ -51,13 +51,13 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
                 queryingUser,
                 allUsers,
                 user => connections
-                    .Any(conn => conn.Account1.Id == user.Id
+                    .Exists(conn => conn.Account1.Id == user.Id
                               || conn.Account2.Id == user.Id)),
             UserQueryOptions.NotConnected => GetUsersFilteredByConnection(
                 queryingUser,
                 allUsers,
                 user => connections
-                    .All(conn => conn.Account1.Id != user.Id
+                    .TrueForAll(conn => conn.Account1.Id != user.Id
                               && conn.Account2.Id != user.Id)),
 
             _ => throw new ArgumentException($"Unsupported query options {queryOptions}")

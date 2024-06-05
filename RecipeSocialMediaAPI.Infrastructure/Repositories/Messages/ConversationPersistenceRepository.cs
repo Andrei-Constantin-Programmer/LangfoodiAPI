@@ -49,14 +49,14 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
     {
         (string? connectionId, string? groupId) = conversation switch
         {
-            ConnectionConversation connectionConversation =>
+            ConnectionConversation =>
                 (connection is not null
                 ? await GetConnectionIdAsync(connection, cancellationToken)
                     ?? throw new InvalidConversationException($"No connection found for ConnectionConversation with id {conversation.ConversationId}")
                 : throw new ArgumentException($"No connection provided when updating ConnectionConversation with id {conversation.ConversationId}"),
                 (string?)null),
 
-            GroupConversation groupConversation =>
+            GroupConversation =>
             (null, group?.GroupId
                 ?? throw new ArgumentException($"No group provided when updating GroupConversation with id {conversation.ConversationId}")),
 

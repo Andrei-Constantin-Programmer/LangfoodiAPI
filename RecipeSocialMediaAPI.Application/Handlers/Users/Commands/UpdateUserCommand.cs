@@ -65,22 +65,18 @@ internal class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 
 public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {
-    private readonly IUserValidationService _userValidationService;
-
     public UpdateUserCommandValidator(IUserValidationService userValidationService)
     {
-        _userValidationService = userValidationService;
-
         RuleFor(x => x.Contract.UserName)
-            .Must(_userValidationService.ValidUserName!)
+            .Must(userValidationService.ValidUserName!)
             .When(x => x.Contract.UserName is not null);
 
         RuleFor(x => x.Contract.Email)
-            .Must(_userValidationService.ValidEmail!)
+            .Must(userValidationService.ValidEmail!)
             .When(x => x.Contract.Email is not null);
 
         RuleFor(x => x.Contract.Password)
-            .Must(_userValidationService.ValidPassword!)
+            .Must(userValidationService.ValidPassword!)
             .When(x => x.Contract.Password is not null);
     }
 }

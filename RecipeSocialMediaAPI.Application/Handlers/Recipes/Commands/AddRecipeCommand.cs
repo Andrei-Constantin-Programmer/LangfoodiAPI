@@ -49,7 +49,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                 request.Contract.NumberOfServings,
                 request.Contract.CookingTime,
                 request.Contract.KiloCalories,
-                request.Contract.ServingSize is not null 
+                request.Contract.ServingSize is not null
                     ? _mapper.MapServingSizeDtoToServingSize(request.Contract.ServingSize)
                     : null
             ),
@@ -68,14 +68,10 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
 public class AddRecipeCommandValidator : AbstractValidator<AddRecipeCommand>
 {
-    private readonly IRecipeValidationService _recipeValidationService;
-
     public AddRecipeCommandValidator(IRecipeValidationService recipeValidationService)
     {
-        _recipeValidationService = recipeValidationService;
-
         RuleFor(x => x.Contract.Title)
-            .Must(_recipeValidationService.ValidTitle);
+            .Must(recipeValidationService.ValidTitle);
 
         RuleFor(x => x.Contract.NumberOfServings)
             .GreaterThanOrEqualTo(1)

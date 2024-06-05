@@ -76,26 +76,22 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
 
 public class AddUserCommandValidator : AbstractValidator<AddUserCommand>
 {
-    private readonly IUserValidationService _userValidationService;
-
     public AddUserCommandValidator(IUserValidationService userValidationService)
     {
-        _userValidationService = userValidationService;
-
         RuleFor(x => x.Contract.Handler)
             .NotEmpty()
-            .Must(_userValidationService.ValidHandler);
+            .Must(userValidationService.ValidHandler);
 
         RuleFor(x => x.Contract.UserName)
             .NotEmpty()
-            .Must(_userValidationService.ValidUserName);
+            .Must(userValidationService.ValidUserName);
 
         RuleFor(x => x.Contract.Email)
             .NotEmpty()
-            .Must(_userValidationService.ValidEmail);
+            .Must(userValidationService.ValidEmail);
 
         RuleFor(x => x.Contract.Password)
             .NotEmpty()
-            .Must(_userValidationService.ValidPassword);
+            .Must(userValidationService.ValidPassword);
     }
 }

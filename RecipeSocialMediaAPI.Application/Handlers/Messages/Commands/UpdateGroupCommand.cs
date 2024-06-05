@@ -74,7 +74,7 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
         while (i < group.Users.Count)
         {
             var user = group.Users[i];
-            if (!newUserList.Any(u => u.Id == user.Id))
+            if (!newUserList.Exists(u => u.Id == user.Id))
             {
                 group.RemoveUser(user);
                 continue;
@@ -85,7 +85,7 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
 
         foreach (var user in newUserList)
         {
-            if (!group.Users.Any(u => u.Id == user.Id))
+            if (!group.Users.Exists(u => u.Id == user.Id))
             {
                 group.AddUser(user);
             }

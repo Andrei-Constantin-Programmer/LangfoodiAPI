@@ -98,7 +98,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         }
     }
 
-    private async Task<Message?> GetMessageRepliedTo(SendMessageCommand request, CancellationToken cancellationToken) 
+    private async Task<Message?> GetMessageRepliedTo(SendMessageCommand request, CancellationToken cancellationToken)
         => request.Contract.MessageRepliedToId is null
             ? null
             : await _messageQueryRepository.GetMessageAsync(request.Contract.MessageRepliedToId, cancellationToken)
