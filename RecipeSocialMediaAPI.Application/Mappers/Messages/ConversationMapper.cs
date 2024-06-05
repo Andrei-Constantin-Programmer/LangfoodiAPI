@@ -14,12 +14,12 @@ public class ConversationMapper : IConversationMapper
         _messageMapper = messageMapper;
     }
 
-    public ConversationDTO MapConversationToConnectionConversationDTO(IUserAccount user, ConnectionConversation conversation)
+    public ConversationDto MapConversationToConnectionConversationDTO(IUserAccount user, ConnectionConversation conversation)
     {
         var lastMessageDto = GetLastMessage(conversation);
         var unreadCount = GetUnreadCount(user, conversation);
 
-        return new ConversationDTO(
+        return new ConversationDto(
             conversation.ConversationId,
             conversation.Connection.ConnectionId,
             false,
@@ -30,12 +30,12 @@ public class ConversationMapper : IConversationMapper
             unreadCount);
     }
 
-    public ConversationDTO MapConversationToGroupConversationDTO(IUserAccount user, GroupConversation conversation)
+    public ConversationDto MapConversationToGroupConversationDTO(IUserAccount user, GroupConversation conversation)
     {
         var lastMessageDto = GetLastMessage(conversation);
         var unreadCount = GetUnreadCount(user, conversation);
 
-        return new ConversationDTO(
+        return new ConversationDto(
             conversation.ConversationId,
             conversation.Group.GroupId,
             true,
@@ -46,7 +46,7 @@ public class ConversationMapper : IConversationMapper
             unreadCount);
     }
 
-    private MessageDTO? GetLastMessage(Conversation conversation)
+    private MessageDto? GetLastMessage(Conversation conversation)
     {
         var lastMessage = conversation.GetMessages()
             .MaxBy(message => message.SentDate);

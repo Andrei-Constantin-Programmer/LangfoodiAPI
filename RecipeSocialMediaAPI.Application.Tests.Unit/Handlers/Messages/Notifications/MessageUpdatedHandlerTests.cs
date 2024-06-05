@@ -25,7 +25,7 @@ public class MessageUpdatedHandlerTests
     public async Task Handle_WhenCancellationNotTriggered_NotifyMessageUpdated()
     {
         // Given
-        MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+        MessageDto message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
         MessageUpdatedNotification notification = new(message);
 
         // When
@@ -42,7 +42,7 @@ public class MessageUpdatedHandlerTests
     public async Task Handle_WhenCancellationIsTriggered_ThrowOperationCanceledException()
     {
         // Given
-        MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+        MessageDto message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
         MessageUpdatedNotification notification = new(message);
 
         _messageNotificationServiceMock

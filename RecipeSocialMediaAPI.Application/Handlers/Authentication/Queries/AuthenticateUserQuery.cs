@@ -9,9 +9,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Authentication.Queries;
 
-public record AuthenticateUserQuery(string Email, string Password) : IRequest<SuccessfulAuthenticationDTO>;
+public record AuthenticateUserQuery(string Email, string Password) : IRequest<SuccessfulAuthenticationDto>;
 
-internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, SuccessfulAuthenticationDTO>
+internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, SuccessfulAuthenticationDto>
 {
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserMapper _mapper;
@@ -30,7 +30,7 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
         _bearerTokenGeneratorService = bearerTokenGeneratorService;
     }
 
-    public async Task<SuccessfulAuthenticationDTO> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
+    public async Task<SuccessfulAuthenticationDto> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
         IUserCredentials user = await _userQueryRepository.GetUserByEmailAsync(request.Email, cancellationToken)
                     ?? throw new UserNotFoundException($"No user found with email {request.Email}");
@@ -43,6 +43,6 @@ internal class AuthenticateUserHandler : IRequestHandler<AuthenticateUserQuery, 
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
 
-        return new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(user), token);
+        return new SuccessfulAuthenticationDto(_mapper.MapUserToUserDto(user), token);
     }
 }

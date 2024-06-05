@@ -88,7 +88,7 @@ public class GetMessagesByConversationHandlerTests
             new TestMessage("m3", user1, new(2024, 1, 2, 13, 32, 15, TimeSpan.Zero), null),
             new TestMessage("m4", user2, new(2024, 1, 2, 13, 35, 42, TimeSpan.Zero), null),
         };
-        List<MessageDTO> expectedDtos = new()
+        List<MessageDto> expectedDtos = new()
         {
             new(messages[0].Id, new(messages[0].Sender.Id, messages[0].Sender.UserName), new(), messages[0].SentDate),
             new(messages[1].Id, new(messages[1].Sender.Id, messages[1].Sender.UserName), new(), messages[1].SentDate),

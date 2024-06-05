@@ -57,8 +57,8 @@ public class AddRecipeHandlerTests
             Description: "Test",
             ChefId: "1",
             Tags: new HashSet<string>(),
-            Ingredients: new List<IngredientDTO>(),
-            RecipeSteps: new Stack<RecipeStepDTO>()
+            Ingredients: new List<IngredientDto>(),
+            RecipeSteps: new Stack<RecipeStepDto>()
         );
 
         // When
@@ -87,14 +87,14 @@ public class AddRecipeHandlerTests
             NumberOfServings: 1,
             KiloCalories: 2300,
             CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() {
+            Ingredients: new List<IngredientDto>() {
                 new("eggs", 1, "whole")
             },
-            RecipeSteps: new Stack<RecipeStepDTO>(),
+            RecipeSteps: new Stack<RecipeStepDto>(),
             ThumbnailId: "img_id_1"
         );
 
-        testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
+        testContract.RecipeSteps.Push(new RecipeStepDto("step", "url"));
 
         _userQueryRepositoryMock
             .Setup(x => x.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -127,20 +127,20 @@ public class AddRecipeHandlerTests
             );
 
         _recipeMapperMock
-            .Setup(x => x.MapIngredientDtoToIngredient(It.IsAny<IngredientDTO>()))
-            .Returns((IngredientDTO ing) => new Ingredient(ing.Name, ing.Quantity, ing.UnitOfMeasurement));
+            .Setup(x => x.MapIngredientDtoToIngredient(It.IsAny<IngredientDto>()))
+            .Returns((IngredientDto ing) => new Ingredient(ing.Name, ing.Quantity, ing.UnitOfMeasurement));
 
         _recipeMapperMock
-            .Setup(x => x.MapRecipeStepDtoToRecipeStep(It.IsAny<RecipeStepDTO>()))
-            .Returns((RecipeStepDTO step) => new RecipeStep(step.Text, new RecipeImage(step.ImageUrl!)));
+            .Setup(x => x.MapRecipeStepDtoToRecipeStep(It.IsAny<RecipeStepDto>()))
+            .Returns((RecipeStepDto step) => new RecipeStep(step.Text, new RecipeImage(step.ImageUrl!)));
 
         _recipeMapperMock
             .Setup(x => x.MapRecipeToRecipeDetailedDto(It.IsAny<Recipe>()))
-            .Returns((Recipe recipe) => new RecipeDetailedDTO(
+            .Returns((Recipe recipe) => new RecipeDetailedDto(
                 Id: "1", 
                 Title: recipe.Title, 
                 Description: recipe.Description,
-                Chef: new UserAccountDTO( 
+                Chef: new UserAccountDto( 
                     Id: "1", 
                     Handler: "handler", 
                     UserName: "name", 
@@ -151,7 +151,7 @@ public class AddRecipeHandlerTests
                 Tags: recipe.Tags, 
                 CreationDate: recipe.CreationDate,
                 LastUpdatedDate: recipe.LastUpdatedDate, 
-                Ingredients: new List<IngredientDTO>() 
+                Ingredients: new List<IngredientDto>() 
                 {
                     new(
                         recipe.Guide.Ingredients[0].Name,
@@ -159,11 +159,11 @@ public class AddRecipeHandlerTests
                         recipe.Guide.Ingredients[0].UnitOfMeasurement
                     )
                 },
-                RecipeSteps: new Stack<RecipeStepDTO>
+                RecipeSteps: new Stack<RecipeStepDto>
                 (
                     new[] 
                     { 
-                        new RecipeStepDTO(
+                        new RecipeStepDto(
                             recipe.Guide.Steps.First().Text,
                             recipe.Guide.Steps.First().Image!.ImageUrl
                         )

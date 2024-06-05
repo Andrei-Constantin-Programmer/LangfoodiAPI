@@ -29,7 +29,7 @@ public class AuthenticationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var authResult = (await result.Content.ReadFromJsonAsync<SuccessfulAuthenticationDTO>())!;
+        var authResult = (await result.Content.ReadFromJsonAsync<SuccessfulAuthenticationDto>())!;
 
         var authenticatedUser = authResult.User;
 

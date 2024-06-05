@@ -80,7 +80,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<GroupDTO>();
+        var data = await result.Content.ReadFromJsonAsync<GroupDto>();
         data.Should().NotBeNull();
         data!.Name.Should().Be(group.Name);
         data.Description.Should().Be(group.Description);
@@ -181,7 +181,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<GroupDTO>();
+        var data = await result.Content.ReadFromJsonAsync<GroupDto>();
         data.Should().NotBeNull();
         data!.Name.Should().Be(group.GroupName);
         data.Description.Should().Be(group.GroupDescription);
@@ -258,7 +258,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<GroupDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<GroupDto>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(2);
         data![0].Id.Should().Be(group1.GroupId);
@@ -296,7 +296,7 @@ public class GroupEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<GroupDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<GroupDto>>();
         data.Should().NotBeNull();
         data.Should().BeEmpty();
     }

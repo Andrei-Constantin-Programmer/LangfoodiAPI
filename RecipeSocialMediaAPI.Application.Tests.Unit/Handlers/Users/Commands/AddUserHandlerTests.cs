@@ -190,7 +190,7 @@ public class AddUserHandlerTests
 
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
-            .Returns((IUserCredentials user) => new UserDTO(
+            .Returns((IUserCredentials user) => new UserDto(
                 Id:user.Account.Id, 
                 Handler: user.Account.Handler, 
                 UserName: user.Account.UserName,

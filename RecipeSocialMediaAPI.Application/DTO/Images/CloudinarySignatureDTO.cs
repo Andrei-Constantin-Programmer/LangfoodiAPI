@@ -1,3 +1,3 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.ImageHosting;
 
-public record CloudinarySignatureDTO(string Signature, long TimeStamp);
+public record CloudinarySignatureDto(string Signature, long TimeStamp);

@@ -7,10 +7,10 @@ public record NewRecipeContract(
     string Description,
     string ChefId,
     ISet<string> Tags,
-    List<IngredientDTO> Ingredients,
-    Stack<RecipeStepDTO> RecipeSteps,
+    List<IngredientDto> Ingredients,
+    Stack<RecipeStepDto> RecipeSteps,
     string? ThumbnailId = null,
     int? NumberOfServings = null,
     int? CookingTime = null,
     int? KiloCalories = null,
-    ServingSizeDTO? ServingSize = null);
+    ServingSizeDto? ServingSize = null);

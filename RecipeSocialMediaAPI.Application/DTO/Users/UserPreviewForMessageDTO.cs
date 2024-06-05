@@ -1,5 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Users;
-public record UserPreviewForMessageDTO(
+
+public record UserPreviewForMessageDto(
     string Id,
     string Username,
     string? ProfileImageId = null

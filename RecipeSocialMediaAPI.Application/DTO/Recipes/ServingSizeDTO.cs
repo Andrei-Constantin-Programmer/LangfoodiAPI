@@ -1,3 +1,3 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Recipes;
 
-public record ServingSizeDTO(double Quantity, string UnitOfMeasurement);
+public record ServingSizeDto(double Quantity, string UnitOfMeasurement);

@@ -12,7 +12,7 @@ namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
 
 public class ImageEndpointsTests : EndpointTestBase
 {
-    private readonly CloudinarySignatureDTO _signatureTestData = new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
+    private readonly CloudinarySignatureDto _signatureTestData = new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
 
     public ImageEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) {}
 
@@ -36,7 +36,7 @@ public class ImageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        CloudinarySignatureDTO generatedSignature = (await result.Content.ReadFromJsonAsync<CloudinarySignatureDTO>())!;
+        CloudinarySignatureDto generatedSignature = (await result.Content.ReadFromJsonAsync<CloudinarySignatureDto>())!;
 
         generatedSignature.Signature.Should().Be(_signatureTestData.Signature);
         generatedSignature.TimeStamp.Should().Be(_signatureTestData.TimeStamp);

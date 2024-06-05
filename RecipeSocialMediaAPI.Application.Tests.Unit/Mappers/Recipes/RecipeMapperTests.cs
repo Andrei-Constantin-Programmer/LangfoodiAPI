@@ -31,7 +31,7 @@ public class RecipeMapperTests
     public void MapServingSizeDtoToServingSize_GivenServingSizeDto_ReturnServingSize()
     {
         // Given
-        ServingSizeDTO testServing = new(30, "kg");
+        ServingSizeDto testServing = new(30, "kg");
 
         ServingSize expectedResult = new(testServing.Quantity, testServing.UnitOfMeasurement);
 
@@ -50,13 +50,13 @@ public class RecipeMapperTests
     {
         // Given
         ServingSize testServing = new(30, "kg");
-        ServingSizeDTO expectedResult = new(testServing.Quantity, testServing.UnitOfMeasurement);
+        ServingSizeDto expectedResult = new(testServing.Quantity, testServing.UnitOfMeasurement);
 
         // When
         var result = _mapperSUT.MapServingSizeToServingSizeDto(testServing);
 
         // Then
-        result.Should().BeOfType<ServingSizeDTO>();
+        result.Should().BeOfType<ServingSizeDto>();
         result.Should().BeEquivalentTo(expectedResult);
     }
 
@@ -66,7 +66,7 @@ public class RecipeMapperTests
     public void MapRecipeStepDtoToRecipeStep_GivenRecipeStepDto_ReturnRecipeStep()
     {
         // Given
-        RecipeStepDTO testStep = new("Step 1", "image url");
+        RecipeStepDto testStep = new("Step 1", "image url");
 
         RecipeStep expectedResult = new(testStep.Text, new RecipeImage(testStep.ImageUrl!));
 
@@ -86,13 +86,13 @@ public class RecipeMapperTests
         // Given
         RecipeStep testStep = new("Step 1", new RecipeImage("image url"));
 
-        RecipeStepDTO expectedResult = new(testStep.Text, testStep.Image!.ImageUrl);
+        RecipeStepDto expectedResult = new(testStep.Text, testStep.Image!.ImageUrl);
 
         // When
         var result = _mapperSUT.MapRecipeStepToRecipeStepDto(testStep);
 
         // Then
-        result.Should().BeOfType<RecipeStepDTO>();
+        result.Should().BeOfType<RecipeStepDto>();
         result.Should().BeEquivalentTo(expectedResult);
     }
 
@@ -102,7 +102,7 @@ public class RecipeMapperTests
     public void MapIngredientDtoToIngredient_GivenIngredientDto_ReturnIngredient()
     {
         // Given
-        IngredientDTO testIngredient = new("eggs", 1, "whole");
+        IngredientDto testIngredient = new("eggs", 1, "whole");
 
         Ingredient expectedResult = new(
             testIngredient.Name,
@@ -126,13 +126,13 @@ public class RecipeMapperTests
         // Given
         Ingredient testIngredient = new("eggs", 1, "whole");
 
-        IngredientDTO expectedResult = new("eggs", 1, "whole");
+        IngredientDto expectedResult = new("eggs", 1, "whole");
 
         // When
         var result = _mapperSUT.MapIngredientToIngredientDto(testIngredient);
 
         // Then
-        result.Should().BeOfType<IngredientDTO>();
+        result.Should().BeOfType<IngredientDto>();
         result.Should().BeEquivalentTo(expectedResult);
     }
 
@@ -165,7 +165,7 @@ public class RecipeMapperTests
         var result = _mapperSUT.MapRecipeToRecipePreviewDto(testRecipe);
 
         // Then
-        result.Should().BeOfType<RecipePreviewDTO>();
+        result.Should().BeOfType<RecipePreviewDto>();
         result.Id.Should().Be(testRecipe.Id);
         result.ThumbnailId.Should().Be(testRecipe.ThumbnailId);
         result.Title.Should().Be(testRecipe.Title);
@@ -201,7 +201,7 @@ public class RecipeMapperTests
 
         _userMapperMock
             .Setup(x => x.MapUserAccountToUserAccountDto(It.IsAny<IUserAccount>()))
-            .Returns((IUserAccount user) => new UserAccountDTO(
+            .Returns((IUserAccount user) => new UserAccountDto(
                 Id: user.Id,
                 Handler: user.Handler,
                 UserName: user.UserName,
@@ -214,7 +214,7 @@ public class RecipeMapperTests
         var result = _mapperSUT.MapRecipeToRecipeDetailedDto(testRecipe);
 
         // Then
-        result.Should().BeOfType<RecipeDetailedDTO>();
+        result.Should().BeOfType<RecipeDetailedDto>();
         result.Id.Should().Be("1");
         result.Title.Should().Be("title");
         result.Description.Should().Be("desc");
@@ -267,7 +267,7 @@ public class RecipeMapperTests
         var result = _mapperSUT.MapRecipeToRecipeDto(testRecipe);
 
         // Then
-        result.Should().BeOfType<RecipeDTO>();
+        result.Should().BeOfType<RecipeDto>();
         result.Id.Should().Be("1");
         result.Title.Should().Be("title");
         result.Description.Should().Be("desc");

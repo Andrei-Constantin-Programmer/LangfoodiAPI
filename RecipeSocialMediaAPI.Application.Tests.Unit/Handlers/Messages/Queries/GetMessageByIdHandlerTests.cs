@@ -62,7 +62,7 @@ public class GetMessageByIdHandlerTests
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
         };
-        UserPreviewForMessageDTO testSenderPreview = new(
+        UserPreviewForMessageDto testSenderPreview = new(
             testSender.Id,
             testSender.UserName,
             testSender.ProfileImageId
@@ -71,7 +71,7 @@ public class GetMessageByIdHandlerTests
         TestMessage repliedToMessage = new("RepliedToId", testSender, new(2023, 10, 18, 0, 0, 0, TimeSpan.Zero), null, null);
         TestMessage testMessage = new("TestId", testSender, new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero), new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero), repliedToMessage);
 
-        MessageDTO mappedMessage = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, testMessage.UpdatedDate);
+        MessageDto mappedMessage = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, testMessage.UpdatedDate);
 
         _messageQueryRepository
             .Setup(repo => repo.GetMessageAsync(testMessage.Id, It.IsAny<CancellationToken>()))

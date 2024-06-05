@@ -27,7 +27,7 @@ public static class ImageEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Generates a Cloudinary signature.")
-            .Produces<CloudinarySignatureDTO>(StatusCodes.Status200OK)
+            .Produces<CloudinarySignatureDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status500InternalServerError);
 

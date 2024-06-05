@@ -6,9 +6,9 @@ namespace RecipeSocialMediaAPI.Application.Mappers.Users;
 
 public class UserMapper : IUserMapper
 {
-    public UserDTO MapUserToUserDto(IUserCredentials userCredentials)
+    public UserDto MapUserToUserDto(IUserCredentials userCredentials)
     {
-        return new UserDTO(
+        return new UserDto(
             Id: userCredentials.Account.Id,
             Handler: userCredentials.Account.Handler,
             UserName: userCredentials.Account.UserName,
@@ -21,9 +21,9 @@ public class UserMapper : IUserMapper
         );
     }
 
-    public UserAccountDTO MapUserAccountToUserAccountDto(IUserAccount userAccount)
+    public UserAccountDto MapUserAccountToUserAccountDto(IUserAccount userAccount)
     {
-        return new UserAccountDTO(
+        return new UserAccountDto(
             Id: userAccount.Id,
             Handler: userAccount.Handler,
             UserName: userAccount.UserName,
@@ -34,9 +34,9 @@ public class UserMapper : IUserMapper
         );
     }
 
-    public UserPreviewForMessageDTO MapUserAccountToUserPreviewForMessageDto(IUserAccount userAccount)
+    public UserPreviewForMessageDto MapUserAccountToUserPreviewForMessageDto(IUserAccount userAccount)
     {
-        return new UserPreviewForMessageDTO(
+        return new UserPreviewForMessageDto(
             Id: userAccount.Id,
             Username: userAccount.UserName,
             ProfileImageId: userAccount.ProfileImageId

@@ -66,13 +66,13 @@ public class GetRecipeByIdHandlerTests
             _testDate
         );
 
-        RecipeDetailedDTO expectedResult = new(
+        RecipeDetailedDto expectedResult = new(
             Id: recipeId,
             Title: testRecipe.Title,
             Description: testRecipe.Description,
             CreationDate: testRecipe.CreationDate,
             LastUpdatedDate: testRecipe.LastUpdatedDate,
-            Chef: new UserAccountDTO(
+            Chef: new UserAccountDto(
                 Id: testRecipe.Chef.Id,
                 UserName: testRecipe.Chef.UserName,
                 Handler: testRecipe.Chef.Handler,
@@ -80,8 +80,8 @@ public class GetRecipeByIdHandlerTests
                 PinnedConversationIds: new(),
                 BlockedConnectionIds: new()
             ),
-            Ingredients: new List<IngredientDTO>(),
-            RecipeSteps: new Stack<RecipeStepDTO>(new List<RecipeStepDTO>()),
+            Ingredients: new List<IngredientDto>(),
+            RecipeSteps: new Stack<RecipeStepDto>(new List<RecipeStepDto>()),
             Tags: testRecipe.Tags
         );
 

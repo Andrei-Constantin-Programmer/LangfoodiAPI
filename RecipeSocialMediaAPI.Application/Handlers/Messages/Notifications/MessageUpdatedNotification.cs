@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Application.DTO.Message;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 
-public record MessageUpdatedNotification(MessageDTO UpdatedMessage) : INotification;
+public record MessageUpdatedNotification(MessageDto UpdatedMessage) : INotification;
 
 internal class MessageUpdatedHandler : INotificationHandler<MessageUpdatedNotification>
 {

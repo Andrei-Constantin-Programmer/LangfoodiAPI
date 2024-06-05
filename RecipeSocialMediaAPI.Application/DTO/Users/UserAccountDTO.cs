@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Users;
 
-public record UserAccountDTO(
+public record UserAccountDto(
     string Id,
     string Handler,
     string UserName,

@@ -2,19 +2,19 @@
 
 namespace RecipeSocialMediaAPI.Application.DTO.Recipes;
 
-public record RecipeDetailedDTO(
+public record RecipeDetailedDto(
     string Id,
     string Title,
     string Description,
-    UserAccountDTO Chef,
+    UserAccountDto Chef,
     ISet<string> Tags,
-    List<IngredientDTO> Ingredients,
-    Stack<RecipeStepDTO> RecipeSteps,
+    List<IngredientDto> Ingredients,
+    Stack<RecipeStepDto> RecipeSteps,
     string? ThumbnailId = null,
     int? NumberOfServings = null,
     int? CookingTime = null,
     int? KiloCalories = null,
-    ServingSizeDTO? ServingSize = null,
+    ServingSizeDto? ServingSize = null,
     DateTimeOffset? CreationDate = null,
     DateTimeOffset? LastUpdatedDate = null
 );

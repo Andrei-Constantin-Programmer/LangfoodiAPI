@@ -112,7 +112,7 @@ public class AuthenticateUserHandlerTests
             Password = encryptedPassword
         };
 
-        UserDTO expectedUserDto = new(
+        UserDto expectedUserDto = new(
             Id: testUser.Account.Id,
             Handler: testUser.Account.Handler,
             UserName: testUser.Account.UserName,

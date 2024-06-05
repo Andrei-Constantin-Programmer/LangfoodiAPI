@@ -14,9 +14,9 @@ using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Commands;
 
-public record AddUserCommand(NewUserContract Contract) : IValidatableRequest<SuccessfulAuthenticationDTO>;
+public record AddUserCommand(NewUserContract Contract) : IValidatableRequest<SuccessfulAuthenticationDto>;
 
-internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthenticationDTO>
+internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthenticationDto>
 {
     private readonly IUserMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -41,7 +41,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
         _bearerTokenGeneratorService = bearerTokenGeneratorService;
     }
 
-    public async Task<SuccessfulAuthenticationDTO> Handle(AddUserCommand request, CancellationToken cancellationToken)
+    public async Task<SuccessfulAuthenticationDto> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         if ((await _userQueryRepository.GetUserByHandlerAsync(request.Contract.Handler, cancellationToken)) is not null)
         {
@@ -70,7 +70,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
 
         var token = _bearerTokenGeneratorService.GenerateToken(insertedUser);
 
-        return new SuccessfulAuthenticationDTO(_mapper.MapUserToUserDto(insertedUser), token);
+        return new SuccessfulAuthenticationDto(_mapper.MapUserToUserDto(insertedUser), token);
     }
 }
 

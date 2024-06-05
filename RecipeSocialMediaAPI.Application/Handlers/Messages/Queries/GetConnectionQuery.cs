@@ -8,9 +8,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetConnectionQuery(string UserId1, string UserId2) : IRequest<ConnectionDTO>;
+public record GetConnectionQuery(string UserId1, string UserId2) : IRequest<ConnectionDto>;
 
-internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, ConnectionDTO>
+internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, ConnectionDto>
 {
     private readonly IConnectionQueryRepository _connectionQueryRepository;
     private readonly IUserQueryRepository _userQueryRepository;
@@ -21,7 +21,7 @@ internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, Connec
         _userQueryRepository = userQueryRepository;
     }
 
-    public async Task<ConnectionDTO> Handle(GetConnectionQuery request, CancellationToken cancellationToken)
+    public async Task<ConnectionDto> Handle(GetConnectionQuery request, CancellationToken cancellationToken)
     {
         IUserAccount user1 = (await _userQueryRepository.GetUserByIdAsync(request.UserId1, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId1}");
@@ -31,6 +31,6 @@ internal class GetConnectionHandler : IRequestHandler<GetConnectionQuery, Connec
         IConnection connection = await _connectionQueryRepository.GetConnectionAsync(user1, user2, cancellationToken)
             ?? throw new ConnectionNotFoundException($"No connection found between users with ids {request.UserId1} and {request.UserId2}");
 
-        return new ConnectionDTO(connection.ConnectionId, connection.Account1.Id, connection.Account2.Id, connection.Status.ToString());
+        return new ConnectionDto(connection.ConnectionId, connection.Account1.Id, connection.Account2.Id, connection.Status.ToString());
     }
 }

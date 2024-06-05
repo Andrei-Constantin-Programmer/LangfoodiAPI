@@ -75,7 +75,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<ConversationDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<ConversationDto>>();
 
         data![0].Id.Should().Be(conversation1.ConversationId);
         data[0].ConnectionOrGroupId.Should().Be(connection.ConnectionId);
@@ -103,7 +103,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<ConversationDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<ConversationDto>>();
         data.Should().BeEmpty();
     }
 
@@ -187,7 +187,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
         data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().BeNull();
@@ -229,7 +229,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
         data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().NotBeNull();
@@ -328,7 +328,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
         data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().BeNull();
@@ -371,7 +371,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
         data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().NotBeNull();
@@ -470,7 +470,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
 
         data.Should().NotBeNull();
         data!.ConnectionOrGroupId.Should().Be(newConnection.ConnectionId);
@@ -541,7 +541,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
 
         data.Should().NotBeNull();
         data!.ConnectionOrGroupId.Should().Be(newGroup.GroupId);

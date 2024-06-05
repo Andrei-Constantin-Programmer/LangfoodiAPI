@@ -98,7 +98,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<RecipeDetailedDTO>();
+        var data = await result.Content.ReadFromJsonAsync<RecipeDetailedDto>();
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(recipeId);
@@ -180,7 +180,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDto>>();
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
@@ -222,7 +222,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDto>>();
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
@@ -252,7 +252,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDto>>();
 
         data.Should().NotBeNull();
         data.Should().BeEmpty();
@@ -297,7 +297,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDto>>();
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
@@ -339,7 +339,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDto>>();
 
         data.Should().NotBeNull();
         data.Should().NotBeEmpty();
@@ -369,7 +369,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<RecipeDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<RecipeDto>>();
 
         data.Should().NotBeNull();
         data.Should().BeEmpty();
@@ -416,8 +416,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Description: "New Desc",
             KiloCalories: 1000,
             ChefId: user.Account.Id,
-            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            Ingredients: new List<IngredientDto>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDto>(new RecipeStepDto[]
             {
                 new("step1", "url1"),
                 new("step2", "url2")
@@ -453,8 +453,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Description: "New Desc",
             KiloCalories: 1000,
             ChefId: _testUser.Account.Id,
-            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            Ingredients: new List<IngredientDto>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDto>(new RecipeStepDto[]
             {
                 new("step1", "url1"),
                 new("step2", "url2")
@@ -467,7 +467,7 @@ public class RecipeEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<RecipeDetailedDTO>();
+        var data = await result.Content.ReadFromJsonAsync<RecipeDetailedDto>();
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(recipeId);
@@ -498,8 +498,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Description: "New Desc",
             KiloCalories: 1000,
             ChefId: _testUser.Account.Id,
-            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            Ingredients: new List<IngredientDto>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDto>(new RecipeStepDto[]
             {
                 new("step1", "url1"),
                 new("step2", "url2")
@@ -526,8 +526,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Title: "New Title",
             Description: "New Desc",
             KiloCalories: 1000,
-            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            Ingredients: new List<IngredientDto>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDto>(new RecipeStepDto[]
             {
                 new("step1", "url1"),
                 new("step2", "url2")
@@ -577,8 +577,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Title: "New Title",
             Description: "New Desc",
             KiloCalories: 1000,
-            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            Ingredients: new List<IngredientDto>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDto>(new RecipeStepDto[]
             {
                 new("step1", "url1"),
                 new("step2", "url2")
@@ -614,8 +614,8 @@ public class RecipeEndpointsTests : EndpointTestBase
             Title: "New Title",
             Description: "New Desc",
             KiloCalories: 1000,
-            Ingredients: new List<IngredientDTO>() { new("lemons", 2, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(new RecipeStepDTO[]
+            Ingredients: new List<IngredientDto>() { new("lemons", 2, "whole") },
+            RecipeSteps: new Stack<RecipeStepDto>(new RecipeStepDto[]
             {
                 new("step1", "url1"),
                 new("step2", "url2")

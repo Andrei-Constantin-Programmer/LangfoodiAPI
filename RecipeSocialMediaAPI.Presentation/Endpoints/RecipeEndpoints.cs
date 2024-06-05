@@ -29,7 +29,7 @@ public static class RecipeEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets a recipe by its id.")
-            .Produces<RecipeDetailedDTO>(StatusCodes.Status200OK)
+            .Produces<RecipeDetailedDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -43,7 +43,7 @@ public static class RecipeEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets all recipes created by user.")
-            .Produces<List<RecipeDTO>>(StatusCodes.Status200OK)
+            .Produces<List<RecipeDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -57,7 +57,7 @@ public static class RecipeEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets all recipes created by user.")
-            .Produces<List<RecipeDTO>>(StatusCodes.Status200OK)
+            .Produces<List<RecipeDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -71,7 +71,7 @@ public static class RecipeEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Creates a new recipe.")
-            .Produces<RecipeDetailedDTO>(StatusCodes.Status200OK)
+            .Produces<RecipeDetailedDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)

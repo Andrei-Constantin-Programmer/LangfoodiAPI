@@ -19,9 +19,9 @@ public class MessageMapper : IMessageMapper
         _userMapper = userMapper;
     }
 
-    public MessageDTO MapMessageToMessageDTO(Message message)
+    public MessageDto MapMessageToMessageDTO(Message message)
     {
-        MessageDTO messageDTO = new(
+        MessageDto messageDTO = new(
             Id: message.Id,
             UserPreview: _userMapper.MapUserAccountToUserPreviewForMessageDto(message.Sender),
             SeenByUserIds: message.GetSeenBy().Select(user => user.Id).ToList(),
@@ -33,17 +33,17 @@ public class MessageMapper : IMessageMapper
         return GetMessageDTOHydratedWithContent(messageDTO, message);
     }
 
-    private MessageDTO GetMessageDTOHydratedWithContent(MessageDTO messageDTO, Message message)
+    private MessageDto GetMessageDTOHydratedWithContent(MessageDto messageDTO, Message message)
     {
         var (text, recipeIds, imageUrls) = message switch
         {
             TextMessage textMessage => (
                 textMessage.TextContent,
-                default(List<RecipePreviewDTO>?),
+                default(List<RecipePreviewDto>?),
                 default(List<string>?)),
             ImageMessage imageMessage => (
                 imageMessage.TextContent,
-                default(List<RecipePreviewDTO>?),
+                default(List<RecipePreviewDto>?),
                 imageMessage.ImageURLs.ToList()),
             RecipeMessage recipeMessage => (
                 recipeMessage.TextContent,

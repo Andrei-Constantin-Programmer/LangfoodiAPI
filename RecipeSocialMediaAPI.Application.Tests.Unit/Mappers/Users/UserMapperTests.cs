@@ -39,7 +39,7 @@ public class UserMapperTests
             Password = "password"
         };
 
-        UserDTO expectedResult = new(
+        UserDto expectedResult = new(
             Id: testUser.Account.Id,
             Handler: testUser.Account.Handler,
             UserName: testUser.Account.UserName,
@@ -82,7 +82,7 @@ public class UserMapperTests
             PinnedConversationIds = (new List<string> { "convo1", "convo2" }).ToImmutableList()
         };
 
-        UserPreviewForMessageDTO expectedResult = new(
+        UserPreviewForMessageDto expectedResult = new(
             Id: testUser.Id,
             Username: testUser.UserName,
             ProfileImageId: testUser.ProfileImageId
@@ -114,7 +114,7 @@ public class UserMapperTests
             BlockedConnectionIds = (new List<string> { "conn1", "conn2" }).ToImmutableList()
         };
 
-        UserAccountDTO expectedResult = new(
+        UserAccountDto expectedResult = new(
             Id: testUser.Id,
             Handler: testUser.Handler,
             UserName: testUser.UserName,

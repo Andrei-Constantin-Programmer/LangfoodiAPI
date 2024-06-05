@@ -65,7 +65,7 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
-        MessageDTO expectedResult = new(
+        MessageDto expectedResult = new(
             Id: testMessage.Id,
             UserPreview: new(testSender.Id, testSender.UserName),
             TextContent: testMessage.TextContent,
@@ -114,7 +114,7 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
-        MessageDTO expectedResult = new(
+        MessageDto expectedResult = new(
             Id: testMessage.Id,
             UserPreview: new(testSender.Id, testSender.UserName),
             ImageURLs: testMessage.ImageURLs.ToList(),
@@ -168,10 +168,10 @@ public class MessageMapperTests
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
-        MessageDTO expectedResult = new(
+        MessageDto expectedResult = new(
             Id: testMessage.Id,
             UserPreview: new(testSender.Id, testSender.UserName),
-            Recipes: new List<RecipePreviewDTO>()
+            Recipes: new List<RecipePreviewDto>()
             {
                 new("Recipe1", "First recipe", null),
                 new("Recipe2", "Second recipe", "ThumbnailId2")

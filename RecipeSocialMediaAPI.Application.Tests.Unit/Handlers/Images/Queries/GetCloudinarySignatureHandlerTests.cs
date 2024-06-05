@@ -27,7 +27,7 @@ public class GetCloudinarySignatureHandlerTests
         // Given
         _cloudinaryWebClientMock
             .Setup(x => x.GenerateSignature(null))
-            .Returns(new CloudinarySignatureDTO("sig", 1000));
+            .Returns(new CloudinarySignatureDto("sig", 1000));
 
         // When
         var result = await _getCloudinarySignatureHandlerSUT.Handle(new GetCloudinarySignatureQuery(), CancellationToken.None);
@@ -45,7 +45,7 @@ public class GetCloudinarySignatureHandlerTests
         // Given
         _cloudinaryWebClientMock
             .Setup(x => x.GenerateSignature(null))
-            .Returns((CloudinarySignatureDTO?)null);
+            .Returns((CloudinarySignatureDto?)null);
 
         // When
         var action = async () => await _getCloudinarySignatureHandlerSUT.Handle(new GetCloudinarySignatureQuery(), CancellationToken.None);

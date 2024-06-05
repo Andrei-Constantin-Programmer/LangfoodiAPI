@@ -17,9 +17,9 @@ using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record SendMessageCommand(SendMessageContract Contract) : IValidatableRequest<MessageDTO>;
+public record SendMessageCommand(SendMessageContract Contract) : IValidatableRequest<MessageDto>;
 
-internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageDTO>
+internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageDto>
 {
     private readonly IMessagePersistenceRepository _messagePersistenceRepository;
     private readonly IMessageQueryRepository _messageQueryRepository;
@@ -53,7 +53,7 @@ internal class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageD
         _publisher = publisher;
     }
 
-    public async Task<MessageDTO> Handle(SendMessageCommand request, CancellationToken cancellationToken)
+    public async Task<MessageDto> Handle(SendMessageCommand request, CancellationToken cancellationToken)
     {
         IUserAccount sender = (await _userQueryRepository.GetUserByIdAsync(request.Contract.SenderId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"User with id {request.Contract.SenderId} not found");

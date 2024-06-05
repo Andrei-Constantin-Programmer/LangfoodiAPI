@@ -6,9 +6,9 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetGroupQuery(string GroupId) : IRequest<GroupDTO>;
+public record GetGroupQuery(string GroupId) : IRequest<GroupDto>;
 
-internal class GetGroupHandler : IRequestHandler<GetGroupQuery, GroupDTO>
+internal class GetGroupHandler : IRequestHandler<GetGroupQuery, GroupDto>
 {
     private readonly IGroupQueryRepository _groupQueryRepository;
 
@@ -17,12 +17,12 @@ internal class GetGroupHandler : IRequestHandler<GetGroupQuery, GroupDTO>
         _groupQueryRepository = groupQueryRepository;
     }
 
-    public async Task<GroupDTO> Handle(GetGroupQuery request, CancellationToken cancellationToken)
+    public async Task<GroupDto> Handle(GetGroupQuery request, CancellationToken cancellationToken)
     {
         Group group = await _groupQueryRepository.GetGroupByIdAsync(request.GroupId, cancellationToken)
             ?? throw new GroupNotFoundException(request.GroupId);
 
-        return new GroupDTO(
+        return new GroupDto(
             group.GroupId,
             group.GroupName,
             group.GroupDescription, 

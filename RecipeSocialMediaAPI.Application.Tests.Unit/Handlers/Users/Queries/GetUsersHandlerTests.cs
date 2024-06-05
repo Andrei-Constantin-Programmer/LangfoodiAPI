@@ -127,9 +127,9 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString} name"
         };
 
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
-        UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
+        UserAccountDto dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDto dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDto dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
@@ -149,7 +149,7 @@ public class GetUsersHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto1, dto2, dto3 });
+        result.Should().BeEquivalentTo(new List<UserAccountDto> { dto1, dto2, dto3 });
     }
 
     [Fact]
@@ -187,8 +187,8 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString} name"
         };
 
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDto dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDto dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
@@ -205,7 +205,7 @@ public class GetUsersHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto1, dto2 });
+        result.Should().BeEquivalentTo(new List<UserAccountDto> { dto1, dto2 });
     }
 
     [Fact]
@@ -243,9 +243,9 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString} name"
         };
 
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
-        UserAccountDTO dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
+        UserAccountDto dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDto dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDto dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
@@ -265,7 +265,7 @@ public class GetUsersHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto1, dto2 });
+        result.Should().BeEquivalentTo(new List<UserAccountDto> { dto1, dto2 });
     }
 
     [Fact]
@@ -303,8 +303,8 @@ public class GetUsersHandlerTests
             UserName = $"{query.ContainedString} name"
         };
 
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDto dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDto dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
         
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
@@ -321,7 +321,7 @@ public class GetUsersHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto1, dto2 });
+        result.Should().BeEquivalentTo(new List<UserAccountDto> { dto1, dto2 });
     }
 
     [Fact]
@@ -379,11 +379,11 @@ public class GetUsersHandlerTests
                 new Connection("conn2", account2, queryingUser.Account, ConnectionStatus.Connected)
             });
 
-        UserAccountDTO dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
-        UserAccountDTO dto3 = new(account3.Id, account3.Handler, account3.UserName, new(), new());
-        UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
+        UserAccountDto dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
+        UserAccountDto dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDto dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDto dto3 = new(account3.Id, account3.Handler, account3.UserName, new(), new());
+        UserAccountDto dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
@@ -409,7 +409,7 @@ public class GetUsersHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto1, dto2 });
+        result.Should().BeEquivalentTo(new List<UserAccountDto> { dto1, dto2 });
     }
 
     [Fact]
@@ -466,11 +466,11 @@ public class GetUsersHandlerTests
                 new Connection("conn2", account2, queryingUser.Account, ConnectionStatus.Connected)
             });
 
-        UserAccountDTO dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
-        UserAccountDTO dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
-        UserAccountDTO dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
-        UserAccountDTO dto3 = new(account3.Id, account3.Handler, account3.UserName, new(), new());
-        UserAccountDTO dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
+        UserAccountDto dto0 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
+        UserAccountDto dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDto dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDto dto3 = new(account3.Id, account3.Handler, account3.UserName, new(), new());
+        UserAccountDto dto4 = new(account4.Id, account4.Handler, account4.UserName, new(), new());
 
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
@@ -496,6 +496,6 @@ public class GetUsersHandlerTests
 
         // Then
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(new List<UserAccountDTO> { dto3, dto4 });
+        result.Should().BeEquivalentTo(new List<UserAccountDto> { dto3, dto4 });
     }
 }
