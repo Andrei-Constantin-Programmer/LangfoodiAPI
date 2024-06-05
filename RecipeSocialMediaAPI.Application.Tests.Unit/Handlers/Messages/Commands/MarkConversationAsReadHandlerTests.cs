@@ -139,16 +139,16 @@ public class MarkConversationAsReadHandlerTests
             .Verify(repo => repo.UpdateMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessageAsync(
-                    It.Is<Message>(message => 
+                    It.Is<Message>(message =>
                         message.Id == messages[3].Id &&
-                        message.SeenBy.Contains(user1.Account)), 
-                    It.IsAny<CancellationToken>()), 
+                        message.GetSeenBy().Contains(user1.Account)),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
         _messagePersistenceRepositoryMock
             .Verify(repo => repo.UpdateMessageAsync(
                     It.Is<Message>(message =>
                         message.Id == messages[4].Id &&
-                        message.SeenBy.Contains(user1.Account)), 
+                        message.GetSeenBy().Contains(user1.Account)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
@@ -196,7 +196,7 @@ public class MarkConversationAsReadHandlerTests
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
         // When
-        var testAction = async() => await _markConversationAsReadHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _markConversationAsReadHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
         await testAction.Should().ThrowAsync<UserNotFoundException>();
@@ -247,7 +247,7 @@ public class MarkConversationAsReadHandlerTests
         MarkConversationAsReadCommand command = new(user1.Account.Id, conversation.ConversationId);
 
         // When
-        var testAction = async() => await _markConversationAsReadHandlerSUT.Handle(command, CancellationToken.None);
+        var testAction = async () => await _markConversationAsReadHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
         await testAction.Should().ThrowAsync<ConversationNotFoundException>();

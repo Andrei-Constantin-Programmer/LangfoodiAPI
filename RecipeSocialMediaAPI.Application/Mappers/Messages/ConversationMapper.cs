@@ -57,5 +57,5 @@ public class ConversationMapper : IConversationMapper
     }
 
     private static int GetUnreadCount(IUserAccount user, Conversation conversation) => conversation.GetMessages()
-        .Count(message => message.SeenBy.All(u => u.Id != user.Id));
+        .Count(message => message.GetSeenBy().All(u => u.Id != user.Id));
 }

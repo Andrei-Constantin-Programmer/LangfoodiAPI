@@ -72,7 +72,7 @@ public class MarkMessageAsReadHandlerTests
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessageAsync(message.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(message);
-        
+
         MarkMessageAsReadCommand command = new(user2.Account.Id, message.Id);
 
         // When
@@ -84,9 +84,9 @@ public class MarkMessageAsReadHandlerTests
                     It.Is<Message>(m
                         => m.Id == message.Id
                         && m.Sender == message.Sender
-                        && m.SeenBy.SequenceEqual(new List<IUserAccount> { user1.Account, user2.Account })
+                        && m.GetSeenBy().SequenceEqual(new List<IUserAccount> { user1.Account, user2.Account })
                         && m.SentDate == message.SentDate
-                        && m.UpdatedDate == message.UpdatedDate), 
+                        && m.UpdatedDate == message.UpdatedDate),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
@@ -126,7 +126,7 @@ public class MarkMessageAsReadHandlerTests
         _messageQueryRepositoryMock
             .Setup(repo => repo.GetMessageAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Message?)null);
-        
+
         MarkMessageAsReadCommand command = new(user2.Account.Id, "m1");
 
         // When
@@ -214,8 +214,8 @@ public class MarkMessageAsReadHandlerTests
             .Verify(publisher => publisher.Publish(
                     It.Is<MessageMarkedAsReadNotification>(notification
                         => notification.UserId == user2.Account.Id
-                        && notification.MessageId == message.Id), 
-                    It.IsAny<CancellationToken>()), 
+                        && notification.MessageId == message.Id),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 }

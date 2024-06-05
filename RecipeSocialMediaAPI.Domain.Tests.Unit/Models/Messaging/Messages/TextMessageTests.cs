@@ -92,7 +92,7 @@ public class TextMessageTests
 
         // Then
         result.Should().BeTrue();
-        _textMessageSUT.SeenBy.Should().Contain(newUser);
+        _textMessageSUT.GetSeenBy().Should().Contain(newUser);
     }
 
     [Fact]
@@ -114,6 +114,6 @@ public class TextMessageTests
 
         // Then
         result.Should().BeFalse();
-        _textMessageSUT.SeenBy.Should().OnlyHaveUniqueItems().And.Contain(existingUser);
+        _textMessageSUT.GetSeenBy().Should().OnlyHaveUniqueItems().And.Contain(existingUser);
     }
 }

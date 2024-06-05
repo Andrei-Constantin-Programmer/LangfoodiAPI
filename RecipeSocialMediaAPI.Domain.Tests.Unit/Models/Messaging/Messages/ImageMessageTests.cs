@@ -93,7 +93,7 @@ public class ImageMessageTests
 
         // Then
         result.Should().BeTrue();
-        _imageMessageSUT.SeenBy.Should().Contain(newUser);
+        _imageMessageSUT.GetSeenBy().Should().Contain(newUser);
     }
 
     [Fact]
@@ -115,6 +115,6 @@ public class ImageMessageTests
 
         // Then
         result.Should().BeFalse();
-        _imageMessageSUT.SeenBy.Should().OnlyHaveUniqueItems().And.Contain(existingUser);
+        _imageMessageSUT.GetSeenBy().Should().OnlyHaveUniqueItems().And.Contain(existingUser);
     }
 }

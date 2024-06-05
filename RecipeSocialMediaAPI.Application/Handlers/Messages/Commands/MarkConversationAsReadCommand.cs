@@ -31,7 +31,7 @@ internal class MarkConversationAsReadHandler : IRequestHandler<MarkConversationA
             ?? throw new ConversationNotFoundException($"No conversation found with id {request.ConversationId}");
 
         var unseenMessages = conversation.GetMessages()
-            .Where(message => !message.SeenBy.Any(u => u.Id == user.Id))
+            .Where(message => !message.GetSeenBy().Any(u => u.Id == user.Id))
             .ToList();
 
         foreach (var message in unseenMessages)
