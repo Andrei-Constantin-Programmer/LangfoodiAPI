@@ -22,7 +22,7 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
 
     public async Task<TDocument?> GetOneAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
-        return (await _collection.FindAsync(expr, cancellationToken: cancellationToken)).FirstOrDefault(cancellationToken: cancellationToken);
+        return await (await _collection.FindAsync(expr, cancellationToken: cancellationToken)).FirstOrDefaultAsync(cancellationToken: cancellationToken);
     }
 
     public async Task<IEnumerable<TDocument>> GetAllAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
