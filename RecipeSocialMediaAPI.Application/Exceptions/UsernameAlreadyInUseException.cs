@@ -14,5 +14,6 @@ public class UsernameAlreadyInUseException : Exception
 
     protected UsernameAlreadyInUseException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
+        Username = string.Empty;
     }
 }

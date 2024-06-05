@@ -14,5 +14,6 @@ public class UnsupportedConnectionStatusException : Exception
 
     protected UnsupportedConnectionStatusException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
+        UnsupportedStatus = string.Empty;
     }
 }

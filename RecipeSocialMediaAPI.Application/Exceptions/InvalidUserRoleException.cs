@@ -13,5 +13,6 @@ public class InvalidUserRoleException : Exception
 
     protected InvalidUserRoleException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
+        InvalidRole = string.Empty;
     }
 }

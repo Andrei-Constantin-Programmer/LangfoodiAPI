@@ -14,5 +14,6 @@ public class EmailAlreadyInUseException : Exception
 
     protected EmailAlreadyInUseException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
+        Email = string.Empty;
     }
 }
