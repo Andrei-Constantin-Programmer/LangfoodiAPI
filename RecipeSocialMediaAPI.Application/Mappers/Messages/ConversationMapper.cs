@@ -48,7 +48,7 @@ public class ConversationMapper : IConversationMapper
 
     private MessageDTO? GetLastMessage(Conversation conversation)
     {
-        var lastMessage = conversation.Messages
+        var lastMessage = conversation.GetMessages()
             .MaxBy(message => message.SentDate);
 
         return lastMessage is null
@@ -56,6 +56,6 @@ public class ConversationMapper : IConversationMapper
             : _messageMapper.MapMessageToMessageDTO(lastMessage);
     }
 
-    private static int GetUnreadCount(IUserAccount user, Conversation conversation) => conversation.Messages
+    private static int GetUnreadCount(IUserAccount user, Conversation conversation) => conversation.GetMessages()
         .Count(message => message.SeenBy.All(u => u.Id != user.Id));
 }

@@ -25,7 +25,7 @@ internal class GetMessagesByConversationHandler : IRequestHandler<GetMessagesByC
         Conversation conversation = await _conversationQueryRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken)
             ?? throw new ConversationNotFoundException($"No conversation found with id {request.ConversationId}");
 
-        return conversation.Messages
+        return conversation.GetMessages()
             .Select(_messageMapper.MapMessageToMessageDTO)
             .ToList();
     }

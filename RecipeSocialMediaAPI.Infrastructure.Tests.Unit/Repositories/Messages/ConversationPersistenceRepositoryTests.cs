@@ -71,13 +71,13 @@ public partial class ConversationPersistenceRepositoryTests
             ConnectionStatus: "Pending"
         );
 
-        Expression<Func<ConnectionDocument, bool>> expectedExpression = connDoc => 
+        Expression<Func<ConnectionDocument, bool>> expectedExpression = connDoc =>
             (connDoc.AccountId1 == user1.Id && connDoc.AccountId2 == user2.Id)
             || (connDoc.AccountId1 == user2.Id && connDoc.AccountId2 == user1.Id);
 
         _connectionCollectionMock
             .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.Is<Expression<Func<ConnectionDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(connectionDoc);
 
@@ -90,7 +90,7 @@ public partial class ConversationPersistenceRepositoryTests
 
         _conversationCollectionMock
             .Setup(collection => collection.InsertAsync(
-                It.Is<ConversationDocument>(doc => doc.ConnectionId == connectionDoc.Id && doc.GroupId == null), 
+                It.Is<ConversationDocument>(doc => doc.ConnectionId == connectionDoc.Id && doc.GroupId == null),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversationDocument);
 
@@ -133,7 +133,7 @@ public partial class ConversationPersistenceRepositoryTests
 
         _connectionCollectionMock
             .Setup(collection => collection.GetOneAsync(
-                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConnectionDocument?)null);
 
@@ -166,7 +166,7 @@ public partial class ConversationPersistenceRepositoryTests
         };
 
         Group testGroup = new("GroupId", "Group Name", "Group Description", new[] { user1, user2 });
-        
+
         ConversationDocument conversationDocument = new(
             Id: "convoId",
             ConnectionId: null,
@@ -176,7 +176,7 @@ public partial class ConversationPersistenceRepositoryTests
 
         _conversationCollectionMock
             .Setup(collection => collection.InsertAsync(
-                It.Is<ConversationDocument>(doc => doc.GroupId == testGroup.GroupId && doc.ConnectionId == null), 
+                It.Is<ConversationDocument>(doc => doc.GroupId == testGroup.GroupId && doc.ConnectionId == null),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversationDocument);
 
@@ -224,25 +224,25 @@ public partial class ConversationPersistenceRepositoryTests
         );
         _connectionCollectionMock
             .Setup(collection => collection.GetOneAsync(
-                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(connectionDoc);
 
         ConnectionConversation testConversation = new(testConnection, "ConvoId", new List<Message>()
         {
-            new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null) 
+            new TestMessage("MsgId", user1, new(2023, 11, 15, 0, 0, 0, TimeSpan.Zero), null)
         });
 
         Expression<Func<ConversationDocument, bool>> expectedExpression = convoDoc => convoDoc.Id == testConversation.ConversationId;
 
         _conversationCollectionMock
             .Setup(collection => collection.UpdateAsync(
-                It.Is<ConversationDocument>(convoDoc => 
+                It.Is<ConversationDocument>(convoDoc =>
                     convoDoc.Id == testConversation.ConversationId
                     && convoDoc.ConnectionId == connectionDoc.Id
                     && convoDoc.GroupId == null
-                    && convoDoc.Messages.SequenceEqual(testConversation.Messages.Select(m => m.Id))), 
-                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    && convoDoc.Messages.SequenceEqual(testConversation.GetMessages().Select(m => m.Id))),
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -286,7 +286,7 @@ public partial class ConversationPersistenceRepositoryTests
 
         _connectionCollectionMock
             .Setup(collection => collection.GetOneAsync(
-                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(connectionDoc);
 
@@ -298,7 +298,7 @@ public partial class ConversationPersistenceRepositoryTests
         _conversationCollectionMock
             .Setup(collection => collection.UpdateAsync(
                 It.IsAny<ConversationDocument>(),
-                It.IsAny<Expression<Func<ConversationDocument, bool>>>(), 
+                It.IsAny<Expression<Func<ConversationDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
@@ -333,7 +333,7 @@ public partial class ConversationPersistenceRepositoryTests
         Connection testConnection = new("0", user1, user2, ConnectionStatus.Pending);
         _connectionCollectionMock
             .Setup(collection => collection.GetOneAsync(
-                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConnectionDocument?)null);
 
@@ -351,9 +351,9 @@ public partial class ConversationPersistenceRepositoryTests
             .WithMessage("No connection found*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateAsync(
-                    It.IsAny<ConversationDocument>(), 
-                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(), 
-                    It.IsAny<CancellationToken>()), 
+                    It.IsAny<ConversationDocument>(),
+                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(),
+                    It.IsAny<CancellationToken>()),
                 Times.Never);
     }
 
@@ -387,7 +387,7 @@ public partial class ConversationPersistenceRepositoryTests
         );
         _connectionCollectionMock
             .Setup(collection => collection.GetOneAsync(
-                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(), 
+                It.IsAny<Expression<Func<ConnectionDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(connectionDoc);
 
@@ -405,9 +405,9 @@ public partial class ConversationPersistenceRepositoryTests
             .WithMessage("No connection provided*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateAsync(
-                    It.IsAny<ConversationDocument>(), 
-                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(), 
-                    It.IsAny<CancellationToken>()), 
+                    It.IsAny<ConversationDocument>(),
+                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(),
+                    It.IsAny<CancellationToken>()),
                 Times.Never);
     }
 
@@ -446,8 +446,8 @@ public partial class ConversationPersistenceRepositoryTests
                     convoDoc.Id == testConversation.ConversationId
                     && convoDoc.ConnectionId == null
                     && convoDoc.GroupId == testGroup.GroupId
-                    && convoDoc.Messages.SequenceEqual(testConversation.Messages.Select(m => m.Id))),
-                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    && convoDoc.Messages.SequenceEqual(testConversation.GetMessages().Select(m => m.Id))),
+                It.Is<Expression<Func<ConversationDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -458,9 +458,9 @@ public partial class ConversationPersistenceRepositoryTests
         result.Should().BeTrue();
         _conversationCollectionMock
             .Verify(collection => collection.UpdateAsync(
-                    It.IsAny<ConversationDocument>(), 
-                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(), 
-                    It.IsAny<CancellationToken>()), 
+                    It.IsAny<ConversationDocument>(),
+                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
@@ -494,7 +494,7 @@ public partial class ConversationPersistenceRepositoryTests
         _conversationCollectionMock
             .Setup(collection => collection.UpdateAsync(
                 It.IsAny<ConversationDocument>(),
-                It.IsAny<Expression<Func<ConversationDocument, bool>>>(), 
+                It.IsAny<Expression<Func<ConversationDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
@@ -541,9 +541,9 @@ public partial class ConversationPersistenceRepositoryTests
             .WithMessage("No group provided*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateAsync(
-                    It.IsAny<ConversationDocument>(), 
-                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(), 
-                    It.IsAny<CancellationToken>()), 
+                    It.IsAny<ConversationDocument>(),
+                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(),
+                    It.IsAny<CancellationToken>()),
                 Times.Never);
     }
 
@@ -554,7 +554,7 @@ public partial class ConversationPersistenceRepositoryTests
     {
         // Given
         TestConversation testConversation = new("ConvoId", new List<Message>());
-        
+
         // When
         var testAction = async () => await _conversationPersistenceRepositorySUT.UpdateConversationAsync(testConversation);
 
@@ -564,9 +564,9 @@ public partial class ConversationPersistenceRepositoryTests
             .WithMessage("*TestConversation*");
         _conversationCollectionMock
             .Verify(collection => collection.UpdateAsync(
-                    It.IsAny<ConversationDocument>(), 
-                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(), 
-                    It.IsAny<CancellationToken>()), 
+                    It.IsAny<ConversationDocument>(),
+                    It.IsAny<Expression<Func<ConversationDocument, bool>>>(),
+                    It.IsAny<CancellationToken>()),
                 Times.Never);
     }
 }

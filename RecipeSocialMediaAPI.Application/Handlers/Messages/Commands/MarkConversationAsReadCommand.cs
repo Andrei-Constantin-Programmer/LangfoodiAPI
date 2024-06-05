@@ -30,7 +30,7 @@ internal class MarkConversationAsReadHandler : IRequestHandler<MarkConversationA
         Conversation conversation = (await _conversationQueryRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken))
             ?? throw new ConversationNotFoundException($"No conversation found with id {request.ConversationId}");
 
-        var unseenMessages = conversation.Messages
+        var unseenMessages = conversation.GetMessages()
             .Where(message => !message.SeenBy.Any(u => u.Id == user.Id))
             .ToList();
 

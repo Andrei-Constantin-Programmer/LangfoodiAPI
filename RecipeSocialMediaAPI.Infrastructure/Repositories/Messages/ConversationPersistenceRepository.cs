@@ -50,14 +50,14 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
         (string? connectionId, string? groupId) = conversation switch
         {
             ConnectionConversation connectionConversation =>
-                (connection is not null 
-                ? await GetConnectionIdAsync(connection, cancellationToken) 
+                (connection is not null
+                ? await GetConnectionIdAsync(connection, cancellationToken)
                     ?? throw new InvalidConversationException($"No connection found for ConnectionConversation with id {conversation.ConversationId}")
                 : throw new ArgumentException($"No connection provided when updating ConnectionConversation with id {conversation.ConversationId}"),
                 (string?)null),
 
-            GroupConversation groupConversation => 
-            (null, group?.GroupId 
+            GroupConversation groupConversation =>
+            (null, group?.GroupId
                 ?? throw new ArgumentException($"No group provided when updating GroupConversation with id {conversation.ConversationId}")),
 
             _ => throw new InvalidConversationException($"Could not update conversation with id {conversation.ConversationId} of unknown type {conversation.GetType()}"),
@@ -68,21 +68,21 @@ public class ConversationPersistenceRepository : IConversationPersistenceReposit
                 Id: conversation.ConversationId,
                 ConnectionId: connectionId,
                 GroupId: groupId,
-                Messages: conversation.Messages.Select(message => message.Id).ToList()),
+                Messages: conversation.GetMessages().Select(message => message.Id).ToList()),
             conversationDoc => conversationDoc.Id == conversation.ConversationId,
             cancellationToken);
     }
 
-    private async Task<string?> GetConnectionIdAsync(IConnection connection, CancellationToken cancellationToken = default) => 
-        connection is not null 
-        ? (await GetConnectionDocumentAsync(connection, cancellationToken))?.Id 
+    private async Task<string?> GetConnectionIdAsync(IConnection connection, CancellationToken cancellationToken = default) =>
+        connection is not null
+        ? (await GetConnectionDocumentAsync(connection, cancellationToken))?.Id
         : null;
 
     private async Task<ConnectionDocument?> GetConnectionDocumentAsync(IConnection connection, CancellationToken cancellationToken = default) =>
         await _connectionCollection.GetOneAsync(
-            conn => (conn.AccountId1 == connection.Account1.Id 
-                                     && conn.AccountId2 == connection.Account2.Id) 
-                 || (conn.AccountId1 == connection.Account2.Id 
-                                     && conn.AccountId2 == connection.Account1.Id), 
+            conn => (conn.AccountId1 == connection.Account1.Id
+                                     && conn.AccountId2 == connection.Account2.Id)
+                 || (conn.AccountId1 == connection.Account2.Id
+                                     && conn.AccountId2 == connection.Account1.Id),
             cancellationToken);
 }

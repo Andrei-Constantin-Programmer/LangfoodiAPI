@@ -8,7 +8,7 @@ public abstract class Conversation
 
     private readonly Stack<Message> _messages;
 
-    public List<Message> Messages { get => _messages.ToList(); }
+    public List<Message> GetMessages() => _messages.ToList();
 
     public Conversation(string conversationId, IEnumerable<Message>? messages = null)
     {

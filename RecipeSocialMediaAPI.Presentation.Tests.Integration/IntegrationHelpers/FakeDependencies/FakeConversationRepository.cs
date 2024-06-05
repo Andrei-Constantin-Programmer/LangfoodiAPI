@@ -15,12 +15,12 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
         _collection = new();
     }
 
-    public async Task<ConnectionConversation?> GetConversationByConnectionAsync(string connectionId, CancellationToken cancellationToken = default) 
+    public async Task<ConnectionConversation?> GetConversationByConnectionAsync(string connectionId, CancellationToken cancellationToken = default)
         => await Task.FromResult(_collection
-            .FirstOrDefault(conversation => conversation is ConnectionConversation connConvo 
+            .FirstOrDefault(conversation => conversation is ConnectionConversation connConvo
                                          && connConvo.Connection.ConnectionId == connectionId) as ConnectionConversation);
 
-    public async Task<GroupConversation?> GetConversationByGroupAsync(string groupId, CancellationToken cancellationToken = default) 
+    public async Task<GroupConversation?> GetConversationByGroupAsync(string groupId, CancellationToken cancellationToken = default)
         => await Task.FromResult(_collection
             .FirstOrDefault(conversation => conversation is GroupConversation groupConvo
                                      && groupConvo.Group.GroupId == groupId) as GroupConversation);
@@ -28,9 +28,9 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
     public async Task<Conversation?> GetConversationByIdAsync(string id, CancellationToken cancellationToken = default) => await Task.FromResult(_collection
         .FirstOrDefault(conversation => conversation.ConversationId == id));
 
-    public async Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default) 
+    public async Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
         => await Task.FromResult(_collection
-        .Where(conversation => (conversation is ConnectionConversation connConvo 
+        .Where(conversation => (conversation is ConnectionConversation connConvo
                                 && (connConvo.Connection.Account1.Id == userAccount.Id || connConvo.Connection.Account2.Id == userAccount.Id))
                             || (conversation is GroupConversation groupConvo
                                 && groupConvo.Group.Users.Any(user => user.Id == userAccount.Id))));
@@ -62,8 +62,8 @@ internal class FakeConversationRepository : IConversationQueryRepository, IConve
         }
 
         Conversation updatedConversation = connection is not null
-            ? new ConnectionConversation(connection, conversation.ConversationId, conversation.Messages)
-            : new GroupConversation(group!, conversation.ConversationId, conversation.Messages);
+            ? new ConnectionConversation(connection, conversation.ConversationId, conversation.GetMessages())
+            : new GroupConversation(group!, conversation.ConversationId, conversation.GetMessages());
 
         _collection.Remove(existingConversation);
         _collection.Add(updatedConversation);
