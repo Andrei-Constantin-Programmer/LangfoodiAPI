@@ -8,8 +8,8 @@
 
 # Langfoodi API
 [![.NET](https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/actions/workflows/dotnet.yml)
-![GitHub repo size](https://img.shields.io/github/repo-size/Andrei-Constantin-Programmer/LangfoodiAPI?label=Repo%20Size)
-![GitHub License](https://img.shields.io/github/license/Andrei-Constantin-Programmer/LangfoodiAPI?label=License)
+[![GitHub repo size](https://img.shields.io/github/repo-size/Andrei-Constantin-Programmer/LangfoodiAPI?label=Repo%20Size)](https://shields.io/badges/git-hub-repo-size)
+[![GitHub License](https://img.shields.io/github/license/Andrei-Constantin-Programmer/LangfoodiAPI?label=License)](LICENSE)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Andrei-Constantin-Programmer_LangfoodiAPI&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Andrei-Constantin-Programmer_LangfoodiAPI)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Andrei-Constantin-Programmer_LangfoodiAPI&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Andrei-Constantin-Programmer_LangfoodiAPI)
