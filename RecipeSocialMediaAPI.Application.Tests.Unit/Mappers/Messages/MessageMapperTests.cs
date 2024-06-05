@@ -57,11 +57,11 @@ public class MessageMapperTests
         TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
 
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage(
-            "TestId", 
-            testSender, 
+            "TestId",
+            testSender,
             "Test text content",
             new(),
-            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero), 
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
             new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
             repliedToMessage);
 
@@ -157,8 +157,8 @@ public class MessageMapperTests
         var testMessage = (RecipeMessage)_messageFactory.CreateRecipeMessage(
             "TestId",
             testSender,
-            new List<Recipe>() 
-            { 
+            new List<Recipe>()
+            {
                 new("Recipe1", "First recipe", new(new(), new()), "Description 1", testSender, TEST_DATE, TEST_DATE),
                 new("Recipe2", "Second recipe", new(new(), new()), "Description 2", testSender, TEST_DATE, TEST_DATE, thumbnailId: "ThumbnailId2")
             },
@@ -225,5 +225,67 @@ public class MessageMapperTests
 
         // Then
         testAction.Should().Throw<CorruptedMessageException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void MapMessageToMessageDTO_WhenThereAreSeenByUsers_CorrectlyMapUsers()
+    {
+        // Given
+        TestUserAccount testSender = new()
+        {
+            Id = "SenderId",
+            Handler = "SenderHandler",
+            UserName = "SenderUsername",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        TestUserAccount user2 = new()
+        {
+            Id = "SenderId2",
+            Handler = "SenderHandler2",
+            UserName = "SenderUsername2",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        TestUserAccount user3 = new()
+        {
+            Id = "SenderId3",
+            Handler = "SenderHandler3",
+            UserName = "SenderUsername3",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+        };
+
+        TestMessage repliedToMessage = new("RepliedToId", testSender, TEST_DATE, null, null);
+
+        var testMessage = (TextMessage)_messageFactory.CreateTextMessage(
+            "TestId",
+            testSender,
+            "Test text content",
+            new() { user2, user3 },
+            new(2023, 10, 20, 1, 15, 0, TimeSpan.Zero),
+            new(2023, 10, 20, 2, 30, 0, TimeSpan.Zero),
+            repliedToMessage);
+
+        MessageDto expectedResult = new(
+            Id: testMessage.Id,
+            UserPreview: new(testSender.Id, testSender.UserName),
+            TextContent: testMessage.TextContent,
+            RepliedToMessageId: testMessage.RepliedToMessage!.Id,
+            SentDate: testMessage.SentDate,
+            UpdatedDate: testMessage.UpdatedDate,
+            SeenByUserIds: new() { user2.Id, user3.Id }
+        );
+
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserPreviewForMessageDto(testMessage.Sender))
+            .Returns(expectedResult.UserPreview);
+
+        // When
+        var result = _messageMapperSUT.MapMessageToMessageDTO(testMessage);
+
+        // Then
+        result.Should().BeEquivalentTo(expectedResult);
     }
 }
