@@ -8,6 +8,8 @@
 
 # Langfoodi API
 [![.NET](https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Andrei-Constantin-Programmer/LangfoodiAPI/actions/workflows/dotnet.yml)
+![GitHub repo size](https://img.shields.io/github/repo-size/Andrei-Constantin-Programmer/LangfoodiAPI?label=Repo%20Size)
+![GitHub License](https://img.shields.io/github/license/Andrei-Constantin-Programmer/LangfoodiAPI?label=License)
 
 The robust API for the Langfoodi recipe-sharing social media platform.
 
