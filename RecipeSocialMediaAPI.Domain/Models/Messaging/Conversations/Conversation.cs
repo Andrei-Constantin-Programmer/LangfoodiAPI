@@ -10,7 +10,7 @@ public abstract class Conversation
 
     public List<Message> GetMessages() => _messages.ToList();
 
-    public Conversation(string conversationId, IEnumerable<Message>? messages = null)
+    protected Conversation(string conversationId, IEnumerable<Message>? messages = null)
     {
         ConversationId = conversationId;
         _messages = messages is null ? new Stack<Message>() : new Stack<Message>(messages);

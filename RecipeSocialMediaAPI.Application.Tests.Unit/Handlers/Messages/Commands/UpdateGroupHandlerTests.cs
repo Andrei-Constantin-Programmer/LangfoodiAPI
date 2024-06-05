@@ -18,7 +18,7 @@ public class UpdateGroupHandlerTests
     private readonly Mock<IGroupQueryRepository> _groupQueryRepositoryMock;
     private readonly Mock<IGroupPersistenceRepository> _groupPersistenceRepositoryMock;
     private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock;
-    private readonly Mock<ILogger<UpdateGroupCommand>> _loggerMock;
+    private readonly Mock<ILogger<UpdateGroupHandler>> _loggerMock;
 
     private readonly List<IUserCredentials> _testUsers;
 
@@ -29,7 +29,7 @@ public class UpdateGroupHandlerTests
         _groupQueryRepositoryMock = new Mock<IGroupQueryRepository>();
         _groupPersistenceRepositoryMock = new Mock<IGroupPersistenceRepository>();
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
-        _loggerMock = new Mock<ILogger<UpdateGroupCommand>>();
+        _loggerMock = new Mock<ILogger<UpdateGroupHandler>>();
 
         _testUsers = new()
         {
@@ -121,7 +121,7 @@ public class UpdateGroupHandlerTests
                 It.Is<Group>(group => group.GroupId == existingGroup.GroupId
                                    && group.GroupName == command.Contract.GroupName
                                    && group.GroupDescription == command.Contract.GroupDescription
-                                   && group.Users.Count == _testUsers.Count), 
+                                   && group.Users.Count == _testUsers.Count),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -141,9 +141,9 @@ public class UpdateGroupHandlerTests
         Group existingGroup = new("1", "Group", "Group Desc");
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
-            existingGroup.GroupId, 
-            "New Group Name", 
-            "New Group Description", 
+            existingGroup.GroupId,
+            "New Group Name",
+            "New Group Description",
             new List<string>()));
 
         _groupQueryRepositoryMock
@@ -156,7 +156,7 @@ public class UpdateGroupHandlerTests
                     group => group.GroupId == existingGroup.GroupId
                           && group.GroupName == command.Contract.GroupName
                           && group.GroupDescription == command.Contract.GroupDescription
-                          && !group.Users.Any()), 
+                          && !group.Users.Any()),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
@@ -188,8 +188,8 @@ public class UpdateGroupHandlerTests
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
-            existingGroup.GroupId, 
-            existingGroup.GroupName, 
+            existingGroup.GroupId,
+            existingGroup.GroupName,
             existingGroup.GroupDescription,
             _testUsers.Select(user => user.Account.Id).ToList()));
 
@@ -207,7 +207,7 @@ public class UpdateGroupHandlerTests
         // Then
         await testAction.Should().NotThrowAsync();
     }
-    
+
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
@@ -230,9 +230,9 @@ public class UpdateGroupHandlerTests
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
-            existingGroup.GroupId, 
-            existingGroup.GroupName, 
-            existingGroup.GroupDescription, 
+            existingGroup.GroupId,
+            existingGroup.GroupName,
+            existingGroup.GroupDescription,
             new List<string>()
             {
                 _testUsers[0].Account.Id,
@@ -251,7 +251,7 @@ public class UpdateGroupHandlerTests
                           && group.GroupDescription == existingGroup.GroupDescription
                           && group.Users.Count == 2
                           && group.Users.Contains(_testUsers[0].Account)
-                          && group.Users.Contains(_testUsers[1].Account)), 
+                          && group.Users.Contains(_testUsers[1].Account)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -299,7 +299,7 @@ public class UpdateGroupHandlerTests
                     group => group.GroupId == existingGroup.GroupId
                           && group.GroupName == existingGroup.GroupName
                           && group.GroupDescription == existingGroup.GroupDescription
-                          && group.Users.Count == 0), 
+                          && group.Users.Count == 0),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -340,9 +340,9 @@ public class UpdateGroupHandlerTests
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Take(3).Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
-            existingGroup.GroupId, 
-            existingGroup.GroupName, 
-            existingGroup.GroupDescription, 
+            existingGroup.GroupId,
+            existingGroup.GroupName,
+            existingGroup.GroupDescription,
             new List<string>()
             {
                 _testUsers[0].Account.Id,
@@ -365,7 +365,7 @@ public class UpdateGroupHandlerTests
                           && group.Users.Contains(_testUsers[0].Account)
                           && group.Users.Contains(_testUsers[1].Account)
                           && group.Users.Contains(_testUsers[2].Account)
-                          && group.Users.Contains(_testUsers[3].Account)), 
+                          && group.Users.Contains(_testUsers[3].Account)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -375,7 +375,7 @@ public class UpdateGroupHandlerTests
         // Then
         await testAction.Should().NotThrowAsync();
     }
-    
+
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
@@ -398,9 +398,9 @@ public class UpdateGroupHandlerTests
         Group existingGroup = new("1", "Group", "Group Desc", _testUsers.Take(3).Select(user => user.Account));
 
         UpdateGroupCommand command = new(new UpdateGroupContract(
-            existingGroup.GroupId, 
-            existingGroup.GroupName, 
-            existingGroup.GroupDescription, 
+            existingGroup.GroupId,
+            existingGroup.GroupName,
+            existingGroup.GroupDescription,
             new List<string>()
             {
                 _testUsers[0].Account.Id,
@@ -419,7 +419,7 @@ public class UpdateGroupHandlerTests
                           && group.GroupDescription == existingGroup.GroupDescription
                           && group.Users.Count == 2
                           && group.Users.Contains(_testUsers[0].Account)
-                          && group.Users.Contains(_testUsers[3].Account)), 
+                          && group.Users.Contains(_testUsers[3].Account)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 

@@ -14,7 +14,13 @@ public abstract class Message
     private readonly HashSet<IUserAccount> _seenBy;
     public List<IUserAccount> GetSeenBy() => _seenBy.ToList();
 
-    internal Message(string id, IUserAccount sender, DateTimeOffset sentDate, DateTimeOffset? updatedDate, Message? repliedToMessage = null, List<IUserAccount>? seenBy = null)
+    private protected Message(
+        string id,
+        IUserAccount sender,
+        DateTimeOffset sentDate,
+        DateTimeOffset? updatedDate,
+        Message? repliedToMessage = null,
+        List<IUserAccount>? seenBy = null)
     {
         Id = id;
         Sender = sender;

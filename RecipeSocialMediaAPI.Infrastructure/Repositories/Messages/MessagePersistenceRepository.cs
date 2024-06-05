@@ -28,7 +28,15 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         _dataCryptoService = dataCryptoService;
     }
 
-    public async Task<Message> CreateMessageAsync(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
+    public async Task<Message> CreateMessageAsync(
+        IUserAccount sender,
+        string? text,
+        List<string>? recipeIds,
+        List<string>? imageURLs,
+        DateTimeOffset sentDate,
+        Message? messageRepliedTo,
+        List<string> seenByUserIds,
+        CancellationToken cancellationToken = default)
     {
         MessageDocument messageDocument = await _messageCollection.InsertAsync(new MessageDocument(
             SenderId: sender.Id,

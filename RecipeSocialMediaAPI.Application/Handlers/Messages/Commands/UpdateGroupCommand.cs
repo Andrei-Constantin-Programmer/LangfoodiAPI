@@ -18,13 +18,13 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
     private readonly IGroupQueryRepository _groupQueryRepository;
     private readonly IGroupPersistenceRepository _groupPersistenceRepository;
     private readonly IUserQueryRepository _userQueryRepository;
-    private readonly ILogger<UpdateGroupCommand> _logger;
+    private readonly ILogger<UpdateGroupHandler> _logger;
 
     public UpdateGroupHandler(
         IGroupQueryRepository groupQueryRepository,
         IGroupPersistenceRepository groupPersistenceRepository,
         IUserQueryRepository userQueryRepository,
-        ILogger<UpdateGroupCommand> logger)
+        ILogger<UpdateGroupHandler> logger)
     {
         _groupQueryRepository = groupQueryRepository;
         _groupPersistenceRepository = groupPersistenceRepository;
@@ -44,7 +44,7 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
             users: group.Users.ToList());
 
         var newUserList = (await Task.WhenAll(request.Contract.UserIds
-            .Select(async userId 
+            .Select(async userId
                 => (await _userQueryRepository.GetUserByIdAsync(userId, cancellationToken))?.Account
                         ?? throw new UserNotFoundException(userId))))
             .ToList();
@@ -70,14 +70,17 @@ internal class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand>
 
     private static void UpdateGroupUserList(Group group, List<IUserAccount> newUserList)
     {
-        for (var i = 0; i < group.Users.Count; i++)
+        var i = 0;
+        while (i < group.Users.Count)
         {
             var user = group.Users[i];
             if (!newUserList.Any(u => u.Id == user.Id))
             {
                 group.RemoveUser(user);
-                i--;
+                continue;
             }
+
+            i++;
         }
 
         foreach (var user in newUserList)
