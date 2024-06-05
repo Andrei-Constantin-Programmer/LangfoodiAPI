@@ -1,7 +1,10 @@
-﻿namespace RecipeSocialMediaAPI.Infrastructure.Exceptions;
+﻿using RecipeSocialMediaAPI.Domain.Models.Users;
+
+namespace RecipeSocialMediaAPI.Infrastructure.Exceptions;
 
 [Serializable]
-public class UserDocumentNotFoundException : Exception
+public class ConnectionDocumentNotFoundException : Exception
 {
-    public UserDocumentNotFoundException(string userId) : base($"User document for user with the id {userId} was not found") { }
+    public ConnectionDocumentNotFoundException(IUserAccount user1, IUserAccount user2)
+        : base($"Connection document between users with ids {user1.Id} and {user2.Id} not found") { }
 }

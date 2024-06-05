@@ -1,4 +1,6 @@
-﻿namespace RecipeSocialMediaAPI.Application.Exceptions;
+﻿using System.Runtime.Serialization;
+
+namespace RecipeSocialMediaAPI.Application.Exceptions;
 
 [Serializable]
 public class InvalidUserRoleException : Exception
@@ -7,5 +9,9 @@ public class InvalidUserRoleException : Exception
     public InvalidUserRoleException(string role) : base($"Invalid user role {role}")
     {
         InvalidRole = role;
+    }
+
+    protected InvalidUserRoleException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }

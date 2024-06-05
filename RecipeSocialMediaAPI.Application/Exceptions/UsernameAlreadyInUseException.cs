@@ -1,4 +1,6 @@
-﻿namespace RecipeSocialMediaAPI.Application.Exceptions;
+﻿using System.Runtime.Serialization;
+
+namespace RecipeSocialMediaAPI.Application.Exceptions;
 
 [Serializable]
 public class UsernameAlreadyInUseException : Exception
@@ -8,5 +10,9 @@ public class UsernameAlreadyInUseException : Exception
     public UsernameAlreadyInUseException(string username)
     {
         Username = username;
+    }
+
+    protected UsernameAlreadyInUseException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }
