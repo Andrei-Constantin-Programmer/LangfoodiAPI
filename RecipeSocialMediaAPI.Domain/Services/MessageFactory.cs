@@ -18,38 +18,38 @@ public class MessageFactory : IMessageFactory
     public Message CreateTextMessage(
         string id,
         IUserAccount sender,
-        string textContent,
+        string text,
         List<IUserAccount> seenBy,
         DateTimeOffset sentDate,
         DateTimeOffset? updatedDate = null,
         Message? repliedToMessage = null)
     {
-        return new TextMessage(_dateTimeProvider, id, sender, textContent, sentDate, updatedDate, repliedToMessage, seenBy);
+        return new TextMessage(_dateTimeProvider, id, sender, text, sentDate, updatedDate, repliedToMessage, seenBy);
     }
 
     public Message CreateImageMessage(
         string id,
         IUserAccount sender,
         IEnumerable<string> images,
-        string? textContent,
+        string? text,
         List<IUserAccount> seenBy,
         DateTimeOffset sentDate,
         DateTimeOffset? updatedDate = null,
         Message? repliedToMessage = null)
     {
-        return new ImageMessage(_dateTimeProvider, id, sender, images, textContent, sentDate, updatedDate, repliedToMessage, seenBy);
+        return new ImageMessage(_dateTimeProvider, id, sender, images, text, sentDate, updatedDate, repliedToMessage, seenBy);
     }
 
     public Message CreateRecipeMessage(
         string id,
         IUserAccount sender,
         IEnumerable<Recipe> recipes,
-        string? textContent,
+        string? text,
         List<IUserAccount> seenBy,
         DateTimeOffset sentDate,
         DateTimeOffset? updatedDate = null,
         Message? repliedToMessage = null)
     {
-        return new RecipeMessage(_dateTimeProvider, id, sender, recipes, textContent, sentDate, updatedDate, repliedToMessage, seenBy);
+        return new RecipeMessage(_dateTimeProvider, id, sender, recipes, text, sentDate, updatedDate, repliedToMessage, seenBy);
     }
 }
