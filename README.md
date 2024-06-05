@@ -11,6 +11,12 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/Andrei-Constantin-Programmer/LangfoodiAPI?label=Repo%20Size)
 ![GitHub License](https://img.shields.io/github/license/Andrei-Constantin-Programmer/LangfoodiAPI?label=License)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Andrei-Constantin-Programmer_LangfoodiAPI&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Andrei-Constantin-Programmer_LangfoodiAPI)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Andrei-Constantin-Programmer_LangfoodiAPI&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Andrei-Constantin-Programmer_LangfoodiAPI)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Andrei-Constantin-Programmer_LangfoodiAPI&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Andrei-Constantin-Programmer_LangfoodiAPI)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Andrei-Constantin-Programmer_LangfoodiAPI&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Andrei-Constantin-Programmer_LangfoodiAPI)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Andrei-Constantin-Programmer_LangfoodiAPI&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Andrei-Constantin-Programmer_LangfoodiAPI)
+
 The robust API for the Langfoodi recipe-sharing social media platform.
 
 
