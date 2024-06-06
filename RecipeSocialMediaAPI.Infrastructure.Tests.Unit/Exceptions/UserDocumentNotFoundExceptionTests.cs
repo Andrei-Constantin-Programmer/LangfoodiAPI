@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Text.Json;
@@ -29,6 +30,4 @@ public class UserDocumentNotFoundExceptionTests
         deserializedData?.Source.Should().Be(exception.Source);
         deserializedData?.StackTrace.Should().Be(exception.StackTrace);
     }
-
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace);
 }

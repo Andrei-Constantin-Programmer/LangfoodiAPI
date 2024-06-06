@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Domain.Tests.Shared;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -43,6 +44,4 @@ public class ConnectionDocumentNotFoundExceptionTests
         deserializedData?.Source.Should().Be(exception.Source);
         deserializedData?.StackTrace.Should().Be(exception.StackTrace);
     }
-
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace);
 }

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Text.Json;
 
@@ -22,13 +23,11 @@ public class RecipeUpdateExceptionTests
         var json = JsonSerializer.Serialize(serializedData);
 
         // Then
-        ExceptionSerializationData? deserializedData = JsonSerializer.Deserialize<ExceptionSerializationData>(json);
+        var deserializedData = JsonSerializer.Deserialize<ExceptionSerializationData>(json);
 
         deserializedData?.Message.Should().Be(message);
         deserializedData?.HResult.Should().Be(exception.HResult);
         deserializedData?.Source.Should().Be(exception.Source);
         deserializedData?.StackTrace.Should().Be(exception.StackTrace);
     }
-
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace);
 }

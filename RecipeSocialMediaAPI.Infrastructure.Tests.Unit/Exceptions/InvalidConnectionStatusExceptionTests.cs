@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
 using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -31,6 +32,4 @@ public class InvalidConnectionStatusExceptionTests
         deserializedData?.Source.Should().Be(exception.Source);
         deserializedData?.StackTrace.Should().Be(exception.StackTrace);
     }
-
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace);
 }

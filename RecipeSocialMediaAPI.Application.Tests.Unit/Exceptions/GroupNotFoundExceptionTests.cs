@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Text.Json;
 
@@ -29,6 +30,4 @@ public class GroupNotFoundExceptionTests
         deserializedData?.Source.Should().Be(exception.Source);
         deserializedData?.StackTrace.Should().Be(exception.StackTrace);
     }
-
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace);
 }

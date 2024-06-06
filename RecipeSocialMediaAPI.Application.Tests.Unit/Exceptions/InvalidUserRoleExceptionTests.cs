@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Text.Json;
 
@@ -16,13 +17,13 @@ public class InvalidUserRoleExceptionTests
         var role = "User";
         InvalidUserRoleException exception = new(role);
 
-        ExceptionSerializationData serializedData = new(exception.Message, exception.HResult, exception.Source, exception.StackTrace, exception.InvalidRole);
+        CustomExceptionSerializationData serializedData = new(exception.Message, exception.HResult, exception.Source, exception.StackTrace, exception.InvalidRole);
 
         // When
         var json = JsonSerializer.Serialize(serializedData);
 
         // Then
-        var deserializedData = JsonSerializer.Deserialize<ExceptionSerializationData>(json);
+        var deserializedData = JsonSerializer.Deserialize<CustomExceptionSerializationData>(json);
 
         deserializedData?.Message.Should().Be(exception.Message);
         deserializedData?.HResult.Should().Be(exception.HResult);
@@ -32,5 +33,6 @@ public class InvalidUserRoleExceptionTests
         deserializedData?.InvalidRole.Should().Be(role);
     }
 
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace, string InvalidRole);
+    private record CustomExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace, string InvalidRole)
+        : ExceptionSerializationData(Message, HResult, Source, StackTrace);
 }

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.Infrastructure.Exceptions;
 using RecipeSocialMediaAPI.Infrastructure.Tests.Shared.TestHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
@@ -18,13 +19,13 @@ public class DocumentAlreadyExistsExceptionTests
 
         DocumentAlreadyExistsException<TestDocument> exception = new(document);
 
-        ExceptionSerializationData serializedData = new(exception.Message, exception.HResult, exception.Source, exception.StackTrace, exception.Document);
+        CustomExceptionSerializationData serializedData = new(exception.Message, exception.HResult, exception.Source, exception.StackTrace, exception.Document);
 
         // When
         var json = JsonSerializer.Serialize(serializedData);
 
         // Then
-        var deserializedData = JsonSerializer.Deserialize<ExceptionSerializationData>(json);
+        var deserializedData = JsonSerializer.Deserialize<CustomExceptionSerializationData>(json);
 
         deserializedData?.Message.Should().Be(exception.Message);
         deserializedData?.HResult.Should().Be(exception.HResult);
@@ -34,5 +35,6 @@ public class DocumentAlreadyExistsExceptionTests
         deserializedData?.Document.Should().BeEquivalentTo(document);
     }
 
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace, TestDocument Document);
+    private record CustomExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace, TestDocument Document)
+        : ExceptionSerializationData(Message, HResult, Source, StackTrace);
 }

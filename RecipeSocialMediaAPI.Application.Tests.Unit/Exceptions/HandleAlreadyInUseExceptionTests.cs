@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Text.Json;
 
@@ -16,13 +17,13 @@ public class HandleAlreadyInUseExceptionTests
         var handle = "test_handler";
         HandleAlreadyInUseException exception = new(handle);
 
-        ExceptionSerializationData serializedData = new(exception.Message, exception.HResult, exception.Source, exception.StackTrace, handle);
+        CustomExceptionSerializationData serializedData = new(exception.Message, exception.HResult, exception.Source, exception.StackTrace, handle);
 
         // When
         var json = JsonSerializer.Serialize(serializedData);
 
         // Then
-        var deserializedData = JsonSerializer.Deserialize<ExceptionSerializationData>(json);
+        var deserializedData = JsonSerializer.Deserialize<CustomExceptionSerializationData>(json);
 
         deserializedData?.Message.Should().Be(exception.Message);
         deserializedData?.HResult.Should().Be(exception.HResult);
@@ -32,5 +33,6 @@ public class HandleAlreadyInUseExceptionTests
         deserializedData?.Handle.Should().Be(handle);
     }
 
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace, string Handle);
+    private record CustomExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace, string Handle)
+        : ExceptionSerializationData(Message, HResult, Source, StackTrace);
 }

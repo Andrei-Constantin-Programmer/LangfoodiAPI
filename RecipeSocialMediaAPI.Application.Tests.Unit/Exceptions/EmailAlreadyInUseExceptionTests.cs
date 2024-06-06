@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Application.Exceptions;
+using RecipeSocialMediaAPI.Application.Tests.Unit.TestHelpers;
 using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Text.Json;
 
@@ -16,7 +17,7 @@ public class EmailAlreadyInUseExceptionTests
         string email = "Test email";
         EmailAlreadyInUseException exception = new(email);
 
-        ExceptionSerializationData serializedData = new(
+        CustomExceptionSerializationData serializedData = new(
             exception.Message,
             exception.HResult,
             exception.Source,
@@ -27,7 +28,7 @@ public class EmailAlreadyInUseExceptionTests
         var json = JsonSerializer.Serialize(serializedData);
 
         // Then
-        var deserializedData = JsonSerializer.Deserialize<ExceptionSerializationData>(json);
+        var deserializedData = JsonSerializer.Deserialize<CustomExceptionSerializationData>(json);
 
         deserializedData?.Message.Should().Be(exception.Message);
         deserializedData?.HResult.Should().Be(exception.HResult);
@@ -37,5 +38,9 @@ public class EmailAlreadyInUseExceptionTests
         deserializedData?.Email.Should().Be(email);
     }
 
-    private record ExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace, string Email);
+    private record CustomExceptionSerializationData(string Message, int HResult, string? Source, string? StackTrace, string Email)
+        : ExceptionSerializationData(Message, HResult, Source, StackTrace)
+    {
+
+    }
 }
