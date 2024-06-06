@@ -126,7 +126,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
-        UserPreviewForMessageDTO testSenderPreview = new(
+        UserPreviewForMessageDto testSenderPreview = new(
             testSender.Id,
             testSender.UserName,
             testSender.ProfileImageId
@@ -139,7 +139,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDto messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -353,7 +353,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         var testMessage = (ImageMessage)_messageFactory.CreateImageMessage("MessageId", testSender, new List<string>() { "ExistingImage" }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
-        UserPreviewForMessageDTO testSenderPreview = new(
+        UserPreviewForMessageDto testSenderPreview = new(
             testSender.Id,
             testSender.UserName,
             testSender.ProfileImageId
@@ -366,7 +366,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDto messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -406,7 +406,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             UserName = "SenderUsername",
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
-        UserPreviewForMessageDTO testSenderPreview = new(
+        UserPreviewForMessageDto testSenderPreview = new(
             testSender.Id,
             testSender.UserName,
             testSender.ProfileImageId
@@ -421,7 +421,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDto messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -582,7 +582,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (RecipeMessage)_messageFactory
             .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
-        UserPreviewForMessageDTO testSenderPreview = new(
+        UserPreviewForMessageDto testSenderPreview = new(
             testSender.Id,
             testSender.UserName,
             testSender.ProfileImageId
@@ -595,7 +595,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDto messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -656,7 +656,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         var testMessage = (RecipeMessage)_messageFactory
             .CreateRecipeMessage("MessageId", testSender, new List<Recipe>() { existingRecipe }, originalText, new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
-        UserPreviewForMessageDTO testSenderPreview = new(
+        UserPreviewForMessageDto testSenderPreview = new(
             testSender.Id,
             testSender.UserName,
             testSender.ProfileImageId
@@ -672,7 +672,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.GetRecipeByIdAsync(newRecipe.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(newRecipe);
 
-        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDto messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);
@@ -920,7 +920,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
         };
         var testMessage = (TextMessage)_messageFactory.CreateTextMessage("MessageId", testSender, "Original Text", new(), new(2023, 10, 20, 0, 0, 0, TimeSpan.Zero));
 
-        UserPreviewForMessageDTO testSenderPreview = new(
+        UserPreviewForMessageDto testSenderPreview = new(
             testSender.Id,
             testSender.UserName,
             testSender.ProfileImageId
@@ -933,7 +933,7 @@ private readonly UpdateMessageHandler _updateMessageHandlerSUT;
             .Setup(repo => repo.UpdateMessageAsync(testMessage, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        MessageDTO messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
+        MessageDto messageDto = new(testMessage.Id, testSenderPreview, new(), testMessage.SentDate, TextContent: testMessage.TextContent);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(testMessage))
             .Returns(messageDto);

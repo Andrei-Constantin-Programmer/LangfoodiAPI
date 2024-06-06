@@ -119,8 +119,8 @@ public class GetConversationsByUserHandlerTests
             new GroupConversation(group, "convo2"),
         };
 
-        ConversationDTO convo1Dto = new(conversations[0].ConversationId, connection.ConnectionId, false, user2.Account.Id, user2.Account.ProfileImageId, null, new() { user1.Account.Id, user2.Account.Id });
-        ConversationDTO convo2Dto = new(conversations[1].ConversationId, group.GroupId, true, group.GroupName, null, null, new() { user1.Account.Id, user2.Account.Id, user3.Account.Id });
+        ConversationDto convo1Dto = new(conversations[0].ConversationId, connection.ConnectionId, false, user2.Account.Id, user2.Account.ProfileImageId, null, new() { user1.Account.Id, user2.Account.Id });
+        ConversationDto convo2Dto = new(conversations[1].ConversationId, group.GroupId, true, group.GroupName, null, null, new() { user1.Account.Id, user2.Account.Id, user3.Account.Id });
         
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1.Account, (ConnectionConversation)conversations[0]))

@@ -15,7 +15,7 @@ public class GroupConversation : Conversation
 
     public override void SendMessage(Message message)
     {
-        if (!_group.Users.Any(user => user.Id == message.Sender.Id))
+        if (!_group.Users.Exists(user => user.Id == message.Sender.Id))
         {
             throw new ArgumentException($"Message {message} cannot be sent to conversation {ConversationId}, as the sender is not part of the conversation.");
         }

@@ -7,9 +7,9 @@ using RecipeSocialMediaAPI.Domain.Models.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 
-public record GetRecipeByIdQuery(string Id) : IRequest<RecipeDetailedDTO>;
+public record GetRecipeByIdQuery(string Id) : IRequest<RecipeDetailedDto>;
 
-internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDetailedDTO>
+internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, RecipeDetailedDto>
 {
     private readonly IRecipeMapper _mapper;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
@@ -20,7 +20,7 @@ internal class GetRecipeByIdHandler : IRequestHandler<GetRecipeByIdQuery, Recipe
         _recipeQueryRepository = recipeQueryRepository;
     }
 
-    public async Task<RecipeDetailedDTO> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)
+    public async Task<RecipeDetailedDto> Handle(GetRecipeByIdQuery request, CancellationToken cancellationToken)
     {
         Recipe recipe = await _recipeQueryRepository.GetRecipeByIdAsync(request.Id, cancellationToken)
             ?? throw new RecipeNotFoundException(request.Id);

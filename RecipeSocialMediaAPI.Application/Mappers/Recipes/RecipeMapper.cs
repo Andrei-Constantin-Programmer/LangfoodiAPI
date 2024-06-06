@@ -14,39 +14,39 @@ public class RecipeMapper : IRecipeMapper
         _userMapper = userMapper;
     }
 
-    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDTO servingSizeDTO)
+    public ServingSize MapServingSizeDtoToServingSize(ServingSizeDto servingSizeDTO)
     {
         return new(servingSizeDTO.Quantity, servingSizeDTO.UnitOfMeasurement);
     }
 
-    public ServingSizeDTO MapServingSizeToServingSizeDto(ServingSize servingSize)
+    public ServingSizeDto MapServingSizeToServingSizeDto(ServingSize servingSize)
     {
-        return new ServingSizeDTO(servingSize.Quantity, servingSize.UnitOfMeasurement);
+        return new ServingSizeDto(servingSize.Quantity, servingSize.UnitOfMeasurement);
     }
 
-    public Ingredient MapIngredientDtoToIngredient(IngredientDTO ingredientDTO)
+    public Ingredient MapIngredientDtoToIngredient(IngredientDto ingredientDTO)
     {
         return new(ingredientDTO.Name, ingredientDTO.Quantity, ingredientDTO.UnitOfMeasurement);
     }
 
-    public IngredientDTO MapIngredientToIngredientDto(Ingredient ingredient)
+    public IngredientDto MapIngredientToIngredientDto(Ingredient ingredient)
     {
-        return new IngredientDTO(ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement);
+        return new IngredientDto(ingredient.Name, ingredient.Quantity, ingredient.UnitOfMeasurement);
     }
 
-    public RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDTO recipeStepDTO)
+    public RecipeStep MapRecipeStepDtoToRecipeStep(RecipeStepDto recipeStepDTO)
     {
         return new(recipeStepDTO.Text, recipeStepDTO.ImageUrl is null ? null : new RecipeImage(recipeStepDTO.ImageUrl));
     }
 
-    public RecipeStepDTO MapRecipeStepToRecipeStepDto(RecipeStep recipeStep)
+    public RecipeStepDto MapRecipeStepToRecipeStepDto(RecipeStep recipeStep)
     {
-        return new RecipeStepDTO(recipeStep.Text, recipeStep.Image?.ImageUrl);
+        return new RecipeStepDto(recipeStep.Text, recipeStep.Image?.ImageUrl);
     }
 
-    public RecipeDetailedDTO MapRecipeToRecipeDetailedDto(Recipe recipe)
+    public RecipeDetailedDto MapRecipeToRecipeDetailedDto(Recipe recipe)
     {
-        return new RecipeDetailedDTO(
+        return new RecipeDetailedDto(
             Id: recipe.Id,
             Title: recipe.Title,
             Description: recipe.Description,
@@ -55,7 +55,7 @@ public class RecipeMapper : IRecipeMapper
             Ingredients: recipe.Guide.Ingredients
                 .Select(MapIngredientToIngredientDto)
                 .ToList(),
-            RecipeSteps: new Stack<RecipeStepDTO>(recipe.Guide.Steps
+            RecipeSteps: new Stack<RecipeStepDto>(recipe.Guide.Steps
                 .Select(MapRecipeStepToRecipeStepDto)),
             KiloCalories: recipe.Guide.KiloCalories,
             NumberOfServings: recipe.Guide.NumberOfServings,
@@ -69,9 +69,9 @@ public class RecipeMapper : IRecipeMapper
         );
     }
 
-    public RecipeDTO MapRecipeToRecipeDto(Recipe recipe)
+    public RecipeDto MapRecipeToRecipeDto(Recipe recipe)
     {
-        return new RecipeDTO(
+        return new RecipeDto(
             Id: recipe.Id,
             Title: recipe.Title,
             Description: recipe.Description,
@@ -86,9 +86,9 @@ public class RecipeMapper : IRecipeMapper
         );
     }
 
-    public RecipePreviewDTO MapRecipeToRecipePreviewDto(Recipe recipe)
+    public RecipePreviewDto MapRecipeToRecipePreviewDto(Recipe recipe)
     {
-        return new RecipePreviewDTO(
+        return new RecipePreviewDto(
             recipe.Id,
             recipe.Title,
             recipe.ThumbnailId

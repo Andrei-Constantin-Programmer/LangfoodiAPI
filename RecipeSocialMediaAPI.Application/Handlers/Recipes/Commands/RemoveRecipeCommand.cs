@@ -12,7 +12,7 @@ public record RemoveRecipeCommand(string Id) : IRequest;
 
 internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 {
-    private readonly ILogger<RemoveRecipeCommand> _logger;
+    private readonly ILogger<RemoveRecipeHandler> _logger;
     private readonly IRecipePersistenceRepository _recipePersistenceRepository;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
     private readonly ICloudinaryWebClient _cloudinaryWebClient;
@@ -22,7 +22,7 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
         IRecipePersistenceRepository recipePersistenceRepository,
         IRecipeQueryRepository recipeQueryRepository,
         ICloudinaryWebClient cloudinaryWebClient,
-        ILogger<RemoveRecipeCommand> logger,
+        ILogger<RemoveRecipeHandler> logger,
         IPublisher publisher)
     {
         _recipePersistenceRepository = recipePersistenceRepository;
@@ -34,7 +34,7 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 
     public async Task Handle(RemoveRecipeCommand request, CancellationToken cancellationToken)
     {
-        Recipe? recipeToRemove = await _recipeQueryRepository.GetRecipeByIdAsync(request.Id, cancellationToken) 
+        Recipe? recipeToRemove = await _recipeQueryRepository.GetRecipeByIdAsync(request.Id, cancellationToken)
             ?? throw new RecipeNotFoundException(request.Id);
 
         var imageIds = recipeToRemove.Guide.Steps
@@ -54,7 +54,7 @@ internal class RemoveRecipeHandler : IRequestHandler<RemoveRecipeCommand>
 
         if (!areImagesRemoved)
         {
-            _logger.LogWarning("Some of the images for recipe {RecipeId} failed to be removed, ids: {ImageIds}", recipeToRemove.Id, string.Join(",",imageIds));
+            _logger.LogWarning("Some of the images for recipe {RecipeId} failed to be removed, ids: {ImageIds}", recipeToRemove.Id, string.Join(",", imageIds));
         }
 
         if (!isRecipeRemoved)

@@ -75,12 +75,12 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<ConversationDTO>>();
-        
+        var data = await result.Content.ReadFromJsonAsync<List<ConversationDto>>();
+
         data![0].Id.Should().Be(conversation1.ConversationId);
         data[0].ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data[0].IsGroup.Should().BeFalse();
-        
+
         data[1].Id.Should().Be(conversation2.ConversationId);
         data[1].ConnectionOrGroupId.Should().Be(group.GroupId);
         data[1].IsGroup.Should().BeTrue();
@@ -103,7 +103,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<ConversationDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<ConversationDto>>();
         data.Should().BeEmpty();
     }
 
@@ -187,7 +187,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
         data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().BeNull();
@@ -216,7 +216,7 @@ public class ConversationEndpointsTests : EndpointTestBase
             .CreateMessageAsync(user2, "Some message", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), null, new());
         Message testMessage3 = await _fakeMessageRepository
             .CreateMessageAsync(user1.Account, "Last message", new(), new(), new(2024, 3, 3, 0, 0, 0, TimeSpan.Zero), null, new());
-        
+
         conversation.SendMessage(testMessage1);
         conversation.SendMessage(testMessage3);
         conversation.SendMessage(testMessage2);
@@ -229,7 +229,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
         data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(connection.ConnectionId);
         data.LastMessage.Should().NotBeNull();
@@ -328,7 +328,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
         data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().BeNull();
@@ -371,7 +371,7 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
         data!.Id.Should().Be(conversation.ConversationId);
         data.ConnectionOrGroupId.Should().Be(group.GroupId);
         data.LastMessage.Should().NotBeNull();
@@ -455,7 +455,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Given
         var user1 = await _fakeUserRepository
             .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakePasswordCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        
+
         var user2 = await _fakeUserRepository
             .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakePasswordCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
@@ -470,7 +470,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
 
         data.Should().NotBeNull();
         data!.ConnectionOrGroupId.Should().Be(newConnection.ConnectionId);
@@ -530,7 +530,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         var user2 = await _fakeUserRepository
             .CreateUserAsync(_testUser2.Account.Handler, _testUser2.Account.UserName, _testUser2.Email, _fakePasswordCryptoService.Encrypt(_testUser2.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
-        Group newGroup = await _fakeGroupRepository.CreateGroupAsync("testGroup","This is a test group.",new List<IUserAccount> { user1.Account, user2.Account});
+        Group newGroup = await _fakeGroupRepository.CreateGroupAsync("testGroup", "This is a test group.", new List<IUserAccount> { user1.Account, user2.Account });
 
         var token = _bearerTokenGeneratorService.GenerateToken(user1);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -541,7 +541,7 @@ public class ConversationEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var data = await result.Content.ReadFromJsonAsync<ConversationDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConversationDto>();
 
         data.Should().NotBeNull();
         data!.ConnectionOrGroupId.Should().Be(newGroup.GroupId);
@@ -626,8 +626,8 @@ public class ConversationEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        message3.SeenBy.Should().Contain(user1.Account);
-        message4.SeenBy.Should().Contain(user1.Account);
+        message3.GetSeenBy().Should().Contain(user1.Account);
+        message4.GetSeenBy().Should().Contain(user1.Account);
     }
 
     [Fact]

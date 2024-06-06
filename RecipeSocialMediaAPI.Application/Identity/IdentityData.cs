@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.Identity;
 
-public class IdentityData
+public static class IdentityData
 {
     public static readonly string AdminUserClaimName = "admin";
     public static readonly string AdminUserPolicyName = "Admin";

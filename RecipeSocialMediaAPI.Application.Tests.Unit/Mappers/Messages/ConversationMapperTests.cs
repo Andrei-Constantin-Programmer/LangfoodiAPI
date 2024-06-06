@@ -95,7 +95,7 @@ public class ConversationMapperTests
             new TestMessage("m4", user2, new(2024, 1, 1, 1, 0, 25, TimeSpan.Zero), null, seenBy : new() { user1, user2 }),
         };
 
-        MessageDTO lastMessageDTO = new(
+        MessageDto lastMessageDTO = new(
             lastMessage.Id,
             new(user1.Id, user1.UserName),
             new() { user1.Id, user2.Id },
@@ -151,7 +151,7 @@ public class ConversationMapperTests
             new TestMessage("m4", user2, new(2024, 1, 1, 1, 0, 25, TimeSpan.Zero), null, seenBy : new() { user2 }),
         };
 
-        MessageDTO lastMessageDTO = new(
+        MessageDto lastMessageDTO = new(
             lastMessage.Id,
             new(user1.Id, user1.UserName),
             new() { user1.Id, user2.Id },
@@ -247,7 +247,7 @@ public class ConversationMapperTests
             new TestMessage("m4", user2, new(2024, 1, 1, 1, 0, 25, TimeSpan.Zero), null, seenBy : new() { user1, user2 }),
         };
 
-        MessageDTO lastMessageDTO = new(
+        MessageDto lastMessageDTO = new(
             lastMessage.Id,
             new(user1.Id, user1.UserName),
             new() { user1.Id, user2.Id },
@@ -302,7 +302,7 @@ public class ConversationMapperTests
             new TestMessage("m4", user2, new(2024, 1, 1, 1, 0, 25, TimeSpan.Zero), null, seenBy : new() { user2 }),
         };
 
-        MessageDTO lastMessageDTO = new(
+        MessageDto lastMessageDTO = new(
             lastMessage.Id,
             new(user1.Id, user1.UserName),
             new() { user1.Id, user2.Id },

@@ -36,8 +36,8 @@ public class GroupConversationTests
             UserName = "Username3",
             AccountCreationDate = new(2023, 10, 10, 22, 30, 0, TimeSpan.Zero)
         };
-        List<IUserAccount> users = new List<IUserAccount>{ account1, account2, account3 };
-        _group = new ("Group", "Group1", "Group 1 Description", users.ToArray());
+        List<IUserAccount> users = new List<IUserAccount> { account1, account2, account3 };
+        _group = new("Group", "Group1", "Group 1 Description", users.ToArray());
 
         _groupConversationSUT = new(_group, "ConvoId");
     }
@@ -76,6 +76,6 @@ public class GroupConversationTests
         _groupConversationSUT.SendMessage(message);
 
         // Then
-        _groupConversationSUT.Messages.Should().Contain(message);
+        _groupConversationSUT.GetMessages().Should().Contain(message);
     }
 }

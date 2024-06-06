@@ -7,9 +7,9 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging.Conversations;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Queries;
 
-public record GetMessagesByConversationQuery(string ConversationId) : IRequest<List<MessageDTO>>;
+public record GetMessagesByConversationQuery(string ConversationId) : IRequest<List<MessageDto>>;
 
-internal class GetMessagesByConversationHandler : IRequestHandler<GetMessagesByConversationQuery, List<MessageDTO>>
+internal class GetMessagesByConversationHandler : IRequestHandler<GetMessagesByConversationQuery, List<MessageDto>>
 {
     private readonly IConversationQueryRepository _conversationQueryRepository;
     private readonly IMessageMapper _messageMapper;
@@ -20,12 +20,12 @@ internal class GetMessagesByConversationHandler : IRequestHandler<GetMessagesByC
         _messageMapper = messageMapper;
     }
 
-    public async Task<List<MessageDTO>> Handle(GetMessagesByConversationQuery request, CancellationToken cancellationToken)
+    public async Task<List<MessageDto>> Handle(GetMessagesByConversationQuery request, CancellationToken cancellationToken)
     {
         Conversation conversation = await _conversationQueryRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken)
             ?? throw new ConversationNotFoundException($"No conversation found with id {request.ConversationId}");
 
-        return conversation.Messages
+        return conversation.GetMessages()
             .Select(_messageMapper.MapMessageToMessageDTO)
             .ToList();
     }

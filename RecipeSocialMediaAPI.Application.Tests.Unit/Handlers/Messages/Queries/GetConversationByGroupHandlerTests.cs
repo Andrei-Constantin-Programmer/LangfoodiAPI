@@ -68,7 +68,7 @@ public class GetConversationByGroupHandlerTests
             .Setup(repo => repo.GetConversationByGroupAsync(group.GroupId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
 
-        ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, null, new() { user1.Id, user2.Id });
+        ConversationDto conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, null, new() { user1.Id, user2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToGroupConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -106,7 +106,7 @@ public class GetConversationByGroupHandlerTests
             Handler = "user2",
             UserName = "User 2"
         };
-        UserPreviewForMessageDTO user2Preview = new(
+        UserPreviewForMessageDto user2Preview = new(
             user2.Id,
             user2.UserName,
             user2.ProfileImageId
@@ -121,7 +121,7 @@ public class GetConversationByGroupHandlerTests
                 Password = "Test@123"
             });
 
-        MessageDTO lastMessageDto = new("3", user2Preview, new(), new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
+        MessageDto lastMessageDto = new("3", user2Preview, new(), new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
 
         List<Message> messages = new()
         {
@@ -135,7 +135,7 @@ public class GetConversationByGroupHandlerTests
         Group group = new("group1", "Group 1", "Group Description", new List<IUserAccount>() { user1, user2 });
         GroupConversation conversation = new(group, "convo1", messages);
 
-        ConversationDTO conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, lastMessageDto, new() { user1.Id, user2.Id });
+        ConversationDto conversationDto = new(conversation.ConversationId, group.GroupId, true, group.GroupName, null, lastMessageDto, new() { user1.Id, user2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToGroupConversationDTO(user1, conversation))
             .Returns(conversationDto);

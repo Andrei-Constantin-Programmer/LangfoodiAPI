@@ -101,7 +101,7 @@ public class DataCryptoServiceTests
             {
                 EncryptionKey = "yeKipAaideMlaicoSerahSepiceRpmeT"
             });
-        
+
         var cipherText = new DataCryptoService(differentOptions.Object, _loggerMock.Object)
             .Encrypt(plainText);
 
@@ -109,7 +109,7 @@ public class DataCryptoServiceTests
         var result = _dataCryptoServiceSUT.Decrypt(cipherText);
 
         // Then
-        result.Should().BeEmpty();
+        result.Should().BeNullOrEmpty();
         _loggerMock
             .Verify(logger => logger.Log(
                     LogLevel.Error,

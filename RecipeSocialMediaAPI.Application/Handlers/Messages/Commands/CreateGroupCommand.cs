@@ -8,9 +8,9 @@ using RecipeSocialMediaAPI.Domain.Models.Messaging;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record CreateGroupCommand(NewGroupContract Contract) : IRequest<GroupDTO>;
+public record CreateGroupCommand(NewGroupContract Contract) : IRequest<GroupDto>;
 
-internal class CreateGroupHandler : IRequestHandler<CreateGroupCommand, GroupDTO>
+internal class CreateGroupHandler : IRequestHandler<CreateGroupCommand, GroupDto>
 {
     private readonly IGroupPersistenceRepository _groupPersistenceRepository;
     private readonly IUserQueryRepository _userQueryRepository;
@@ -21,7 +21,7 @@ internal class CreateGroupHandler : IRequestHandler<CreateGroupCommand, GroupDTO
         _userQueryRepository = userQueryRepository;
     }
 
-    public async Task<GroupDTO> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
+    public async Task<GroupDto> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
     {
         string groupName = request.Contract.Name;
         string groupDesciption = request.Contract.Description;
@@ -34,7 +34,7 @@ internal class CreateGroupHandler : IRequestHandler<CreateGroupCommand, GroupDTO
         Group createdGroup = await _groupPersistenceRepository
             .CreateGroupAsync(groupName, groupDesciption, userAccounts, cancellationToken);
 
-        return new GroupDTO(
+        return new GroupDto(
             createdGroup.GroupId,
             createdGroup.GroupName,
             createdGroup.GroupDescription,

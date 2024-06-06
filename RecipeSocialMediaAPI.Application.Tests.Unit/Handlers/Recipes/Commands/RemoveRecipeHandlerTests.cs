@@ -15,7 +15,7 @@ namespace RecipeSocialMediaAPI.Application.Tests.Unit.Handlers.Recipes.Commands;
 
 public class RemoveRecipeHandlerTests
 {
-    private readonly Mock<ILogger<RemoveRecipeCommand>> _loggerMock;
+    private readonly Mock<ILogger<RemoveRecipeHandler>> _loggerMock;
     private readonly Mock<ICloudinaryWebClient> _cloudinaryWebClientMock;
     private readonly Mock<IRecipePersistenceRepository> _recipePersistenceRepositoryMock;
     private readonly Mock<IRecipeQueryRepository> _recipeQueryRepositoryMock;
@@ -27,7 +27,7 @@ public class RemoveRecipeHandlerTests
 
     public RemoveRecipeHandlerTests()
     {
-        _loggerMock = new Mock<ILogger<RemoveRecipeCommand>>();
+        _loggerMock = new Mock<ILogger<RemoveRecipeHandler>>();
         _recipePersistenceRepositoryMock = new Mock<IRecipePersistenceRepository>();
         _recipeQueryRepositoryMock = new Mock<IRecipeQueryRepository>();
         _cloudinaryWebClientMock = new Mock<ICloudinaryWebClient>();
@@ -72,10 +72,10 @@ public class RemoveRecipeHandlerTests
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new Recipe(
-                "1", 
+                "1",
                 "title",
                 new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
-                "desc", 
+                "desc",
                 new TestUserAccount
                 {
                     Id = "1",
@@ -83,7 +83,7 @@ public class RemoveRecipeHandlerTests
                     UserName = "name",
                     AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
                 },
-                _testDate, 
+                _testDate,
                 _testDate
             ));
 
@@ -114,10 +114,10 @@ public class RemoveRecipeHandlerTests
         _recipeQueryRepositoryMock
             .Setup(x => x.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new Recipe(
-                "1", 
+                "1",
                 "title",
                 new RecipeGuide(new List<Ingredient>(), new Stack<RecipeStep>()),
-                "desc", 
+                "desc",
                 new TestUserAccount
                 {
                     Id = "1",
@@ -125,7 +125,7 @@ public class RemoveRecipeHandlerTests
                     UserName = "name",
                     AccountCreationDate = new(2023, 10, 9, 0, 0, 0, TimeSpan.Zero)
                 },
-                _testDate, 
+                _testDate,
                 _testDate,
                 new HashSet<string>()
             ));
@@ -307,8 +307,8 @@ public class RemoveRecipeHandlerTests
         // Then
         _publisherMock
             .Verify(publisher => publisher.Publish(
-                    It.Is<RecipeRemovedNotification>(notification => notification.RecipeId == recipeId), 
-                    It.IsAny<CancellationToken>()), 
+                    It.Is<RecipeRemovedNotification>(notification => notification.RecipeId == recipeId),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 }

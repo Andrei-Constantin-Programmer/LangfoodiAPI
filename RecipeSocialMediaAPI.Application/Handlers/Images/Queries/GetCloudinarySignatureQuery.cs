@@ -4,9 +4,9 @@ using RecipeSocialMediaAPI.Application.WebClients.Interfaces;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Images.Queries;
 
-public record class GetCloudinarySignatureQuery() : IRequest<CloudinarySignatureDTO>;
+public record class GetCloudinarySignatureQuery() : IRequest<CloudinarySignatureDto>;
 
-internal class GetCloudinarySignatureHandler : IRequestHandler<GetCloudinarySignatureQuery, CloudinarySignatureDTO>
+internal class GetCloudinarySignatureHandler : IRequestHandler<GetCloudinarySignatureQuery, CloudinarySignatureDto>
 {
     private readonly ICloudinaryWebClient _cloudinaryWebClient;
 
@@ -15,9 +15,9 @@ internal class GetCloudinarySignatureHandler : IRequestHandler<GetCloudinarySign
         _cloudinaryWebClient = cloudinaryWebClient;
     }
 
-    public async Task<CloudinarySignatureDTO> Handle(GetCloudinarySignatureQuery request, CancellationToken cancellationToken)
+    public async Task<CloudinarySignatureDto> Handle(GetCloudinarySignatureQuery request, CancellationToken cancellationToken)
     {
-        CloudinarySignatureDTO signature = _cloudinaryWebClient.GenerateSignature()
+        CloudinarySignatureDto signature = _cloudinaryWebClient.GenerateSignature()
             ?? throw new InvalidOperationException("Failed to generate signature");
 
         return await Task.FromResult(signature);

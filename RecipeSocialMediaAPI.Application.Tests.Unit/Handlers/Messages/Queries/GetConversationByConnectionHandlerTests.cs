@@ -67,7 +67,7 @@ public class GetConversationByConnectionHandlerTests
             .Setup(repo => repo.GetConversationByConnectionAsync(connection.ConnectionId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
 
-        ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, null, new() { user1.Id, user2.Id });
+        ConversationDto conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, null, new() { user1.Id, user2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1, conversation))
             .Returns(conversationDto);
@@ -115,7 +115,7 @@ public class GetConversationByConnectionHandlerTests
                 Password = "Test@123"
             });
 
-        MessageDTO lastMessageDto = new("3", new(user2.Id, user1.UserName), new(), new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
+        MessageDto lastMessageDto = new("3", new(user2.Id, user1.UserName), new(), new(2023, 1, 1, 14, 35, 0, TimeSpan.Zero));
 
         List<Message> messages = new()
         {
@@ -129,7 +129,7 @@ public class GetConversationByConnectionHandlerTests
         Connection connection = new("conn1", user1, user2, ConnectionStatus.Pending);
         ConnectionConversation conversation = new(connection, "convo1", messages);
 
-        ConversationDTO conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, lastMessageDto, new() { user1.Id, user2.Id });
+        ConversationDto conversationDto = new(conversation.ConversationId, connection.ConnectionId, false, user2.UserName, user2.ProfileImageId, lastMessageDto, new() { user1.Id, user2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1, conversation))
             .Returns(conversationDto);

@@ -11,7 +11,7 @@ public abstract record MongoDocument
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; internal set; } = null;
 
-    public MongoDocument(string? id)
+    protected MongoDocument(string? id)
     {
         Id = id;
     }

@@ -27,11 +27,6 @@ public class ConversationDocumentToModelMapper : IConversationDocumentToModelMap
             return new ConnectionConversation(connection, conversationDocument.Id, messages);
         }
 
-        if (group is not null)
-        {
-            return new GroupConversation(group, conversationDocument.Id, messages);
-        }
-
-        throw new MalformedConversationDocumentException(conversationDocument);
+        return new GroupConversation(group!, conversationDocument.Id, messages);
     }
 }

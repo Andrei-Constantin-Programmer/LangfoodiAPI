@@ -10,9 +10,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Users.Queries;
 
-public record GetUsersQuery(string UserId, string ContainedString, UserQueryOptions QueryOptions) : IRequest<List<UserAccountDTO>>;
+public record GetUsersQuery(string UserId, string ContainedString, UserQueryOptions QueryOptions) : IRequest<List<UserAccountDto>>;
 
-internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccountDTO>>
+internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccountDto>>
 {
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserMapper _userMapper;
@@ -25,7 +25,7 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
         _connectionQueryRepository = connectionQueryRepository;
     }
 
-    public async Task<List<UserAccountDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+    public async Task<List<UserAccountDto>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
     {
         IUserAccount queryingUser = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");
@@ -51,13 +51,13 @@ internal class GetUsersHandler : IRequestHandler<GetUsersQuery, List<UserAccount
                 queryingUser,
                 allUsers,
                 user => connections
-                    .Any(conn => conn.Account1.Id == user.Id
+                    .Exists(conn => conn.Account1.Id == user.Id
                               || conn.Account2.Id == user.Id)),
             UserQueryOptions.NotConnected => GetUsersFilteredByConnection(
                 queryingUser,
                 allUsers,
                 user => connections
-                    .All(conn => conn.Account1.Id != user.Id
+                    .TrueForAll(conn => conn.Account1.Id != user.Id
                               && conn.Account2.Id != user.Id)),
 
             _ => throw new ArgumentException($"Unsupported query options {queryOptions}")

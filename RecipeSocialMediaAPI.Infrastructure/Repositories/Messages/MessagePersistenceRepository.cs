@@ -28,7 +28,15 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         _dataCryptoService = dataCryptoService;
     }
 
-    public async Task<Message> CreateMessageAsync(IUserAccount sender, string? text, List<string>? recipeIds, List<string>? imageURLs, DateTimeOffset sentDate, Message? messageRepliedTo, List<string> seenByUserIds, CancellationToken cancellationToken = default)
+    public async Task<Message> CreateMessageAsync(
+        IUserAccount sender,
+        string? text,
+        List<string>? recipeIds,
+        List<string>? imageURLs,
+        DateTimeOffset sentDate,
+        Message? messageRepliedTo,
+        List<string> seenByUserIds,
+        CancellationToken cancellationToken = default)
     {
         MessageDocument messageDocument = await _messageCollection.InsertAsync(new MessageDocument(
             SenderId: sender.Id,
@@ -56,7 +64,7 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
 
                     _ => throw new Exception($"Unable to update message with id {message.Id}")
                 },
-                SeenByUserIds: message.SeenBy.Select(user => user.Id).ToList(),
+                SeenByUserIds: message.GetSeenBy().Select(user => user.Id).ToList(),
                 SentDate: message.SentDate,
                 LastUpdatedDate: message.UpdatedDate,
                 MessageRepliedToId: message.RepliedToMessage?.Id
@@ -71,10 +79,10 @@ public class MessagePersistenceRepository : IMessagePersistenceRepository
         }
     }
 
-    public async Task<bool> DeleteMessageAsync(Message message, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteMessageAsync(Message message, CancellationToken cancellationToken = default)
         => await DeleteMessageAsync(message.Id, cancellationToken);
 
-    public async Task<bool> DeleteMessageAsync(string messageId, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteMessageAsync(string messageId, CancellationToken cancellationToken = default)
         => await _messageCollection.DeleteAsync(messageDoc => messageDoc.Id == messageId, cancellationToken);
 
     private string? EncryptTextMessage(string? textMessage) =>

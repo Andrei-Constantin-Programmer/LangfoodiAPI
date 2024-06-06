@@ -30,7 +30,7 @@ public static class AuthenticationEndpoints
             return Results.Ok(successfulAuthentication);
         })
             .WithDescription("Authenticates user. If successful, returns the user and a bearer token.")
-            .Produces<SuccessfulAuthenticationDTO>(StatusCodes.Status200OK)
+            .Produces<SuccessfulAuthenticationDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);

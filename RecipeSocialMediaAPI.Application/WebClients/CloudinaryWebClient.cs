@@ -72,7 +72,7 @@ public class CloudinaryWebClient : ICloudinaryWebClient
         return response.IsSuccessStatusCode;
     }
 
-    public CloudinarySignatureDTO? GenerateSignature(string? publicId = null)
+    public CloudinarySignatureDto? GenerateSignature(string? publicId = null)
     {
         try
         {

@@ -30,7 +30,7 @@ public static class GroupEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets a group by its id.")
-            .Produces<GroupDTO>(StatusCodes.Status200OK)
+            .Produces<GroupDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -44,7 +44,7 @@ public static class GroupEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets all groups for a user.")
-            .Produces<List<GroupDTO>>(StatusCodes.Status200OK)
+            .Produces<List<GroupDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -58,7 +58,7 @@ public static class GroupEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Creates a group.")
-            .Produces<GroupDTO>(StatusCodes.Status200OK)
+            .Produces<GroupDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)

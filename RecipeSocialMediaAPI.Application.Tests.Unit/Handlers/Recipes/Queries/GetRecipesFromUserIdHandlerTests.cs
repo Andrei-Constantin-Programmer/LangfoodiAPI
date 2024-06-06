@@ -67,7 +67,7 @@ public class GetRecipesFromUserIdHandlerTests
             _testDate
         );
 
-        RecipeDTO expectedResult = new(
+        RecipeDto expectedResult = new(
             Id: testRecipe.Id,
             Title: testRecipe.Title,
             Description: testRecipe.Description,

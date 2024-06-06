@@ -6,12 +6,12 @@ namespace RecipeSocialMediaAPI.Application.Cryptography;
 public class PasswordCryptoService : IPasswordCryptoService
 {
 
-    public bool ArePasswordsTheSame(string clientPassword, string serverPassword)
+    public bool ArePasswordsTheSame(string decryptedPassword, string encryptedPassword)
     {
         try
         {
-            return BCrypter.Verify(clientPassword, serverPassword)
-                   || clientPassword == serverPassword;
+            return BCrypter.Verify(decryptedPassword, encryptedPassword)
+                   || decryptedPassword == encryptedPassword;
         }
         catch (Exception)
         {

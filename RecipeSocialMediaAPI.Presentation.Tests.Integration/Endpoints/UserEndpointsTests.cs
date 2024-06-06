@@ -32,7 +32,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = (await result.Content.ReadFromJsonAsync<SuccessfulAuthenticationDTO>())!;
+        var data = (await result.Content.ReadFromJsonAsync<SuccessfulAuthenticationDto>())!;
 
         data.User.Id.Should().NotBeNull();
         data.User.UserName.Should().Be(contract.UserName);
@@ -374,7 +374,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDto>>();
         data.Should().NotBeNull();
         data.Should().BeEmpty();
     }
@@ -401,7 +401,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDto>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(2);
 
@@ -436,7 +436,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDto>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(1);
 
@@ -462,7 +462,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDto>>();
         data.Should().NotBeNull();
         data.Should().BeEmpty();
     }
@@ -492,7 +492,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDto>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(1);
 
@@ -542,7 +542,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDto>>();
         data.Should().NotBeNull();
         data.Should().BeEmpty();
     }
@@ -572,7 +572,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<UserAccountDto>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(1);
 

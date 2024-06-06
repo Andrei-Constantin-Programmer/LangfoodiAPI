@@ -76,7 +76,7 @@ public class CreateConnectionConversationHandlerTests
             .Setup(repo => repo.CreateConnectionConversationAsync(connection, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedConversation);
 
-        ConversationDTO conversationDto = new(expectedConversation.ConversationId, connection.ConnectionId, false, userAccount2.UserName, userAccount2.ProfileImageId, null, new() { userAccount1.Id, userAccount2.Id });
+        ConversationDto conversationDto = new(expectedConversation.ConversationId, connection.ConnectionId, false, userAccount2.UserName, userAccount2.ProfileImageId, null, new() { userAccount1.Id, userAccount2.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(userAccount1, expectedConversation))
             .Returns(conversationDto);

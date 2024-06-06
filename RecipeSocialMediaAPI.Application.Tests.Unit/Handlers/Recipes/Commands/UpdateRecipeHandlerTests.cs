@@ -53,8 +53,8 @@ public class UpdateRecipeHandlerTests
             Title: "Test",
             Description: "Test",            
             Tags: new HashSet<string>(),
-            Ingredients: new List<IngredientDTO>(),
-            RecipeSteps: new Stack<RecipeStepDTO>(),
+            Ingredients: new List<IngredientDto>(),
+            RecipeSteps: new Stack<RecipeStepDto>(),
             ThumbnailId: "img_id_1"
         );
 
@@ -81,8 +81,8 @@ public class UpdateRecipeHandlerTests
             Title: "Test",
             Description: "Test",
             Tags: new HashSet<string>(),
-            Ingredients: new List<IngredientDTO>(),
-            RecipeSteps: new Stack<RecipeStepDTO>(),
+            Ingredients: new List<IngredientDto>(),
+            RecipeSteps: new Stack<RecipeStepDto>(),
             ThumbnailId: "img_id_1"
         );
 
@@ -130,8 +130,8 @@ public class UpdateRecipeHandlerTests
             Title: "Test",
             Description: "Test",
             Tags: new HashSet<string>(),
-            Ingredients: new List<IngredientDTO>(),
-            RecipeSteps: new Stack<RecipeStepDTO>(),
+            Ingredients: new List<IngredientDto>(),
+            RecipeSteps: new Stack<RecipeStepDto>(),
             ThumbnailId: "img_id_1"
         );
 

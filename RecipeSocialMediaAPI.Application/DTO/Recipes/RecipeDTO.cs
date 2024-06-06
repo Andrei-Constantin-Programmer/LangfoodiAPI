@@ -1,6 +1,6 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Recipes;
 
-public record RecipeDTO(
+public record RecipeDto(
     string Id,
     string Title,
     string Description,

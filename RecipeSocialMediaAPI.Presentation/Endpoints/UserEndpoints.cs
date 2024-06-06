@@ -33,7 +33,7 @@ public static class UserEndpoints
                 .Send(new GetUsersQuery(userId, containedString, containSelf ? UserQueryOptions.All : UserQueryOptions.NonSelf), cancellationToken));
         })
             .WithDescription("Gets all users whose handle or username contain the given string.")
-            .Produces<List<UserAccountDTO>>(StatusCodes.Status200OK)
+            .Produces<List<UserAccountDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -47,7 +47,7 @@ public static class UserEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets all connected users whose handle or username contain the given string.")
-            .Produces<List<UserAccountDTO>>(StatusCodes.Status200OK)
+            .Produces<List<UserAccountDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -62,7 +62,7 @@ public static class UserEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets all unconnected users whose handle or username contain the given string.")
-            .Produces<List<UserAccountDTO>>(StatusCodes.Status200OK)
+            .Produces<List<UserAccountDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -75,7 +75,7 @@ public static class UserEndpoints
             return Results.Ok(await sender.Send(new AddUserCommand(newUserContract), cancellationToken));
         })
             .WithDescription("Registers a new user. Returns newly created user and a bearer token.")
-            .Produces<SuccessfulAuthenticationDTO>(StatusCodes.Status200OK)
+            .Produces<SuccessfulAuthenticationDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 

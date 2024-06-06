@@ -18,7 +18,16 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         _recipeCollection = mongoCollectionFactory.CreateCollection<RecipeDocument>();
     }
 
-    public async Task<Recipe> CreateRecipeAsync(string title, RecipeGuide recipeGuide, string description, IUserAccount chef, ISet<string> tags, DateTimeOffset creationDate, DateTimeOffset lastUpdatedDate, string? thumbnailId, CancellationToken cancellationToken = default)
+    public async Task<Recipe> CreateRecipeAsync(
+        string title,
+        RecipeGuide recipeGuide,
+        string description,
+        IUserAccount chef,
+        ISet<string> tags,
+        DateTimeOffset creationDate,
+        DateTimeOffset lastUpdatedDate,
+        string? thumbnailId,
+        CancellationToken cancellationToken = default)
     {
         var recipeDocument = await _recipeCollection
             .InsertAsync(new RecipeDocument(
@@ -40,7 +49,7 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
         return _mapper.MapRecipeDocumentToRecipe(recipeDocument, chef);
     }
 
-    public async Task<bool> UpdateRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default) => await 
+    public async Task<bool> UpdateRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default) => await
         _recipeCollection.UpdateAsync(
             new RecipeDocument(
                 Id: recipe.Id,
@@ -61,9 +70,9 @@ public class RecipePersistenceRepository : IRecipePersistenceRepository
             cancellationToken
         );
 
-    public async Task<bool> DeleteRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteRecipeAsync(Recipe recipe, CancellationToken cancellationToken = default)
         => await DeleteRecipeAsync(recipe.Id, cancellationToken);
 
-    public async Task<bool> DeleteRecipeAsync(string id, CancellationToken cancellationToken = default) 
+    public async Task<bool> DeleteRecipeAsync(string id, CancellationToken cancellationToken = default)
         => await _recipeCollection.DeleteAsync(recipeDoc => recipeDoc.Id == id, cancellationToken);
 }

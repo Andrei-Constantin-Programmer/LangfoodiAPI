@@ -33,11 +33,11 @@ public class AddRecipeValidatorTests
             NumberOfServings: 1,
             KiloCalories: 2300,
             CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>()
+            Ingredients: new List<IngredientDto>() { new("eggs", 1, "whole") },
+            RecipeSteps: new Stack<RecipeStepDto>()
         );
 
-        testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
+        testContract.RecipeSteps.Push(new RecipeStepDto("step", "url"));
 
         AddRecipeCommand testCommand = new(testContract);
 
@@ -67,8 +67,8 @@ public class AddRecipeValidatorTests
             NumberOfServings: -1,
             CookingTime: -1,
             KiloCalories: -1,
-            Ingredients: new List<IngredientDTO>(),
-            RecipeSteps: new Stack<RecipeStepDTO>()
+            Ingredients: new List<IngredientDto>(),
+            RecipeSteps: new Stack<RecipeStepDto>()
         );
 
         AddRecipeCommand testCommand = new(testContract);
@@ -101,8 +101,8 @@ public class AddRecipeValidatorTests
             Description: "Test",
             ChefId: "1",
             Tags: new HashSet<string>(),
-            Ingredients: new List<IngredientDTO>(),
-            RecipeSteps: new Stack<RecipeStepDTO>()
+            Ingredients: new List<IngredientDto>(),
+            RecipeSteps: new Stack<RecipeStepDto>()
         );
 
         AddRecipeCommand testCommand = new(testContract);

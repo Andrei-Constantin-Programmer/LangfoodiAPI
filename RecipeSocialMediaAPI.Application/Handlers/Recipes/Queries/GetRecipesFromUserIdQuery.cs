@@ -5,9 +5,9 @@ using RecipeSocialMediaAPI.Application.Repositories.Recipes;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Queries;
 
-public record GetRecipesFromUserIdQuery(string Id) : IRequest<List<RecipeDTO>>;
+public record GetRecipesFromUserIdQuery(string Id) : IRequest<List<RecipeDto>>;
 
-internal class GetRecipesFromUserIdHandler : IRequestHandler<GetRecipesFromUserIdQuery, List<RecipeDTO>>
+internal class GetRecipesFromUserIdHandler : IRequestHandler<GetRecipesFromUserIdQuery, List<RecipeDto>>
 {
     private readonly IRecipeMapper _mapper;
     private readonly IRecipeQueryRepository _recipeQueryRepository;
@@ -18,7 +18,7 @@ internal class GetRecipesFromUserIdHandler : IRequestHandler<GetRecipesFromUserI
         _mapper = mapper;
     }
 
-    public async Task<List<RecipeDTO>> Handle(GetRecipesFromUserIdQuery request, CancellationToken cancellationToken)
+    public async Task<List<RecipeDto>> Handle(GetRecipesFromUserIdQuery request, CancellationToken cancellationToken)
     {
         return (await _recipeQueryRepository.GetRecipesByChefIdAsync(request.Id, cancellationToken))
             .Select(_mapper.MapRecipeToRecipeDto)

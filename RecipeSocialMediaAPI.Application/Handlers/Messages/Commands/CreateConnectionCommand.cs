@@ -9,9 +9,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record CreateConnectionCommand(NewConnectionContract Contract) : IRequest<ConnectionDTO>;
+public record CreateConnectionCommand(NewConnectionContract Contract) : IRequest<ConnectionDto>;
 
-internal class CreateConnectionHandler : IRequestHandler<CreateConnectionCommand, ConnectionDTO>
+internal class CreateConnectionHandler : IRequestHandler<CreateConnectionCommand, ConnectionDto>
 {
     private readonly IConnectionPersistenceRepository _connectionPersistenceRepository;
     private readonly IUserQueryRepository _userQueryRepository;
@@ -22,7 +22,7 @@ internal class CreateConnectionHandler : IRequestHandler<CreateConnectionCommand
         _userQueryRepository = userQueryRepository;
     }
 
-    public async Task<ConnectionDTO> Handle(CreateConnectionCommand request, CancellationToken cancellationToken)
+    public async Task<ConnectionDto> Handle(CreateConnectionCommand request, CancellationToken cancellationToken)
     {
         IUserAccount user1 = (await _userQueryRepository
             .GetUserByIdAsync(request.Contract.UserId1, cancellationToken))?.Account
@@ -34,7 +34,7 @@ internal class CreateConnectionHandler : IRequestHandler<CreateConnectionCommand
         IConnection createdConnection = await _connectionPersistenceRepository
             .CreateConnectionAsync(user1, user2, ConnectionStatus.Pending, cancellationToken);
 
-        return new ConnectionDTO(
+        return new ConnectionDto(
             createdConnection.ConnectionId,
             createdConnection.Account1.Id, 
             createdConnection.Account2.Id, 

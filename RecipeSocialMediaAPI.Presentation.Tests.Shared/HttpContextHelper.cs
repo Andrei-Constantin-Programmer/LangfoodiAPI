@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Shared;
 
-public class HttpContextHelper
+public static class HttpContextHelper
 {
     public static async Task<string> GetResponseBodyAsync(HttpContext context)
     {

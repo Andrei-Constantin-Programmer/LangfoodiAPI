@@ -3,14 +3,14 @@ using RecipeSocialMediaAPI.Application.DTO.Users;
 
 namespace RecipeSocialMediaAPI.Application.DTO.Message;
 
-public record MessageDTO(
+public record MessageDto(
     string Id,
-    UserPreviewForMessageDTO UserPreview,
+    UserPreviewForMessageDto UserPreview,
     List<string> SeenByUserIds,
     DateTimeOffset? SentDate = null,
     DateTimeOffset? UpdatedDate = null,
     string? RepliedToMessageId = null,
     string? TextContent = null,
     List<string>? ImageURLs = null,
-    List<RecipePreviewDTO>? Recipes = null
+    List<RecipePreviewDto>? Recipes = null
 );

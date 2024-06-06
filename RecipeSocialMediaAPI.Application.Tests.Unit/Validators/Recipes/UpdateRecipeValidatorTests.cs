@@ -33,12 +33,12 @@ public class UpdateRecipeValidatorTests
             NumberOfServings: 1,
             KiloCalories: 2300,
             CookingTime: 500,
-            Ingredients: new List<IngredientDTO>() { new("eggs", 1, "whole") },
-            RecipeSteps: new Stack<RecipeStepDTO>(),
-            ServingSize: new ServingSizeDTO(30, "kg")
+            Ingredients: new List<IngredientDto>() { new("eggs", 1, "whole") },
+            RecipeSteps: new Stack<RecipeStepDto>(),
+            ServingSize: new ServingSizeDto(30, "kg")
         );
 
-        testContract.RecipeSteps.Push(new RecipeStepDTO("step", "url"));
+        testContract.RecipeSteps.Push(new RecipeStepDto("step", "url"));
 
         UpdateRecipeCommand testCommand = new(testContract);
 
@@ -68,9 +68,9 @@ public class UpdateRecipeValidatorTests
             NumberOfServings: -1,
             CookingTime: -1,
             KiloCalories: -1,
-            Ingredients: new List<IngredientDTO>(),
-            RecipeSteps: new Stack<RecipeStepDTO>(),
-            ServingSize: new ServingSizeDTO(30, "kg")
+            Ingredients: new List<IngredientDto>(),
+            RecipeSteps: new Stack<RecipeStepDto>(),
+            ServingSize: new ServingSizeDto(30, "kg")
         );
 
         UpdateRecipeCommand testCommand = new(testContract);
@@ -103,8 +103,8 @@ public class UpdateRecipeValidatorTests
             Title: "Test",
             Description: "Test",
             Tags: new HashSet<string>(),
-            Ingredients: new List<IngredientDTO>() { },
-            RecipeSteps: new Stack<RecipeStepDTO>()
+            Ingredients: new List<IngredientDto>() { },
+            RecipeSteps: new Stack<RecipeStepDto>()
         );
 
         UpdateRecipeCommand testCommand = new(testContract);

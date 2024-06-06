@@ -38,7 +38,7 @@ public class MessageNotificationServiceTests
     {
         // Given
         string conversationId = "convo1";
-        MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+        MessageDto message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
 
         // When
         await _messageNotificationServiceSUT.NotifyMessageSentAsync(message, conversationId, CancellationToken.None);
@@ -55,10 +55,10 @@ public class MessageNotificationServiceTests
     {
         // Given
         string conversationId = "convo1";
-        MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+        MessageDto message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
 
         _hubContextMock
-            .Setup(context => context.Clients.All.ReceiveMessage(It.IsAny<MessageDTO>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(context => context.Clients.All.ReceiveMessage(It.IsAny<MessageDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .Throws(new OperationCanceledException());
 
         // When
@@ -81,7 +81,7 @@ public class MessageNotificationServiceTests
     public async Task NotifyMessageUpdated_WhenCancellationIsNotTriggered_NotifyAllClientsOfMessageUpdate()
     {
         // Given
-        MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+        MessageDto message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
 
         // When
         await _messageNotificationServiceSUT.NotifyMessageUpdatedAsync(message, CancellationToken.None);
@@ -97,10 +97,10 @@ public class MessageNotificationServiceTests
     public async Task NotifyMessageUpdated_WhenCancellationIsTriggered_LogsWarning()
     {
         // Given
-        MessageDTO message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
+        MessageDto message = new("m1", new("u1", "User 1"), new() { "u1" }, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), TextContent: "text");
 
         _hubContextMock
-            .Setup(context => context.Clients.All.ReceiveMessageUpdate(It.IsAny<MessageDTO>(), It.IsAny<CancellationToken>()))
+            .Setup(context => context.Clients.All.ReceiveMessageUpdate(It.IsAny<MessageDto>(), It.IsAny<CancellationToken>()))
             .Throws(new OperationCanceledException());
 
         // When

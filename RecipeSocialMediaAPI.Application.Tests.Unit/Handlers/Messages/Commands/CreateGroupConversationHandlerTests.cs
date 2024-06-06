@@ -65,7 +65,7 @@ public class CreateGroupConversationHandlerTests
             .Setup(repo => repo.CreateGroupConversationAsync(group, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedConversation);
 
-        ConversationDTO conversationDto = new(expectedConversation.ConversationId, group.GroupId, true, group.GroupName, null, null, new() { userAccount1.Id });
+        ConversationDto conversationDto = new(expectedConversation.ConversationId, group.GroupId, true, group.GroupName, null, null, new() { userAccount1.Id });
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToGroupConversationDTO(userAccount1, expectedConversation))
             .Returns(conversationDto);

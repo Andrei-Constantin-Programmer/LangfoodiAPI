@@ -1,3 +1,3 @@
 ﻿namespace RecipeSocialMediaAPI.Application.DTO.Users;
 
-public record SuccessfulAuthenticationDTO(UserDTO User, string Token);
+public record SuccessfulAuthenticationDto(UserDto User, string Token);

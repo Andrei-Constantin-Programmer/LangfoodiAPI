@@ -77,9 +77,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         IConnection? connection = await GetConnectionAsync(conversationDocument, cancellationToken);
         List<Message> messages = await GetMessagesAsync(conversationDocument, cancellationToken);
 
-        return conversationDocument is not null
-            ? (ConnectionConversation)_mapper.MapConversationFromDocument(conversationDocument, connection, null, messages)
-            : null;
+        return (ConnectionConversation)_mapper.MapConversationFromDocument(conversationDocument, connection, null, messages);
     }
 
     public async Task<GroupConversation?> GetConversationByGroupAsync(string groupId, CancellationToken cancellationToken = default)
@@ -103,9 +101,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         Group? group = await GetGroupAsync(conversationDocument, cancellationToken);
         List<Message> messages = await GetMessagesAsync(conversationDocument, cancellationToken);
 
-        return conversationDocument is not null
-            ? (GroupConversation)_mapper.MapConversationFromDocument(conversationDocument, null, group, messages)
-            : null;
+        return (GroupConversation)_mapper.MapConversationFromDocument(conversationDocument, null, group, messages);
     }
 
     public async Task<IEnumerable<Conversation>> GetConversationsByUserAsync(IUserAccount userAccount, CancellationToken cancellationToken = default)
@@ -135,7 +131,7 @@ public class ConversationQueryRepository : IConversationQueryRepository
         }
 
         return (await Task.WhenAll(conversations
-            .Select(async conversationDoc => 
+            .Select(async conversationDoc =>
             {
                 IConnection? connection = await GetConnectionAsync(conversationDoc, cancellationToken);
                 Group? group = await GetGroupAsync(conversationDoc);
@@ -154,13 +150,13 @@ public class ConversationQueryRepository : IConversationQueryRepository
             .OfType<Conversation>();
     }
 
-    private async Task<List<Message>> GetMessagesAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default) 
+    private async Task<List<Message>> GetMessagesAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default)
         => (await Task.WhenAll(conversationDocument.Messages
             .Select(async message => await _messageQueryRepository.GetMessageAsync(message, cancellationToken))))
             .OfType<Message>()
             .ToList();
-    
-    private async Task<Group?> GetGroupAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default) 
+
+    private async Task<Group?> GetGroupAsync(ConversationDocument conversationDocument, CancellationToken cancellationToken = default)
         => conversationDocument.GroupId is null
             ? null
             : await _groupQueryRepository.GetGroupByIdAsync(conversationDocument.GroupId, cancellationToken);

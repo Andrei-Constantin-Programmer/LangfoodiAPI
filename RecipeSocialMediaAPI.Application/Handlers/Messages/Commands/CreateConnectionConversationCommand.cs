@@ -10,9 +10,9 @@ using RecipeSocialMediaAPI.Domain.Models.Users;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Commands;
 
-public record CreateConnectionConversationCommand(string UserId, string ConnectionId) : IRequest<ConversationDTO>;
+public record CreateConnectionConversationCommand(string UserId, string ConnectionId) : IRequest<ConversationDto>;
 
-internal class CreateConnectionConversationHandler : IRequestHandler<CreateConnectionConversationCommand, ConversationDTO>
+internal class CreateConnectionConversationHandler : IRequestHandler<CreateConnectionConversationCommand, ConversationDto>
 {
     private readonly IConversationPersistenceRepository _conversationPersistenceRepository;
     private readonly IConversationMapper _conversationMapper;
@@ -31,7 +31,7 @@ internal class CreateConnectionConversationHandler : IRequestHandler<CreateConne
         _userQueryRepository = userQueryRepository;
     }
 
-    public async Task<ConversationDTO> Handle(CreateConnectionConversationCommand request, CancellationToken cancellationToken)
+    public async Task<ConversationDto> Handle(CreateConnectionConversationCommand request, CancellationToken cancellationToken)
     {
         IUserAccount user = (await _userQueryRepository.GetUserByIdAsync(request.UserId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.UserId}");

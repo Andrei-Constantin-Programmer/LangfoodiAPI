@@ -86,7 +86,7 @@ public class AddUserHandlerTests
         var action = async () => await _userHandlerSUT.Handle(command, CancellationToken.None);
 
         // Then
-        await action.Should().ThrowAsync<HandlerAlreadyInUseException>();
+        await action.Should().ThrowAsync<HandleAlreadyInUseException>();
         _userPersistenceRepositoryMock
             .Verify(repo => repo.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<UserRole>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -190,7 +190,7 @@ public class AddUserHandlerTests
 
         _mapperMock
             .Setup(mapper => mapper.MapUserToUserDto(It.IsAny<IUserCredentials>()))
-            .Returns((IUserCredentials user) => new UserDTO(
+            .Returns((IUserCredentials user) => new UserDto(
                 Id:user.Account.Id, 
                 Handler: user.Account.Handler, 
                 UserName: user.Account.UserName,

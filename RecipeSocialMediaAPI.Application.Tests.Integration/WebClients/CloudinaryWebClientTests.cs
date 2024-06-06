@@ -30,7 +30,7 @@ public class CloudinaryWebClientTests
 
     private readonly List<string> _testPublicIds = new() { "id1", "id2", "id3" };
 
-    private readonly CloudinarySignatureDTO _signatureTestData = 
+    private readonly CloudinarySignatureDto _signatureTestData = 
         new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
 
     public CloudinaryWebClientTests()

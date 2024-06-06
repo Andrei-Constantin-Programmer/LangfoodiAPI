@@ -98,7 +98,7 @@ public class RecipeMessageTests
 
         // Then
         result.Should().BeTrue();
-        _recipeMessageSUT.SeenBy.Should().Contain(newUser);
+        _recipeMessageSUT.GetSeenBy().Should().Contain(newUser);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class RecipeMessageTests
 
         // Then
         result.Should().BeFalse();
-        _recipeMessageSUT.SeenBy.Should().OnlyHaveUniqueItems().And.Contain(existingUser);
+        _recipeMessageSUT.GetSeenBy().Should().OnlyHaveUniqueItems().And.Contain(existingUser);
     }
 
     private static Recipe CreateTestRecipe(string id, IUserAccount testUser, DateTimeOffset testDate) =>

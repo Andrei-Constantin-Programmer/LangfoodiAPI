@@ -80,7 +80,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConnectionDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConnectionDto>();
 
         data.Should().NotBeNull();
         data!.ConnectionId.Should().Be(existingConnection.ConnectionId);
@@ -200,7 +200,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var data = await result.Content.ReadFromJsonAsync<List<ConnectionDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<ConnectionDto>>();
         data.Should().NotBeNull();
         data.Should().HaveCount(2);
         data![0].ConnectionId.Should().Be(connection1.ConnectionId);
@@ -231,7 +231,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<ConnectionDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<ConnectionDto>>();
         data.Should().BeEmpty();
     }
 
@@ -311,7 +311,7 @@ public class ConnectionEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<ConnectionDTO>();
+        var data = await result.Content.ReadFromJsonAsync<ConnectionDto>();
         data!.ConnectionId.Should().Be("0");
         data.UserId1.Should().Be(user1.Account.Id);
         data.UserId2.Should().Be(user2.Account.Id);

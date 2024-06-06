@@ -34,7 +34,7 @@ app.UseAuthorization();
 app.MapHub<MessagingHub>("messaging-hub");
 app.UseCors("AllowAll");
 app.MapEndpoints();
-app.Run();
+await app.RunAsync();
 
 
 public partial class Program { }

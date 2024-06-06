@@ -5,7 +5,7 @@ namespace RecipeSocialMediaAPI.Application.Mappers.Interfaces;
 
 public interface IUserMapper
 {
-    UserDTO MapUserToUserDto(IUserCredentials userCredentials);
-    UserAccountDTO MapUserAccountToUserAccountDto(IUserAccount userAccount);
-    UserPreviewForMessageDTO MapUserAccountToUserPreviewForMessageDto(IUserAccount userAccount);
+    UserDto MapUserToUserDto(IUserCredentials userCredentials);
+    UserAccountDto MapUserAccountToUserAccountDto(IUserAccount userAccount);
+    UserPreviewForMessageDto MapUserAccountToUserPreviewForMessageDto(IUserAccount userAccount);
 }

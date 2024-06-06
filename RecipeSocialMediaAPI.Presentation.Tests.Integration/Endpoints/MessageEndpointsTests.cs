@@ -121,7 +121,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+        var data = await result.Content.ReadFromJsonAsync<MessageDto>();
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(message.Id);
@@ -156,7 +156,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+        var data = await result.Content.ReadFromJsonAsync<MessageDto>();
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(message.Id);
@@ -167,7 +167,7 @@ public class MessageEndpointsTests : EndpointTestBase
         data!.UpdatedDate.Should().Be(message.UpdatedDate);
         data!.TextContent.Should().Be((message as RecipeMessage)!.TextContent);
         data!.ImageURLs.Should().BeNull();
-        data!.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDTO>() { 
+        data!.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDto>() { 
             new(
                 _testRecipe1.Id, 
                 _testRecipe1.Title,
@@ -195,7 +195,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+        var data = await result.Content.ReadFromJsonAsync<MessageDto>();
 
         data.Should().NotBeNull();
         data!.Id.Should().Be(message.Id);
@@ -278,7 +278,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
+        var data = await result.Content.ReadFromJsonAsync<List<MessageDto>>();
         data.Should().HaveCount(2);
         data![0].Id.Should().Be(message1.Id);
         data[0].UserPreview.Id.Should().Be(user1.Account.Id);
@@ -374,7 +374,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+        var data = await result.Content.ReadFromJsonAsync<MessageDto>();
         
         data.Should().NotBeNull();
         data!.Id.Should().Be("0");
@@ -410,7 +410,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+        var data = await result.Content.ReadFromJsonAsync<MessageDto>();
 
         data.Should().NotBeNull();
         data!.Id.Should().Be("0");
@@ -451,7 +451,7 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var data = await result.Content.ReadFromJsonAsync<MessageDTO>();
+        var data = await result.Content.ReadFromJsonAsync<MessageDto>();
 
         data.Should().NotBeNull();
         data!.Id.Should().Be("0");
@@ -463,7 +463,7 @@ public class MessageEndpointsTests : EndpointTestBase
         data.RepliedToMessageId.Should().BeNull();
         data.TextContent.Should().Be(newMessageContract.Text);
         data.ImageURLs.Should().BeNull();
-        data.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDTO>()
+        data.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDto>()
         {
             new(recipe1.Id, recipe1.Title, recipe1.ThumbnailId),
             new(recipe2.Id, recipe2.Title, recipe2.ThumbnailId),

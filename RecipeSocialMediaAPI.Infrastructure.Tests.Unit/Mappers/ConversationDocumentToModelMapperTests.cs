@@ -61,11 +61,11 @@ public class ConversationDocumentToModelMapperTests
         };
 
         // When
-        var result = (ConnectionConversation)_conversationDocumentToModelMapperSUT.MapConversationFromDocument(conversationDocument,connection,null,messages);
+        var result = (ConnectionConversation)_conversationDocumentToModelMapperSUT.MapConversationFromDocument(conversationDocument, connection, null, messages);
 
         // Then
         result.ConversationId.Should().Be(conversationDocument.Id);
-        result.Messages.Should().BeEquivalentTo(messages);
+        result.GetMessages().Should().BeEquivalentTo(messages);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class ConversationDocumentToModelMapperTests
 
         // Then
         result.ConversationId.Should().Be(conversationDocument.Id);
-        result.Messages.Should().BeEquivalentTo(messages);
+        result.GetMessages().Should().BeEquivalentTo(messages);
     }
 
     [Fact]

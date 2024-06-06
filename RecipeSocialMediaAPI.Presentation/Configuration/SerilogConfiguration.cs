@@ -8,6 +8,8 @@ namespace RecipeSocialMediaAPI.Presentation.Utilities;
 
 internal static class SerilogConfiguration
 {
+    private const string LOCAL_LOG_PATH = "C:\\Logs\\RecipeSocialMedia\\RecipeSocialMediaLog.txt";
+
     public static void ConfigureLogging(this WebApplicationBuilder builder)
     {
         builder.Host.UseSerilog((_, serviceProvider, configuration) =>
@@ -16,12 +18,12 @@ internal static class SerilogConfiguration
 
             configuration
                 .WriteTo.Console()
-                .WriteTo.File("C:\\Logs\\RecipeSocialMedia\\RecipeSocialMediaLog.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File(LOCAL_LOG_PATH, rollingInterval: RollingInterval.Day)
                 .WriteTo.DatadogLogs(
                     apiKey: dataDogOptions.ApiKey,
                     service: dataDogOptions.Service,
                     logLevel: LogEventLevel.Information,
-                    configuration: new DatadogConfiguration() { Url =  dataDogOptions.Url }
+                    configuration: new DatadogConfiguration() { Url = dataDogOptions.Url }
                 )
                 .Enrich.FromLogContext()
                 .Enrich.WithMachineName()

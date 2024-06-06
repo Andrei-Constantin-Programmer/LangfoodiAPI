@@ -15,7 +15,7 @@ public class MessageNotificationService : IMessageNotificationService
         _logger = logger;
     }
 
-    public async Task NotifyMessageSentAsync(MessageDTO sentMessage, string conversationId, CancellationToken cancellationToken)
+    public async Task NotifyMessageSentAsync(MessageDto sentMessage, string conversationId, CancellationToken cancellationToken)
     {
         try
         {
@@ -27,7 +27,7 @@ public class MessageNotificationService : IMessageNotificationService
         }
     }
 
-    public async Task NotifyMessageUpdatedAsync(MessageDTO updatedMessage, CancellationToken cancellationToken)
+    public async Task NotifyMessageUpdatedAsync(MessageDto updatedMessage, CancellationToken cancellationToken)
     {
         try
         {

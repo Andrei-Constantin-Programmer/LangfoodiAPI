@@ -29,7 +29,7 @@ public static class MessageEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets a message by its id.")
-            .Produces<MessageDTO>(StatusCodes.Status200OK)
+            .Produces<MessageDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -43,7 +43,7 @@ public static class MessageEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets all messages in a conversation.")
-            .Produces<List<MessageDTO>>(StatusCodes.Status200OK)
+            .Produces<List<MessageDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -59,7 +59,7 @@ public static class MessageEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Sends a message in a conversation.")
-            .Produces<MessageDTO>(StatusCodes.Status200OK)
+            .Produces<MessageDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)

@@ -3,7 +3,7 @@ using RecipeSocialMediaAPI.Application.DTO.Message;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Messages.Notifications;
 
-public record MessageSentNotification(MessageDTO SentMessage, string ConversationId) : INotification;
+public record MessageSentNotification(MessageDto SentMessage, string ConversationId) : INotification;
 
 internal class MessageCreatedHandler : INotificationHandler<MessageSentNotification>
 {

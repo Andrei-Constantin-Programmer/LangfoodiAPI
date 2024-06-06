@@ -14,9 +14,9 @@ using RecipeSocialMediaAPI.Domain.Utilities;
 
 namespace RecipeSocialMediaAPI.Application.Handlers.Recipes.Commands;
 
-public record AddRecipeCommand(NewRecipeContract Contract) : IValidatableRequest<RecipeDetailedDTO>;
+public record AddRecipeCommand(NewRecipeContract Contract) : IValidatableRequest<RecipeDetailedDto>;
 
-internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetailedDTO>
+internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetailedDto>
 {
     private readonly IRecipeMapper _mapper;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -31,7 +31,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
         _userQueryRepository = userQueryRepository;
     }
 
-    public async Task<RecipeDetailedDTO> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
+    public async Task<RecipeDetailedDto> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
     {
         IUserAccount? chef = (await _userQueryRepository.GetUserByIdAsync(request.Contract.ChefId, cancellationToken))?.Account
             ?? throw new UserNotFoundException($"No user found with id {request.Contract.ChefId}");
@@ -49,7 +49,7 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
                 request.Contract.NumberOfServings,
                 request.Contract.CookingTime,
                 request.Contract.KiloCalories,
-                request.Contract.ServingSize is not null 
+                request.Contract.ServingSize is not null
                     ? _mapper.MapServingSizeDtoToServingSize(request.Contract.ServingSize)
                     : null
             ),
@@ -68,14 +68,10 @@ internal class AddRecipeHandler : IRequestHandler<AddRecipeCommand, RecipeDetail
 
 public class AddRecipeCommandValidator : AbstractValidator<AddRecipeCommand>
 {
-    private readonly IRecipeValidationService _recipeValidationService;
-
     public AddRecipeCommandValidator(IRecipeValidationService recipeValidationService)
     {
-        _recipeValidationService = recipeValidationService;
-
         RuleFor(x => x.Contract.Title)
-            .Must(_recipeValidationService.ValidTitle);
+            .Must(recipeValidationService.ValidTitle);
 
         RuleFor(x => x.Contract.NumberOfServings)
             .GreaterThanOrEqualTo(1)

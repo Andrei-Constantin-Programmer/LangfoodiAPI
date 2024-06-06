@@ -6,5 +6,5 @@ public interface ICloudinaryWebClient
 {
     bool RemoveHostedImage(string publicId);
     bool BulkRemoveHostedImages(List<string> publicIds);
-    CloudinarySignatureDTO? GenerateSignature(string? publicId = null);
+    CloudinarySignatureDto? GenerateSignature(string? publicId = null);
 }

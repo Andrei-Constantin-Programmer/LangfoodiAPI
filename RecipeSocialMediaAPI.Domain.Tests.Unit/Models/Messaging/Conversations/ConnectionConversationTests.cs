@@ -21,7 +21,7 @@ public class ConnectionConversationTests
             UserName = "Username1",
             AccountCreationDate = new(2023, 10, 10, 12, 30, 0, TimeSpan.Zero)
         };
-        
+
         IUserAccount account2 = new TestUserAccount()
         {
             Id = "Id2",
@@ -30,7 +30,7 @@ public class ConnectionConversationTests
             AccountCreationDate = new(2023, 10, 10, 17, 45, 0, TimeSpan.Zero)
         };
 
-        _connection = new ("0", account1, account2, ConnectionStatus.Connected);
+        _connection = new("0", account1, account2, ConnectionStatus.Connected);
 
         _connectionConversationSUT = new(_connection, "ConvoId");
     }
@@ -48,7 +48,7 @@ public class ConnectionConversationTests
             UserName = "Username3",
             AccountCreationDate = new(2023, 1, 1, 12, 0, 0, TimeSpan.Zero)
         };
-        TestMessage message = new ("MessageId", newAcccount, new(2023, 10, 10, 15, 30, 0, TimeSpan.Zero), null);
+        TestMessage message = new("MessageId", newAcccount, new(2023, 10, 10, 15, 30, 0, TimeSpan.Zero), null);
 
         // When
         var testAction = () => _connectionConversationSUT.SendMessage(message);
@@ -69,6 +69,6 @@ public class ConnectionConversationTests
         _connectionConversationSUT.SendMessage(message);
 
         // Then
-        _connectionConversationSUT.Messages.Should().Contain(message);
+        _connectionConversationSUT.GetMessages().Should().Contain(message);
     }
 }

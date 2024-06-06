@@ -31,7 +31,7 @@ public static class ConnectionEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets connection between two users.")
-            .Produces<ConnectionDTO>(StatusCodes.Status200OK)
+            .Produces<ConnectionDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -45,7 +45,7 @@ public static class ConnectionEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Gets all connections for user.")
-            .Produces<List<ConnectionDTO>>(StatusCodes.Status200OK)
+            .Produces<List<ConnectionDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -59,7 +59,7 @@ public static class ConnectionEndpoints
         })
             .RequireAuthorization()
             .WithDescription("Creates new connection between two users.")
-            .Produces<ConnectionDTO>(StatusCodes.Status200OK)
+            .Produces<ConnectionDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
