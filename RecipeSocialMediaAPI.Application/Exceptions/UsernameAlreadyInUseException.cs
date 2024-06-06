@@ -14,6 +14,12 @@ public class UsernameAlreadyInUseException : Exception
 
     protected UsernameAlreadyInUseException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
-        Username = string.Empty;
+        Username = info.GetString("Username") ?? string.Empty;
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        base.GetObjectData(info, context);
+        info.AddValue("Username", Username);
     }
 }

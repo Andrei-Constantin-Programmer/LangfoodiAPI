@@ -45,7 +45,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, SuccessfulAuthen
     {
         if ((await _userQueryRepository.GetUserByHandlerAsync(request.Contract.Handler, cancellationToken)) is not null)
         {
-            throw new HandlerAlreadyInUseException(request.Contract.Handler);
+            throw new HandleAlreadyInUseException(request.Contract.Handler);
         }
 
         if ((await _userQueryRepository.GetUserByUsernameAsync(request.Contract.UserName, cancellationToken)) is not null)

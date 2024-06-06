@@ -7,6 +7,7 @@ namespace RecipeSocialMediaAPI.Application.Exceptions;
 public class UnsupportedConnectionStatusException : Exception
 {
     public string UnsupportedStatus { get; }
+
     public UnsupportedConnectionStatusException(string connectionStatus) : base($"Could not map {connectionStatus} to {typeof(ConnectionStatus)}")
     {
         UnsupportedStatus = connectionStatus;
@@ -14,6 +15,12 @@ public class UnsupportedConnectionStatusException : Exception
 
     protected UnsupportedConnectionStatusException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
-        UnsupportedStatus = string.Empty;
+        UnsupportedStatus = info.GetString("UnsupportedStatus") ?? string.Empty;
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        base.GetObjectData(info, context);
+        info.AddValue("UnsupportedStatus", UnsupportedStatus);
     }
 }

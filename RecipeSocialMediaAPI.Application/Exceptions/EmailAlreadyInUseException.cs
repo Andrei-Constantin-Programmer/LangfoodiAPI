@@ -14,6 +14,12 @@ public class EmailAlreadyInUseException : Exception
 
     protected EmailAlreadyInUseException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
-        Email = string.Empty;
+        Email = info.GetString("Email") ?? string.Empty;
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        base.GetObjectData(info, context);
+        info.AddValue("Email", Email);
     }
 }

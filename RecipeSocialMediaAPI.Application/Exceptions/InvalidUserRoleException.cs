@@ -13,6 +13,12 @@ public class InvalidUserRoleException : Exception
 
     protected InvalidUserRoleException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
-        InvalidRole = string.Empty;
+        InvalidRole = info.GetString("InvalidRole") ?? string.Empty;
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        base.GetObjectData(info, context);
+        info.AddValue("InvalidRole", InvalidRole);
     }
 }

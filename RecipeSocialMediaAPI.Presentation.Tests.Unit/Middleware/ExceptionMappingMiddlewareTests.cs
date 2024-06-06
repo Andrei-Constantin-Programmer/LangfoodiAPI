@@ -85,7 +85,7 @@ public class ExceptionMappingMiddlewareTests
         string handler = "TestHandler";
         _nextMock
             .Setup(next => next(It.IsAny<HttpContext>()))
-            .Throws(new HandlerAlreadyInUseException(handler))
+            .Throws(new HandleAlreadyInUseException(handler))
             .Verifiable();
 
         HttpContext context = new DefaultHttpContext();
