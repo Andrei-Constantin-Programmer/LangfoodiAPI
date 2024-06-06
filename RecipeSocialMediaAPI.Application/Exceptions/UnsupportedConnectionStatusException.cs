@@ -1,4 +1,5 @@
 ﻿using RecipeSocialMediaAPI.Domain.Models.Messaging.Connections;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace RecipeSocialMediaAPI.Application.Exceptions;
@@ -14,11 +15,13 @@ public class UnsupportedConnectionStatusException : Exception
         UnsupportedStatus = connectionStatus;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Already tested (indirectly) in exception tests for serialization")]
     protected UnsupportedConnectionStatusException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         UnsupportedStatus = info.GetString(UNSUPPORTED_STATUS_PROPERTY_NAME) ?? string.Empty;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Already tested (indirectly) in exception tests for serialization")]
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);

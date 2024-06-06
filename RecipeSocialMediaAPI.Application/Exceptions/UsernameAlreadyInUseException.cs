@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 
 namespace RecipeSocialMediaAPI.Application.Exceptions;
 
@@ -13,11 +14,13 @@ public class UsernameAlreadyInUseException : Exception
         Username = username;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Already tested (indirectly) in exception tests for serialization")]
     protected UsernameAlreadyInUseException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         Username = info.GetString(USERNAME_PROPERTY_NAME) ?? string.Empty;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Already tested (indirectly) in exception tests for serialization")]
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);

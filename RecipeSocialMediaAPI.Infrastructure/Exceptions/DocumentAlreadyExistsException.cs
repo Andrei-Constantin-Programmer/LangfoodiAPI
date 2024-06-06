@@ -1,4 +1,5 @@
 ﻿using RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace RecipeSocialMediaAPI.Infrastructure.Exceptions;
@@ -14,11 +15,13 @@ public class DocumentAlreadyExistsException<TDocument> : Exception where TDocume
         Document = document;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Already tested (indirectly) in exception tests for serialization")]
     protected DocumentAlreadyExistsException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
         Document = info.GetValue(DOCUMENT_PROPERTY_NAME, typeof(TDocument)) as TDocument ?? default!;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Already tested (indirectly) in exception tests for serialization")]
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);

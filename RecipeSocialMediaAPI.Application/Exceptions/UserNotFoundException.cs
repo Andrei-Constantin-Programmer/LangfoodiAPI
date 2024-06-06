@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 
 namespace RecipeSocialMediaAPI.Application.Exceptions;
 
@@ -9,6 +10,7 @@ public class UserNotFoundException : Exception
     {
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Already tested (indirectly) in exception tests for serialization")]
     protected UserNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
