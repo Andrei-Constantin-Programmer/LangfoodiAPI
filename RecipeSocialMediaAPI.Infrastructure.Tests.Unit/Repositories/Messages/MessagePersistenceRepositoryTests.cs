@@ -76,8 +76,8 @@ public class MessagePersistenceRepositoryTests
             "MessageId",
             testSender,
             "MessageText",
-            new List<Recipe>() 
-            { 
+            new List<Recipe>()
+            {
                 new(
                     "RecipeId",
                     "RecipeTitle",
@@ -116,7 +116,7 @@ public class MessagePersistenceRepositoryTests
                     && doc.MessageContent.ImageURLs!.SequenceEqual(expectedMessage.ImageURLs)
                     && doc.SentDate == expectedMessage.SentDate
                     && doc.LastUpdatedDate == expectedMessage.UpdatedDate
-                    && doc.MessageRepliedToId == null), 
+                    && doc.MessageRepliedToId == null),
                 It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -134,15 +134,23 @@ public class MessagePersistenceRepositoryTests
             AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
 
+        TestUserAccount user2 = new()
+        {
+            Id = "u2",
+            Handler = "handle_2",
+            UserName = "User 2",
+            AccountCreationDate = new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        };
+
         var message = (TextMessage)_messageFactory
-            .CreateTextMessage("MessageId", testSender, "Test Text", new(), _dateTimeProviderMock.Object.Now);
+            .CreateTextMessage("MessageId", testSender, "Test Text", new() { testSender, user2 }, _dateTimeProviderMock.Object.Now);
 
         Expression<Func<MessageDocument, bool>> expectedExpression = x => x.Id == message.Id;
 
         _messageCollectionMock
             .Setup(collection => collection.UpdateAsync(
-                It.IsAny<MessageDocument>(), 
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<MessageDocument>(),
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -152,17 +160,18 @@ public class MessagePersistenceRepositoryTests
         // Then
         result.Should().BeTrue();
         _messageCollectionMock
-            .Verify(collection => 
+            .Verify(collection =>
                 collection.UpdateAsync(
                     It.Is<MessageDocument>(doc =>
                         doc.Id == message.Id
                         && _dataCryptoServiceFake.Decrypt(doc.MessageContent.Text!) == message.TextContent
                         && doc.MessageContent.RecipeIds == null
                         && doc.MessageContent.ImageURLs == null
-                        && doc.SentDate == message.SentDate                    
+                        && doc.SentDate == message.SentDate
+                        && doc.SeenByUserIds.SequenceEqual(message.GetSeenBy().Select(u => u.Id))
                     ),
-                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
-                    It.IsAny<CancellationToken>()), 
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
     }
 
@@ -194,8 +203,8 @@ public class MessagePersistenceRepositoryTests
 
         _messageCollectionMock
             .Setup(collection => collection.UpdateAsync(
-                It.IsAny<MessageDocument>(), 
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<MessageDocument>(),
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -214,7 +223,7 @@ public class MessagePersistenceRepositoryTests
                         && doc.MessageContent.ImageURLs == null
                         && doc.SentDate == message.SentDate
                     ),
-                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
@@ -242,8 +251,8 @@ public class MessagePersistenceRepositoryTests
 
         _messageCollectionMock
             .Setup(collection => collection.UpdateAsync(
-                It.IsAny<MessageDocument>(), 
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<MessageDocument>(),
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -262,7 +271,7 @@ public class MessagePersistenceRepositoryTests
                         && doc.MessageContent.ImageURLs!.SequenceEqual(imageURLs)
                         && doc.SentDate == message.SentDate
                     ),
-                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.Is<Expression<Func<MessageDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
@@ -285,8 +294,8 @@ public class MessagePersistenceRepositoryTests
 
         _messageCollectionMock
             .Setup(collection => collection.UpdateAsync(
-                It.IsAny<MessageDocument>(), 
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<MessageDocument>(),
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -324,8 +333,8 @@ public class MessagePersistenceRepositoryTests
 
         _messageCollectionMock
             .Setup(collection => collection.UpdateAsync(
-                It.IsAny<MessageDocument>(), 
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<MessageDocument>(),
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
@@ -353,7 +362,7 @@ public class MessagePersistenceRepositoryTests
 
         _messageCollectionMock
             .Setup(collection => collection.DeleteAsync(
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -381,7 +390,7 @@ public class MessagePersistenceRepositoryTests
 
         _messageCollectionMock
             .Setup(collection => collection.DeleteAsync(
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
@@ -400,7 +409,7 @@ public class MessagePersistenceRepositoryTests
         // Given
         _messageCollectionMock
             .Setup(collection => collection.DeleteAsync(
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -419,7 +428,7 @@ public class MessagePersistenceRepositoryTests
         // Given
         _messageCollectionMock
             .Setup(collection => collection.DeleteAsync(
-                It.IsAny<Expression<Func<MessageDocument, bool>>>(), 
+                It.IsAny<Expression<Func<MessageDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
