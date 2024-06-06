@@ -19,6 +19,8 @@
 
 The robust API for the Langfoodi recipe-sharing social media platform.
 
+Find the app this API services at [Langfoodi App](https://github.com/Andrei-Constantin-Programmer/Langfoodi-App).
+
 
 ## Table of Contents
 - [Introduction](#introduction)
