@@ -17,7 +17,7 @@ public class HandleAlreadyInUseExceptionTests
         var handle = "test_handler";
         HandleAlreadyInUseException exception = new(handle);
 
-        CustomExceptionSerializationData serializedData = new(exception.Message, exception.HResult, exception.Source, exception.StackTrace, handle);
+        CustomExceptionSerializationData serializedData = new(exception.Message, exception.HResult, exception.Source, exception.StackTrace, exception.Handle);
 
         // When
         var json = JsonSerializer.Serialize(serializedData);

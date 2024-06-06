@@ -5,7 +5,9 @@ namespace RecipeSocialMediaAPI.Application.Exceptions;
 [Serializable]
 public class InvalidUserRoleException : Exception
 {
+    private const string INVALID_ROLE_PROPERTY_NAME = "InvalidRole";
     public string InvalidRole { get; }
+
     public InvalidUserRoleException(string role) : base($"Invalid user role {role}")
     {
         InvalidRole = role;
@@ -13,12 +15,12 @@ public class InvalidUserRoleException : Exception
 
     protected InvalidUserRoleException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
-        InvalidRole = info.GetString("InvalidRole") ?? string.Empty;
+        InvalidRole = info.GetString(INVALID_ROLE_PROPERTY_NAME) ?? string.Empty;
     }
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);
-        info.AddValue("InvalidRole", InvalidRole);
+        info.AddValue(INVALID_ROLE_PROPERTY_NAME, InvalidRole);
     }
 }

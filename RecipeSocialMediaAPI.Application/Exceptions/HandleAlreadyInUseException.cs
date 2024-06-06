@@ -5,21 +5,22 @@ namespace RecipeSocialMediaAPI.Application.Exceptions;
 [Serializable]
 public class HandleAlreadyInUseException : Exception
 {
+    private const string HANDLE_PROPERTY_NAME = "Handle";
     public string Handle { get; }
 
-    public HandleAlreadyInUseException(string handler)
+    public HandleAlreadyInUseException(string handle)
     {
-        Handle = handler;
+        Handle = handle;
     }
 
     protected HandleAlreadyInUseException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
-        Handle = info.GetString("Handler") ?? string.Empty;
+        Handle = info.GetString(HANDLE_PROPERTY_NAME) ?? string.Empty;
     }
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);
-        info.AddValue("Handle", Handle);
+        info.AddValue(HANDLE_PROPERTY_NAME, Handle);
     }
 }
