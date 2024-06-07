@@ -24,7 +24,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
             ConnectionString = dbFixture.ConnectionString,
             ClusterName = dbFixture.DatabaseName
         };
-        
+
         _mongoCollectionWrapperSUT = new MongoCollectionWrapper<TestDocument>(testConfiguration);
     }
 
@@ -35,7 +35,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     {
         // Given
         List<TestDocument> existingDocuments = new();
-        for(int i = 0; i <= 10; i++)
+        for (int i = 0; i <= 10; i++)
         {
             existingDocuments.Add(new(i.ToString()));
         }
@@ -183,7 +183,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public async Task Delete_WhenNoDocumentExists_ReturnFalse()
     {
         // Given
-        
+
         // When
         var wasDeleted = await _mongoCollectionWrapperSUT.DeleteAsync(doc => doc.TestProperty == string.Empty);
 
@@ -213,7 +213,7 @@ public class MongoCollectionWrapperTests : IClassFixture<MongoDBFixture>
     public async Task Find_WhenNoDocumentExists_ReturnNull()
     {
         // Given
-        
+
         // When
         var documentFromDb = await _mongoCollectionWrapperSUT.GetOneAsync(doc => doc.TestProperty == "Nonexistent");
 

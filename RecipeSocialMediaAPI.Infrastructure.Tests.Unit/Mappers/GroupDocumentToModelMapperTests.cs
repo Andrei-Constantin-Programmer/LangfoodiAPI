@@ -16,7 +16,7 @@ public class GroupDocumentToModelMapperTests
 
     private readonly GroupDocumentToModelMapper _groupDocumentToModelMapperSUT;
 
-    public GroupDocumentToModelMapperTests() 
+    public GroupDocumentToModelMapperTests()
     {
         _userQueryRepositoryMock = new Mock<IUserQueryRepository>();
 
@@ -164,5 +164,25 @@ public class GroupDocumentToModelMapperTests
         result.GroupName.Should().Be(testDocument.GroupName);
         result.GroupDescription.Should().Be(testDocument.GroupDescription);
         result.Users.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task MapGroupFromDocument_WhenGroupDocumentHasNullId_ThrowsArgumentException()
+    {
+        // Given
+        GroupDocument testDocument = new(
+            Id: null,
+            GroupName: "Test Name",
+            GroupDescription: "Test Desc",
+            UserIds: new()
+        );
+
+        // When
+        var result = async () => await _groupDocumentToModelMapperSUT.MapGroupFromDocumentAsync(testDocument);
+
+        // Then
+        await result.Should().ThrowAsync<ArgumentException>();
     }
 }

@@ -121,7 +121,7 @@ public class SendMessageHandlerTests
         _conversationQueryRepositoryMock
             .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(conversation);
-        
+
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
 
         Message createdMessage = _messageFactory.CreateTextMessage("m1", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now);
@@ -132,14 +132,14 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     null,
-                    It.IsAny<List<string>>(), 
+                    It.IsAny<List<string>>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdMessage);
         MessageDto messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text);
         _messageMapperMock
             .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
             .Returns(messageDto);
-        
+
         // When
         var result = await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
 
@@ -208,7 +208,7 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => imageUrls.SequenceEqual(contract.ImageURLs!)),
                     _testDate,
                     null,
-                    It.IsAny<List<string>>(), 
+                    It.IsAny<List<string>>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdMessage);
 
@@ -285,7 +285,7 @@ public class SendMessageHandlerTests
 
         SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new() { existingRecipe1.Id, existingRecipe2.Id }, new(), null);
 
-        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<Recipe>() { existingRecipe1, existingRecipe2}, contract.Text, new(), _dateTimeProviderMock.Object.Now);
+        Message createdMessage = _messageFactory.CreateRecipeMessage("m1", user1.Account, new List<Recipe>() { existingRecipe1, existingRecipe2 }, contract.Text, new(), _dateTimeProviderMock.Object.Now);
         _messagePersistenceRepositoryMock
             .Setup(repo => repo.CreateMessageAsync(user1.Account,
                     contract.Text,
@@ -293,7 +293,7 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     null,
-                    It.IsAny<List<string>>(), 
+                    It.IsAny<List<string>>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdMessage);
 
@@ -374,7 +374,7 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     null,
-                    It.IsAny<List<string>>(), 
+                    It.IsAny<List<string>>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdMessage);
 
@@ -384,7 +384,7 @@ public class SendMessageHandlerTests
             .Returns(messageDto);
 
         // When
-        var testAction = async() => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+        var testAction = async () => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
 
         // Then
         await testAction.Should().ThrowAsync<RecipeNotFoundException>();
@@ -550,7 +550,7 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     repliedToMessage,
-                    It.IsAny<List<string>>(), 
+                    It.IsAny<List<string>>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdMessage);
 
@@ -630,7 +630,7 @@ public class SendMessageHandlerTests
                     It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                     _testDate,
                     repliedToMessage,
-                    It.IsAny<List<string>>(), 
+                    It.IsAny<List<string>>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdMessage);
 
@@ -640,7 +640,7 @@ public class SendMessageHandlerTests
             .Returns(messageDto);
 
         // When
-        var testAction = async() => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+        var testAction = async () => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
 
         // Then
         await testAction.Should().ThrowAsync<MessageNotFoundException>();
@@ -702,7 +702,7 @@ public class SendMessageHandlerTests
                 It.Is<List<string>>(imageUrls => !imageUrls.Any()),
                 _testDate,
                 null,
-                It.IsAny<List<string>>(), 
+                It.IsAny<List<string>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdMessage);
         MessageDto messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text);
@@ -779,5 +779,82 @@ public class SendMessageHandlerTests
 
         // Then
         await testAction.Should().ThrowAsync<AttemptedToSendMessageToBlockedConnectionException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenTheConversationTypeIsUnsupported_ThrowsUnsupportedConversationException()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1",
+                ProfileImageId = "User1ImageId"
+            },
+            Email = "u1@mail.com",
+            Password = "Test@123"
+        };
+        TestUserCredentials user2 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u2",
+                Handler = "user_2",
+                UserName = "User 2"
+            },
+            Email = "u2@mail.com",
+            Password = "Test@321"
+        };
+        UserPreviewForMessageDto user1Preview = new(
+            user1.Account.Id,
+            user1.Account.UserName,
+            user1.Account.ProfileImageId
+        );
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
+
+        Conversation conversation = new UnsupportedConversation("convo1");
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationByIdAsync(conversation.ConversationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversation);
+
+        SendMessageContract contract = new(conversation.ConversationId, user1.Account.Id, "Text", new(), new(), null);
+
+        Message createdMessage = _messageFactory.CreateTextMessage("m1", user1.Account, contract.Text!, new(), _dateTimeProviderMock.Object.Now);
+        _messagePersistenceRepositoryMock
+            .Setup(repo => repo.CreateMessageAsync(user1.Account,
+                    contract.Text,
+                    It.Is<List<string>>(recipeIds => !recipeIds.Any()),
+                    It.Is<List<string>>(imageUrls => !imageUrls.Any()),
+                    _testDate,
+                    null,
+                    It.IsAny<List<string>>(),
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdMessage);
+        MessageDto messageDto = new(createdMessage.Id, user1Preview, new(), createdMessage.SentDate, TextContent: contract.Text);
+        _messageMapperMock
+            .Setup(mapper => mapper.MapMessageToMessageDTO(createdMessage))
+            .Returns(messageDto);
+
+        // When
+        var testAction = async () => await _sendMessageHandlerSUT.Handle(new SendMessageCommand(contract), CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<UnsupportedConversationException>();
+    }
+
+    private class UnsupportedConversation : Conversation
+    {
+        public UnsupportedConversation(string conversationId) : base(conversationId)
+        {
+        }
     }
 }

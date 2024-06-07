@@ -200,7 +200,6 @@ public static class UserEndpoints
 
         group.MapPost("/pins/get", async (
             [FromQuery] string userId,
-            [FromQuery] string conversationId,
             CancellationToken cancellationToken,
             [FromServices] ISender sender) =>
         {

@@ -31,15 +31,16 @@ public class ValidateOptionsTests
             .Setup(x => x.GetService(typeof(IServiceScopeFactory)))
             .Returns(serviceScopeFactoryMock.Object);
 
-        _validateOptionsSUT = new ValidateOptions<TestOptions>(_serviceProviderMock.Object, null);
+        _validateOptionsSUT = new ValidateOptions<TestOptions>(_serviceProviderMock.Object, nameof(TestOptions));
     }
 
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("OtherOptions")]
-    public void Validate_WhenOptionsNameDoesNotMatch_ReturnsSkip(string optionsName)
+    public void Validate_WhenOptionsNameDoesNotMatch_ReturnsSkip(string? optionsName)
     {
         // Given
         var options = new TestOptions
@@ -51,7 +52,7 @@ public class ValidateOptionsTests
         var result = _validateOptionsSUT.Validate(optionsName, options);
 
         // Then
-        result.Succeeded.Should().BeTrue();
+        result.Skipped.Should().BeTrue();
     }
 
     [Fact]
