@@ -1000,6 +1000,70 @@ public class UserEndpointsTests : EndpointTestBase
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task GetPins_WhenThereAreNoPins_ReturnEmptyList()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/pins/get/?userId={user.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var data = await result.Content.ReadFromJsonAsync<List<string>>();
+        data.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task GetPins_WhenThereArePins_ReturnPins()
+    {
+        // Given
+        List<string> pins = new() { "convo1", "convo2" };
+
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        user.Account.AddPin(pins[0]);
+        user.Account.AddPin(pins[1]);
+
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/pins/get/?userId={user.Account.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var data = await result.Content.ReadFromJsonAsync<List<string>>();
+        data.Should().BeEquivalentTo(pins);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task GetPins_WhenNoTokenIsUsed_ReturnsUnauthorised()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync("user/pins/get/?userId=0&conversationId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
     public async Task Block_WhenConnectionExists_BlockConnectionAndReturnOk()
     {
         // Given
