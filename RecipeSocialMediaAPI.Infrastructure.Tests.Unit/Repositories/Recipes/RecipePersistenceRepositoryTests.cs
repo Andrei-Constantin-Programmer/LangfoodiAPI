@@ -28,7 +28,7 @@ public class RecipePersistenceRepositoryTests
         _mongoCollectionFactoryMock
             .Setup(factory => factory.CreateCollection<RecipeDocument>())
             .Returns(_mongoCollectionWrapperMock.Object);
-        
+
         _recipePersistenceRepositorySUT = new(
             _mapperMock.Object,
             _mongoCollectionFactoryMock.Object);
@@ -40,7 +40,7 @@ public class RecipePersistenceRepositoryTests
     public async Task CreateRecipe_WhenRecipeIsValid_AddRecipeToCollectionAndReturnMappedRecipe()
     {
         // Given
-        IUserAccount testChef = new TestUserAccount() 
+        IUserAccount testChef = new TestUserAccount()
         {
             Id = "ChefId",
             Handler = "TestHandler",
@@ -53,7 +53,18 @@ public class RecipePersistenceRepositoryTests
         Recipe expectedResult = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 10, 500, 2300, new ServingSize(200, "g")),
+            new RecipeGuide(
+                new List<Ingredient> { new("Flour", 1.5, "kg"), new("Egg", 4.0, "pieces") },
+                new Stack<RecipeStep>(new List<RecipeStep>
+                {
+                    new("Add flour to bowl", null),
+                    new("Mix eggs", new("mixing_eggs_image_id")),
+                    new("Pour eggs in flour", null)
+                }),
+                numberOfServings: 10,
+                cookingTimeInSeconds: 500,
+                kiloCalories: 2300,
+                new ServingSize(200, "g")),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -65,8 +76,8 @@ public class RecipePersistenceRepositoryTests
         RecipeDocument newRecipeDocument = new(
             Id: expectedResult.Id,
             Title: expectedResult.Title,
-            Ingredients: new List<(string, double, string)>(),
-            Steps: new List<(string, string?)>(),
+            Ingredients: new List<(string, double, string)>() { ("Flour", 1.5, "kg"), ("Egg", 4.0, "pieces") },
+            Steps: new List<(string, string?)>() { ("Add flour to bowl", null), ("Mix eggs", "mixing_eggs_image_id"), ("Pour eggs in flour", null) },
             Description: expectedResult.Description,
             ChefId: testChef.Id,
             CreationDate: expectedResult.CreationDate,
@@ -109,11 +120,11 @@ public class RecipePersistenceRepositoryTests
                     && doc.ChefId == testChef.Id
                     && doc.CreationDate == expectedResult.CreationDate
                     && doc.LastUpdatedDate == expectedResult.LastUpdatedDate
-                    && doc.Ingredients.Count == 0
-                    && doc.Steps.Count == 0
+                    && doc.Ingredients.Count == 2
+                    && doc.Steps.Count == 3
                     && doc.Tags.Contains(testTag) && doc.Tags.Count == 1
                     && doc.ServingSize!.Value.Quantity == expectedResult.Guide.ServingSize.Quantity
-                    && doc.ServingSize!.Value.UnitOfMeasurement == expectedResult.Guide.ServingSize.UnitOfMeasurement), 
+                    && doc.ServingSize!.Value.UnitOfMeasurement == expectedResult.Guide.ServingSize.UnitOfMeasurement),
                 It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -135,7 +146,18 @@ public class RecipePersistenceRepositoryTests
         Recipe recipe = new(
             "TestId",
             "TestTitle",
-            new(new(), new(), 10, 500, 2300, new ServingSize(30, "kg")),
+            new RecipeGuide(
+                new List<Ingredient> { new("Flour", 1.5, "kg"), new("Egg", 4.0, "pieces") },
+                new Stack<RecipeStep>(new List<RecipeStep>
+                {
+                    new("Add flour to bowl", null),
+                    new("Mix eggs", new("mixing_eggs_image_id")),
+                    new("Pour eggs in flour", null)
+                }),
+                numberOfServings: 10,
+                cookingTimeInSeconds: 500,
+                kiloCalories: 2300,
+                new ServingSize(30, "kg")),
             "Short Description",
             testChef,
             new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -147,8 +169,8 @@ public class RecipePersistenceRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.UpdateAsync(
-                It.IsAny<RecipeDocument>(), 
-                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<RecipeDocument>(),
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -167,15 +189,15 @@ public class RecipePersistenceRepositoryTests
                         && recipeDoc.CreationDate == recipe.CreationDate
                         && recipeDoc.LastUpdatedDate == recipe.LastUpdatedDate
                         && recipeDoc.Tags.Contains(testTag) && recipe.Tags.Count == 1
-                        && recipeDoc.Ingredients.Count == 0
-                        && recipeDoc.Steps.Count == 0
+                        && recipeDoc.Ingredients.Count == 2
+                        && recipeDoc.Steps.Count == 3
                         && recipeDoc.NumberOfServings == recipe.Guide.NumberOfServings
                         && recipeDoc.CookingTimeInSeconds == recipe.Guide.CookingTimeInSeconds
                         && recipeDoc.KiloCalories == recipe.Guide.KiloCalories
                         && recipeDoc.ThumbnailId == recipe.ThumbnailId
                         && recipeDoc.ServingSize.GetValueOrDefault().Quantity == recipe.Guide.ServingSize!.Quantity
                         && recipeDoc.ServingSize.GetValueOrDefault().UnitOfMeasurement == recipe.Guide.ServingSize!.UnitOfMeasurement),
-                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
@@ -210,8 +232,8 @@ public class RecipePersistenceRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.UpdateAsync(
-                It.IsAny<RecipeDocument>(), 
-                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<RecipeDocument>(),
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
@@ -233,7 +255,7 @@ public class RecipePersistenceRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.DeleteAsync(
-                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -244,7 +266,7 @@ public class RecipePersistenceRepositoryTests
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
             .Verify(collection => collection.DeleteAsync(
-                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
@@ -277,7 +299,7 @@ public class RecipePersistenceRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.DeleteAsync(
-                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
@@ -288,7 +310,7 @@ public class RecipePersistenceRepositoryTests
         result.Should().BeTrue();
         _mongoCollectionWrapperMock
             .Verify(collection => collection.DeleteAsync(
-                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
@@ -304,7 +326,7 @@ public class RecipePersistenceRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.DeleteAsync(
-                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
@@ -315,7 +337,7 @@ public class RecipePersistenceRepositoryTests
         result.Should().BeFalse();
         _mongoCollectionWrapperMock
             .Verify(collection => collection.DeleteAsync(
-                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
@@ -348,7 +370,7 @@ public class RecipePersistenceRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.DeleteAsync(
-                It.IsAny<Expression<Func<RecipeDocument, bool>>>(), 
+                It.IsAny<Expression<Func<RecipeDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
@@ -359,7 +381,7 @@ public class RecipePersistenceRepositoryTests
         result.Should().BeFalse();
         _mongoCollectionWrapperMock
             .Verify(collection => collection.DeleteAsync(
-                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                    It.Is<Expression<Func<RecipeDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
