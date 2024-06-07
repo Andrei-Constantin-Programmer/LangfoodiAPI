@@ -44,14 +44,7 @@ public class MongoCollectionWrapper<TDocument> : IMongoCollectionWrapper<TDocume
 
     public async Task<bool> UpdateAsync(TDocument record, Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            return (await _collection.ReplaceOneAsync(expr, record, cancellationToken: cancellationToken)).ModifiedCount > 0;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        return (await _collection.ReplaceOneAsync(expr, record, cancellationToken: cancellationToken)).ModifiedCount > 0;
     }
 
     public async Task<bool> DeleteAsync(Expression<Func<TDocument, bool>> expr, CancellationToken cancellationToken = default)

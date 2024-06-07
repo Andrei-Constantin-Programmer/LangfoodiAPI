@@ -54,7 +54,7 @@ public class UserQueryRepositoryTests
         UserDocument? nullUserDocument = null;
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(nullUserDocument);
 
@@ -91,10 +91,10 @@ public class UserQueryRepositoryTests
             Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
             Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
         };
-            
+
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetOneAsync(
-                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)), 
+                It.Is<Expression<Func<UserDocument, bool>>>(expr => Lambda.Eq(expr, expectedExpression)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(testDocument);
         _mapperMock
@@ -150,7 +150,7 @@ public class UserQueryRepositoryTests
         // Then
         result.Should().BeNull();
         _loggerMock
-            .Verify(logger => 
+            .Verify(logger =>
                 logger.Log(
                     LogLevel.Information,
                     It.IsAny<EventId>(),
@@ -214,7 +214,7 @@ public class UserQueryRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAllAsync(
-                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<UserDocument> { testDocument, otherDocument });
         _mapperMock
@@ -265,6 +265,125 @@ public class UserQueryRepositoryTests
 
         // When
         var result = await _userQueryRepositorySUT.GetUserByEmailAsync(email);
+
+        // Then
+        result.Should().BeNull();
+        _loggerMock
+            .Verify(logger =>
+                logger.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    testException,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once());
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task GetUserByHandle_WhenUserIsNotFound_ReturnNull()
+    {
+        // Given
+        string handle = "test_handle";
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Enumerable.Empty<UserDocument>());
+
+        // When
+        var result = await _userQueryRepositorySUT.GetUserByHandlerAsync(handle);
+
+        // Then
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task GetUserByHandle_WhenUserIsFound_ReturnUser()
+    {
+        // Given
+        string handle = "test_handle";
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt(handle),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt("test@mail.com"),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
+        UserDocument otherDocument = new(
+            _dataCryptoServiceFake.Encrypt("TestHandle1"),
+            _dataCryptoServiceFake.Encrypt("TestName1"),
+            _dataCryptoServiceFake.Encrypt("TestEmail1"),
+            _dataCryptoServiceFake.Encrypt("TestPassword1"),
+            (int)UserRole.User);
+        IUserCredentials testUser = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
+        };
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAllAsync(
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<UserDocument> { testDocument, otherDocument });
+        _mapperMock
+            .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
+            .Returns(testUser);
+
+        // When
+        var result = await _userQueryRepositorySUT.GetUserByHandlerAsync(handle);
+
+        // Then
+        result.Should().Be(testUser);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task GetUserByHandle_WhenMongoThrowsException_LogExceptionAndReturnNull()
+    {
+        // Given
+        string handle = "test_handle";
+        UserDocument testDocument = new(
+            _dataCryptoServiceFake.Encrypt(handle),
+            _dataCryptoServiceFake.Encrypt("TestName"),
+            _dataCryptoServiceFake.Encrypt("test@mail.com"),
+            _dataCryptoServiceFake.Encrypt("TestPassword"),
+            (int)UserRole.User);
+        IUserCredentials testUser = new TestUserCredentials()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "TestId",
+                Handler = _dataCryptoServiceFake.Decrypt(testDocument.Handler),
+                UserName = _dataCryptoServiceFake.Decrypt(testDocument.UserName),
+                AccountCreationDate = new(2023, 10, 6, 0, 0, 0, TimeSpan.Zero)
+            },
+            Email = _dataCryptoServiceFake.Decrypt(testDocument.Email),
+            Password = _dataCryptoServiceFake.Decrypt(testDocument.Password)
+        };
+
+        Exception testException = new("Test Exception");
+
+        _mongoCollectionWrapperMock
+            .Setup(collection => collection.GetAllAsync(It.IsAny<Expression<Func<UserDocument, bool>>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(testException);
+        _mapperMock
+            .Setup(mapper => mapper.MapUserDocumentToUser(testDocument))
+            .Returns(testUser);
+
+        // When
+        var result = await _userQueryRepositorySUT.GetUserByHandlerAsync(handle);
 
         // Then
         result.Should().BeNull();
@@ -424,7 +543,7 @@ public class UserQueryRepositoryTests
     {
         // Given
         string containedString = "test";
-        
+
         List<UserDocument> userDocuments = new()
         {
             new(
@@ -468,7 +587,7 @@ public class UserQueryRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAllAsync(
-                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userDocuments);
         _mapperMock
@@ -493,7 +612,7 @@ public class UserQueryRepositoryTests
     {
         // Given
         string containedString = "test";
-        
+
         List<UserDocument> userDocuments = new()
         {
             new(
@@ -537,7 +656,7 @@ public class UserQueryRepositoryTests
 
         _mongoCollectionWrapperMock
             .Setup(collection => collection.GetAllAsync(
-                It.IsAny<Expression<Func<UserDocument, bool>>>(), 
+                It.IsAny<Expression<Func<UserDocument, bool>>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userDocuments);
 

@@ -121,7 +121,7 @@ public class GetConversationsByUserHandlerTests
 
         ConversationDto convo1Dto = new(conversations[0].ConversationId, connection.ConnectionId, false, user2.Account.Id, user2.Account.ProfileImageId, null, new() { user1.Account.Id, user2.Account.Id });
         ConversationDto convo2Dto = new(conversations[1].ConversationId, group.GroupId, true, group.GroupName, null, null, new() { user1.Account.Id, user2.Account.Id, user3.Account.Id });
-        
+
         _conversationMapperMock
             .Setup(mapper => mapper.MapConversationToConnectionConversationDTO(user1.Account, (ConnectionConversation)conversations[0]))
             .Returns(convo1Dto);
@@ -157,9 +157,56 @@ public class GetConversationsByUserHandlerTests
         GetConversationsByUserQuery query = new("u1");
 
         // When
-        var testAction = async() => await _getConversationsByUserHandlerSUT.Handle(query, CancellationToken.None);
+        var testAction = async () => await _getConversationsByUserHandlerSUT.Handle(query, CancellationToken.None);
 
         // Then
         await testAction.Should().ThrowAsync<UserNotFoundException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenUnsupportedConversationType_ThrowUnsupportedConversationException()
+    {
+        // Given
+        TestUserCredentials user = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "test@mail.com",
+            Password = "Test@123"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserByIdAsync(user.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+
+        List<Conversation> conversations = new()
+        {
+            new UnsupportedConversation("convo1"),
+        };
+
+        _conversationQueryRepositoryMock
+            .Setup(repo => repo.GetConversationsByUserAsync(user.Account, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conversations);
+
+        GetConversationsByUserQuery query = new(user.Account.Id);
+
+        // When
+        var testAction = async () => await _getConversationsByUserHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        await testAction.Should().ThrowAsync<UnsupportedConversationException>();
+    }
+
+    private class UnsupportedConversation : Conversation
+    {
+        public UnsupportedConversation(string conversationId) : base(conversationId)
+        {
+        }
     }
 }
