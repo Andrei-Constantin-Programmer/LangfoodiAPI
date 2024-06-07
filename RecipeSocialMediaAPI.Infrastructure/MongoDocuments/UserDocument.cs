@@ -1,8 +1,10 @@
 ﻿using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 
 [MongoCollection("User")]
+[ExcludeFromCodeCoverage(Justification = "Unnecessary testing on DTO")]
 public record UserDocument(
     string Handler,
     string UserName,

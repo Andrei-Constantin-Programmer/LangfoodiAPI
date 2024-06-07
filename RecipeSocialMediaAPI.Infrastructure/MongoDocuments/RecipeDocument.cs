@@ -1,8 +1,10 @@
 ﻿using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 
 [MongoCollection("Recipe")]
+[ExcludeFromCodeCoverage(Justification = "Unnecessary testing on DTO")]
 public record RecipeDocument(
     string Title,
     IList<(string Name, double Quantity, string UnitOfMeasurement)> Ingredients,
