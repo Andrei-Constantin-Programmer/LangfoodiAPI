@@ -2,7 +2,7 @@
 
 namespace RecipeSocialMediaAPI.Presentation.Middleware;
 
-public record ValidationErrorResponse
+public class ValidationErrorResponse
 {
     public string Message { get; } = "Validation failed";
     public IEnumerable<string> Errors { get; }
