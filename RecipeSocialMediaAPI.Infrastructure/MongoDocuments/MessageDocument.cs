@@ -1,8 +1,10 @@
 ﻿using RecipeSocialMediaAPI.Infrastructure.MongoConfiguration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RecipeSocialMediaAPI.Infrastructure.MongoDocuments;
 
 [MongoCollection("Message")]
+[ExcludeFromCodeCoverage(Justification = "Unnecessary testing on DTO")]
 public record MessageDocument(
     string SenderId,
     MessageContentDto MessageContent,
@@ -13,6 +15,7 @@ public record MessageDocument(
     string? Id = null
 ) : MongoDocument(Id);
 
+[ExcludeFromCodeCoverage(Justification = "Unnecessary testing on DTO")]
 public record MessageContentDto(
     string? Text = null,
     List<string>? RecipeIds = null,

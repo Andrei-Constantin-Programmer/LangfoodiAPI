@@ -1,9 +1,11 @@
 ﻿using RecipeSocialMediaAPI.Domain.Models.Users;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RecipeSocialMediaAPI.Application.Repositories.Users;
 
 public interface IUserPersistenceRepository
 {
+    [ExcludeFromCodeCoverage(Justification = "Implementation is tested instead")]
     Task<IUserCredentials> CreateUserAsync(
         string handler,
         string username,

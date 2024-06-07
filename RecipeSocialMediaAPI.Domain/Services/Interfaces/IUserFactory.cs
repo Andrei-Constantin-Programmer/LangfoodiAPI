@@ -1,9 +1,11 @@
 ﻿using RecipeSocialMediaAPI.Domain.Models.Users;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RecipeSocialMediaAPI.Domain.Services.Interfaces;
 
 public interface IUserFactory
 {
+    [ExcludeFromCodeCoverage(Justification = "Implementation is tested instead")]
     IUserAccount CreateUserAccount(
         string id,
         string handler,
@@ -14,6 +16,7 @@ public interface IUserFactory
         List<string>? blockedConnectionIds = null,
         UserRole userRole = UserRole.User);
 
+    [ExcludeFromCodeCoverage(Justification = "Implementation is tested instead")]
     IUserCredentials CreateUserCredentials(
         string id,
         string handler,
