@@ -38,7 +38,6 @@ public class UserAccount : IUserAccount
     }
 
     public bool RemovePin(string pinnedConversationId) => _pinnedConversationIds.Remove(pinnedConversationId);
-
     public bool AddPin(string pinnedConversationId) => _pinnedConversationIds.Add(pinnedConversationId);
     public bool UnblockConnection(string connectionId) => _blockedConnectionIds.Remove(connectionId);
     public bool BlockConnection(string connectionId) => _blockedConnectionIds.Add(connectionId);
