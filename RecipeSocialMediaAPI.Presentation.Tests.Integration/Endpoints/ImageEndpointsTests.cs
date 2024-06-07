@@ -8,13 +8,13 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace RecipeSocialMediaAPI.Core.Tests.Integration.Endpoints;
+namespace RecipeSocialMediaAPI.Presentation.Tests.Integration.Endpoints;
 
 public class ImageEndpointsTests : EndpointTestBase
 {
     private readonly CloudinarySignatureDto _signatureTestData = new("signature1", new DateTimeOffset(2023, 08, 19, 12, 30, 0, TimeSpan.Zero).ToUnixTimeSeconds());
 
-    public ImageEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) {}
+    public ImageEndpointsTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.IMAGE)]

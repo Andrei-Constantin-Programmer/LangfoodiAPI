@@ -198,7 +198,7 @@ public class ExceptionMappingMiddlewareTests
         HttpResponse response = context.Response;
         response.StatusCode.Should().Be(StatusCodes.Status404NotFound);
     }
-    
+
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.INFRASTRUCTURE)]
     [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]

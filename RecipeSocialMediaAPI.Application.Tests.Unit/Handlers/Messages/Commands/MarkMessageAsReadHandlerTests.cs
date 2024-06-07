@@ -218,4 +218,49 @@ public class MarkMessageAsReadHandlerTests
                     It.IsAny<CancellationToken>()),
                 Times.Once);
     }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public async Task Handle_WhenMessageIsAlreadyMarked_DoNotUpdateOrNotify()
+    {
+        // Given
+        TestUserCredentials user1 = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "User 1"
+            },
+            Email = "user1@mail.com",
+            Password = "Test@123"
+        };
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserByIdAsync(user1.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user1);
+
+        TestMessage message = new("m1", user1.Account, new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, seenBy: new List<IUserAccount> { user1.Account });
+        _messageQueryRepositoryMock
+            .Setup(repo => repo.GetMessageAsync(message.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(message);
+
+        MarkMessageAsReadCommand command = new(user1.Account.Id, message.Id);
+
+        // When
+        await _markMessageAsReadHandlerSUT.Handle(command, CancellationToken.None);
+
+        // Then
+        _messagePersistenceRepositoryMock
+            .Verify(repo => repo.UpdateMessageAsync(
+                It.IsAny<Message>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
+        _publisherMock
+            .Verify(publisher => publisher.Publish(
+                It.IsAny<MessageMarkedAsReadNotification>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
 }

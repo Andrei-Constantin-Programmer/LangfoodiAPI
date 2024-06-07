@@ -11,7 +11,6 @@ using RecipeSocialMediaAPI.TestInfrastructure;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Runtime.Intrinsics.X86;
 
 namespace RecipeSocialMediaAPI.Presentation.Tests.Integration.Endpoints;
 
@@ -71,7 +70,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // When
         var result = await _client.PostAsync($"user/username/exists?username={Uri.EscapeDataString(contract.UserName)}", null);
-        
+
         // Then
         var resultContent = bool.Parse(await
             result.Content.ReadAsStringAsync());
@@ -256,7 +255,7 @@ public class UserEndpointsTests : EndpointTestBase
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        
+
         var userExists = await _fakeUserRepository.GetUserByUsernameAsync(user.Account.UserName) is not null;
         userExists.Should().BeFalse();
     }
@@ -699,6 +698,582 @@ public class UserEndpointsTests : EndpointTestBase
 
         // When
         var result = await _client.PutAsync($"user/change-role?userId=1&newRole=role", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Pin_WhenConversationExists_PinConversationAndReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle1", "UserName 1", "email1@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/pin?userId={user.Account.Id}&conversationId={conversation.ConversationId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.PinnedConversationIds.Should().HaveCount(1);
+        userFromDb.PinnedConversationIds.Should().Contain(conversation.ConversationId);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Pin_WhenConversationExistsAndThereAreExistingPins_PinConversationWithoutOtherChangesAndReturnOk()
+    {
+        // Given
+        string existingConversationId = "existingConversationId";
+
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        user.Account.AddPin(existingConversationId);
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/pin?userId={user.Account.Id}&conversationId={conversation.ConversationId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.PinnedConversationIds.Should().HaveCount(2);
+        userFromDb.PinnedConversationIds.Should().Contain(conversation.ConversationId);
+        userFromDb.PinnedConversationIds.Should().Contain(existingConversationId);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Pin_WhenConversationIsAlreadyPinned_ReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
+
+        user.Account.AddPin(conversation.ConversationId);
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/pin?userId={user.Account.Id}&conversationId={conversation.ConversationId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.PinnedConversationIds.Should().HaveCount(1);
+        userFromDb.PinnedConversationIds.Should().Contain(conversation.ConversationId);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Pin_WhenUserDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/pin?userId=nonExistentUserId&conversationId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Pin_WhenConversationDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/pin?userId={user.Account.Id}&conversationId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Pin_WhenNoTokenIsUsed_ReturnsUnauthorised()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync("user/pin?userId=0&conversationId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unpin_WhenConversationExistsButIsUnpinned_ReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle1", "UserName 1", "email1@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unpin?userId={user.Account.Id}&conversationId={conversation.ConversationId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.PinnedConversationIds.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unpin_WhenConversationExistsAndIsPinned_UnpinConversationAndReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
+
+        user.Account.AddPin(conversation.ConversationId);
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unpin?userId={user.Account.Id}&conversationId={conversation.ConversationId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.PinnedConversationIds.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unpin_WhenThereArePins_RemovePinAndReturnOk()
+    {
+        // Given
+        string pinToKeep = "anotherPin";
+
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+        var conversation = await _fakeConversationRepository
+            .CreateConnectionConversationAsync(connection);
+
+        user.Account.AddPin(conversation.ConversationId);
+        user.Account.AddPin(pinToKeep);
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unpin?userId={user.Account.Id}&conversationId={conversation.ConversationId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.PinnedConversationIds.Should().HaveCount(1);
+        userFromDb.PinnedConversationIds.Should().Contain(pinToKeep);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unpin_WhenUserDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unpin?userId=nonExistentUserId&conversationId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unpin_WhenConversationDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unpin?userId={user.Account.Id}&conversationId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unpin_WhenNoTokenIsUsed_ReturnsUnauthorised()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync("user/unpin?userId=0&conversationId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Block_WhenConnectionExists_BlockConnectionAndReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle1", "UserName 1", "email1@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/block?userId={user.Account.Id}&connectionId={connection.ConnectionId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.BlockedConnectionIds.Should().HaveCount(1);
+        userFromDb.BlockedConnectionIds.Should().Contain(connection.ConnectionId);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Block_WhenConnectionExistsAndThereAreExistingBlockedConnections_BlockConnectionWithoutOtherChangesAndReturnOk()
+    {
+        // Given
+        string existingConnectionId = "existingConnectionId";
+
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        user.Account.BlockConnection(existingConnectionId);
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/block?userId={user.Account.Id}&connectionId={connection.ConnectionId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.BlockedConnectionIds.Should().HaveCount(2);
+        userFromDb.BlockedConnectionIds.Should().Contain(connection.ConnectionId);
+        userFromDb.BlockedConnectionIds.Should().Contain(existingConnectionId);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Block_WhenConnectionIsAlreadyBlocked_ReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+
+        user.Account.BlockConnection(connection.ConnectionId);
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/block?userId={user.Account.Id}&connectionId={connection.ConnectionId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.BlockedConnectionIds.Should().HaveCount(1);
+        userFromDb.BlockedConnectionIds.Should().Contain(connection.ConnectionId);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Block_WhenUserDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/block?userId=nonExistentUserId&connectionId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Block_WhenConnectionDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/block?userId={user.Account.Id}&connectionId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Block_WhenNoTokenIsUsed_ReturnsUnauthorised()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync("user/block?userId=0&connectionId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unblock_WhenConnectionExistsButIsNotBlocked_ReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle1", "UserName 1", "email1@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unblock?userId={user.Account.Id}&connectionId={connection.ConnectionId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.BlockedConnectionIds.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unblock_WhenConnectionExistsAndIsBlocked_UnblockConnectionAndReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+
+        user.Account.BlockConnection(connection.ConnectionId);
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unblock?userId={user.Account.Id}&connectionId={connection.ConnectionId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.BlockedConnectionIds.Should().BeEmpty();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unblock_WhenThereAreBlockedConnections_UnblockAndReturnOk()
+    {
+        // Given
+        string blockedConnectionToKeep = "blockedConnection";
+
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var user2 = await _fakeUserRepository
+            .CreateUserAsync("handle2", "UserName 2", "email2@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var connection = await _fakeConnectionRepository.CreateConnectionAsync(user.Account, user2.Account, ConnectionStatus.Connected);
+
+        user.Account.BlockConnection(connection.ConnectionId);
+        user.Account.BlockConnection(blockedConnectionToKeep);
+        await _fakeUserRepository.UpdateUserAsync(user);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unblock?userId={user.Account.Id}&connectionId={connection.ConnectionId}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        IUserAccount userFromDb = (await _fakeUserRepository.GetUserByIdAsync(user.Account.Id))!.Account;
+        userFromDb.BlockedConnectionIds.Should().HaveCount(1);
+        userFromDb.BlockedConnectionIds.Should().Contain(blockedConnectionToKeep);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unblock_WhenUserDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unblock?userId=nonExistentUserId&connectionId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unblock_WhenConnectionDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+            .CreateUserAsync("handle", "UserName 1", "email@mail.com", _fakePasswordCryptoService.Encrypt("Test@123"), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PostAsync($"user/unblock?userId={user.Account.Id}&connectionId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task Unblock_WhenNoTokenIsUsed_ReturnsUnauthorised()
+    {
+        // Given
+
+        // When
+        var result = await _client.PostAsync("user/unblock?userId=0&connectionId=0", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

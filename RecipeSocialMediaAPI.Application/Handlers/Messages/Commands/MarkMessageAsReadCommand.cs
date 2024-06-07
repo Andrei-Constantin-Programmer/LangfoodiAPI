@@ -31,10 +31,10 @@ internal class MarkMessageAsReadHandler : IRequestHandler<MarkMessageAsReadComma
         var message = (await _messageQueryRepository.GetMessageAsync(request.MessageId, cancellationToken))
             ?? throw new MessageNotFoundException($"No Message found with id {request.MessageId}");
 
-        message.MarkAsSeenBy(user);
-
-        await _messagePersistenceRepository.UpdateMessageAsync(message, cancellationToken);
-
-        await _publisher.Publish(new MessageMarkedAsReadNotification(user.Id, message.Id), cancellationToken);
+        if (message.MarkAsSeenBy(user))
+        {
+            await _messagePersistenceRepository.UpdateMessageAsync(message, cancellationToken);
+            await _publisher.Publish(new MessageMarkedAsReadNotification(user.Id, message.Id), cancellationToken);
+        }
     }
 }
