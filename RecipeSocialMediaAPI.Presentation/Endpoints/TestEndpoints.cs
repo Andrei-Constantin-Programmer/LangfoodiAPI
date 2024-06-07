@@ -1,4 +1,5 @@
 ﻿using RecipeSocialMediaAPI.Application.Identity;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RecipeSocialMediaAPI.Presentation.Endpoints;
 
@@ -13,6 +14,7 @@ public static class TestEndpoints
         return app;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "No testing necessary for test endpoint")]
     private static RouteGroupBuilder AddTestEndpoints(this RouteGroupBuilder group)
     {
         group.MapPost("/log", (ILogger<Program> logger) =>

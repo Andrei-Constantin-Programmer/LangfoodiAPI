@@ -111,7 +111,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var user = await _fakeUserRepository
           .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakePasswordCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = await _fakeMessageRepository
-            .CreateMessageAsync(_testMessage1.Sender,"hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -146,7 +146,7 @@ public class MessageEndpointsTests : EndpointTestBase
         await _fakeRecipeRepository
            .CreateRecipeAsync(_testRecipe1.Title, _testRecipe1.Guide, _testRecipe1.Description, _testRecipe1.Chef, _testRecipe1.Tags, _testRecipe1.CreationDate, _testRecipe1.LastUpdatedDate, _testRecipe1.ThumbnailId);
         var message = await _fakeMessageRepository
-            .CreateMessageAsync(_testMessage1.Sender, "hello", new() { _testRecipe1.Id}, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new() { _testRecipe1.Id }, new(), _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -167,12 +167,12 @@ public class MessageEndpointsTests : EndpointTestBase
         data!.UpdatedDate.Should().Be(message.UpdatedDate);
         data!.TextContent.Should().Be((message as RecipeMessage)!.TextContent);
         data!.ImageURLs.Should().BeNull();
-        data!.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDto>() { 
+        data!.Recipes.Should().BeEquivalentTo(new List<RecipePreviewDto>() {
             new(
-                _testRecipe1.Id, 
+                _testRecipe1.Id,
                 _testRecipe1.Title,
                 _testRecipe1.ThumbnailId
-            ) 
+            )
         });
     }
 
@@ -185,7 +185,7 @@ public class MessageEndpointsTests : EndpointTestBase
         var user = await _fakeUserRepository
           .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakePasswordCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var message = await _fakeMessageRepository
-            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1"}, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
 
         var token = _bearerTokenGeneratorService.GenerateToken(user);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -265,7 +265,7 @@ public class MessageEndpointsTests : EndpointTestBase
             .CreateMessageAsync(user1.Account, "Message 1", new(), new(), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), null, new());
         var message2 = await _fakeMessageRepository
             .CreateMessageAsync(user2.Account, "Message 2", new(), new(), new(2024, 2, 2, 0, 0, 0, TimeSpan.Zero), message1, new());
-        
+
         conversation.SendMessage(message1);
         conversation.SendMessage(message2);
         await _fakeConversationRepository.UpdateConversationAsync(conversation, connection);
@@ -375,7 +375,7 @@ public class MessageEndpointsTests : EndpointTestBase
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         var data = await result.Content.ReadFromJsonAsync<MessageDto>();
-        
+
         data.Should().NotBeNull();
         data!.Id.Should().Be("0");
         data.UserPreview.Id.Should().Be(user.Account.Id);
@@ -763,6 +763,111 @@ public class MessageEndpointsTests : EndpointTestBase
 
         // When
         var result = await _client.DeleteAsync($"message/delete/?id={message.Id}");
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task MarkMessageAsRead_WhenMessageExistsAndIsUnmarked_MarkAndReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakePasswordCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PutAsync($"message/mark-as-read/?userId={user.Account.Id}&messageId={message.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        Message messageFromDb = (await _fakeMessageRepository.GetMessageAsync(message.Id))!;
+        messageFromDb.GetSeenBy().Should().HaveCount(1);
+        message.GetSeenBy().Should().Contain(user.Account);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task MarkMessageAsRead_WhenMessageExistsButIsAlreadyMarked_ReturnOk()
+    {
+        // Given
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakePasswordCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var message = await _fakeMessageRepository
+            .CreateMessageAsync(_testMessage1.Sender, "hello", new(), new() { "image 1" }, _testMessage1.SentDate, _testMessage1.RepliedToMessage, new());
+
+        message.MarkAsSeenBy(user.Account);
+        await _fakeMessageRepository.UpdateMessageAsync(message);
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PutAsync($"message/mark-as-read/?userId={user.Account.Id}&messageId={message.Id}", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        Message messageFromDb = (await _fakeMessageRepository.GetMessageAsync(message.Id))!;
+        messageFromDb.GetSeenBy().Should().HaveCount(1);
+        message.GetSeenBy().Should().Contain(user.Account);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task MarkMessageAsRead_WhenUserDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakePasswordCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PutAsync($"message/mark-as-read/?userId=nonExistentUser&messageId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task MarkMessageAsRead_WhenMessageDoesNotExist_ReturnNotFound()
+    {
+        // Given
+        var user = await _fakeUserRepository
+          .CreateUserAsync(_testUser1.Account.Handler, _testUser1.Account.UserName, _testUser1.Email, _fakePasswordCryptoService.Encrypt(_testUser1.Password), new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        var token = _bearerTokenGeneratorService.GenerateToken(user);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // When
+        var result = await _client.PutAsync($"message/mark-as-read/?userId={user.Account.Id}&messageId=0", null);
+
+        // Then
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.PRESENTATION)]
+    public async Task MarkMessageAsRead_WhenMessageDoesNotExist_ReturnUnauthorized()
+    {
+        // Given
+
+        // When
+        var result = await _client.PutAsync($"message/mark-as-read/?userId=0&messageId=0", null);
 
         // Then
         result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
