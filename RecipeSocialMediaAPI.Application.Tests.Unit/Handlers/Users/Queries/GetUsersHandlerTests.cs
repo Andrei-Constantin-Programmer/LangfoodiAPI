@@ -46,7 +46,7 @@ public class GetUsersHandlerTests
             .ReturnsAsync((IUserCredentials?)null);
 
         GetUsersQuery query = new("userId", "StringNotFound", options);
-        
+
         // When
         var testAction = async () => await _usersHandlerSUT.Handle(query, CancellationToken.None);
 
@@ -305,7 +305,7 @@ public class GetUsersHandlerTests
 
         UserAccountDto dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
         UserAccountDto dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
-        
+
         _userQueryRepositoryMock
             .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<IUserAccount> { account1, account2 });
@@ -497,5 +497,64 @@ public class GetUsersHandlerTests
         // Then
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(new List<UserAccountDto> { dto3, dto4 });
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
+    public void Handle_WhenUnsupportedQueryOptions_ThrowsArgumentException()
+    {
+        // Given
+        TestUserCredentials queryingUser = new()
+        {
+            Account = new TestUserAccount()
+            {
+                Id = "u1",
+                Handler = "user_1",
+                UserName = "UserName 1"
+            },
+            Email = "email@mail.com",
+            Password = "Test@123"
+        };
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetUserByIdAsync(queryingUser.Account.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(queryingUser);
+
+        GetUsersQuery query = new(queryingUser.Account.Id, "StringNotFound", (UserQueryOptions)10);
+        IUserAccount account1 = new TestUserAccount()
+        {
+            Id = "u2",
+            Handler = $"handle_{query.ContainedString}",
+            UserName = "Unrelated Username"
+        };
+        IUserAccount account2 = new TestUserAccount()
+        {
+            Id = "u3",
+            Handler = "user_handle",
+            UserName = $"{query.ContainedString} name"
+        };
+
+        UserAccountDto dto1 = new(account1.Id, account1.Handler, account1.UserName, new(), new());
+        UserAccountDto dto2 = new(account2.Id, account2.Handler, account2.UserName, new(), new());
+        UserAccountDto dto3 = new(queryingUser.Account.Id, queryingUser.Account.Handler, queryingUser.Account.UserName, new(), new());
+
+        _userQueryRepositoryMock
+            .Setup(repo => repo.GetAllUserAccountsContainingAsync(query.ContainedString, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<IUserAccount>() { account1, account2, queryingUser.Account });
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account1))
+            .Returns(dto1);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(account2))
+            .Returns(dto2);
+        _userMapperMock
+            .Setup(mapper => mapper.MapUserAccountToUserAccountDto(queryingUser.Account))
+            .Returns(dto3);
+
+        // When
+        var testAction = () => _usersHandlerSUT.Handle(query, CancellationToken.None);
+
+        // Then
+        testAction.Should().ThrowAsync<ArgumentException>();
     }
 }

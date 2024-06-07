@@ -145,7 +145,7 @@ public class MessageDocumentToModelMapperTests
             testDocument.SentDate,
             null,
             null,
-            new() { testSender } );
+            new() { testSender });
 
         _messageFactoryMock
             .Setup(factory => factory.CreateImageMessage(
@@ -160,7 +160,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(imageMessage);
 
         // When
-        var result = (TestImageMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
+        var result = (TestImageMessage?)await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().Be(imageMessage);
@@ -249,7 +249,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(recipeMessage);
 
         // When
-        var result = (TestRecipeMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
+        var result = (TestRecipeMessage?)await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().Be(recipeMessage);
@@ -300,7 +300,7 @@ public class MessageDocumentToModelMapperTests
             .Returns(textMessage);
 
         // When
-        var result = (TestTextMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
+        var result = (TestTextMessage?)await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().Be(textMessage);
@@ -359,7 +359,7 @@ public class MessageDocumentToModelMapperTests
         _recipeQueryRepositoryMock
             .Setup(repo => repo.GetRecipeByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string id, CancellationToken _) => recipes.FirstOrDefault(recipe => recipe.Id == id));
-        
+
         // When
         var testAction = async () => await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
@@ -443,9 +443,9 @@ public class MessageDocumentToModelMapperTests
                 recipeMessage.UpdatedDate,
                 null))
             .Returns(recipeMessage);
-        
+
         // When
-        var result = (TestRecipeMessage?) await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
+        var result = (TestRecipeMessage?)await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
 
         // Then
         result.Should().Be(recipeMessage);
@@ -502,5 +502,36 @@ public class MessageDocumentToModelMapperTests
 
         // Then
         await action.Should().ThrowAsync<MalformedMessageDocumentException>();
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.MESSAGING)]
+    [Trait(Traits.MODULE, Traits.Modules.INFRASTRUCTURE)]
+    public async Task MapMessageFromDocument_WhenMessageDocumentIdIsNull_ThrowArgumentException()
+    {
+        // Given
+        string senderId = "50";
+
+        MessageDocument testDocument = new(
+            Id: null,
+            MessageContent: new(_dataCryptoServiceFake.Encrypt("Text")),
+            SeenByUserIds: new() { senderId },
+            SenderId: senderId,
+            SentDate: new(2023, 10, 17, 0, 0, 0, TimeSpan.Zero)
+        );
+
+        TestUserAccount testSender = new()
+        {
+            Id = senderId,
+            Handler = "Test Handler",
+            UserName = "Test Username",
+            AccountCreationDate = new(2020, 10, 10, 0, 0, 0, TimeSpan.Zero)
+        };
+
+        // When
+        var testAction = async () => await _messageDocumentToModelMapperSUT.MapMessageFromDocumentAsync(testDocument, testSender, null);
+
+        // Then
+        await testAction.Should().ThrowAsync<ArgumentException>();
     }
 }

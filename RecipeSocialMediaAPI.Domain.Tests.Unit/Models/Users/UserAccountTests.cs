@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using RecipeSocialMediaAPI.Domain.Models.Users;
 using RecipeSocialMediaAPI.TestInfrastructure;
+using System.Collections.Immutable;
 
 namespace RecipeSocialMediaAPI.Domain.Tests.Unit.Models.Users;
 
@@ -15,7 +16,7 @@ public class UserAccountTests
         string pinToRemove = "convo1";
         string pinToKeep = "convo2";
 
-        UserAccount userAccountSUT = new ("u1", "user_1", "User 1", "img.png", new (2024, 1, 1, 0, 0, 0, TimeSpan.Zero), new() { pinToRemove, pinToKeep });
+        UserAccount userAccountSUT = new("u1", "user_1", "User 1", "img.png", new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), new() { pinToRemove, pinToKeep });
 
         // When
         var result = userAccountSUT.RemovePin(pinToRemove);
@@ -24,7 +25,7 @@ public class UserAccountTests
         result.Should().BeTrue();
         userAccountSUT.PinnedConversationIds.Should().BeEquivalentTo(new List<string> { pinToKeep });
     }
-    
+
     [Fact]
     [Trait(Traits.DOMAIN, Traits.Domains.USER)]
     [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
@@ -34,7 +35,7 @@ public class UserAccountTests
         string nonexistentPin = "convo1";
         string existingPin = "convo2";
 
-        UserAccount userAccountSUT = new ("u1", "user_1", "User 1", "img.png", new (2024, 1, 1, 0, 0, 0, TimeSpan.Zero), new() { existingPin });
+        UserAccount userAccountSUT = new("u1", "user_1", "User 1", "img.png", new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), new() { existingPin });
 
         // When
         var result = userAccountSUT.RemovePin(nonexistentPin);
@@ -79,5 +80,39 @@ public class UserAccountTests
         // Then
         result.Should().BeFalse();
         userAccountSUT.PinnedConversationIds.Should().BeEquivalentTo(new List<string> { existingPin });
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void PinnedConversationIds_WhenModified_ReturnsImmutableList()
+    {
+        // Given
+        UserAccount userAccountSUT = new("u1", "user_1", "User 1", "img.png", new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        // When
+        userAccountSUT.AddPin("convo1");
+
+        // Then
+        userAccountSUT.PinnedConversationIds.Should().BeOfType<ImmutableList<string>>();
+        userAccountSUT.PinnedConversationIds.Should().HaveCount(1);
+        userAccountSUT.PinnedConversationIds.Should().Contain("convo1");
+    }
+
+    [Fact]
+    [Trait(Traits.DOMAIN, Traits.Domains.USER)]
+    [Trait(Traits.MODULE, Traits.Modules.DOMAIN)]
+    public void BlockedConnectionIds_WhenModified_ReturnsImmutableList()
+    {
+        // Given
+        UserAccount userAccountSUT = new("u1", "user_1", "User 1", "img.png", new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        // When
+        userAccountSUT.BlockConnection("u2");
+
+        // Then
+        userAccountSUT.BlockedConnectionIds.Should().BeOfType<ImmutableList<string>>();
+        userAccountSUT.BlockedConnectionIds.Should().HaveCount(1);
+        userAccountSUT.BlockedConnectionIds.Should().Contain("u2");
     }
 }
