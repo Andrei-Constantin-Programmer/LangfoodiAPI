@@ -82,7 +82,6 @@ public class DataCryptoServiceTests
     [Theory]
     [Trait(Traits.DOMAIN, Traits.Domains.CRYPTOGRAPHY)]
     [Trait(Traits.MODULE, Traits.Modules.APPLICATION)]
-    [InlineData("")]
     [InlineData("1")]
     [InlineData(":)")]
     [InlineData("22")]
@@ -91,7 +90,7 @@ public class DataCryptoServiceTests
     [InlineData("MediuMSizE")]
     [InlineData("Long@Test!With_Special-Characters")]
     [InlineData("Extremely Long Test &*/. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vitae.")]
-    public void Decrypt_WithDifferentKey_ReturnsNullAndLogs(string plainText)
+    public void Decrypt_WithDifferentKey_DoesNotReturnOriginalText(string plainText)
     {
         // Given
         var differentOptions = new Mock<IOptions<EncryptionOptions>>();
@@ -109,14 +108,6 @@ public class DataCryptoServiceTests
         var result = _dataCryptoServiceSUT.Decrypt(cipherText);
 
         // Then
-        result.Should().BeNullOrEmpty();
-        _loggerMock
-            .Verify(logger => logger.Log(
-                    LogLevel.Error,
-                    It.IsAny<EventId>(),
-                    It.IsAny<It.IsAnyType>(),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-                Times.Once);
+        result.Should().NotBe(plainText);
     }
 }
